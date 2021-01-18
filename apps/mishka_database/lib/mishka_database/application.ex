@@ -10,6 +10,7 @@ defmodule MishkaDatabase.Application do
     children = [
       # Starts a worker by calling: MishkaDatabase.Worker.start_link(arg)
       # {MishkaDatabase.Worker, arg}
+      MishkaDatabase.Repo
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

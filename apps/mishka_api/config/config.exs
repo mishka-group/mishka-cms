@@ -8,12 +8,12 @@
 use Mix.Config
 
 # Configures the endpoint
-config :mishka_api, MishkaApiWeb.Endpoint,
-  url: [host: "localhost"],
-  secret_key_base: "qP5c9diga3k115/empFNEEi/fgwXkhArZvpvFaiLqdi3Um1ntPh0P2AkleLzEpzY",
-  render_errors: [view: MishkaApiWeb.ErrorView, accepts: ~w(json), layout: false],
-  pubsub_server: MishkaApi.PubSub,
-  live_view: [signing_salt: "e1v5FAl7"]
+# config :mishka_api, MishkaApiWeb.Endpoint,
+#   url: [host: "localhost"],
+#   secret_key_base: "qP5c9diga3k115/empFNEEi/fgwXkhArZvpvFaiLqdi3Um1ntPh0P2AkleLzEpzY",
+#   render_errors: [view: MishkaApiWeb.ErrorView, accepts: ~w(json), layout: false],
+#   pubsub_server: MishkaApi.PubSub,
+#   live_view: [signing_salt: "e1v5FAl7"]
 
 # Configures Elixir's Logger
 config :logger, :console,

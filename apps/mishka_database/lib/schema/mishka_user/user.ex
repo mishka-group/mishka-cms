@@ -1,0 +1,47 @@
+defmodule MishkaDatabase.Schema.MishkaUser.User do
+  use Ecto.Schema
+
+  import Ecto.Changeset
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+
+  schema "users" do
+
+    field :full_name, :string, size: 60, null: false
+    field :username, :string, size: 20, null: false
+    field :email, :string, null: false
+    field :password_hash, :string, null: true
+    field :password, :string, virtual: true
+    field :status, UserStatusEnum, null: false, default: :registered
+    field :unconfirmed_email, :string, null: true
+
+    timestamps(type: :utc_datetime)
+  end
+
+  def changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:full_name, :username, :email, :password_hash, :password, :status, :unconfirmed_email])
+    |> validate_required([:full_name, :username, :email, :status], message: "can't be blank")
+    |> validate_length(:full_name, min: 3, max: 60, message: "minimum 3 characters and maximum 20 characters")
+    |> validate_length(:password, min: 8, max: 100, message: "minimum 8 characters and maximum 100 characters")
+    |> validate_length(:username, min: 3, max: 20, message: "minimum 3 characters and maximum 20 characters")
+    |> validate_length(:email, min: 8, max: 50, message: "minimum 8 characters and maximum 50 characters")
+
+    # |> SanitizeStrategy.changeset_input_validation(MishkaAuth.get_config_info(:input_validation_status))
+
+
+
+    |> unique_constraint(:unconfirmed_email, name: :index_on_users_verified_email, message: "this email has already been taken.")
+    |> unique_constraint(:username, name: :index_on_users_username, message: "this username has already been taken.")
+    |> unique_constraint(:email, name: :index_on_users_email, message: "this email has already been taken.")
+    |> hash_password
+  end
+
+  defp hash_password(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
+        put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(password))
+      _ -> changeset
+    end
+  end
+end

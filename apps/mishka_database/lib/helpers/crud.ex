@@ -14,10 +14,10 @@ defmodule MishkaDatabase.CRUD do
                         error_atom: :your_error_tag,
                         repo: Your.Repo
   ```
-  و در مرحله بعدی این ماژول را در ماژول سفارشی خود ایمپورت کنید
+  برای یکپارچه سازی و همینطور تنظیم فانکشن های کراد می توانید بی هی ویر را در فایل سفارشی خود اضافه کنید.
 
   ```elixir
-  import MishkaDatabase.CRUD
+  @behaviour MishkaDatabase.CRUD
   ```
   لازم به ذکر هست سه پارامتر زیر حتما باید ارسال گردند
 
@@ -28,13 +28,49 @@ defmodule MishkaDatabase.CRUD do
   ```
 
   """
+
+
+
+  # MishkaUser.User custom Typespecs
+  # برای درک بهتر و همینطور یکپارچه سازی توسعه نوشته شدند
+  @type data_uuid() :: Ecto.UUID.t
+  @type record_input() :: map()
+  @type error_tag() :: atom()
+  @type email() :: String.t()
+  @type username() :: String.t()
+  @type repo_data() :: Ecto.Schema.t()
+  @type repo_error() :: Ecto.Changeset.t()
+
+
+  @callback create(record_input()) ::
+            {:error, :add, error_tag(), repo_error()} |
+            {:ok, :add, error_tag(), repo_data()}
+
+  @callback edit(record_input()) ::
+            {:error, :edit, :uuid, error_tag()} |
+            {:error, :edit, :get_record_by_id, error_tag()} |
+            {:error, :edit, error_tag(), repo_error()} |
+            {:ok, :edit, error_tag(), repo_data()}
+
+  @callback delete(data_uuid()) ::
+            {:error, :delete, :uuid, error_tag()} |
+            {:error, :delete, :get_record_by_id, error_tag()} |
+            {:error, :delete, :forced_to_delete, error_tag()} |
+            {:error, :delete, error_tag(), repo_error()} |
+            {:ok, :delete, error_tag(), repo_data()}
+
+
+  @callback show_by_id(data_uuid()) ::
+            {:error, :get_record_by_id, error_tag()} |
+            {:ok, :get_record_by_id, error_tag(), repo_data()}
+
+
   defmacro __using__(opts) do
     quote(bind_quoted: [opts: opts]) do
+      import MishkaDatabase.CRUD
       @interface_module opts
     end
   end
-
-
 
   @doc """
   ### ماکرو ساخت یک رکورد
@@ -266,8 +302,8 @@ defmodule MishkaDatabase.CRUD do
   @doc false
   def get_record_by_id(id, module, error_atom, repo) do
     case repo.get(module, id) do
-      nil -> {:error, error_atom, :get_record_by_id}
-      record_info -> {:ok, error_atom, :get_record_by_id, record_info}
+      nil -> {:error, :get_record_by_id, error_atom}
+      record_info -> {:ok, :get_record_by_id, error_atom, record_info}
     end
   end
 
@@ -275,8 +311,8 @@ defmodule MishkaDatabase.CRUD do
   @doc false
   def get_record_by_field(field, value, module, error_atom, repo) do
     case repo.get_by(module, "#{field}": value) do
-      nil -> {:error, error_atom, :get_record_by_field}
-      record_info -> {:ok, error_atom, :get_record_by_field, record_info}
+      nil -> {:error, :get_record_by_field, error_atom}
+      record_info -> {:ok, :get_record_by_field, error_atom, record_info}
     end
   end
 
@@ -284,18 +320,19 @@ defmodule MishkaDatabase.CRUD do
   @doc false
   def edit_record(attrs, module, error_atom, repo) do
     with {:ok, :uuid, record_id} <- uuid(attrs.id),
-        {:ok, error_atom, :get_record_by_id, record_info} <- get_record_by_id(record_id, module, error_atom, repo),
+        {:ok, :get_record_by_id, error_atom, record_info} <- get_record_by_id(record_id, module, error_atom, repo),
         {:ok, info} <- update(record_info, attrs, module, repo) do
 
         {:ok, :edit, error_atom, info}
       else
         {:error, :uuid} ->
-          {:error, :edit, error_atom, :uuid}
+          {:error, :edit, :uuid, error_atom}
 
         {:error, changeset} ->
           {:error, :edit, error_atom, changeset}
+
         _ ->
-          {:error, :edit, error_atom, :get_record_by_id}
+          {:error, :edit, :get_record_by_id, error_atom}
     end
   end
 
@@ -304,24 +341,23 @@ defmodule MishkaDatabase.CRUD do
   def delete_record(id, module, error_atom, repo) do
     try do
       with {:ok, :uuid, record_id} <- uuid(id),
-           {:ok, error_atom, :get_record_by_id, record_info} <- get_record_by_id(record_id, module, error_atom, repo),
+           {:ok, :get_record_by_id, error_atom, record_info} <- get_record_by_id(record_id, module, error_atom, repo),
            {:ok, struct} <- repo.delete(record_info) do
 
         {:ok, :delete, error_atom, struct}
       else
         {:error, :uuid} ->
-          {:error, :delete, error_atom, :uuid}
+          {:error, :delete, :uuid, error_atom}
 
         {:error, changeset} ->
           {:error, :delete, error_atom, changeset}
 
         _ ->
-          {:error, :delete, error_atom, :get_record_by_id}
+          {:error, :delete, :get_record_by_id, error_atom}
       end
     rescue
-      _e in Ecto.ConstraintError -> {:error, :delete, error_atom, :forced_to_delete}
+      _e in Ecto.ConstraintError -> {:error, :delete, :forced_to_delete, error_atom}
     end
   end
-
 
 end

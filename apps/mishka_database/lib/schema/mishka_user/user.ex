@@ -1,6 +1,8 @@
 defmodule MishkaDatabase.Schema.MishkaUser.User do
   use Ecto.Schema
 
+  # @derive {Jason.Encoder, only: [:full_name, :username, :email, :status]}
+
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -10,9 +12,10 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
     field :full_name, :string, size: 60, null: false
     field :username, :string, size: 20, null: false
     field :email, :string, null: false
+    field :status, UserStatusEnum, null: false, default: :registered
+
     field :password_hash, :string, null: true
     field :password, :string, virtual: true
-    field :status, UserStatusEnum, null: false, default: :registered
     field :unconfirmed_email, :string, null: true
 
     timestamps(type: :utc_datetime)

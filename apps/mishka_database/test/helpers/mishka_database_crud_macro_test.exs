@@ -6,8 +6,6 @@ defmodule MishkaDatabaseCrudMacroTest do
                         error_atom: :user,
                         repo: MishkaDatabase.Repo
 
-  import MishkaDatabase.CRUD
-
   setup do
     # Explicitly get a connection before each test
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(MishkaDatabase.Repo)
@@ -57,12 +55,12 @@ defmodule MishkaDatabaseCrudMacroTest do
 
     test "get record by id (user right info)" do
       {:ok, :add, :user, data} = assert crud_add(@right_user_info)
-      {:ok, :user, :get_record_by_id, _record_info} = assert crud_get_record(data.id)
+      {:ok, :get_record_by_id, :user, _record_info} = assert crud_get_record(data.id)
     end
 
     test "get record by field (user right info)" do
       {:ok, :add, :user, data} = assert crud_add(@right_user_info)
-      {:ok, :user, :get_record_by_field, _record_info} = assert crud_get_by_field("email", data.email)
+      {:ok, :get_record_by_field, :user, _record_info} = assert crud_get_by_field("email", data.email)
     end
   end
 
@@ -94,15 +92,15 @@ defmodule MishkaDatabaseCrudMacroTest do
     end
 
     test "crud delete (user false info)" do
-      {:error, :delete, :user, :get_record_by_id} = assert crud_delete(Ecto.UUID.generate)
+      {:error, :delete, :get_record_by_id, :user} = assert crud_delete(Ecto.UUID.generate)
     end
 
     test "get record by id (user false info)" do
-      {:error, :user, :get_record_by_id} = assert crud_get_record(Ecto.UUID.generate)
+      {:error, :get_record_by_id, :user} = assert crud_get_record(Ecto.UUID.generate)
     end
 
     test "get record by field (user false info)" do
-      {:error, :user, :get_record_by_field} = assert crud_get_by_field("email", "test@test.com")
+      {:error, :get_record_by_field, :user} = assert crud_get_by_field("email", "test@test.com")
     end
   end
 end

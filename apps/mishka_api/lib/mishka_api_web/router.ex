@@ -7,7 +7,15 @@ defmodule MishkaApiWeb.Router do
 
   scope "/api", MishkaApiWeb do
     pipe_through :api
+
   end
+
+  scope "/api/auth/v1", MishkaApiWeb do
+    pipe_through :api
+    post "/register", AuthController, :rgister
+    post "/login", AuthController, :login
+  end
+
 
   # Enables LiveDashboard only for development
   #

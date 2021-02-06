@@ -1,38 +1,28 @@
 defmodule MishkaDatabase.CRUD do
   @moduledoc """
-  ## ماکرو ساده سازی شده ایجاد - ویرایش - نمایش و خذف به کمک اکتو
+  ## Simplified CRUD macro using Ecto
 
-  به واسطه این ماژول شما می توانید هرجایی که نیاز به ساخت کواری دارید موارد مربوط به
-  کراد را به سادگی هرچه تمام تر در فایل مذکور خود پیاده سازی کنید.
-  این ماژول و ماکرو های زیر مجموعه آن بیشتر برای ایجاد یک ساختار یک پارچه درست گردیدند و شما می توانید در پروژه های چتری موارد سفارشی خودتان را پیاده سازی کنید
-
-  در مرحله اول برای استفاده از ماکرو های زیر شما باید در ماژول مربوط به خودتان اطلاعات درخواستی را بایند نمایید
-
+  With this module, you can easily implement CRUD-related items in your file wherever you need to build a query.
+  These modules and their sub-macros were created more to create a one-piece structure, and you can implement your own custom items in umbrella projects.
+  In the first step, to use the following macros, you must bind the requested information in the relevant module that you have already created as follows.
   ```elixir
   use MishkaDatabase.CRUD,
                         module: YOURschemaMODULE,
                         error_atom: :your_error_tag,
                         repo: Your.Repo
   ```
-  برای یکپارچه سازی و همینطور تنظیم فانکشن های کراد می توانید بی هی ویر را در فایل سفارشی خود اضافه کنید.
-
-  ```elixir
-  @behaviour MishkaDatabase.CRUD
-  ```
-  لازم به ذکر هست سه پارامتر زیر حتما باید ارسال گردند
+  It should be noted that the following three parameters must be sent and also make sure you are connected to the database.
 
   ```elixir
   module
   error_atom
   repo
   ```
-
   """
 
 
 
   # MishkaUser.User custom Typespecs
-  # برای درک بهتر و همینطور یکپارچه سازی توسعه نوشته شدند
   @type data_uuid() :: Ecto.UUID.t
   @type record_input() :: map()
   @type error_tag() :: atom()
@@ -73,22 +63,22 @@ defmodule MishkaDatabase.CRUD do
   end
 
   @doc """
-  ### ماکرو ساخت یک رکورد
+  ### Creating a record macro
 
-  ## مثال
+  ## Example
   ```elixir
   crud_add(map_of_info like: %{name: "trangell"})
   ```
-  ورودی این ماکرو یک مپ می باشد و خروجی آن نیز به صورت مپ است. به صورت مثال
+  The input of this macro is a map and its output are a map. For example
 
   ```elixir
   {:ok, :add, error_atom, data}
   {:error, :add, error_atom, changeset}
   ```
 
-  در صورتی که می خواهید فقط پارامتر های انتخابی  از لیست پارامتر های ارسالی جدا شود و برای بانک اطلاعاتی ارسال گردد از همین ماکرو با ورودی ۲ استفاده کنید
+  If you want only the selected parameters to be separated from the list of submitted parameters and sent to the database, use the same macro with input 2
 
-  ###  مثال
+  ###  Example
   ```elixir
   crud_add(map_of_info like: %{name: "trangell"}, [:name])
   ```
@@ -128,33 +118,32 @@ defmodule MishkaDatabase.CRUD do
 
 
   @doc """
-  ### ماکرو ویرایش یک رکورد در دیتابیس
+  ### Edit a record in a database Macro
 
-  به کمک این ماکرو می توانید یک رکورد در بانک اطلاعاتی با آیدی آن ویرایش کنید. به همین منظور شما حتما باید آیدی رکورد درخواستی را
-  به همراه مپ پارامتر های جدید ارسال نمایید. در غیر این صورت ماکرو خطا آیدی را برگشت می دهد
+  With the help of this macro, you can edit a record in the database with its ID. For this purpose, you must send the requested record ID along with the new Map parameters. Otherwise the macro returns the ID error.
 
-  ## مثال
+  ## Example
   ```elixir
   crud_edit(map_of_info like: %{id: "6d80d5f4-781b-4fa8-9796-1821804de6ba",name: "trangell"})
   ```
-  > توجه کنید آیدی ارسال حتما باید از نوع یو یو آیدی باشد.
+  > Note that the sending ID must be of UUID type.
 
-  ورودی این ماکرو یک مپ می باشد و خروجی آن نیز به صورت مپ است. به صورت مثال
+  The input of this macro is a map and its output are a map. For example
 
   ```elixir
-  # در صورتی که درخواست شما موفقیت آمیز ذخیره شده باشد
+  # If your request has been saved successfully
   {:ok, :edit, error_atom, info}
-  # در صورتی که آیدی شما از نوع یو یو آیدی نباشد
+  # If your ID is not uuid type
   {:error, :edit, error_atom, :uuid}
-  # در صورتی که در ارسال داده ها خطایی روخ داده باشد
+  # If there is an error in sending the data
   {:error, :edit, error_atom, changeset}
-  # در صورتی که رکوردی برای آیدی شما پیدا نشده باشد
+  # If no record is found for your ID
   {:error, :delete, error_atom, :get_record_by_id}
   ```
 
-  لازم به ذکر است اگر می خواهید فقط فیلد های انتخاب شده از پارامتر های ارسالی جدا گردد و به بانک اطلاعاتی ارسال شود از ماکرو با ورودی دو استفاده کنید
+  It should be noted that if you want only the selected fields to be separated from the submitted parameters and sent to the database, use the macro with dual input.
 
-  ## مثال
+  ## Example
   ```elixir
   crud_edit(map_of_info like: %{id: "6d80d5f4-781b-4fa8-9796-1821804de6ba", name: "trangell"}, [:id, :name])
   ```
@@ -181,33 +170,33 @@ defmodule MishkaDatabase.CRUD do
 
 
   @doc """
-  ### ماکرو حذف یک رکورد از دیتابیس با کمک آیدی
+  ### delete a record from the database with the help of ID Macro
 
-  به کمک این ماکرو می توانید می توانید رکورد درخواستی خودتان را از دیتابیس حذف نمایید.
-  برای حذف یک رکورد آیدی ارسالی باید از نوع یو یو آیدی باشد در غیر این صورت خطا دریافت خواهید کرد.
+  With the help of this macro, you can delete your requested record from the database.
+  The input of this macro is a UUID and its output is a map
 
-  ورودی این ماکرو یک آیدی از نوع یو یو آیدی می باشد و خروجی آن یک مپ
 
-  ## مثال
+  ## Example
   ```elixir
   crud_delete("6d80d5f4-781b-4fa8-9796-1821804de6ba")
   ```
-  خروجی:
-  باید توجه کنید این ماکرو جلوی یتیم سازی داده های وابسته به رکورد درخواستی برای حذف را می گیرد. پس در زمانی از این ماکرو استفاده کنید که داده های دیگر به داده با آیدی ارسالی
-  از طرف شما وابستگی نداشته باشد.
+  Output:
+  You should note that this macro prevents the orphan data of the record requested to be deleted. So, use this macro when the other data is not dependent on the data with the ID sent by you.
 
-  خروجی ها:
+
+
+  Outputs:
 
   ```elixir
-  # در زمانی این پیام برگشت داده می شود که داده شما به صورت موفقیت آمیز حذف شده باشد
+  # This message will be returned when your data has been successfully deleted
   {:ok, :delete, error_atom, struct}
-  # زمانی این خطا برگشت داده می شود که شناسه ارسالی از طرف شما یو یو آیدی نباشد
+  # This error will be returned if the ID sent by you is not a UUID
   {:error, :delete, error_atom, :uuid}
-  # در زمانی این خطا برگشت داده می شود که در ارسال داده ها خطایی روخ داده باشد
+  # This error is reversed when an error occurs while sending data
   {:error, :delete, error_atom, changeset}
-  # در زمانی این خطا برگشت داده می شود که آیدی ارسالی در بانک اطلاعاتی وجود نداشته باشد
+  # This error will be reversed when there is no submitted ID in the database
   {:error, :delete, error_atom, :get_record_by_id}
-  # در زمانی این خطا برگشت داده می شود که رکورد دیگری وابسته به این رکورد باشد
+  # This error is reversed when another record is associated with this record
   {:error, :delete, error_atom, :forced_to_delete}
   ```
   """
@@ -223,12 +212,13 @@ defmodule MishkaDatabase.CRUD do
 
 
   @doc """
-  ### ماکرو پیدا کردن یک رکورد در دیتابیس با کمک آیدی
+  ### Macro Finding a record in a database with the help of ID
 
-  با کمک این ماکرو می توانید آیدی که از نوع یو یو آیدی می باشد  را ارسال کرده و در صورت وجود رکورد در دیتابیس آن را فراواخوانی کنید.
-  خروجی این ماکرو مپ می باشد.
+  With the help of this macro, you can send an ID that is of UUID type and call it if there is a record in the database.
+  The output of this macro is map.
 
-  # مثال
+
+  # Example
   ```elixir
   crud_get_record("6d80d5f4-781b-4fa8-9796-1821804de6ba")
   ```
@@ -251,12 +241,12 @@ defmodule MishkaDatabase.CRUD do
 
 
   @doc """
-  ### ماکرو پیدا کردن یک رکورد در دیتابیس با کمک فیلد درخواستی
+  ### Macro Find a record in the database with the help of the requested field
 
-  با کمک این ماکرو می توانید یک فیلد با ولیو درخواستی خودتان در صورت وجود در دیتابیس را پیدا کنید. لازم به ذکر می باشد که اسم فیلد باید به صورت استرینگ وارد شود.
+  With the help of this macro, you can find a field with the value you want, if it exists in the database. It should be noted that the field name must be entered as a String.
 
 
-  # مثال
+  # Example
   ```elixir
   crud_get_by_field("email", "info@trangell.com")
   ```

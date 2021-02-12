@@ -1,8 +1,10 @@
 defmodule MishkaUser.Token.PhoenixToken do
   alias MishkaUser.Token.TokenManagemnt
 
-  @refresh_token_time 2000 #should be changed
-  @access_token_time 2000 #should be changed
+  @refresh_token_time DateTime.utc_now() |> DateTime.add(1124000, :second)
+  @refresh_time 1124000
+  @access_token_time DateTime.utc_now() |> DateTime.add(3600, :second)
+  @access_time 3600
   @hard_secret_refresh "Test refresh"
   @hard_secret_access "Test access"
   # ["access", "refresh", "current"]
@@ -10,93 +12,133 @@ defmodule MishkaUser.Token.PhoenixToken do
 
   # create a token with Phoenix token by type
   def create_token(id, :access) do
-    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_access, %{id: id}, [key_digest: :sha256])
-    # call the save_token function to store token on user node Genserver
+    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_access, %{id: id, type: "access"}, [key_digest: :sha256])
+    # save reresh token on disk db
     {:ok, :access, token}
   end
 
   def create_token(id, :refresh) do
-    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_refresh, %{id: id}, [key_digest: :sha256])
-    # call the save_token function to store token on user node Genserver
+    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_refresh, %{id: id, type: "refresh"}, [key_digest: :sha256])
+    # save reresh token on disk db
     {:ok, :refresh, token}
   end
 
   # add create_token(id, params, :current)
 
+  def create_refresh_acsses_token(user_info) do
+    create_new_refresh_token({:ok, :delete_old_token, %{id: user_info.id}})
+  end
 
-  # because there is no function to refresh these way
-  # verify user sent refresh token
-  # delete old token on otp and disk if there is a db more delete on it
-  # create a new refresh token if we had a old refresh token on db
-  # if we have no old token on state which is refresh token  just show the error with error tag and action
-  # re-search how to use it on plug and get header to pass all the router we neede
   def refresh_token(token) do
     verify_token(token, :refresh)
     |> delete_old_token(token)
     |> create_new_refresh_token()
   end
 
-  defp delete_old_token({:ok, :verify_token, :refresh, clime}, _token) do
-    # if state of verify is oky, then get it on user GenServer state
-    # if there isnt any item on it please call this function with :error header
-    # if there is a recorde same user sent token, then delete it
-    # call the create_new_refresh_token with custom status
+  defp delete_old_token({:ok, :verify_token, :refresh, clime}, token) do
+    # Save and Delete old token on disk
+    TokenManagemnt.delete_child_token(clime.id, token)
+    TokenManagemnt.delete_token(clime.id, token)
+
     {:ok, :delete_old_token, clime}
   end
 
-  defp delete_old_token({:error, error_function, :refresh, action}, _token) do
-    # when we use this function that we should show verify error, not the exist value of delete_old_token
-    # for showing the errors of delete_old_token  call the create_new_refresh_token with :error status
-    # call the create_new_refresh_token with :error status
-    {:error, error_function, action}
-  end
-
+  defp delete_old_token({:error, error_function, :refresh, action}, _token), do: {:error, error_function, action}
 
   defp create_new_refresh_token({:ok, :delete_old_token, clime}) do
-    # after create_token and those works create a new refresh_token
-    # save it on GenServer state and save other location we demonstrate
-    # and pass refresh_token function as main error handler
-    create_token(clime.id, :refresh) # create a new refresh token
-    create_token(clime.id, :access) # create a new access token
-    # after the time we seletced for access token it will be deleted
-    # I think this is not important to delete all the access token
-    # when the refresh token deleted for security reson, but why it can be public
-    # if create a function to delete all the access token which is related to the refresh token selected
+    TokenManagemnt.start(clime.id)
+
+    case TokenManagemnt.count_refresh_token(clime.id) do
+      {:ok, :count_refresh_token}->
+
+        {:ok, :refresh, refresh_token} = create_token(clime.id, :refresh)
+        {:ok, :access, access_token} = create_token(clime.id, :access)
+        refresh_token_id = Ecto.UUID.generate
+
+        [
+          %{user_id: clime.id, type: "refresh", token_id: refresh_token_id, token: refresh_token, exp: @refresh_token_time},
+          %{user_id: clime.id, type: "access", token_id: Ecto.UUID.generate, token: access_token, exp: @access_token_time},
+        ]
+        |> Enum.map(fn x ->
+          rel = if x.type == "access", do: refresh_token_id, else: nil
+          save_token(
+            %{
+              id: x.user_id,
+              token_id: x.token_id,
+              type: x.type,
+              token: x.token,
+              os: "linux",
+              create_time: System.system_time(:second),
+              last_used: System.system_time(:second),
+              exp: x.exp,
+              rel: rel
+              }, x.user_id
+          )
+
+          {:ok, String.to_atom(x.type), x.token, %{"exp" => x.exp, "typ" => x.type}}
+        end)
+        |> get_refresh_and_access_token()
+
+      _ ->
+        {:error, :more_device}
+    end
   end
 
-  defp create_new_refresh_token({:error, error_function, action}) do
-    # show last errors with action and fucntion and main function I mean refresh_token as the error handler
-    {:error, error_function, :refresh, action}
-  end
+  defp create_new_refresh_token({:error, error_function, action}), do: {:error, error_function, :refresh, action}
 
+  defp get_refresh_and_access_token([{:ok, :refresh, refresh_token, refresh_clime}, {:ok, :access, access_token, access_clime}]) do
+    %{
+      refresh_token: %{token: refresh_token, clime: refresh_clime},
+      access_token:  %{token: access_token, clime: access_clime}
+    }
+  end
 
   def verify_token(token, :refresh) do
-    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_refresh, token, [max_age: @refresh_token_time])
-    |> case do
-      {:ok, clime} -> {:ok, :verify_token, :refresh, clime}
-      {:error, action} -> {:error, :verify_token, :refresh, action}
-    end
+    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_refresh, token, [max_age: @refresh_time])
+    |> verify_token_condition(:refresh)
+    |> verify_token_on_state(token)
   end
 
   def verify_token(token, :access) do
-    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_access, token, [max_age: @access_token_time])
+    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_access, token, [max_age: @access_time])
+    |> verify_token_condition(:access)
+    |> verify_token_on_state(token)
+  end
+
+  defp verify_token_condition(state, type) do
+    state
     |> case do
-      {:ok, clime} -> {:ok, :verify_token, :access, clime}
-      {:error, action} -> {:error, :verify_token, :access, action}
+      {:ok, clime} -> {:ok, :verify_token, type, clime}
+      {:error, action} -> {:error, :verify_token, type, action}
     end
   end
 
-  def create_refresh_acsses_token(refresh_token) do
-    refresh_token(refresh_token)
+  defp verify_token_on_state({:ok, :verify_token, type, clime}, token) do
+    case TokenManagemnt.get_token(clime.id, token) do
+      {:reply, nil, _state} -> {:error, :verify_token, type, :token_otp_state}
+      {:reply, _token_map, _state} -> {:ok, :verify_token, type, clime}
+    end
   end
 
-  def get_refresh_and_access_token do
+  defp verify_token_on_state({:error, :verify_token, type, action}, _token), do: {:error, :verify_token, type, action}
 
-  end
 
-  def save_token do
-    # create a handelinfo to delete token after expire time
-    # if the token is access, should have refresh token id,
-    # which helps us to delete after refreshtin token or delete the refresh token
+  def save_token(element, user_id) do
+    TokenManagemnt.save(%{
+      id: element.id,
+      token_info:
+        [
+          %{
+            token_id: element.token_id,
+            type: element.type,
+            token: element.token,
+            os: element.os,
+            create_time: element.create_time,
+            last_used: element.create_time,
+            access_expires_in: element.exp,
+            rel: element.rel
+          }
+        ]
+    }, user_id)
   end
 end

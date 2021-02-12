@@ -4,7 +4,7 @@ defmodule MishkaApiWeb.AuthController do
   @allowed_fields ["full_name", "username", "email", "password"]
   @allowed_fields_output ["full_name", "username", "email", "status"]
 
-
+  alias MishkaUser.Token.Token
 
   # action {:login, :add}, error_tag {:user} || %{
   #   0: register 200
@@ -161,10 +161,12 @@ defmodule MishkaApiWeb.AuthController do
     # show user exprie time
   end
 
-  def refresh_token(_conn, %{"token" => _token}) do
+  def refresh_token(conn, %{"token" => refresh_token}) do
     # add ip limiter
     # do all the things we used in MishkaAuth
     # create Auth files and project in MishkaUser
+    Token.refresh_token(refresh_token, :phoenix_token)
+    |> MishkaApi.JsonProtocol.refresh_token(refresh_token, conn, @allowed_fields)
   end
 
   def verify_email(_conn, %{"token" => _token}) do
@@ -180,6 +182,5 @@ defmodule MishkaApiWeb.AuthController do
     # if email is not active
     # if code is valid; verify email
   end
-
 
 end

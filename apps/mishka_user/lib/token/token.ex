@@ -20,6 +20,7 @@ defmodule MishkaUser.Token.Token do
     JWTToken.refresh_token(refresh_token)
   end
 
+
   def verify_access_token(token, :phoenix_token) do
     PhoenixToken.verify_token(token, :access)
   end
@@ -27,4 +28,26 @@ defmodule MishkaUser.Token.Token do
   def verify_access_token(token, :jwt_token) do
     JWTToken.verify_token(token, :access)
   end
+
+  def delete_token(token, :phoenix_token) do
+    PhoenixToken.delete_refresh_token(token)
+  end
+
+  def delete_token(token, :jwt_token) do
+    JWTToken.delete_refresh_token(token)
+  end
+
+  def get_string_token([], type), do: {:error, type, :no_header}
+
+  def get_string_token(full_request, type) do
+    full_request
+    |> List.first()
+    |> String.split(" ")
+    |> case do
+      [""] -> {:error, type, :invalid}
+      ["Bearer", token] -> {:ok, type, :valid, token}
+      _ -> {:error, type, :invalid}
+    end
+  end
+
 end

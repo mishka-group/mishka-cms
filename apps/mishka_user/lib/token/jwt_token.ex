@@ -16,7 +16,7 @@ defmodule MishkaUser.Token.JWTToken do
 
   def refresh_token(token) do
     case Guardian.refresh(token, ttl: {@refresh_token_time, :seconds}) do
-      {:ok, _old_clime, {new_token, new_clime}} ->
+      {:ok, {_old_token, %{"typ" => "refresh"}}, {new_token, new_clime}} ->
 
         {:ok, :refresh_token, new_token, new_clime}
         |> verify_refresh_token_on_state(token)
@@ -68,8 +68,8 @@ defmodule MishkaUser.Token.JWTToken do
   defp verify_token_on_state({:ok, :verify_token, type, claims}, token) do
     {:ok, %{id: id}} = get_id_from_climes(claims)
     case TokenManagemnt.get_token(id, token) do
-      {:reply, nil, _state} -> {:error, :verify_token, type, :token_otp_state}
-      {:reply, _token_map, _state} -> {:ok, :verify_token, type, claims}
+      nil -> {:error, :verify_token, type, :token_otp_state}
+      _clime -> {:ok, :verify_token, type, Map.merge(claims, %{"id" => id})}
     end
   end
 
@@ -78,7 +78,7 @@ defmodule MishkaUser.Token.JWTToken do
 
   def create_refresh_acsses_token(user_info) do
     # Start Creating Token
-    TokenManagemnt.start(user_info.id)
+    MishkaUser.Token.TokenDynamicSupervisor.start_job([id: user_info.id, type: "token"])
 
     case TokenManagemnt.count_refresh_token(user_info.id) do
       {:ok, :count_refresh_token}->
@@ -105,7 +105,7 @@ defmodule MishkaUser.Token.JWTToken do
                   }, x.user_id
                 )
 
-            {:ok, action_atom, token, clime}
+            {:ok, action_atom, token, Map.merge(clime, %{"id" => x.user_id})}
         end)
         |> get_refresh_and_access_token()
 
@@ -143,4 +143,27 @@ defmodule MishkaUser.Token.JWTToken do
 
   defp token_time("access"), do: @access_token_time
   defp token_time("refresh"), do: @refresh_token_time
+
+  def delete_refresh_token(token) do
+    case refresh_delete_token(token) do
+      {:ok, :delete_old_token, _new_clime} -> {:ok, :delete_refresh_token}
+
+      {:error, _error_function, action} -> {:error, :delete_refresh_token, action}
+    end
+  end
+
+  defp refresh_delete_token(token) do
+    case Guardian.refresh(token, ttl: {@refresh_token_time, :seconds}) do
+      {:ok, {_old_token, %{"typ" => "refresh"}}, {new_token, new_clime}} ->
+
+        {:ok, :refresh_token, new_token, new_clime}
+        |> verify_refresh_token_on_state(token)
+        |> delete_old_token(token)
+
+      result ->
+        {:error, :refresh_token, result}
+        |> delete_old_token(token)
+    end
+  end
+
 end

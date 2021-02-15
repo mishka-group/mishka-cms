@@ -7,9 +7,14 @@ defmodule MishkaUser.Application do
 
   @impl true
   def start(_type, _args) do
+    token_runner_config = [
+      strategy: :one_for_one,
+      name: MishkaUser.Token.TokenOtpRunner
+    ]
+
     children = [
-      # Starts a worker by calling: MishkaUser.Worker.start_link(arg)
-      # {MishkaUser.Worker, arg}
+      {Registry, keys: :unique, name: MishkaUser.Token.TokenRegistry},
+      {DynamicSupervisor, token_runner_config}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

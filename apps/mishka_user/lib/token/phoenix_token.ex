@@ -37,8 +37,8 @@ defmodule MishkaUser.Token.PhoenixToken do
 
   defp delete_old_token({:ok, :verify_token, :refresh, clime}, token) do
     # Save and Delete old token on disk
-    TokenManagemnt.delete_child_token(clime.id, token)
-    TokenManagemnt.delete_token(clime.id, token)
+    TokenManagemnt.delete_child_token(clime["id"], token)
+    TokenManagemnt.delete_token(clime["id"], token)
 
     {:ok, :delete_old_token, clime}
   end
@@ -46,7 +46,7 @@ defmodule MishkaUser.Token.PhoenixToken do
   defp delete_old_token({:error, error_function, :refresh, action}, _token), do: {:error, error_function, action}
 
   defp create_new_refresh_token({:ok, :delete_old_token, clime}) do
-    TokenManagemnt.start(clime.id)
+    MishkaUser.Token.TokenDynamicSupervisor.start_job([id: clime.id, type: "token"])
 
     case TokenManagemnt.count_refresh_token(clime.id) do
       {:ok, :count_refresh_token}->
@@ -75,7 +75,7 @@ defmodule MishkaUser.Token.PhoenixToken do
               }, x.user_id
           )
 
-          {:ok, String.to_atom(x.type), x.token, %{"exp" => x.exp, "typ" => x.type}}
+          {:ok, String.to_atom(x.type), x.token, %{"exp" => x.exp, "typ" => x.type, "id" => x.user_id}}
         end)
         |> get_refresh_and_access_token()
 
@@ -115,8 +115,12 @@ defmodule MishkaUser.Token.PhoenixToken do
 
   defp verify_token_on_state({:ok, :verify_token, type, clime}, token) do
     case TokenManagemnt.get_token(clime.id, token) do
-      {:reply, nil, _state} -> {:error, :verify_token, type, :token_otp_state}
-      {:reply, _token_map, _state} -> {:ok, :verify_token, type, clime}
+      nil -> {:error, :verify_token, type, :token_otp_state}
+      state ->
+        {:ok, :verify_token, type,
+        Map.new(state, fn {k, v} -> {Atom.to_string(k), v} end)
+        |> Map.merge(%{"id" => clime.id})
+      }
     end
   end
 
@@ -141,4 +145,15 @@ defmodule MishkaUser.Token.PhoenixToken do
         ]
     }, user_id)
   end
+
+  def delete_refresh_token(token) do
+    verify_token(token, :refresh)
+    |> delete_old_token(token)
+    |> case do
+      {:ok, :delete_old_token, _clime} -> {:ok, :delete_refresh_token}
+
+      {:error, _error_function, action} -> {:error, :delete_refresh_token, action}
+    end
+  end
+
 end

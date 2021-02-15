@@ -6,6 +6,10 @@ defmodule MishkaApiWeb.AuthController do
 
   alias MishkaUser.Token.Token
 
+  plug MishkaApi.Plug.AccessTokenPlug when action in [:change_password]
+
+  # [:change_password, :user_tokens, :deactive_acount, :edit_profile, :delete_tokens, :get_token_expire_time, :verify_email]
+
   # action {:login, :add}, error_tag {:user} || %{
   #   0: register 200
   #   1: register 400
@@ -16,78 +20,84 @@ defmodule MishkaApiWeb.AuthController do
   # }
   # create task evry 24 hours to log all registerd user in a day
   # create a task to save all token on database on background
-  # see MishkaAuth to create and verify token
+  # add ip limitter
+  # this module will help user to send request with his mobile after creating a dynamic plug for mobile provider
+  # create a log that coveres all the requested token
 
   def rgister(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email , "password" => _password} = params) do
     # add ip limitter
     MishkaUser.User.create(params, @allowed_fields)
-    |> MishkaApi.JsonProtocol.crud_json(conn, @allowed_fields_output)
+    |> MishkaApi.ClientAuthProtocol.crud_json(conn, @allowed_fields_output)
   end
 
   def rgister(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email} = params) do
     # add ip limitter
     MishkaUser.User.create(params, @allowed_fields)
-    |> MishkaApi.JsonProtocol.crud_json(conn, @allowed_fields_output)
+    |> MishkaApi.ClientAuthProtocol.crud_json(conn, @allowed_fields_output)
   end
-
-
-  # login functions allow the users to create multi token
-  # this module will help user to send request with his mobile after creating a dynamic plug for mobile provider
-  # this plug should be simple and normal rest request
-  # create a log that coveres all the requested token
-
 
   def login(conn, %{"username" => username, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
-    # create token and save in otp {auth2}
     # save user os info and user ip
-    # note create new id for the os user sent request, should be saved into token as a parametr
-    # add ip limitter
-    # we need a config for creating a user token which has a acl to see the api or do somethings, defult primation
+    # add ip limitter and os getter
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_username(username),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
-        MishkaApi.JsonProtocol.login_json({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
+        MishkaApi.ClientAuthProtocol.login_json({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
 
     else
       error_struct ->
-        MishkaApi.JsonProtocol.login_json(error_struct, :login, conn, @allowed_fields_output)
+        MishkaApi.ClientAuthProtocol.login_json(error_struct, :login, conn, @allowed_fields_output)
     end
   end
 
   def login(conn, %{"email" => email, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
-
-    # create token and save in otp {auth2}
     # save user os info and user ip
-    # note create new id for the os user sent request, should be saved into token as a parametr
-    # add ip limitter
-    # we need a config for creating a user token which has a acl to see the api or do somethings, defult primation
+    # add ip limitter and os getter
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(email),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
-        MishkaApi.JsonProtocol.login_json({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
+        MishkaApi.ClientAuthProtocol.login_json({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
 
     else
       error_struct ->
-        MishkaApi.JsonProtocol.login_json(error_struct, :login, conn, @allowed_fields_output)
+        MishkaApi.ClientAuthProtocol.login_json(error_struct, :login, conn, @allowed_fields_output)
     end
   end
 
-  def logout(_conn, %{"token" => _token}) do
-    # get token and user id if verify
-    # if user exists?
-    # delete token on otp
-    # add ip limitter
+  def logout(conn, _params) do
+    # add ip limitter and mybe os info
+    get_req_header(conn, "authorization")
+    |> Token.get_string_token(:refresh)
+    |> case do
+      {:error, :refresh, action} ->
+        {:error, :delete_refresh_token, action}
+        |> MishkaApi.ClientAuthProtocol.logout(conn)
+
+      {:ok, :refresh, :valid, refresh_token} ->
+        Token.delete_token(refresh_token, :phoenix_token)
+        |> MishkaApi.ClientAuthProtocol.logout(conn)
+    end
   end
 
-  def change_password(_conn, %{"token" => _token, "curent_password" => _password, "new_password" => _new_password}) do
-    # get token and user id if verify
-    # if user exists?
-    # if user has a password
-    # check curent password if is true and the new password should be saved
-    # {if config} check status of changing password is true then clean all the pass if false just delete this token with user selected os
+  def change_password(conn, %{"curent_password" => password, "new_password" => new_password}) do
+    # {if config} check status of changing password is true
+    # then clean all the pass if false just delete this token with user selected os
     # add ip limitter
+    with {:ok, :get_record_by_id, :user, user_info} <-MishkaUser.User.show_by_id(conn.assigns.user_id),
+         {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
+         {:ok, :edit, :user, info} <- MishkaUser.User.edit(%{id: user_info.id, password: new_password}) do
+
+          {:ok, :change_password, info}
+          |> MishkaApi.ClientAuthProtocol.change_password(conn, @allowed_fields_output)
+
+    else
+      error  ->
+        error
+        |> MishkaApi.ClientAuthProtocol.change_password(conn, @allowed_fields_output)
+    end
+
   end
 
   def reset_password(_conn, %{"email" => _email}) do
@@ -126,6 +136,11 @@ defmodule MishkaApiWeb.AuthController do
     # delete all the user's tokens
   end
 
+  def deactive_acount_by_email(_conn, %{"code" => _code}) do
+    # get request without ssetion
+    # the link whitch is clicked by user
+  end
+
   def edit_profile(_conn, %{"token" => _token, "profile_info" => _profile_info}) do
     # add ip limitter
     # after creating user profile table
@@ -135,17 +150,17 @@ defmodule MishkaApiWeb.AuthController do
     # I think there is a good place to get mobile and verify
   end
 
-  def delete_token(_conn, %{"token" => _token}) do
-    # add ip limiter
-    # if token is verify and user is ok
-    # delete this token
-  end
-
   def delete_tokens(_conn, %{"token" => _token}) do
     # add ip limiter
     # if token is verify and user is oky
     # send a random code or big token with chacking config
   end
+
+  def delete_tokens(_conn, %{"code" => _code}) do
+    # get request without ssetion
+    # the link whitch is clicked by user
+  end
+
 
   def delete_tokens(_conn, %{"token" => _token, "code" => _code}) do
     # add ip limiter
@@ -155,18 +170,30 @@ defmodule MishkaApiWeb.AuthController do
     # clear user cookins and extra
   end
 
+  def delete_tokens_by_email(_conn, %{"email" => _email}) do
+    # get request without ssetion
+    # the link whitch is clicked by user
+  end
+
   def get_token_expire_time(_conn, %{"token" => _token}) do
     # add ip limiter
     # if user token and user is ok
     # show user exprie time
   end
 
-  def refresh_token(conn, %{"token" => refresh_token}) do
+  def refresh_token(conn, _params) do
     # add ip limiter
-    # do all the things we used in MishkaAuth
-    # create Auth files and project in MishkaUser
-    Token.refresh_token(refresh_token, :phoenix_token)
-    |> MishkaApi.JsonProtocol.refresh_token(refresh_token, conn, @allowed_fields)
+    get_req_header(conn, "authorization")
+    |> Token.get_string_token(:refresh)
+    |> case do
+      {:error, :refresh, action} ->
+        {:error, :verify_token, :refresh, action}
+        |> MishkaApi.ClientAuthProtocol.refresh_token("refresh_token", conn, @allowed_fields_output)
+
+      {:ok, :refresh, :valid, refresh_token} ->
+        Token.refresh_token(refresh_token, :phoenix_token)
+        |> MishkaApi.ClientAuthProtocol.refresh_token(refresh_token, conn, @allowed_fields_output)
+    end
   end
 
   def verify_email(_conn, %{"token" => _token}) do

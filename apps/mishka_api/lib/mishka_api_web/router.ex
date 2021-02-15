@@ -14,6 +14,8 @@ defmodule MishkaApiWeb.Router do
     pipe_through :api
     post "/register", AuthController, :rgister
     post "/login", AuthController, :login
+    post "/refresh-token", AuthController, :refresh_token
+    post "/change-password", AuthController, :change_password
   end
 
 

@@ -4,11 +4,14 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @refresh_interval :timer.seconds(1) # :timer.seconds(5)
   @saving_interval :timer.seconds(300) # :timer.seconds(5)
   require Logger
-
+  alias MishkaUser.Token.TokenDynamicSupervisor
 
   # we need a event to delete expired token every action
-  def start(user_id) do
-    GenServer.start_link(__MODULE__, default(user_id), name: converted_id(user_id))
+  def start_link(args) do
+    id = Keyword.get(args, :id)
+    type = Keyword.get(args, :type)
+
+    GenServer.start_link(__MODULE__, default(id), name: via(id, type))
   end
 
   defp default(user_id) do
@@ -16,51 +19,77 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   def save(element, user_id) do
-    schedule_delete_token(user_id)
-    GenServer.cast(converted_id(user_id), {:push, element})
+    with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
+      schedule_delete_token(pid)
+      GenServer.cast(pid, {:push, element})
+    end
   end
 
   def get_all(user_id) do
-    schedule_delete_token(user_id)
-    GenServer.call(converted_id(user_id), :pop)
+    with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
+      schedule_delete_token(pid)
+      GenServer.call(pid, :pop)
+    end
   end
 
   def delete(user_id) do
-    schedule_delete_token(user_id)
-    GenServer.call(converted_id(user_id), :delete)
+    with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
+      schedule_delete_token(pid)
+      GenServer.call(pid, :delete)
+    end
   end
 
   def stop(user_id) do
-    schedule_delete_token(user_id)
-    GenServer.cast(converted_id(user_id), :stop)
+    with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
+      schedule_delete_token(pid)
+      GenServer.cast(pid, :stop)
+    end
   end
 
   def delete_token(user_id, token) do
-    schedule_delete_token(user_id)
-    GenServer.call(converted_id(user_id), {:delete, token})
+    with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
+      schedule_delete_token(pid)
+      GenServer.call(pid, {:delete, token})
+    end
   end
 
   def delete_child_token(user_id, refresh_token) do
-    schedule_delete_token(user_id)
-    GenServer.call(converted_id(user_id), {:delete_child_token, refresh_token})
+    with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
+      schedule_delete_token(pid)
+      GenServer.call(pid, {:delete_child_token, refresh_token})
+    end
   end
 
   def get_token(user_id, token) do
-    schedule_delete_token(user_id)
-    GenServer.call(converted_id(user_id), {:get_token, token})
+    with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
+      schedule_delete_token(pid)
+      GenServer.call(pid, {:get_token, token})
+    end
   end
 
   # Callbacks
 
   @impl true
-  def init(stack) do
+  def init(state) do
     Logger.info("Token OTP server was started")
     # create a handelinfo to delete token after expire time
-    List.first(stack).id
-    |> schedule_delete_token()
+    with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(Keyword.get(state, :id)) do
+      schedule_delete_token(pid)
+    end
     # save token on disk evry 5 seconds or the second user configs
     schedule_saving_token_on_disk()
-    {:ok, stack}
+    # {:ok, state}
+    {:ok, state, {:continue, :get_on_disk}}
+  end
+
+
+  # after make mnasia for storing data on disk we should use handle_continue
+  # to get existing data
+
+  @impl true
+  def handle_continue(:get_on_disk, state) do
+    {:noreply, state} # after updating state we can replace it
+    # {:stop, :normal, state} # when we should stop server
   end
 
   @impl true
@@ -148,10 +177,9 @@ defmodule MishkaUser.Token.TokenManagemnt do
     {:noreply, stats}
   end
 
-  def schedule_delete_token(user_id) do
+  def schedule_delete_token(pid) do
     # all event
-    pid = GenServer.whereis(converted_id(user_id))
-    if pid != nil, do: Process.send_after(pid, :schedule_delete_token, @refresh_interval)
+    Process.send_after(pid, :schedule_delete_token, @refresh_interval)
   end
 
   def schedule_saving_token_on_disk() do
@@ -162,6 +190,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @impl true
   def terminate(reason, _state) do
     Logger.warn("Reason of Terminate #{inspect(reason)}")
+    # send error to log server
   end
 
   def update_state(nil, element, state) do
@@ -183,8 +212,6 @@ defmodule MishkaUser.Token.TokenManagemnt do
       end)
     }
   end
-
-  defp converted_id(user_id), do: String.to_atom(user_id)
 
   def count_refresh_token(user_id) do
     devices = user_id
@@ -226,4 +253,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  defp via(key, value) do
+    {:via, Registry, {MishkaUser.Token.TokenRegistry, key, value}}
+  end
 end

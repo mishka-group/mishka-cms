@@ -1,8 +1,6 @@
 defmodule MishkaApi.Plug.AccessTokenPlug do
-  # import plug module
-
   # use check token with type which is gotten on config file
-  # return http status
+
   import Plug.Conn
   use MishkaApiWeb, :controller
   alias MishkaUser.Token.Token
@@ -18,47 +16,24 @@ defmodule MishkaApi.Plug.AccessTokenPlug do
 
     else
       {:error, :access, :no_header} ->
-        conn
-        |> put_status(401)
-        |> json(%{
-          action: :change_password,
-          system: :user,
-          message: "شما به این صفحه دسترسی ندارید لطفا در هنگام ارسال درخواست توکن خود را ارسال فرمایید."
-        })
-        |> halt()
-
-
-      {:error, :access, :invalid} ->
-        conn
-        |> put_status(401)
-        |> json(%{
-          action: :change_password,
-          system: :user,
-          message: "توکن شما نامعتبر است"
-        })
-        |> halt()
+        error_message(conn, 401, "شما به این صفحه دسترسی ندارید لطفا در هنگام ارسال درخواست توکن خود را ارسال فرمایید.")
 
       {:error, :verify_token, :access, :expired} ->
-        conn
-        |> put_status(401)
-        |> json(%{
-          action: :change_password,
-          system: :user,
-          message: "توکن شما منقضی شده است"
-        })
-        |> halt()
+        error_message(conn, 401, "توکن شما منقضی شده است")
 
-      {:error, :verify_token, :access, _type} ->
-        conn
-        |> put_status(401)
-        |> json(%{
-          action: :change_password,
-          system: :user,
-          message: "توکن شما نامعتبر است"
-        })
-        |> halt()
-
+      _ ->
+        error_message(conn, 401, "توکن شما نامعتبر است")
     end
   end
 
+  defp error_message(conn, status, msg) do
+    conn
+    |> put_status(status)
+    |> json(%{
+      action: :change_password,
+      system: :user,
+      message: msg
+    })
+    |> halt()
+  end
 end

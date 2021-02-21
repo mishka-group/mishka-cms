@@ -5,6 +5,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @saving_interval :timer.seconds(300) # :timer.seconds(5)
   require Logger
   alias MishkaUser.Token.TokenDynamicSupervisor
+  alias MishkaDatabase.Cache.MnesiaToken
 
   # we need a event to delete expired token every action
   def start_link(args) do
@@ -79,18 +80,26 @@ defmodule MishkaUser.Token.TokenManagemnt do
     # save token on disk evry 5 seconds or the second user configs
     schedule_saving_token_on_disk()
     # {:ok, state}
-    {:ok, state, {:continue, :get_on_disk}}
+    {:ok, state, {:continue, :get_disc_token}}
   end
-
 
   # after make mnasia for storing data on disk we should use handle_continue
   # to get existing data
 
   @impl true
-  def handle_continue(:get_on_disk, state) do
-    {:noreply, state} # after updating state we can replace it
-    # {:stop, :normal, state} # when we should stop server
+  def handle_continue(:get_disc_token, state) do
+    user_id = List.first(state).id
+    case MnesiaToken.get_token_by_user_id(user_id) do
+      %{} ->
+        Logger.info("There is no Saved Token for this user")
+        {:noreply, state}
+
+      data ->
+        new_state = create_new_state_to_get_disc_token(data, user_id)
+        {:noreply, [new_state]}
+    end
   end
+
 
   @impl true
   def handle_call({:get_token, token}, _from, state) do
@@ -135,6 +144,20 @@ defmodule MishkaUser.Token.TokenManagemnt do
       nil ->
         update_state(nil, element, state)
       _ ->
+
+        first_list = List.first(element.token_info)
+
+        if first_list.type == "refresh" do
+          MnesiaToken.save(
+            first_list.token_id,
+            element.id,
+            first_list.token,
+            first_list.access_expires_in,
+            first_list.create_time,
+            first_list.os
+          )
+        end
+
         update_state(element, state)
     end
   end
@@ -157,6 +180,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     |> Enum.reject(fn x -> x.access_expires_in <= System.system_time(:second) end)
 
     new_state = Enum.map(state, fn item ->
+      MnesiaToken.delete_expierd_token(item.id)
       Map.merge(
         item,
         %{
@@ -193,6 +217,21 @@ defmodule MishkaUser.Token.TokenManagemnt do
     # send error to log server
   end
 
+
+  def update_state(element, state, :update_state) do
+    Enum.map(state, fn item ->
+        token_info = item.token_info ++ element.token_info
+        Map.merge(
+          item,
+          %{
+            id: element.id,
+            token_info: token_info
+          }
+        )
+    end)
+  end
+
+
   def update_state(nil, element, state) do
     {:noreply, [element | state]}
   end
@@ -212,6 +251,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
       end)
     }
   end
+
 
   def count_refresh_token(user_id) do
     devices = user_id
@@ -252,6 +292,26 @@ defmodule MishkaUser.Token.TokenManagemnt do
         end)
     end
   end
+
+
+  defp create_new_state_to_get_disc_token(data, user_id) do
+    %{
+      id: user_id,
+      token_info: Enum.map(data, fn [token_id, _user_id, token, exp_time, create_time, os] ->
+        %{
+          token_id: token_id,
+          type: "refresh",
+          token: token,
+          os: os,
+          create_time: create_time,
+          last_used: create_time,
+          access_expires_in: exp_time,
+          rel: nil
+        }
+      end)
+    }
+  end
+
 
   defp via(key, value) do
     {:via, Registry, {MishkaUser.Token.TokenRegistry, key, value}}

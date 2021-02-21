@@ -1,9 +1,9 @@
 defmodule MishkaUser.Token.PhoenixToken do
   alias MishkaUser.Token.TokenManagemnt
 
-  @refresh_token_time DateTime.utc_now() |> DateTime.add(1124000, :second)
+  @refresh_token_time DateTime.utc_now() |> DateTime.add(1124000, :second) |> DateTime.to_unix()
   @refresh_time 1124000
-  @access_token_time DateTime.utc_now() |> DateTime.add(3600, :second)
+  @access_token_time DateTime.utc_now() |> DateTime.add(3600, :second) |> DateTime.to_unix()
   @access_time 3600
   @hard_secret_refresh "Test refresh"
   @hard_secret_access "Test access"

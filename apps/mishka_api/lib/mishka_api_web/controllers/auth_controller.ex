@@ -6,9 +6,8 @@ defmodule MishkaApiWeb.AuthController do
 
   alias MishkaUser.Token.Token
 
-  plug MishkaApi.Plug.AccessTokenPlug when action in [:change_password]
+  plug MishkaApi.Plug.AccessTokenPlug when action in [:change_password, :user_tokens, :get_token_expire_time]
 
-  # [:change_password, :user_tokens, :deactive_acount, :edit_profile, :delete_tokens, :get_token_expire_time, :verify_email]
 
   # action {:login, :add}, error_tag {:user} || %{
   #   0: register 200
@@ -118,12 +117,10 @@ defmodule MishkaApiWeb.AuthController do
     # send email to user to notic him the password was changed with os and ip info
   end
 
-  def user_tokens(_conn, %{"token" => _token}) do
+  def user_tokens(conn, _params) do
     # add ip limitter
-    # list of user token which dosent show the token
-    # show user os recent logined if log is enable
-    # and tokens time which were created
-    # if this token has the premition
+    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    |> MishkaApi.ClientAuthProtocol.user_tokens(conn, @allowed_fields_output)
   end
 
   def deactive_acount(_conn, %{"token" => _token}) do
@@ -175,10 +172,10 @@ defmodule MishkaApiWeb.AuthController do
     # the link whitch is clicked by user
   end
 
-  def get_token_expire_time(_conn, %{"token" => _token}) do
+  def get_token_expire_time(conn, %{"token" => token}) do
     # add ip limiter
-    # if user token and user is ok
-    # show user exprie time
+    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    |> MishkaApi.ClientAuthProtocol.get_token_expire_time(conn, token, @allowed_fields_output)
   end
 
   def refresh_token(conn, _params) do

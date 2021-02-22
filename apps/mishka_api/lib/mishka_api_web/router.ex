@@ -16,6 +16,8 @@ defmodule MishkaApiWeb.Router do
     post "/login", AuthController, :login
     post "/refresh-token", AuthController, :refresh_token
     post "/change-password", AuthController, :change_password
+    post "/user-tokens", AuthController, :user_tokens
+    post "/get-token-expire-time", AuthController, :get_token_expire_time
   end
 
 

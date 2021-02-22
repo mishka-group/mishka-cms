@@ -26,7 +26,7 @@ defmodule MishkaUser.Token.PhoenixToken do
   # add create_token(id, params, :current)
 
   def create_refresh_acsses_token(user_info) do
-    create_new_refresh_token({:ok, :delete_old_token, %{id: user_info.id}})
+    create_new_refresh_token({:ok, :delete_old_token, %{"id" => user_info.id}})
   end
 
   def refresh_token(token) do
@@ -46,18 +46,19 @@ defmodule MishkaUser.Token.PhoenixToken do
   defp delete_old_token({:error, error_function, :refresh, action}, _token), do: {:error, error_function, action}
 
   defp create_new_refresh_token({:ok, :delete_old_token, clime}) do
-    MishkaUser.Token.TokenDynamicSupervisor.start_job([id: clime.id, type: "token"])
 
-    case TokenManagemnt.count_refresh_token(clime.id) do
+    MishkaUser.Token.TokenDynamicSupervisor.start_job([id: clime["id"], type: "token"])
+
+    case TokenManagemnt.count_refresh_token(clime["id"]) do
       {:ok, :count_refresh_token}->
 
-        {:ok, :refresh, refresh_token} = create_token(clime.id, :refresh)
-        {:ok, :access, access_token} = create_token(clime.id, :access)
+        {:ok, :refresh, refresh_token} = create_token(clime["id"], :refresh)
+        {:ok, :access, access_token} = create_token(clime["id"], :access)
         refresh_token_id = Ecto.UUID.generate
 
         [
-          %{user_id: clime.id, type: "refresh", token_id: refresh_token_id, token: refresh_token, exp: @refresh_token_time},
-          %{user_id: clime.id, type: "access", token_id: Ecto.UUID.generate, token: access_token, exp: @access_token_time},
+          %{user_id: clime["id"], type: "refresh", token_id: refresh_token_id, token: refresh_token, exp: @refresh_token_time},
+          %{user_id: clime["id"], type: "access", token_id: Ecto.UUID.generate, token: access_token, exp: @access_token_time},
         ]
         |> Enum.map(fn x ->
           rel = if x.type == "access", do: refresh_token_id, else: nil

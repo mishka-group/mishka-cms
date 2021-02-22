@@ -7,7 +7,14 @@ defmodule MishkaUser.Token.TokenManagemnt do
   alias MishkaUser.Token.TokenDynamicSupervisor
   alias MishkaDatabase.Cache.MnesiaToken
 
-  # we need a event to delete expired token every action
+
+  ##########################################
+  # 1. We need a function and handle_info to update mnesia disk evry action
+  # 2. These actions should handle only Refresh Token
+  # 3. Dont forget to create an Api router to delete all the token the user wants
+  ##########################################
+
+
   def start_link(args) do
     id = Keyword.get(args, :id)
     type = Keyword.get(args, :type)
@@ -23,6 +30,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
       GenServer.cast(pid, {:push, element})
+    else
+      {:error, :get_user_pid} ->
+        TokenDynamicSupervisor.start_job([id: user_id, type: "token"])
+        save(element, user_id)
     end
   end
 
@@ -30,6 +41,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
       GenServer.call(pid, :pop)
+    else
+      {:error, :get_user_pid} ->
+        TokenDynamicSupervisor.start_job([id: user_id, type: "token"])
+        get_all(user_id)
     end
   end
 
@@ -37,6 +52,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
       GenServer.call(pid, :delete)
+    else
+      {:error, :get_user_pid} ->
+        TokenDynamicSupervisor.start_job([id: user_id, type: "token"])
+        delete(user_id)
     end
   end
 
@@ -44,6 +63,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
       GenServer.cast(pid, :stop)
+    else
+      {:error, :get_user_pid} ->
+        TokenDynamicSupervisor.start_job([id: user_id, type: "token"])
+        stop(user_id)
     end
   end
 
@@ -51,6 +74,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
       GenServer.call(pid, {:delete, token})
+    else
+      {:error, :get_user_pid} ->
+        TokenDynamicSupervisor.start_job([id: user_id, type: "token"])
+        delete_token(user_id, token)
     end
   end
 
@@ -58,6 +85,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
       GenServer.call(pid, {:delete_child_token, refresh_token})
+    else
+      {:error, :get_user_pid} ->
+        TokenDynamicSupervisor.start_job([id: user_id, type: "token"])
+        delete_child_token(user_id, refresh_token)
     end
   end
 
@@ -65,6 +96,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
       GenServer.call(pid, {:get_token, token})
+    else
+      {:error, :get_user_pid} ->
+        TokenDynamicSupervisor.start_job([id: user_id, type: "token"])
+        get_token(user_id, token)
     end
   end
 
@@ -73,18 +108,11 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @impl true
   def init(state) do
     Logger.info("Token OTP server was started")
-    # create a handelinfo to delete token after expire time
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(Keyword.get(state, :id)) do
       schedule_delete_token(pid)
     end
-    # save token on disk evry 5 seconds or the second user configs
-    schedule_saving_token_on_disk()
-    # {:ok, state}
     {:ok, state, {:continue, :get_disc_token}}
   end
-
-  # after make mnasia for storing data on disk we should use handle_continue
-  # to get existing data
 
   @impl true
   def handle_continue(:get_disc_token, state) do
@@ -116,7 +144,6 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   @impl true
   def handle_call({:delete, token}, _from, state) do
-    # update and replace new state on Disk
     new_token = get_token_info(state)
     |> Enum.reject(fn x -> x.token == token end)
 
@@ -140,26 +167,33 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   @impl true
   def handle_cast({:push, element}, state) do
-    case Enum.find(state, fn x -> x.id == element.id end) do
-      nil ->
-        update_state(nil, element, state)
-      _ ->
+    first_list = List.first(element.token_info)
 
-        first_list = List.first(element.token_info)
-
-        if first_list.type == "refresh" do
-          MnesiaToken.save(
-            first_list.token_id,
-            element.id,
-            first_list.token,
-            first_list.access_expires_in,
-            first_list.create_time,
-            first_list.os
-          )
-        end
-
-        update_state(element, state)
+    if first_list.type == "refresh" do
+      MnesiaToken.save(
+        first_list.token_id,
+        element.id,
+        first_list.token,
+        first_list.access_expires_in,
+        first_list.create_time,
+        first_list.os
+      )
     end
+
+
+    new_state =
+      Enum.map(state, fn item ->
+        token_info = item.token_info ++ element.token_info
+        Map.merge(
+          item,
+          %{
+            id: element.id,
+            token_info: token_info
+          }
+        )
+      end)
+
+    {:noreply, new_state}
   end
 
   @impl true
@@ -190,66 +224,28 @@ defmodule MishkaUser.Token.TokenManagemnt do
       )
     end)
 
-    # update state on disk on another node()
     {:noreply, new_state}
   end
 
   @impl true
   def handle_info(:schedule_saving, stats) do
     Logger.info("Request was sent to save Tokens on Disk")
-    schedule_saving_token_on_disk()
+    # schedule_saving_token_on_disk(pid)
     {:noreply, stats}
   end
 
   def schedule_delete_token(pid) do
-    # all event
     Process.send_after(pid, :schedule_delete_token, @refresh_interval)
   end
 
-  def schedule_saving_token_on_disk() do
-    # save token on disk, it should be found which way is better and has no dependencies
-    Process.send_after(self(), :schedule_saving, @saving_interval)
+  def schedule_saving_token_on_disk(pid) do
+    Process.send_after(pid, :schedule_saving, @saving_interval)
   end
 
   @impl true
   def terminate(reason, _state) do
     Logger.warn("Reason of Terminate #{inspect(reason)}")
     # send error to log server
-  end
-
-
-  def update_state(element, state, :update_state) do
-    Enum.map(state, fn item ->
-        token_info = item.token_info ++ element.token_info
-        Map.merge(
-          item,
-          %{
-            id: element.id,
-            token_info: token_info
-          }
-        )
-    end)
-  end
-
-
-  def update_state(nil, element, state) do
-    {:noreply, [element | state]}
-  end
-
-  def update_state(element, state) do
-    {
-      :noreply,
-      Enum.map(state, fn item ->
-          token_info = item.token_info ++ element.token_info
-          Map.merge(
-            item,
-            %{
-              id: element.id,
-              token_info: token_info
-            }
-          )
-      end)
-    }
   end
 
 
@@ -263,7 +259,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     if devices <= 5, do: {:ok, :count_refresh_token}, else: {:error, :count_refresh_token}
   end
 
-  defp get_token_info(state) do
+  def get_token_info(state) do
     case state do
       [] -> []
       items -> List.first(items).token_info

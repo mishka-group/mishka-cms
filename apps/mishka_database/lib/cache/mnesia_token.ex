@@ -3,6 +3,11 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
   alias :mnesia, as: Mnesia
   require Logger
 
+  ##########################################
+  # 1. create handle info to delete expired token every 24 hours with stream lazy load map
+  # 2. we dont need any state then just keep starter state
+  ##########################################
+
 
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
@@ -218,6 +223,6 @@ end
 
 
 # test
-# alias :mnesia, as: Mnesia ; Mnesia.transaction(fn -> Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [], [:"$$"]}]) end)
+# alias :mnesia, as: Mnesia ; token_list = Mnesia.transaction(fn -> Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [], [:"$$"]}]) end)
 
 # fn -> Mnesia.write({Token, 1, 1, "token", "exp", "create_time", "os"}) end |> Mnesia.transaction()

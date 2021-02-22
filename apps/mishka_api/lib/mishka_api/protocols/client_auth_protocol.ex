@@ -11,6 +11,10 @@ defprotocol MishkaApi.ClientAuthProtocol do
   def logout(outputs, conn)
 
   def change_password(outputs, conn, allowed_fields)
+
+  def user_tokens(outputs, conn, allowed_fields_output)
+
+  def get_token_expire_time(outputs, conn, token, allowed_fields_output)
 end
 
 defimpl MishkaApi.ClientAuthProtocol, for: Any do
@@ -177,7 +181,6 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   def refresh_token(%{refresh_token: %{token: refresh_token, clime: refresh_clime},
                       access_token:  %{token: access_token, clime: access_clime}}, _token, conn, allowed_fields) do
 
-
     {:ok, :get_record_by_id, :user, user_info} = MishkaUser.User.show_by_id(refresh_clime["id"])
 
 
@@ -294,4 +297,66 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   end
 
 
+  def user_tokens({:ok, :get_record_by_id, :user, user_info}, conn, allowed_fields_output) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :user_tokens,
+      system: @request_error_tag,
+      message: "توکن شما با موفقیت تازه سازی گردید. و توکن قبلی نیز حذف شد.",
+      user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1)),
+      user_tokens_info:
+
+      MishkaUser.Token.TokenManagemnt.get_all(user_info.id)
+      |> MishkaUser.Token.TokenManagemnt.get_token_info()
+      |> Enum.map(fn x ->
+        %{
+          access_expires_in: x.access_expires_in,
+          create_time: x.create_time,
+          last_used: x.last_used,
+          os: x.os,
+          type: x.type
+        }
+      end)
+    })
+  end
+
+
+  def user_tokens({:error, :get_record_by_id, :user}, conn) do
+    conn
+    |> put_status(401)
+    |> json(%{
+      action: :user_tokens,
+      system: @request_error_tag,
+      message: "کاربر مورد نظر ممکن است از سیستم حذف شده بشد یا دسترسی آن قطع گردیده"
+    })
+  end
+
+  def get_token_expire_time({:ok, :get_record_by_id, :user, user_info}, conn, token, allowed_fields_output) do
+    token_allowed_filed = ["access_expires_in", "create_time", "last_used", "os", "token", "type"]
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :get_token_expire_time,
+      system: @request_error_tag,
+      message: "توکن شما با موفقیت در سیستم اسکن گردید",
+      user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1)),
+      user_token_info:
+      case MishkaUser.Token.TokenManagemnt.get_token(user_info.id, token) do
+        nil -> nil
+        token_info -> Map.take(token_info, token_allowed_filed |> Enum.map(&String.to_existing_atom/1))
+      end
+    })
+  end
+
+
+  def get_token_expire_time({:error, :get_record_by_id, :user}, conn, _token, _allowed_fields_output) do
+    conn
+    |> put_status(401)
+    |> json(%{
+      action: :get_token_expire_time,
+      system: @request_error_tag,
+      message: "کاربر مورد نظر ممکن است از سیستم حذف شده بشد یا دسترسی آن قطع گردیده"
+    })
+  end
 end

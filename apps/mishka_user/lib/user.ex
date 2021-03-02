@@ -125,4 +125,7 @@ defmodule MishkaUser.User do
     end
   end
 
+  def user_inactive?(user_status) do
+    if user_status == :inactive, do: {:ok, :user_inactive?}, else: {:error, :user_inactive?}
+  end
 end

@@ -10,6 +10,7 @@ defmodule MishkaDatabase.Application do
     children = [
       # Starts a worker by calling: MishkaDatabase.Worker.start_link(arg)
       {MishkaDatabase.Cache.MnesiaToken, []},
+      {MishkaDatabase.Cache.RandomCode, []},
       MishkaDatabase.Repo
     ]
 

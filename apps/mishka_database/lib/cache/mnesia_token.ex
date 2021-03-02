@@ -3,20 +3,21 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
   alias :mnesia, as: Mnesia
   require Logger
 
-  ##########################################
-  # 1. create handle info to delete expired token every 24 hours with stream lazy load map
-  # 2. we dont need any state then just keep starter state
-  ##########################################
-
+  @delete_tokens :timer.seconds(1000) # :timer.seconds(5)
+  @save_refresh :timer.seconds(10)
 
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
-
   def save(token_id, user_id, token, exp, create_time, os) do
-      GenServer.cast(__MODULE__, {:push, token_id, user_id, token, exp, create_time, os})
+    GenServer.cast(__MODULE__, {:push, token_id, user_id, token, exp, create_time, os})
   end
+
+  def save_different_node(token_id, user_id, token, exp, create_time, os) do
+    Process.send_after(__MODULE__, {:push, token_id, user_id, token, exp, create_time, os}, @save_refresh)
+  end
+
 
   def get_token_by_user_id(user_id) do
     GenServer.call(__MODULE__, {:get_token_by_user_id, user_id})
@@ -53,6 +54,7 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
   @impl true
   def handle_continue(:start_mnesia_token, state) do
     start_token()
+    Process.send_after(__MODULE__, :reject_all_expired_tokens, @delete_tokens)
     {:noreply, state}
   end
 
@@ -161,6 +163,39 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
   end
 
 
+  @impl true
+  def handle_info(:reject_all_expired_tokens,  state) do
+    Logger.info("OTP Reject all expired tokens server was started")
+    Process.send_after(__MODULE__, :reject_all_expired_tokens, @delete_tokens)
+
+    Mnesia.transaction(fn ->
+      Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [], [:"$$"]}])
+    end)
+    |> case do
+      {:atomic, []} -> {:noreply, state}
+      {:atomic, data} ->
+        Enum.map(data, fn [id, _user_id, _token, access_expires_in, _create_time, _os] ->
+          if access_expires_in <= System.system_time(:second) do
+            Mnesia.dirty_delete(Token, id)
+          end
+        end)
+        {:noreply, state}
+
+      _ -> {:noreply, state}
+    end
+  end
+
+  def handle_info({:push, token_id, user_id, token, exp, create_time, os},  state) do
+    fn ->
+      Mnesia.write({Token, token_id, user_id, token, exp, create_time, os})
+    end
+    |> Mnesia.transaction()
+
+    Logger.info("Refresh Token was saved on background")
+    {:noreply, state}
+  end
+
+
 
   defp start_token() do
     Mnesia.create_schema([node()])
@@ -207,22 +242,3 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
   end
 
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# test
-# alias :mnesia, as: Mnesia ; token_list = Mnesia.transaction(fn -> Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [], [:"$$"]}]) end)
-
-# fn -> Mnesia.write({Token, 1, 1, "token", "exp", "create_time", "os"}) end |> Mnesia.transaction()

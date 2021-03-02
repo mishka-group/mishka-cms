@@ -1,10 +1,7 @@
 defmodule MishkaUser.Token.PhoenixToken do
   alias MishkaUser.Token.TokenManagemnt
 
-  @refresh_token_time DateTime.utc_now() |> DateTime.add(1124000, :second) |> DateTime.to_unix()
-  @refresh_time 1124000
-  @access_token_time DateTime.utc_now() |> DateTime.add(3600, :second) |> DateTime.to_unix()
-  @access_time 3600
+
   @hard_secret_refresh "Test refresh"
   @hard_secret_access "Test access"
   # ["access", "refresh", "current"]
@@ -57,8 +54,8 @@ defmodule MishkaUser.Token.PhoenixToken do
         refresh_token_id = Ecto.UUID.generate
 
         [
-          %{user_id: clime["id"], type: "refresh", token_id: refresh_token_id, token: refresh_token, exp: @refresh_token_time},
-          %{user_id: clime["id"], type: "access", token_id: Ecto.UUID.generate, token: access_token, exp: @access_token_time},
+          %{user_id: clime["id"], type: "refresh", token_id: refresh_token_id, token: refresh_token, exp: token_expire_time(:refresh).unix_time},
+          %{user_id: clime["id"], type: "access", token_id: Ecto.UUID.generate, token: access_token, exp: token_expire_time(:access).unix_time},
         ]
         |> Enum.map(fn x ->
           rel = if x.type == "access", do: refresh_token_id, else: nil
@@ -95,13 +92,13 @@ defmodule MishkaUser.Token.PhoenixToken do
   end
 
   def verify_token(token, :refresh) do
-    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_refresh, token, [max_age: @refresh_time])
+    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_refresh, token, [max_age: token_expire_time(:refresh).age])
     |> verify_token_condition(:refresh)
     |> verify_token_on_state(token)
   end
 
   def verify_token(token, :access) do
-    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_access, token, [max_age: @access_time])
+    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_access, token, [max_age: token_expire_time(:access).age])
     |> verify_token_condition(:access)
     |> verify_token_on_state(token)
   end
@@ -115,6 +112,7 @@ defmodule MishkaUser.Token.PhoenixToken do
   end
 
   defp verify_token_on_state({:ok, :verify_token, type, clime}, token) do
+    IO.inspect(clime)
     case TokenManagemnt.get_token(clime.id, token) do
       nil -> {:error, :verify_token, type, :token_otp_state}
       state ->
@@ -157,4 +155,18 @@ defmodule MishkaUser.Token.PhoenixToken do
     end
   end
 
+
+  defp token_expire_time(:refresh) do
+    %{
+      unix_time: DateTime.utc_now() |> DateTime.add(1124000, :second) |> DateTime.to_unix(),
+      age: 1124000
+    }
+  end
+
+  defp token_expire_time(:access) do
+    %{
+      unix_time: DateTime.utc_now() |> DateTime.add(3600, :second) |> DateTime.to_unix(),
+      age: 3600
+    }
+  end
 end

@@ -6,39 +6,34 @@ defmodule MishkaApiWeb.AuthController do
 
   alias MishkaUser.Token.Token
 
-  plug MishkaApi.Plug.AccessTokenPlug when action in [:change_password, :user_tokens, :get_token_expire_time]
+  plug MishkaApi.Plug.AccessTokenPlug when action in [
+    :change_password,
+    :user_tokens,
+    :get_token_expire_time,
+    :delete_token,
+    :delete_tokens,
+    :edit_profile,
+    :deactive_account
+  ]
 
-
-  # action {:login, :add}, error_tag {:user} || %{
-  #   0: register 200
-  #   1: register 400
-  #   2: login 200
-  #   3: login 401
-  #   none: login 500
-  #
-  # }
   # create task evry 24 hours to log all registerd user in a day
-  # create a task to save all token on database on background
   # add ip limitter
   # this module will help user to send request with his mobile after creating a dynamic plug for mobile provider
   # create a log that coveres all the requested token
 
   def rgister(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email , "password" => _password} = params) do
-    # add ip limitter
     MishkaUser.User.create(params, @allowed_fields)
-    |> MishkaApi.ClientAuthProtocol.crud_json(conn, @allowed_fields_output)
+    |> MishkaApi.ClientAuthProtocol.rgister(conn, @allowed_fields_output)
   end
 
   def rgister(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email} = params) do
-    # add ip limitter
     MishkaUser.User.create(params, @allowed_fields)
-    |> MishkaApi.ClientAuthProtocol.crud_json(conn, @allowed_fields_output)
+    |> MishkaApi.ClientAuthProtocol.rgister(conn, @allowed_fields_output)
   end
 
   def login(conn, %{"username" => username, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
     # save user os info and user ip
-    # add ip limitter and os getter
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_username(username),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
@@ -53,7 +48,6 @@ defmodule MishkaApiWeb.AuthController do
   def login(conn, %{"email" => email, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
     # save user os info and user ip
-    # add ip limitter and os getter
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(email),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
@@ -81,9 +75,6 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def change_password(conn, %{"curent_password" => password, "new_password" => new_password}) do
-    # {if config} check status of changing password is true
-    # then clean all the pass if false just delete this token with user selected os
-    # add ip limitter
     with {:ok, :get_record_by_id, :user, user_info} <-MishkaUser.User.show_by_id(conn.assigns.user_id),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:ok, :edit, :user, info} <- MishkaUser.User.edit(%{id: user_info.id, password: new_password}) do
@@ -96,90 +87,43 @@ defmodule MishkaApiWeb.AuthController do
         error
         |> MishkaApi.ClientAuthProtocol.change_password(conn, @allowed_fields_output)
     end
-
   end
 
-  def reset_password(_conn, %{"email" => _email}) do
-    # add ip limitter
-    # if user email and info exist
-    # create a random code or big token {this has a config}
-    # if random code user can send this to other reset_password action
-    # if big tokebn send a link to user email that user can click on it and change password on html api
-    # if the html api oky clear the cookies and show a btn which has a mobile url with custom #tag {back to app or other external software}
-    # log all the requested reset password if admin allow to save it in db
-  end
-
-  def reset_password(_conn, %{"code" => _code, "email" => _email, "new_password" => _password}) do
-    # add ip limitter
-    # if code and this email exist and true
-    # get user id and chnage user password
-    # {if config } check the user status if is true delete all the cookies and token, if false just delete this browser sesition
+  def reset_password(conn, %{"code" => code, "email" => email, "new_password" => password}) do
     # send email to user to notic him the password was changed with os and ip info
+    MishkaDatabase.Cache.RandomCode.get_user(email, code)
+    |> MishkaApi.ClientAuthProtocol.reset_password(conn, password)
+  end
+
+  def reset_password(conn, %{"email" => email}) do
+    to_string(:inet_parse.ntoa(conn.remote_ip))
+
+    MishkaUser.User.show_by_email(email)
+    |> MishkaApi.ClientAuthProtocol.reset_password(conn)
   end
 
   def user_tokens(conn, _params) do
-    # add ip limitter
     MishkaUser.User.show_by_id(conn.assigns.user_id)
     |> MishkaApi.ClientAuthProtocol.user_tokens(conn, @allowed_fields_output)
   end
 
-  def deactive_acount(_conn, %{"token" => _token}) do
-    # add ip limitter
-    # if tokey is verify and user is ok
-    # this should be thinked and create way to import on whole the project with a custom privicy
-    # this function cant delete all the user data espicaily the data has depency whole the project
-    # let the user before the mounth needed on config to active the user after that dont let user to use the acount again
-    # send this action log to admin
-    # delete all the user's tokens
+  def delete_token(conn, %{"token" => token}) do
+    MishkaUser.Token.TokenManagemnt.get_token(conn.assigns.user_id, token)
+    |> MishkaApi.ClientAuthProtocol.delete_token(conn.assigns.user_id, conn)
   end
 
-  def deactive_acount_by_email(_conn, %{"code" => _code}) do
-    # get request without ssetion
-    # the link whitch is clicked by user
-  end
-
-  def edit_profile(_conn, %{"token" => _token, "profile_info" => _profile_info}) do
-    # add ip limitter
-    # after creating user profile table
-    # if user token verify and user is ok
-    # if config allow to send profile info
-    # try to get safe profile daynamic infos
-    # I think there is a good place to get mobile and verify
-  end
-
-  def delete_tokens(_conn, %{"token" => _token}) do
-    # add ip limiter
-    # if token is verify and user is oky
-    # send a random code or big token with chacking config
-  end
-
-  def delete_tokens(_conn, %{"code" => _code}) do
-    # get request without ssetion
-    # the link whitch is clicked by user
-  end
-
-
-  def delete_tokens(_conn, %{"token" => _token, "code" => _code}) do
-    # add ip limiter
-    # if token is verify and user is oky
-    # if user code is verify
-    # delete all the user token created
-    # clear user cookins and extra
-  end
-
-  def delete_tokens_by_email(_conn, %{"email" => _email}) do
-    # get request without ssetion
-    # the link whitch is clicked by user
+  def delete_tokens(conn, _params) do
+    MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(conn.assigns.user_id)
+    MishkaUser.Token.TokenManagemnt.stop(conn.assigns.user_id)
+    MishkaApi.ClientAuthProtocol.delete_tokens(conn)
   end
 
   def get_token_expire_time(conn, %{"token" => token}) do
-    # add ip limiter
     MishkaUser.User.show_by_id(conn.assigns.user_id)
     |> MishkaApi.ClientAuthProtocol.get_token_expire_time(conn, token, @allowed_fields_output)
   end
 
   def refresh_token(conn, _params) do
-    # add ip limiter
     get_req_header(conn, "authorization")
     |> Token.get_string_token(:refresh)
     |> case do
@@ -191,6 +135,32 @@ defmodule MishkaApiWeb.AuthController do
         Token.refresh_token(refresh_token, :phoenix_token)
         |> MishkaApi.ClientAuthProtocol.refresh_token(refresh_token, conn, @allowed_fields_output)
     end
+  end
+
+  def edit_profile(conn, %{"full_name" => full_name}) do
+    MishkaUser.User.edit(%{id: conn.assigns.user_id, full_name: full_name})
+    |> MishkaApi.ClientAuthProtocol.edit_profile(conn, @allowed_fields_output)
+  end
+
+
+  def deactive_account(conn, %{"code" => code}) do
+    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    |> MishkaApi.ClientAuthProtocol.deactive_account(:sent, {conn, code}, @allowed_fields_output)
+  end
+
+
+  def deactive_account(conn, _params) do
+    # this should be thinked and create a way to import on whole the project with a custom privicy
+    # this function cant delete all the user data espicaily the data has depency whole the project
+    # send this action log to admin
+    # if create a random link to get user reson that why he decided to deactive his account
+    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    |> MishkaApi.ClientAuthProtocol.deactive_account(:send, conn, @allowed_fields_output)
+  end
+
+  def deactive_account_by_email(_conn, %{"code" => _code}) do
+    # get request without ssetion
+    # the link whitch is clicked by user
   end
 
   def verify_email(_conn, %{"token" => _token}) do
@@ -207,4 +177,8 @@ defmodule MishkaApiWeb.AuthController do
     # if code is valid; verify email
   end
 
+  def delete_tokens_by_email(_conn, %{"email" => _email}) do
+    # get request without ssetion
+    # the link whitch is clicked by user
+  end
 end

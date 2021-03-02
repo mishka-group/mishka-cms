@@ -18,6 +18,15 @@ defmodule MishkaApiWeb.Router do
     post "/change-password", AuthController, :change_password
     post "/user-tokens", AuthController, :user_tokens
     post "/get-token-expire-time", AuthController, :get_token_expire_time
+    post "/reset-password", AuthController, :reset_password
+    post "/delete-token", AuthController, :delete_token
+    post "/delete-tokens", AuthController, :delete_tokens
+    post "/edit-profile", AuthController, :edit_profile
+
+    post "/deactive-account", AuthController, :deactive_account
+    post "/deactive-account-by-email", AuthController, :deactive_account_by_email
+    post "/verify-email", AuthController, :verify_email
+    post "/delete-tokens-by-email", AuthController, :delete_tokens_by_email
   end
 
 

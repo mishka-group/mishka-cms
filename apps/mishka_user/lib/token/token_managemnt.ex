@@ -9,9 +9,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
 
   ##########################################
-  # 1. We need a function and handle_info to update mnesia disk evry action
-  # 2. These actions should handle only Refresh Token
-  # 3. Dont forget to create an Api router to delete all the token the user wants
+  # 1. create handle_info to delete expired token every 24 hours with Registery
   ##########################################
 
 
@@ -170,7 +168,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     first_list = List.first(element.token_info)
 
     if first_list.type == "refresh" do
-      MnesiaToken.save(
+      MnesiaToken.save_different_node(
         first_list.token_id,
         element.id,
         first_list.token,

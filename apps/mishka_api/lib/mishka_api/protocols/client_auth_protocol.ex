@@ -2,7 +2,7 @@ defprotocol MishkaApi.ClientAuthProtocol do
   @fallback_to_any true
   @doc "should be changed"
 
-  def crud_json(crud_struct, conn, allowed_fields)
+  def rgister(crud_struct, conn, allowed_fields)
 
   def login_json(request_struct, action, conn, allowed_fields)
 
@@ -15,15 +15,28 @@ defprotocol MishkaApi.ClientAuthProtocol do
   def user_tokens(outputs, conn, allowed_fields_output)
 
   def get_token_expire_time(outputs, conn, token, allowed_fields_output)
+
+  def reset_password(outputs, conn)
+
+  def reset_password(outputs, conn, password)
+
+  def delete_token(outputs, id, conn)
+
+  def delete_tokens(conn)
+
+  def edit_profile(outputs, conn, allowed_fields_output)
+
+  def deactive_account(outputs, action, conn, allowed_fields_output)
 end
 
 defimpl MishkaApi.ClientAuthProtocol, for: Any do
   use MishkaApiWeb, :controller
   alias MishkaUser.Token.Token
+  alias MishkaDatabase.Cache.RandomCode
 
   @request_error_tag :user
 
-  def crud_json({:error, action, error_tag, repo_error}, conn, _allowed_fields) do
+  def rgister({:error, action, error_tag, repo_error}, conn, _allowed_fields) do
     conn
     |> put_status(400)
     |> json(%{
@@ -34,7 +47,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
     })
   end
 
-  def crud_json({:ok, action, error_tag, repo_data}, conn, allowed_fields) do
+  def rgister({:ok, action, error_tag, repo_data}, conn, allowed_fields) do
     conn
     |> put_status(200)
     |> json(%{
@@ -225,6 +238,11 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   end
 
   def change_password({:ok, :change_password, info}, conn, allowed_fields) do
+    # clean all the token otp
+    MishkaUser.Token.TokenManagemnt.stop(info.id)
+    # clean all the token on disc
+    MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(info.id)
+
     conn
     |> put_status(200)
     |> json(%{
@@ -359,4 +377,256 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
       message: "کاربر مورد نظر ممکن است از سیستم حذف شده بشد یا دسترسی آن قطع گردیده"
     })
   end
+
+
+  def reset_password({:ok, :get_record_by_field, :user, user_info}, conn) do
+    random_code = Enum.random(100000..999999)
+    IO.inspect(random_code)
+    case RandomCode.get_code_with_email(user_info.email) do
+      nil ->
+        RandomCode.save(user_info.email, random_code)
+        # send random code to user email
+
+      _user_data ->
+        RandomCode.save(user_info.email, random_code)
+    end
+
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :reset_password,
+      system: @request_error_tag,
+      message: "در صورتی که ایمیل شما در سیستم موجود باشد یک ایمیل حاوی تغییر پسورد برای شما ارسال می گردد. لطفا در صورت عدم وجود ایمیل در اینباکس لطفا در پوشه اسپم یا جانک نیز بازدید به عمل بیاورید"
+    })
+  end
+
+  def reset_password({:error, :get_record_by_field, _error_tag}, conn) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :reset_password,
+      system: @request_error_tag,
+      message: "در صورتی که ایمیل شما در سیستم موجود باشد یک ایمیل حاوی تغییر پسورد برای شما ارسال می گردد. لطفا در صورت عدم وجود ایمیل در اینباکس لطفا در پوشه اسپم یا جانک نیز بازدید به عمل بیاورید"
+    })
+  end
+
+  def reset_password([{:error, :get_user, _error_result}], conn, _password) do
+    conn
+    |> put_status(404)
+    |> json(%{
+      action: :reset_password,
+      system: @request_error_tag,
+      message: "این خطا در زمانی روخ می دهد که کد ریست پسورد اشتباه باشد یا وجود نداشته باشد."
+    })
+  end
+
+
+  def reset_password([{:ok, :get_user, code, email}], conn, password) do
+
+    with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(email),
+         {:ok, :edit, :user, _user_edit_info} <- MishkaUser.User.edit(%{id: user_info.id, password: password}) do
+
+          # clean all the token OTP
+          MishkaUser.Token.TokenManagemnt.stop(user_info.id)
+          # clean all the token on disc
+          MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(user_info.id)
+          # delete all randome codes of user
+          RandomCode.delete_code(code, email)
+
+        conn
+        |> put_status(200)
+        |> json(%{
+          action: :reset_password,
+          system: @request_error_tag,
+          message: "پسورد شما با موفقیت ریست شد و تمامی توکن های ایجاد شده برای حساب کاربری شما نیز منقضی گردید"
+        })
+
+    else
+      {:error, :get_record_by_field, error_tag} ->
+        reset_password({:error, :get_record_by_field, error_tag}, conn)
+
+      {:error, :edit, :user, repo_error} ->
+        change_password({:error, :edit, :user, repo_error}, conn, "allowed_fields")
+    end
+  end
+
+  def delete_token(nil, _id, conn) do
+    conn
+    |> put_status(404)
+    |> json(%{
+      action: :delete_token,
+      system: @request_error_tag,
+      message: "این خطا در زمانی روخ می دهد که توکن ارسالی وجود نداشته باشد"
+    })
+  end
+
+  def delete_token(token, user_id, conn) do
+    if token.type == "refresh" do
+      MishkaUser.Token.TokenManagemnt.delete_child_token(user_id, token.token)
+      MishkaDatabase.Cache.MnesiaToken.delete_token(token)
+    end
+
+    MishkaUser.Token.TokenManagemnt.delete_token(user_id, token.token)
+
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_token,
+      system: @request_error_tag,
+      message: "توکن شما با موفقیت از سیستم حذف گردید. باید توجه داشته باشید تمامی دستگاه هایی که از این توکن استفاده می کردند نیز به صورت خودکار خارج شدند و برای ورود مجدد لطفا دوباره در سیستم لاگین کنید."
+    })
+  end
+
+
+  def delete_tokens(conn) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_tokens,
+      system: @request_error_tag,
+      message: "توکن های شما با موفقیت حذف گردید"
+    })
+  end
+
+  def edit_profile({:ok, :edit, :user, user_info}, conn, allowed_fields_output) do
+    # after we create dynamic profile we can do more than now
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :edit_profile,
+      system: @request_error_tag,
+      message: ".اطلاعات کاربر مورد نظر با موفقیت ویرایش گردید",
+      user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+    })
+  end
+
+  def edit_profile({:error, :edit, :user, repo_error}, conn, _allowed_fields_output) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :edit_profile,
+      system: @request_error_tag,
+      message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def edit_profile({:error, :edit, _action, _error_tag}, conn, _allowed_fields_output) do
+    conn
+    |> put_status(401)
+    |> json(%{
+      action: :edit_profile,
+      system: @request_error_tag,
+      message: "کاربر مذکور وجود ندارد یا از یستم حذف گردید"
+    })
+  end
+
+  def deactive_account({:ok, :get_record_by_id, _user, user_info}, :send, conn, allowed_fields_output) do
+    case user_info.status do
+      :inactive  ->
+
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :deactive_account,
+          system: @request_error_tag,
+          message: "حساب کاربری شما از قبل غیر فعال سازی گردیده است. اطلاعات تکمیلی در زمان درخواست غیر فعال سازی برای شما ایمیل گردید."
+        })
+
+      _data ->
+        # send random code to user's email
+        random_code = Enum.random(100000..999999)
+        IO.inspect(random_code)
+        RandomCode.save(user_info.email, random_code)
+        conn
+        |> put_status(200)
+        |> json(%{
+          action: :deactive_account,
+          system: @request_error_tag,
+          message: "کد غیر فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید.",
+          user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+        })
+    end
+  end
+
+
+  def deactive_account({:error, :get_record_by_id, _error_tag}, :send, conn, _allowed_fields_output) do
+    conn
+    |> put_status(404)
+    |> json(%{
+      action: :deactive_account,
+      system: @request_error_tag,
+      message: "این خطا در زمانی روخ می هد که کاربری وجود نداشته باشد یا از سیستم حذف گریده باشد."
+    })
+  end
+
+  def deactive_account({:ok, :get_record_by_id, _user, user_info}, :sent, {conn, code}, allowed_fields_output) do
+
+    with [{:ok, :get_user, _code, _email}] <- MishkaDatabase.Cache.RandomCode.get_user(user_info.email, code),
+         {:error, :user_inactive?} <- MishkaUser.User.user_inactive?(user_info.status),
+         {:ok, :edit, _error_tag, repo_data} <- MishkaUser.User.edit(%{id: user_info.id, status: :inactive}) do
+
+          RandomCode.delete_code(code, user_info.email)
+          MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(user_info.id)
+          MishkaUser.Token.TokenManagemnt.stop(user_info.id)
+
+          conn
+          |> put_status(200)
+          |> json(%{
+            action: :deactive_account,
+            system: @request_error_tag,
+            message: "حساب شما با موفقیت غیر فعال شد. ایمیلی در رابطه با چگونگی پاک سازی اطلاعات شما ارسال گردیده است. لازم به ذکر هست تمامی دستگاه های آنلاین شما به سیستم نیز خودکار خارج شدند. برای اتصال مجدد دوباره لاگین کنید",
+            user_info: Map.take(repo_data, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+          })
+
+    else
+      {:error, :edit, _error_tag, repo_error} ->
+        conn
+        |> put_status(400)
+        |> json(%{
+          action: :deactive_account,
+          system: @request_error_tag,
+          message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+          errors: MishkaDatabase.translate_errors(repo_error)
+        })
+
+      {:error, :edit, _acction, _error_tag} ->
+
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :deactive_account,
+          system: @request_error_tag,
+          message: "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد."
+        })
+
+      {:error, :get_user, :time} ->
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :deactive_account,
+          system: @request_error_tag,
+          message: "کد فعال سازی شما منقضی شده است."
+        })
+
+      {:error, :get_user, _acction} ->
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :deactive_account,
+          system: @request_error_tag,
+          message: "کد غیر فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید."
+        })
+
+      {:ok, :user_inactive?} ->
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :deactive_account,
+          system: @request_error_tag,
+          message: "حساب کاربری شما از قبل غیر فعال سازی گردیده است. اطلاعات تکمیلی در زمان درخواست غیر فعال سازی برای شما ایمیل گردید."
+        })
+    end
+  end
+
 end

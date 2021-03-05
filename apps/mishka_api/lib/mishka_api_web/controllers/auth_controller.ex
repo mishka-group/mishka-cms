@@ -13,11 +13,14 @@ defmodule MishkaApiWeb.AuthController do
     :delete_token,
     :delete_tokens,
     :edit_profile,
-    :deactive_account
+    :deactive_account,
+    :verify_email,
+    :verify_email_by_email_link,
+    :deactive_account_by_email_link
   ]
 
   # create task evry 24 hours to log all registerd user in a day
-  # add ip limitter
+  # add ip limitter and os info
   # this module will help user to send request with his mobile after creating a dynamic plug for mobile provider
   # create a log that coveres all the requested token
 
@@ -33,7 +36,6 @@ defmodule MishkaApiWeb.AuthController do
 
   def login(conn, %{"username" => username, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
-    # save user os info and user ip
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_username(username),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
@@ -47,7 +49,6 @@ defmodule MishkaApiWeb.AuthController do
 
   def login(conn, %{"email" => email, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
-    # save user os info and user ip
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(email),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
@@ -60,7 +61,6 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def logout(conn, _params) do
-    # add ip limitter and mybe os info
     get_req_header(conn, "authorization")
     |> Token.get_string_token(:refresh)
     |> case do
@@ -90,7 +90,6 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def reset_password(conn, %{"code" => code, "email" => email, "new_password" => password}) do
-    # send email to user to notic him the password was changed with os and ip info
     MishkaDatabase.Cache.RandomCode.get_user(email, code)
     |> MishkaApi.ClientAuthProtocol.reset_password(conn, password)
   end
@@ -150,35 +149,37 @@ defmodule MishkaApiWeb.AuthController do
 
 
   def deactive_account(conn, _params) do
-    # this should be thinked and create a way to import on whole the project with a custom privicy
-    # this function cant delete all the user data espicaily the data has depency whole the project
-    # send this action log to admin
-    # if create a random link to get user reson that why he decided to deactive his account
     MishkaUser.User.show_by_id(conn.assigns.user_id)
     |> MishkaApi.ClientAuthProtocol.deactive_account(:send, conn, @allowed_fields_output)
   end
 
-  def deactive_account_by_email(_conn, %{"code" => _code}) do
-    # get request without ssetion
-    # the link whitch is clicked by user
+  def verify_email(conn, %{"code" => code}) do
+    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    |> MishkaApi.ClientAuthProtocol.verify_email(:sent, {conn, code}, @allowed_fields_output)
   end
 
-  def verify_email(_conn, %{"token" => _token}) do
-    # add ip limiter
-    # if token and user is ok
-    # if email is not active
-    # send email {on config} big token or random code
+  def verify_email(conn, _params) do
+    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    |> MishkaApi.ClientAuthProtocol.verify_email(:send, conn, @allowed_fields_output)
   end
 
-  def verify_email(_conn, %{"token" => _token, "code" => _code}) do
-    # add ip limiter
-    # if token and user is ok
-    # if email is not active
-    # if code is valid; verify email
+
+  def verify_email_by_email_link(conn, _params) do
+    # this function just is a luncher to send email, the function after clicking we need should be written on html api side
+    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    |> MishkaApi.ClientAuthProtocol.verify_email_by_email_link(conn, @allowed_fields_output)
   end
 
-  def delete_tokens_by_email(_conn, %{"email" => _email}) do
-    # get request without ssetion
-    # the link whitch is clicked by user
+
+  def delete_tokens_by_email_link(conn, %{"email" => email}) do
+    # this function just is a luncher to send email, the function after clicking we need should be written on html api side
+    MishkaUser.User.show_by_email(email)
+    |> MishkaApi.ClientAuthProtocol.delete_tokens_by_email_link(conn)
+  end
+
+  def deactive_account_by_email_link(conn, _params) do
+    # this function just is a luncher to send email, the function after clicking we need should be written on html api side
+    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    |> MishkaApi.ClientAuthProtocol.deactive_account_by_email_link(conn, @allowed_fields_output)
   end
 end

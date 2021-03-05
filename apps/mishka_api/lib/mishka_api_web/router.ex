@@ -22,11 +22,11 @@ defmodule MishkaApiWeb.Router do
     post "/delete-token", AuthController, :delete_token
     post "/delete-tokens", AuthController, :delete_tokens
     post "/edit-profile", AuthController, :edit_profile
-
     post "/deactive-account", AuthController, :deactive_account
-    post "/deactive-account-by-email", AuthController, :deactive_account_by_email
+    post "/deactive-account-by-email-link", AuthController, :deactive_account_by_email_link
     post "/verify-email", AuthController, :verify_email
-    post "/delete-tokens-by-email", AuthController, :delete_tokens_by_email
+    post "/verify-email-by-email-link", AuthController, :verify_email_by_email_link
+    post "/delete-tokens-by-email-link", AuthController, :delete_tokens_by_email_link
   end
 
 

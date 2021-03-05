@@ -8,9 +8,9 @@ defmodule MishkaDatabase.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: MishkaDatabase.Worker.start_link(arg)
       {MishkaDatabase.Cache.MnesiaToken, []},
       {MishkaDatabase.Cache.RandomCode, []},
+      {MishkaDatabase.Cache.RandomLink, []},
       MishkaDatabase.Repo
     ]
 

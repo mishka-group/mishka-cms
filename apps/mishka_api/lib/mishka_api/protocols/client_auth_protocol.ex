@@ -27,12 +27,20 @@ defprotocol MishkaApi.ClientAuthProtocol do
   def edit_profile(outputs, conn, allowed_fields_output)
 
   def deactive_account(outputs, action, conn, allowed_fields_output)
+
+  def verify_email(outputs, action, conn, allowed_fields_output)
+
+  def verify_email_by_email_link(outputs, conn, allowed_fields_output)
+
+  def deactive_account_by_email_link(outputs, conn, allowed_fields_output)
+
+  def delete_tokens_by_email_link(outputs, conn)
 end
 
 defimpl MishkaApi.ClientAuthProtocol, for: Any do
   use MishkaApiWeb, :controller
   alias MishkaUser.Token.Token
-  alias MishkaDatabase.Cache.RandomCode
+  alias MishkaDatabase.Cache.{RandomCode, RandomLink}
 
   @request_error_tag :user
 
@@ -627,6 +635,148 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
           message: "حساب کاربری شما از قبل غیر فعال سازی گردیده است. اطلاعات تکمیلی در زمان درخواست غیر فعال سازی برای شما ایمیل گردید."
         })
     end
+  end
+
+  def verify_email({:ok, :get_record_by_id, _user, user_info}, :sent, {conn, code}, allowed_fields_output) do
+    with [{:ok, :get_user, _code, _email}] <- MishkaDatabase.Cache.RandomCode.get_user(user_info.email, code),
+         {:error, :user_active?} <- MishkaUser.User.user_active?(user_info.status),
+         {:ok, :edit, _error_tag, repo_data} <- MishkaUser.User.edit(%{id: user_info.id, status: :inactive}) do
+
+          RandomCode.delete_code(code, user_info.email)
+
+          conn
+          |> put_status(200)
+          |> json(%{
+            action: :verify_email,
+            system: @request_error_tag,
+            message: "حساب شما با موفقیت فعال شد.",
+            user_info: Map.take(repo_data, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+          })
+
+    else
+      {:error, :edit, _error_tag, repo_error} ->
+        conn
+        |> put_status(400)
+        |> json(%{
+          action: :verify_email,
+          system: @request_error_tag,
+          message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+          errors: MishkaDatabase.translate_errors(repo_error)
+        })
+
+      {:error, :edit, _acction, _error_tag} ->
+
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :verify_email,
+          system: @request_error_tag,
+          message: "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد."
+        })
+
+      {:error, :get_user, :time} ->
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :verify_email,
+          system: @request_error_tag,
+          message: "کد فعال سازی شما منقضی شده است."
+        })
+
+      {:error, :get_user, _acction} ->
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :verify_email,
+          system: @request_error_tag,
+          message: "کد فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید."
+        })
+
+      {:ok, :user_active?} ->
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :verify_email,
+          system: @request_error_tag,
+          message: "حساب کاربری شما از قبل فعال سازی گردیده است."
+        })
+    end
+  end
+
+  def verify_email({:ok, :get_record_by_id, _user, user_info}, :send, conn, allowed_fields_output) do
+    case user_info.status do
+      :active  ->
+
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :verify_email,
+          system: @request_error_tag,
+          message: "حساب کاربری شما از قبل فعال شده است"
+        })
+
+      _data ->
+        # send random code to user's email
+        random_code = Enum.random(100000..999999)
+        IO.inspect(random_code)
+        RandomCode.save(user_info.email, random_code)
+        conn
+        |> put_status(200)
+        |> json(%{
+          action: :verify_email,
+          system: @request_error_tag,
+          message: "کد فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید.",
+          user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+        })
+    end
+  end
+
+  def verify_email_by_email_link({:ok, :get_record_by_id, _user, user_info}, conn, allowed_fields_output) do
+    RandomLink.save(user_info.email, %{type: :verify})
+    # Email sender module with theme
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :verify_email_by_email_link,
+      system: @request_error_tag,
+      message: "کد فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.",
+      user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+    })
+  end
+
+  def deactive_account_by_email_link({:ok, :get_record_by_id, _user, user_info}, conn, allowed_fields_output) do
+    RandomLink.save(user_info.email, %{type: :deactive})
+    # Email sender module with theme
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :deactive_account_by_email_link,
+      system: @request_error_tag,
+      message: "کد غیر فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.",
+      user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+    })
+  end
+
+  def delete_tokens_by_email_link({:ok, :get_record_by_field, :user, user_info}, conn) do
+    RandomLink.save(user_info.email, %{type: :delete_tokens})
+    # Email sender module with theme
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :deactive_account_by_email_link,
+      system: @request_error_tag,
+      message: "اگر در بانک اطلاعاتی ما حسابی داشته باشید برای شما یک ایمیل حاوی لینک ارسال می گردد."
+    })
+  end
+
+  def delete_tokens_by_email_link(_, conn, _) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :deactive_account_by_email_link,
+      system: @request_error_tag,
+      message: "اگر در بانک اطلاعاتی ما حسابی داشته باشید برای شما یک ایمیل حاوی لینک ارسال می گردد."
+    })
   end
 
 end

@@ -6,4 +6,10 @@ defmodule MishkaApi do
   Contexts are also responsible for managing your data, regardless
   if it comes from the database, an external API or others.
   """
+
+  def get_config(item) do
+    :mishka_api
+    |> Application.fetch_env!(:auth)
+    |> Keyword.fetch!(item)
+  end
 end

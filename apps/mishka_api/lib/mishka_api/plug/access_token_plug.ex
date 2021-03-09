@@ -9,7 +9,7 @@ defmodule MishkaApi.Plug.AccessTokenPlug do
 
   def call(conn, _default) do
     with {:ok, :access, :valid, access_token} <- Token.get_string_token(get_req_header(conn, "authorization"), :access),
-         {:ok, :verify_token, :access, clime} <- Token.verify_access_token(access_token, :phoenix_token) do
+         {:ok, :verify_token, :access, clime} <- Token.verify_access_token(access_token, MishkaApi.get_config(:token_type)) do
 
         conn
         |> assign(:user_id, clime["id"])

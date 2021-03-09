@@ -3,7 +3,7 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
   alias :mnesia, as: Mnesia
   require Logger
 
-  @delete_tokens :timer.seconds(1000) # :timer.seconds(5)
+  @delete_tokens :timer.seconds(360)
   @save_refresh :timer.seconds(10)
 
   def start_link(args \\ []) do
@@ -165,7 +165,7 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
 
   @impl true
   def handle_info(:reject_all_expired_tokens,  state) do
-    Logger.info("OTP Reject all expired tokens server was started")
+    Logger.info("OTP Reject all expired tokens server into Mnesia was started")
     Process.send_after(__MODULE__, :reject_all_expired_tokens, @delete_tokens)
 
     Mnesia.transaction(fn ->

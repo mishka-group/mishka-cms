@@ -2,9 +2,9 @@ defprotocol MishkaApi.ClientAuthProtocol do
   @fallback_to_any true
   @doc "should be changed"
 
-  def rgister(crud_struct, conn, allowed_fields)
+  def register(crud_struct, conn, allowed_fields)
 
-  def login_json(request_struct, action, conn, allowed_fields)
+  def login(request_struct, action, conn, allowed_fields)
 
   def refresh_token(outputs, token, conn, allowed_fields)
 
@@ -44,43 +44,43 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
 
   @request_error_tag :user
 
-  def rgister({:error, action, error_tag, repo_error}, conn, _allowed_fields) do
+  def register({:error, _action, _error_tag, repo_error}, conn, _allowed_fields) do
     conn
     |> put_status(400)
     |> json(%{
-      action: action,
-      system: error_tag,
+      action: :register,
+      system: @request_error_tag,
       message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
       errors: MishkaDatabase.translate_errors(repo_error)
     })
   end
 
-  def rgister({:ok, action, error_tag, repo_data}, conn, allowed_fields) do
+  def register({:ok, _action, _error_tag, repo_data}, conn, allowed_fields) do
     conn
     |> put_status(200)
     |> json(%{
-      action: action,
-      system: error_tag,
+      action: :register,
+      system: @request_error_tag,
       message: "داده شما با موفقیت ذخیره شد.",
       user_info: Map.take(repo_data, allowed_fields |> Enum.map(&String.to_existing_atom/1))
     })
   end
 
-  def login_json({:ok, user_info, error_tag}, action, conn, allowed_fields) do
-    case token = Token.create_token(user_info, :phoenix_token) do
+  def login({:ok, user_info, _error_tag}, action, conn, allowed_fields) do
+    case token = Token.create_token(user_info, MishkaApi.get_config(:token_type)) do
       {:error, :more_device} ->
 
         MishkaUser.Token.TokenManagemnt.get_all(user_info.id)
 
-        login_json({:error, :more_device, :user}, action, conn, allowed_fields)
+        login({:error, :more_device, :user}, action, conn, allowed_fields)
 
       _ ->
 
         conn
         |> put_status(200)
         |> json(%{
-          action: action,
-          system: error_tag,
+          action: :login,
+          system: @request_error_tag,
           message: "با موفقیت وارد سیستم شدید.",
           user_info: Map.take(user_info, allowed_fields |> Enum.map(&String.to_existing_atom/1)),
           auth: %{
@@ -98,32 +98,32 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   end
 
 
-  def login_json(error_struct, action, conn, _allowed_fields) do
+  def login(error_struct, _action, conn, _allowed_fields) do
     case error_struct do
-      {:error, :get_record_by_field, error_tag} ->
+      {:error, :get_record_by_field, _error_tag} ->
         conn
         |> put_status(401)
         |> json(%{
-          action: action,
-          system: error_tag,
-          message: "ممکن است اطلاعات حسابکاربری شما اشتباه باشد."
-        })
-
-      {:error, :check_password, error_tag} ->
-        conn
-        |> put_status(401)
-        |> json(%{
-          action: action,
-          system: error_tag,
+          action: :login,
+          system: @request_error_tag,
           message: "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
         })
 
-      {:error, :more_device, error_tag} ->
+      {:error, :check_password, _error_tag} ->
         conn
         |> put_status(401)
         |> json(%{
-          action: action,
-          system: error_tag,
+          action: :login,
+          system: @request_error_tag,
+          message: "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
+        })
+
+      {:error, :more_device, _error_tag} ->
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :login,
+          system: @request_error_tag,
           message: "با حساب کاربری شما بیشتر از 5 دستگاه وارد سیستم شدند. برای ورود باید از یکی از دستگاه ها خارج شوید و اگر خودتان وارد نشدید سریعا پسورد خود را تغییر داده و همینطور تمام توکن ها را درحساب کاربری خود حذف نمایید."
         })
 
@@ -131,7 +131,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
         conn
         |> put_status(500)
         |> json(%{
-          action: action,
+          action: :login,
           system: @request_error_tag,
           message: "خطای غیر قابل پیشبینی روخ داده است."
         })
@@ -199,6 +199,16 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
     })
   end
 
+  def refresh_token({:error, :verify_token, :refresh, _result}, _token, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :refresh_token,
+      system: @request_error_tag,
+      message: " توکن ارسالی اشتباه می باشد یا منقضی گردیده است"
+    })
+  end
+
   def refresh_token(%{refresh_token: %{token: refresh_token, clime: refresh_clime},
                       access_token:  %{token: access_token, clime: access_clime}}, _token, conn, allowed_fields) do
 
@@ -231,15 +241,15 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
     |> json(%{
       action: :logout,
       system: @request_error_tag,
-      message: "توکن شما با موفقیت تازه سازی گردید. و توکن قبلی نیز حذف شد."
+      message: "شما با موفقیت از سیستم خارج  شدید"
     })
   end
 
-  def logout({:error, :delete_refresh_token, action}, conn) do
+  def logout({:error, :delete_refresh_token, _action}, conn) do
     conn
     |> put_status(401)
     |> json(%{
-      action: action,
+      action: :logout,
       system: @request_error_tag,
       message: "این خطا در زمانی روخ می دهد که توکن شما معتبر نباشد یا قبلا از سیستم پاک شده باشد."
     })
@@ -348,7 +358,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   end
 
 
-  def user_tokens({:error, :get_record_by_id, :user}, conn) do
+  def user_tokens({:error, :get_record_by_id, :user}, conn, _allowed_fields_output) do
     conn
     |> put_status(401)
     |> json(%{
@@ -389,7 +399,6 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
 
   def reset_password({:ok, :get_record_by_field, :user, user_info}, conn) do
     random_code = Enum.random(100000..999999)
-    IO.inspect(random_code)
     case RandomCode.get_code_with_email(user_info.email) do
       nil ->
         RandomCode.save(user_info.email, random_code)
@@ -460,7 +469,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
 
   def delete_token(nil, _id, conn) do
     conn
-    |> put_status(404)
+    |> put_status(401)
     |> json(%{
       action: :delete_token,
       system: @request_error_tag,
@@ -544,7 +553,6 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
       _data ->
         # send random code to user's email
         random_code = Enum.random(100000..999999)
-        IO.inspect(random_code)
         RandomCode.save(user_info.email, random_code)
         conn
         |> put_status(200)
@@ -608,7 +616,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
           message: "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد."
         })
 
-      {:error, :get_user, :time} ->
+      [{:error, :get_user, :time}] ->
         conn
         |> put_status(401)
         |> json(%{
@@ -617,7 +625,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
           message: "کد فعال سازی شما منقضی شده است."
         })
 
-      {:error, :get_user, _acction} ->
+      [{:error, :get_user, _acction}] ->
         conn
         |> put_status(401)
         |> json(%{
@@ -640,7 +648,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   def verify_email({:ok, :get_record_by_id, _user, user_info}, :sent, {conn, code}, allowed_fields_output) do
     with [{:ok, :get_user, _code, _email}] <- MishkaDatabase.Cache.RandomCode.get_user(user_info.email, code),
          {:error, :user_active?} <- MishkaUser.User.user_active?(user_info.status),
-         {:ok, :edit, _error_tag, repo_data} <- MishkaUser.User.edit(%{id: user_info.id, status: :inactive}) do
+         {:ok, :edit, _error_tag, repo_data} <- MishkaUser.User.edit(%{id: user_info.id, status: :active, unconfirmed_email: nil}) do
 
           RandomCode.delete_code(code, user_info.email)
 
@@ -674,7 +682,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
           message: "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد."
         })
 
-      {:error, :get_user, :time} ->
+      [{:error, :get_user, :time} ]->
         conn
         |> put_status(401)
         |> json(%{
@@ -683,7 +691,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
           message: "کد فعال سازی شما منقضی شده است."
         })
 
-      {:error, :get_user, _acction} ->
+      [{:error, :get_user, _acction} ]->
         conn
         |> put_status(401)
         |> json(%{
@@ -718,7 +726,6 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
       _data ->
         # send random code to user's email
         random_code = Enum.random(100000..999999)
-        IO.inspect(random_code)
         RandomCode.save(user_info.email, random_code)
         conn
         |> put_status(200)
@@ -732,28 +739,76 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   end
 
   def verify_email_by_email_link({:ok, :get_record_by_id, _user, user_info}, conn, allowed_fields_output) do
-    RandomLink.save(user_info.email, %{type: :verify})
-    # Email sender module with theme
+    case user_info.status do
+      :active  ->
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :verify_email_by_email_link,
+          system: @request_error_tag,
+          message: "حساب کاربری شما از قبل فعال گردیده است."
+        })
+
+      _ ->
+        RandomLink.save(user_info.email, %{type: :verify})
+        # Email sender module with theme
+        conn
+        |> put_status(200)
+        |> json(%{
+          action: :verify_email_by_email_link,
+          system: @request_error_tag,
+          message: "لینک فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.",
+          user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+        })
+
+    end
+  end
+
+  def verify_email_by_email_link(_, conn, _allowed_fields_output) do
     conn
-    |> put_status(200)
+    |> put_status(404)
     |> json(%{
       action: :verify_email_by_email_link,
       system: @request_error_tag,
-      message: "کد فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.",
-      user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+      message: "چنین کاربری وجود ندارد یا از سیستم حذف گردیده"
     })
   end
 
   def deactive_account_by_email_link({:ok, :get_record_by_id, _user, user_info}, conn, allowed_fields_output) do
-    RandomLink.save(user_info.email, %{type: :deactive})
-    # Email sender module with theme
+    case user_info.status do
+      :inactive ->
+        RandomLink.save(user_info.email, %{type: :deactive})
+        # Email sender module with theme
+        conn
+        |> put_status(401)
+        |> json(%{
+          action: :deactive_account_by_email_link,
+          system: @request_error_tag,
+          message: "حساب کاربری شما از قبل غیر فعال گردیده است."
+        })
+
+
+      _ ->
+        RandomLink.save(user_info.email, %{type: :deactive})
+        # Email sender module with theme
+        conn
+        |> put_status(200)
+        |> json(%{
+          action: :deactive_account_by_email_link,
+          system: @request_error_tag,
+          message: "ایمیل غیر فعال سازی حساب کاربری برای شما ارسال گردید",
+          user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+        })
+    end
+  end
+
+  def deactive_account_by_email_link(_, conn, _allowed_fields_output) do
     conn
-    |> put_status(200)
+    |> put_status(404)
     |> json(%{
       action: :deactive_account_by_email_link,
       system: @request_error_tag,
-      message: "کد غیر فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.",
-      user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+      message: "چنین کاربری وجود ندارد یا از سیستم حذف گردیده"
     })
   end
 
@@ -769,7 +824,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
     })
   end
 
-  def delete_tokens_by_email_link(_, conn, _) do
+  def delete_tokens_by_email_link(_, conn) do
     conn
     |> put_status(200)
     |> json(%{

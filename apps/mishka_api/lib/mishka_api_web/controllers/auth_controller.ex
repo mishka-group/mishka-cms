@@ -1,7 +1,7 @@
 defmodule MishkaApiWeb.AuthController do
   use MishkaApiWeb, :controller
 
-  @allowed_fields ["full_name", "username", "email", "password"]
+  @allowed_fields ["full_name", "username", "email", "password", "unconfirmed_email"]
   @allowed_fields_output ["full_name", "username", "email", "status"]
 
   alias MishkaUser.Token.Token
@@ -22,16 +22,15 @@ defmodule MishkaApiWeb.AuthController do
   # create task evry 24 hours to log all registerd user in a day
   # add ip limitter and os info
   # this module will help user to send request with his mobile after creating a dynamic plug for mobile provider
-  # create a log that coveres all the requested token
 
-  def rgister(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email , "password" => _password} = params) do
+  def register(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email , "password" => _password} = params) do
     MishkaUser.User.create(params, @allowed_fields)
-    |> MishkaApi.ClientAuthProtocol.rgister(conn, @allowed_fields_output)
+    |> MishkaApi.ClientAuthProtocol.register(conn, @allowed_fields_output)
   end
 
-  def rgister(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email} = params) do
+  def register(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email} = params) do
     MishkaUser.User.create(params, @allowed_fields)
-    |> MishkaApi.ClientAuthProtocol.rgister(conn, @allowed_fields_output)
+    |> MishkaApi.ClientAuthProtocol.register(conn, @allowed_fields_output)
   end
 
   def login(conn, %{"username" => username, "password" => password}) do
@@ -39,11 +38,11 @@ defmodule MishkaApiWeb.AuthController do
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_username(username),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
-        MishkaApi.ClientAuthProtocol.login_json({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
+        MishkaApi.ClientAuthProtocol.login({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
 
     else
       error_struct ->
-        MishkaApi.ClientAuthProtocol.login_json(error_struct, :login, conn, @allowed_fields_output)
+        MishkaApi.ClientAuthProtocol.login(error_struct, :login, conn, @allowed_fields_output)
     end
   end
 
@@ -52,11 +51,11 @@ defmodule MishkaApiWeb.AuthController do
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(email),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
-        MishkaApi.ClientAuthProtocol.login_json({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
+        MishkaApi.ClientAuthProtocol.login({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
 
     else
       error_struct ->
-        MishkaApi.ClientAuthProtocol.login_json(error_struct, :login, conn, @allowed_fields_output)
+        MishkaApi.ClientAuthProtocol.login(error_struct, :login, conn, @allowed_fields_output)
     end
   end
 
@@ -69,7 +68,7 @@ defmodule MishkaApiWeb.AuthController do
         |> MishkaApi.ClientAuthProtocol.logout(conn)
 
       {:ok, :refresh, :valid, refresh_token} ->
-        Token.delete_token(refresh_token, :phoenix_token)
+        Token.delete_token(refresh_token, MishkaApi.get_config(:token_type))
         |> MishkaApi.ClientAuthProtocol.logout(conn)
     end
   end
@@ -131,7 +130,7 @@ defmodule MishkaApiWeb.AuthController do
         |> MishkaApi.ClientAuthProtocol.refresh_token("refresh_token", conn, @allowed_fields_output)
 
       {:ok, :refresh, :valid, refresh_token} ->
-        Token.refresh_token(refresh_token, :phoenix_token)
+        Token.refresh_token(refresh_token, MishkaApi.get_config(:token_type))
         |> MishkaApi.ClientAuthProtocol.refresh_token(refresh_token, conn, @allowed_fields_output)
     end
   end

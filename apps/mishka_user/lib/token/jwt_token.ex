@@ -18,41 +18,47 @@ defmodule MishkaUser.Token.JWTToken do
     case Guardian.refresh(token, ttl: {@refresh_token_time, :seconds}) do
       {:ok, {_old_token, %{"typ" => "refresh"}}, {new_token, new_clime}} ->
 
-        {:ok, :refresh_token, new_token, new_clime}
+        {:ok, :verify_token, new_token, new_clime}
         |> verify_refresh_token_on_state(token)
         |> delete_old_token(token)
         |> create_new_refresh_token()
 
       result ->
-        {:error, :refresh_token, result}
+        {:error, :verify_token, result}
         |> delete_old_token(token)
     end
   end
 
 
-  defp verify_refresh_token_on_state({:ok, :refresh_token, new_token, new_clime}, token) do
+  defp verify_refresh_token_on_state({:ok, :verify_token, new_token, new_clime}, token) do
     {:ok, %{id: id}} = get_id_from_climes(new_clime)
     case TokenManagemnt.get_token(id, token) do
-      {:reply, nil, _state} -> {:error, :refresh_token, :token_otp_state}
-      {:reply, _token_map, _state} -> {:ok, :refresh_token, new_token, new_clime}
+      nil -> {:error, :verify_token, :token_otp_state}
+      _data -> {:ok, :verify_token, new_token, new_clime}
     end
   end
 
 
-  defp delete_old_token({:ok, :refresh_token, _new_token, new_clime}, token) do
-    TokenManagemnt.delete_child_token(new_clime.id, token)
-    TokenManagemnt.delete_token(new_clime.id, token)
+  defp delete_old_token({:ok, :verify_token, _new_token, new_clime}, token) do
+    {:ok, %{id: id}} = get_id_from_climes(new_clime)
+    TokenManagemnt.delete_child_token(id, token)
+    TokenManagemnt.delete_token(id, token)
 
     {:ok, :delete_old_token, new_clime}
   end
 
-  defp delete_old_token({:error, error_function, action}, _token), do: {:error, error_function, action}
+  defp delete_old_token({:error, error_function, action}, _token), do: {:error, error_function, :refresh, action}
 
-  defp create_new_refresh_token({:ok, :delete_old_token, clime}), do: create_refresh_acsses_token(%{id: clime.id})
+  defp create_new_refresh_token({:ok, :delete_old_token, clime}) do
+    {:ok, %{id: id}} = get_id_from_climes(clime)
+    create_refresh_acsses_token(%{id: id})
+  end
 
-  defp create_new_refresh_token({:error, error_function, :token_otp_state}), do: {:error, error_function, :token_otp_state}
+  defp create_new_refresh_token({:error, error_function, :refresh, :token_otp_state}) do
+    {:error, error_function, :refresh, :token_otp_state}
+  end
 
-  defp create_new_refresh_token({:error, error_function, action}), do: {:error, error_function, action}
+  defp create_new_refresh_token({:error, error_function, :refresh, action}), do: {:error, error_function, :refresh, action}
 
 
   def get_id_from_climes(climes), do: Guardian.resource_from_claims(climes)
@@ -77,7 +83,6 @@ defmodule MishkaUser.Token.JWTToken do
 
 
   def create_refresh_acsses_token(user_info) do
-    # Start Creating Token
     MishkaUser.Token.TokenDynamicSupervisor.start_job([id: user_info.id, type: "token"])
 
     case TokenManagemnt.count_refresh_token(user_info.id) do
@@ -148,7 +153,7 @@ defmodule MishkaUser.Token.JWTToken do
     case refresh_delete_token(token) do
       {:ok, :delete_old_token, _new_clime} -> {:ok, :delete_refresh_token}
 
-      {:error, _error_function, action} -> {:error, :delete_refresh_token, action}
+      {:error, _error_function, :refresh, action} -> {:error, :delete_refresh_token, action}
     end
   end
 
@@ -156,12 +161,12 @@ defmodule MishkaUser.Token.JWTToken do
     case Guardian.refresh(token, ttl: {@refresh_token_time, :seconds}) do
       {:ok, {_old_token, %{"typ" => "refresh"}}, {new_token, new_clime}} ->
 
-        {:ok, :refresh_token, new_token, new_clime}
+        {:ok, :verify_token, new_token, new_clime}
         |> verify_refresh_token_on_state(token)
         |> delete_old_token(token)
 
       result ->
-        {:error, :refresh_token, result}
+        {:error, :verify_token, result}
         |> delete_old_token(token)
     end
   end

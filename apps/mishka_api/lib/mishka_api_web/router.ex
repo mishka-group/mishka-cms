@@ -12,8 +12,9 @@ defmodule MishkaApiWeb.Router do
 
   scope "/api/auth/v1", MishkaApiWeb do
     pipe_through :api
-    post "/register", AuthController, :rgister
+    post "/register", AuthController, :register
     post "/login", AuthController, :login
+    post "/logout", AuthController, :logout
     post "/refresh-token", AuthController, :refresh_token
     post "/change-password", AuthController, :change_password
     post "/user-tokens", AuthController, :user_tokens

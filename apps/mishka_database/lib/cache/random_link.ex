@@ -133,7 +133,7 @@ defmodule MishkaDatabase.Cache.RandomLink do
     Enum.random(@alphabet)
   end
 
-  defp random_link_id(count \\ 10) do
+  def random_link_id(count \\ 10) do
     :crypto.strong_rand_bytes(count) |> Base.url_encode64(padding: false)
   end
 end

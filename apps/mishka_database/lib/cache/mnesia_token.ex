@@ -43,6 +43,15 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
     GenServer.call(__MODULE__, {:delete_all_user_tokens, user_id})
   end
 
+  def delete_all_tokens() do
+    GenServer.call(__MODULE__, {:delete_all_tokens})
+  end
+
+
+  def stop() do
+    GenServer.cast(__MODULE__, :stop)
+  end
+
 
   @impl true
   def init(state) do
@@ -152,6 +161,20 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
   end
 
   @impl true
+  def handle_call({:delete_all_tokens}, _from, state) do
+    Mnesia.transaction(fn ->
+      Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [], [:"$$"]}])
+    end)
+    |> case do
+      {:atomic, []} -> {:reply, %{}, state}
+      {:atomic, data} ->
+        Enum.map(data, fn [id, _user_id, _token, _access_expires_in, _create_time, _os] -> Mnesia.dirty_delete(Token, id) end)
+        {:reply, data, state}
+      _ -> {:reply, %{}, state}
+    end
+  end
+
+  @impl true
   def handle_cast({:push, token_id, user_id, token, exp, create_time, os}, state) do
     fn ->
       Mnesia.write({Token, token_id, user_id, token, exp, create_time, os})
@@ -162,6 +185,11 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
     {:noreply, state}
   end
 
+  @impl true
+  def handle_cast(:stop, stats) do
+    Logger.info("MnesiaToken server was stoped and clean State")
+    {:stop, :normal, stats}
+  end
 
   @impl true
   def handle_info(:reject_all_expired_tokens,  state) do

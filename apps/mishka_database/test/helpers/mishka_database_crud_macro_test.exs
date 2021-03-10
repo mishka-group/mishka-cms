@@ -1,4 +1,4 @@
-defmodule MishkaDatabaseCrudMacroTest do
+defmodule MishkaDatabase.Helpers.CrudMacroTest do
   use ExUnit.Case
   doctest MishkaDatabase
   use MishkaDatabase.CRUD,

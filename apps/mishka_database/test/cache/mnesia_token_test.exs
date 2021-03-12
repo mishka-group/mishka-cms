@@ -13,7 +13,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
   describe "Happy | OTP Mnesia Token DB (▰˘◡˘▰)" do
 
     test "Save a Token" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       # MishkaDatabase.Cache.MnesiaToken.stop()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.exp, test_data.system_time, "Linux")
@@ -22,7 +22,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
 
 
     test "Get code with code" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.exp, test_data.system_time, "Linux")
 
@@ -34,7 +34,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
     end
 
     test "Get token by id" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.exp, test_data.system_time, "Linux")
 
@@ -42,7 +42,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
     end
 
     test "Get all token" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.exp, test_data.system_time, "Linux")
 
@@ -54,7 +54,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
     end
 
     test "Delete token" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.exp, test_data.system_time, "Linux")
 
@@ -67,7 +67,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
     end
 
     test "delete_expierd_token" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.system_time, test_data.exp, "Linux")
 
@@ -80,7 +80,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
 
 
     test "delete_all_user_tokens" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.system_time, test_data.exp, "Linux")
 
@@ -96,7 +96,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
 
 
     test "delete_all_tokens" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.system_time, test_data.exp, "Linux")
       [
@@ -107,7 +107,7 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
     end
 
     test "stop" do
-      MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      delete_all_data()
       test_data = creat_test_data()
       :ok = assert MnesiaToken.save(test_data.token_id, test_data.user_id, test_data.token, test_data.system_time, test_data.exp, "Linux")
       :ok = MnesiaToken.stop()
@@ -119,7 +119,42 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
 
 
   describe "UnHappy | OTP Mnesia Token DB ಠ╭╮ಠ" do
+    test "Get code with code" do
+      delete_all_data()
+      %{} = assert MnesiaToken.get_token_by_user_id(Ecto.UUID.generate)
+    end
 
+    test "Get token by id" do
+      delete_all_data()
+      %{} = assert MnesiaToken.get_token_by_id(Ecto.UUID.generate)
+    end
+
+    test "Get all token" do
+      delete_all_data()
+      %{} = assert MnesiaToken.get_all_token()
+    end
+
+    test "Delete token" do
+      delete_all_data()
+      %{} = assert MnesiaToken.delete_token(Ecto.UUID.generate)
+    end
+
+    test "delete_expierd_token" do
+      delete_all_data()
+      %{} = assert MnesiaToken.delete_expierd_token(Ecto.UUID.generate)
+    end
+
+
+    test "delete_all_user_tokens" do
+      delete_all_data()
+      %{} = MnesiaToken.delete_all_user_tokens(Ecto.UUID.generate)
+    end
+
+
+    test "delete_all_tokens" do
+      delete_all_data()
+      %{} = MnesiaToken.delete_all_tokens()
+    end
   end
 
 
@@ -130,5 +165,15 @@ defmodule MishkaDatabase.Cache.MnesiaTokenTest do
     system_time = System.system_time(:second)
     exp = DateTime.utc_now() |> DateTime.add(3600, :second) |> DateTime.to_unix()
     %{token_id: token_id, user_id: user_id, token: token, system_time: system_time, exp: exp}
+  end
+
+  def delete_all_data() do
+    # waite for repairing mnesia on disk
+    case :mnesia.wait_for_tables([Token], 50) do
+      :ok ->
+        MishkaDatabase.Cache.MnesiaToken.delete_all_tokens()
+      _ ->
+        delete_all_data()
+    end
   end
 end

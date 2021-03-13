@@ -3,6 +3,7 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
   alias :mnesia, as: Mnesia
   require Logger
 
+  @timeout 5000
   @delete_tokens :timer.seconds(360)
   @save_refresh :timer.seconds(10)
 
@@ -18,35 +19,33 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
     Process.send_after(__MODULE__, {:push, token_id, user_id, token, exp, create_time, os}, @save_refresh)
   end
 
-
   def get_token_by_user_id(user_id) do
-    GenServer.call(__MODULE__, {:get_token_by_user_id, user_id})
+    GenServer.call(__MODULE__, {:get_token_by_user_id, user_id}, @timeout)
   end
 
   def get_token_by_id(id) do
-    GenServer.call(__MODULE__, {:get_token_by_id, id})
-  end
-
-  def get_all_token() do
-    GenServer.call(__MODULE__, {:get_all_token})
+    GenServer.call(__MODULE__, {:get_token_by_id, id}, @timeout)
   end
 
   def delete_token(token) do
-    GenServer.call(__MODULE__, {:delete_token, token})
+    GenServer.cast(__MODULE__, {:delete_token, token})
   end
 
   def delete_expierd_token(user_id) do
-    GenServer.call(__MODULE__, {:delete_expierd_token, user_id})
+    GenServer.cast(__MODULE__, {:delete_expierd_token, user_id})
   end
 
   def delete_all_user_tokens(user_id) do
-    GenServer.call(__MODULE__, {:delete_all_user_tokens, user_id})
+    GenServer.cast(__MODULE__, {:delete_all_user_tokens, user_id})
   end
 
   def delete_all_tokens() do
     GenServer.call(__MODULE__, {:delete_all_tokens})
   end
 
+  def get_all_token() do
+    GenServer.call(__MODULE__, {:get_all_token})
+  end
 
   def stop() do
     GenServer.cast(__MODULE__, :stop)
@@ -74,31 +73,25 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
       Mnesia.read({Token, id})
     end
 
-    case Mnesia.transaction(data_to_read) do
+    token_selected = case Mnesia.transaction(data_to_read) do
       {:atomic,[{Token, id, user_id, token, exp, create_time, os}]} ->
 
-        {:reply, %{id: id, user_id: user_id, token: token, access_expires_in: exp, create_time: create_time, os: os}, state}
+        %{
+          id: id,
+          user_id: user_id,
+          token: token,
+          access_expires_in: exp,
+          create_time: create_time,
+          os: os
+        }
 
-      {:atomic, []} ->  {:reply, %{}, state}
-      _ -> {:reply, %{}, state}
+      {:atomic, []} ->  %{}
+      _ -> %{}
     end
+
+    {:reply, token_selected, state}
   end
 
-
-  @impl true
-  def handle_call({:get_token_by_user_id, user_id}, _from, state) do
-    Mnesia.transaction(fn ->
-      Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [{:"==", :"$2", "#{user_id}"}], [:"$$"]}])
-    end)
-    |> case do
-      {:atomic, []} -> {:reply, %{}, state}
-      {:atomic, data} -> {:reply, data, state}
-      _ -> {:reply, %{}, state}
-    end
-  end
-
-
-  @impl true
   def handle_call({:get_all_token}, _from, state) do
     Mnesia.transaction(fn ->
       Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [], [:"$$"]}])
@@ -112,27 +105,62 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
 
 
   @impl true
-  def handle_call({:delete_token, token}, _from, state) do
+  def handle_call({:get_token_by_user_id, user_id}, _from, state) do
+    token_selected = Mnesia.transaction(fn ->
+      Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [{:"==", :"$2", "#{user_id}"}], [:"$$"]}])
+    end)
+    |> case do
+      {:atomic, []} -> %{}
+      {:atomic, data} -> data
+      _ -> %{}
+    end
+
+    {:reply, token_selected, state}
+  end
+
+
+  @impl true
+  def handle_call({:delete_all_tokens}, _from, state) do
+    all_token = Mnesia.transaction(fn ->
+      Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [], [:"$$"]}])
+    end)
+    |> case do
+      {:atomic, []} -> state
+      {:atomic, data} ->
+
+        Enum.map(data, fn [id, _user_id, _token, _access_expires_in, _create_time, _os] ->
+          Mnesia.dirty_delete(Token, id)
+        end)
+
+        state
+      _ -> state
+    end
+
+    {:reply, all_token, state}
+  end
+
+  @impl true
+  def handle_cast({:delete_token, token}, state) do
     Mnesia.transaction(fn ->
       Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [{:"==", :"$3", "#{token}"}], [:"$$"]}])
     end)
     |> case do
-      {:atomic, []} -> {:reply, %{}, state}
+      {:atomic, []} -> {:noreply, state}
       {:atomic, data} ->
         Enum.map(data, fn [id, _user_id, _token, _exp_time, _create_time, _os] -> Mnesia.dirty_delete(Token, id) end)
-        {:reply, data, state}
-      _ -> {:reply, %{}, state}
+        {:noreply, state}
+      _ -> {:noreply, state}
     end
   end
 
 
   @impl true
-  def handle_call({:delete_expierd_token, user_id}, _from, state) do
+  def handle_cast({:delete_expierd_token, user_id}, state) do
     Mnesia.transaction(fn ->
       Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [{:"==", :"$2", "#{user_id}"}], [:"$$"]}])
     end)
     |> case do
-      {:atomic, []} -> {:reply, %{}, state}
+      {:atomic, []} -> {:noreply, state}
       {:atomic, data} ->
 
         Enum.map(data, fn [id, _user_id, _token, access_expires_in, _create_time, _os] ->
@@ -141,36 +169,22 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
           end
         end)
 
-        {:reply, data, state}
-      _ -> {:reply, %{}, state}
+        {:noreply, state}
+      _ -> {:noreply, state}
     end
   end
 
   @impl true
-  def handle_call({:delete_all_user_tokens, user_id}, _from, state) do
+  def handle_cast({:delete_all_user_tokens, user_id}, state) do
     Mnesia.transaction(fn ->
       Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [{:"==", :"$2", "#{user_id}"}], [:"$$"]}])
     end)
     |> case do
-      {:atomic, []} -> {:reply, %{}, state}
+      {:atomic, []} -> {:noreply, state}
       {:atomic, data} ->
         Enum.map(data, fn [id, _user_id, _token, _access_expires_in, _create_time, _os] -> Mnesia.dirty_delete(Token, id) end)
-        {:reply, data, state}
-      _ -> {:reply, %{}, state}
-    end
-  end
-
-  @impl true
-  def handle_call({:delete_all_tokens}, _from, state) do
-    Mnesia.transaction(fn ->
-      Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [], [:"$$"]}])
-    end)
-    |> case do
-      {:atomic, []} -> {:reply, %{}, state}
-      {:atomic, data} ->
-        Enum.map(data, fn [id, _user_id, _token, _access_expires_in, _create_time, _os] -> Mnesia.dirty_delete(Token, id) end)
-        {:reply, data, state}
-      _ -> {:reply, %{}, state}
+        {:noreply, state}
+      _ -> {:noreply, state}
     end
   end
 
@@ -223,7 +237,11 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
     {:noreply, state}
   end
 
-
+  @impl true
+  def terminate(reason, state) do
+    Logger.warn("Reason of Terminate #{inspect(reason)} and State is #{inspect(state)}")
+    # send error to log server
+  end
 
   defp start_token() do
     Mnesia.create_schema([node()])

@@ -1,5 +1,5 @@
 defmodule MishkaDatabase.Helpers.CrudMacroTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest MishkaDatabase
   use MishkaDatabase.CRUD,
                         module: MishkaDatabase.Schema.MishkaUser.User,

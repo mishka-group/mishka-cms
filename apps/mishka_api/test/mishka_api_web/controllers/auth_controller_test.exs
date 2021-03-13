@@ -1,5 +1,5 @@
 defmodule MishkaApiWeb.AuthControllerTest do
-  use MishkaApiWeb.ConnCase
+  use MishkaApiWeb.ConnCase, async: true
 
   setup do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(MishkaDatabase.Repo)

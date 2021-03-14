@@ -1,6 +1,14 @@
 defmodule MishkaUser.Token.PhoenixToken do
   alias MishkaUser.Token.TokenManagemnt
 
+  @type token() :: String.t()
+  @type id() :: String.t()
+  @type user_info() :: map()
+  @type params() :: map()
+  @type result() :: map() | tuple() | atom()
+  @type time() :: integer()
+  @type clime() :: map() | tuple() | struct()
+
 
   @hard_secret_refresh "Test refresh"
   @hard_secret_access "Test access"
@@ -8,6 +16,8 @@ defmodule MishkaUser.Token.PhoenixToken do
 
 
   # create a token with Phoenix token by type
+  @spec create_token(id(), :access | :refresh) :: {:ok, :access | :refresh, token()}
+
   def create_token(id, :access) do
     token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_access, %{id: id, type: "access"}, [key_digest: :sha256])
     # save reresh token on disk db
@@ -22,9 +32,15 @@ defmodule MishkaUser.Token.PhoenixToken do
 
   # add create_token(id, params, :current)
 
+
   def create_refresh_acsses_token(user_info) do
     create_new_refresh_token({:ok, :delete_old_token, %{"id" => user_info.id}})
   end
+
+  @spec refresh_token(token()) ::
+          {:error, :more_device}
+          | {:error, :verify_token, :refresh, :expired | :invalid | :missing | :token_otp_state}
+          | %{access_token: %{clime: clime(), token: token()}, refresh_token: %{clime: clime(), token: token()}}
 
   def refresh_token(token) do
     verify_token(token, :refresh)
@@ -91,6 +107,13 @@ defmodule MishkaUser.Token.PhoenixToken do
     }
   end
 
+
+
+  @spec verify_token(token(), :access | :refresh) ::
+          {:error, :verify_token, :access | :refresh,
+           :expired | :invalid | :missing | :token_otp_state}
+          | {:ok, :verify_token, :access | :refresh, map}
+
   def verify_token(token, :refresh) do
     Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_refresh, token, [max_age: token_expire_time(:refresh).age])
     |> verify_token_condition(:refresh)
@@ -112,7 +135,6 @@ defmodule MishkaUser.Token.PhoenixToken do
   end
 
   defp verify_token_on_state({:ok, :verify_token, type, clime}, token) do
-    IO.inspect(clime)
     case TokenManagemnt.get_token(clime.id, token) do
       nil -> {:error, :verify_token, type, :token_otp_state}
       state ->
@@ -125,6 +147,8 @@ defmodule MishkaUser.Token.PhoenixToken do
 
   defp verify_token_on_state({:error, :verify_token, type, action}, _token), do: {:error, :verify_token, type, action}
 
+
+  @spec save_token(user_info(), id()) :: :ok
 
   def save_token(element, user_id) do
     TokenManagemnt.save(%{
@@ -144,6 +168,11 @@ defmodule MishkaUser.Token.PhoenixToken do
         ]
     }, user_id)
   end
+
+
+  @spec delete_refresh_token(token()) ::
+          {:ok, :delete_refresh_token}
+          | {:error, :delete_refresh_token, :expired | :invalid | :missing | :token_otp_state}
 
   def delete_refresh_token(token) do
     verify_token(token, :refresh)

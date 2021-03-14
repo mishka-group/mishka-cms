@@ -7,6 +7,9 @@ defmodule MishkaUser.Token.TokenManagemnt do
   alias MishkaUser.Token.TokenDynamicSupervisor
   alias MishkaDatabase.Cache.MnesiaToken
 
+  @type params() :: map()
+  @type id() :: String.t()
+  @type token() :: String.t()
 
   ##########################################
   # 1. create handle_info to delete expired token every 24 hours with Registery
@@ -24,6 +27,9 @@ defmodule MishkaUser.Token.TokenManagemnt do
     [%{id: user_id, token_info: []}]
   end
 
+
+  @spec save(params(), id()) :: :ok
+
   def save(element, user_id) do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
@@ -35,6 +41,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  @spec get_all(id()) :: any
   def get_all(user_id) do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
@@ -46,6 +53,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  @spec delete(id()) :: any
   def delete(user_id) do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
@@ -57,6 +65,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  @spec stop(id()) :: :ok
   def stop(user_id) do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
@@ -68,6 +77,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  @spec delete_token(id(), token()) :: any
   def delete_token(user_id, token) do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
@@ -79,6 +89,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  @spec delete_child_token(id(), token()) :: any
   def delete_child_token(user_id, refresh_token) do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
@@ -90,6 +101,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  @spec get_token(id(), token()) :: any
   def get_token(user_id, token) do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
@@ -122,6 +134,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
       data ->
         new_state = create_new_state_to_get_disc_token(data, user_id)
+
         {:noreply, [new_state]}
     end
   end
@@ -232,10 +245,12 @@ defmodule MishkaUser.Token.TokenManagemnt do
     {:noreply, stats}
   end
 
+  @spec schedule_delete_token(atom | pid) :: reference
   def schedule_delete_token(pid) do
     Process.send_after(pid, :schedule_delete_token, @refresh_interval)
   end
 
+  @spec schedule_saving_token_on_disk(atom | pid) :: reference
   def schedule_saving_token_on_disk(pid) do
     Process.send_after(pid, :schedule_saving, @saving_interval)
   end
@@ -247,6 +262,9 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
 
+  @spec count_refresh_token(id()) ::
+          {:error, :count_refresh_token} | {:ok, :count_refresh_token}
+
   def count_refresh_token(user_id) do
     devices = user_id
     |> get_all()
@@ -257,6 +275,8 @@ defmodule MishkaUser.Token.TokenManagemnt do
     if devices <= 5, do: {:ok, :count_refresh_token}, else: {:error, :count_refresh_token}
   end
 
+
+  @spec get_token_info([any]) :: any
   def get_token_info(state) do
     case state do
       [] -> []

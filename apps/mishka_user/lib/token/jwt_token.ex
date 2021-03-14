@@ -5,14 +5,35 @@ defmodule MishkaUser.Token.JWTToken do
   @refresh_token_time 1124000
   @access_token_time 3600
 
+  @type token() :: String.t()
+  @type id() :: String.t()
+  @type user_info() :: map()
+  @type params() :: map()
+  @type result() :: map() | tuple() | atom()
+  @type time() :: integer()
+
+
+  @spec create_token(id(), params(), time(), String.t()) :: {:ok, atom, binary, map}
+
   def create_token(id, params \\ %{}, time, type) when type in ["access", "refresh", "current"] do
     {:ok, token, clime} = encode_and_sign_token(id, params, time, type)
     {:ok, String.to_atom(type), token, clime}
   end
 
+
+
+  @spec encode_and_sign_token(id(), params(), time(), String.t()) :: {:error, any} | {:ok, binary, map}
+
   def encode_and_sign_token(id, params, time, type) do
     Guardian.encode_and_sign(%{id: "#{id}"}, Map.merge(%{some: "claim"}, params), token_type: type, ttl: {time, :seconds})
   end
+
+
+
+  @spec refresh_token(token()) ::
+          {:error, :more_device}
+          | {:ok, :delete_old_token, map}
+          | {:error, :verify_token, :refresh, result()}
 
   def refresh_token(token) do
     case Guardian.refresh(token, ttl: {@refresh_token_time, :seconds}) do
@@ -61,7 +82,13 @@ defmodule MishkaUser.Token.JWTToken do
   defp create_new_refresh_token({:error, error_function, :refresh, action}), do: {:error, error_function, :refresh, action}
 
 
+  @spec get_id_from_climes(id() | maybe_improper_list | map) :: {:ok, %{id: any}}
+
   def get_id_from_climes(climes), do: Guardian.resource_from_claims(climes)
+
+
+  @spec verify_token(token(), atom()) ::
+          {:error, :verify_token, atom(), result()} | {:ok, :verify_token, atom(), map}
 
   def verify_token(token, type) do
     case Guardian.decode_and_verify(token) do
@@ -81,6 +108,8 @@ defmodule MishkaUser.Token.JWTToken do
 
   defp verify_token_on_state({:error, :verify_token, type, action}, _token), do: {:error, :verify_token, type, action}
 
+
+  @spec create_refresh_acsses_token(atom | %{id: any}) :: result()
 
   def create_refresh_acsses_token(user_info) do
     MishkaUser.Token.TokenDynamicSupervisor.start_job([id: user_info.id, type: "token"])
@@ -127,6 +156,8 @@ defmodule MishkaUser.Token.JWTToken do
   end
 
 
+  @spec save_token(user_info(), id()) :: :ok
+
   def save_token(element, user_id) do
     TokenManagemnt.save(%{
       id: element.id,
@@ -148,6 +179,11 @@ defmodule MishkaUser.Token.JWTToken do
 
   defp token_time("access"), do: @access_token_time
   defp token_time("refresh"), do: @refresh_token_time
+
+
+  @spec delete_refresh_token(token()) ::
+          {:ok, :delete_refresh_token}
+          | {:error, :delete_refresh_token, result()}
 
   def delete_refresh_token(token) do
     case refresh_delete_token(token) do

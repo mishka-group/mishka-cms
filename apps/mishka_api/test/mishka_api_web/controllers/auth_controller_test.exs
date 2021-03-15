@@ -1,5 +1,9 @@
 defmodule MishkaApiWeb.AuthControllerTest do
   use MishkaApiWeb.ConnCase, async: true
+  setup_all do
+    start_supervised(MishkaDatabase.Cache.MnesiaToken)
+    :ok
+  end
 
   setup do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(MishkaDatabase.Repo)

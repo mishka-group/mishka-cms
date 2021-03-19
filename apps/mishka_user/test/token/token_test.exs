@@ -4,12 +4,6 @@ defmodule MishkaUserTest.Token.TokenTest do
 
   alias MishkaUser.Token.Token
 
-  # setup_all do
-  #   start_supervised(MishkaDatabase.Cache.MnesiaToken)
-  #   :ok
-  # end
-
-
   describe "Happy | main Token (▰˘◡˘▰)" do
     test "create token" do
       %{

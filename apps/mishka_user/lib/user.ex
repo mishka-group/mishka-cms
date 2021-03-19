@@ -1,6 +1,7 @@
 defmodule MishkaUser.User do
   @moduledoc """
     this module helps us to handle users and connect to users database.
+    this module is tested in MishkaDatabase CRUD macro
   """
   alias MishkaDatabase.Schema.MishkaUser.User
 

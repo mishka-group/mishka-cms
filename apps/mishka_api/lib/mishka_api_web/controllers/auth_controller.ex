@@ -1,7 +1,7 @@
 defmodule MishkaApiWeb.AuthController do
   use MishkaApiWeb, :controller
 
-  @allowed_fields ["full_name", "username", "email", "password", "unconfirmed_email"]
+  @allowed_fields ["full_name", "username", "email", "password", "unconfirmed_email", "identity_provider"]
   @allowed_fields_output ["full_name", "username", "email", "status"]
 
   alias MishkaUser.Token.Token

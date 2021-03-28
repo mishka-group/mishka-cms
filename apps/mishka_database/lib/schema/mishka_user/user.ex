@@ -18,6 +18,8 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
     field :password, :string, virtual: true
     field :unconfirmed_email, :string, null: true
 
+    has_many :identities, MishkaDatabase.Schema.MishkaUser.IdentityProvider, foreign_key: :user_id
+
     timestamps(type: :utc_datetime)
   end
 

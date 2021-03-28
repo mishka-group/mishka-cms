@@ -56,6 +56,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   end
 
   def register({:ok, _action, _error_tag, repo_data}, conn, allowed_fields) do
+    MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
     conn
     |> put_status(200)
     |> json(%{

@@ -14,19 +14,19 @@ defmodule MishkaDatabase.Repo.Migrations.Users do
     end
     create(
       index(:users, [:email],
-        name: :index_on_users_email,
+        name: :index_users_on_email,
         unique: true
       )
     )
     create(
       index(:users, [:unconfirmed_email],
-        name: :index_on_users_verified_email,
+        name: :index_users_on_verified_email,
         unique: true
       )
     )
     create(
       index(:users, [:username],
-        name: :index_on_users_username,
+        name: :index_users_on_username,
         unique: true
       )
     )

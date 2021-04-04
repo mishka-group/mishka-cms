@@ -1,7 +1,6 @@
 defmodule MishkaDatabase.Schema.MishkaUser.User do
   use Ecto.Schema
 
-  # @derive {Jason.Encoder, only: [:full_name, :username, :email, :status]}
 
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -19,6 +18,8 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
     field :unconfirmed_email, :string, null: true
 
     has_many :identities, MishkaDatabase.Schema.MishkaUser.IdentityProvider, foreign_key: :user_id
+    has_many :users_roles, MishkaDatabase.Schema.MishkaUser.UserRole, foreign_key: :user_id, on_delete: :delete_all
+    many_to_many :roles, MishkaDatabase.Schema.MishkaUser.Role, join_through: MishkaDatabase.Schema.MishkaUser.UserRole
 
     timestamps(type: :utc_datetime)
   end
@@ -36,9 +37,9 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
 
 
 
-    |> unique_constraint(:unconfirmed_email, name: :index_on_users_verified_email, message: "this email has already been taken.")
-    |> unique_constraint(:username, name: :index_on_users_username, message: "this username has already been taken.")
-    |> unique_constraint(:email, name: :index_on_users_email, message: "this email has already been taken.")
+    |> unique_constraint(:unconfirmed_email, name: :index_users_on_verified_email, message: "this email has already been taken.")
+    |> unique_constraint(:username, name: :index_users_on_username, message: "this username has already been taken.")
+    |> unique_constraint(:email, name: :index_users_on_email, message: "this email has already been taken.")
     |> hash_password
   end
 

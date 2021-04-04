@@ -6,11 +6,13 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  schema "content_activities" do
+  schema "activities" do
 
-    field :title, :string, size: 200, null: false
-    field :description, :string, null: false
-    field :priority, ContentPriorityEnum, null: false, default: :none
+    field :type, :string, size: 100, null: false
+    field :section, :string, size: 100, null: false
+    field :priority, ContentPriorityEnum, null: false
+    field :status, ActivitiesStatusEnum, null: false
+    field :extra, :map, null: true
 
     # user_id
     # action like {:delete, :edit, etc...}
@@ -20,17 +22,15 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
     timestamps(type: :utc_datetime)
   end
 
-  @all_fields ~w(title description)a
+  @all_fields ~w(type section priority status extra)a
+  @all_required ~w(type section priority status)a
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_fields, message: "can't be blank")
-    |> validate_length(:title, min: 10, max: 200, message: "minimum 10 characters and maximum 200 characters")
-    |> validate_length(:short_description, min: 20, max: 350, message: "minimum 20 characters and maximum 350 characters")
-    |> validate_length(:alias_link, min: 5, max: 200, message: "minimum 5 characters and maximum 200 characters")
-    |> validate_length(:meta_keywords, min: 8, max: 200, message: "minimum 8 characters and maximum 200 characters")
-    |> validate_length(:meta_description, min: 8, max: 164, message: "minimum 8 characters and maximum 164 characters")
+    |> validate_required(@all_required, message: "can't be blank")
+    |> validate_length(:type, max: 100, message: "maximum 100 characters")
+    |> validate_length(:section, max: 100, message: "maximum 100 characters")
   end
 
 end

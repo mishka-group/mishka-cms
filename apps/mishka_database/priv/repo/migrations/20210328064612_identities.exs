@@ -15,14 +15,14 @@ defmodule MishkaDatabase.Repo.Migrations.Identities do
     end
     create(
       index(:identities, [:provider_uid, :identity_provider],
-        name: :index_on_provider_uid,
+        name: :index_identities_on_provider_uid_and_identity_provider,
         unique: true
       )
     )
 
     create(
       index(:identities, [:user_id, :identity_provider],
-        name: :index_on_identity_provider,
+        name: :index_identities_on_user_id_and_identity_provider,
         unique: true
       )
     )

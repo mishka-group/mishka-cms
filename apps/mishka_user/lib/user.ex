@@ -3,6 +3,8 @@ defmodule MishkaUser.User do
     this module helps us to handle users and connect to users database.
     this module is tested in MishkaDatabase CRUD macro
   """
+  import Ecto.Query
+  # alias MishkaDatabase.Schema.MishkaUser.UserRole
   alias MishkaDatabase.Schema.MishkaUser.User
 
   use MishkaDatabase.CRUD,
@@ -126,12 +128,25 @@ defmodule MishkaUser.User do
     end
   end
 
+  # def user_inactive, do
   def user_inactive?(user_status) do
     if user_status == :inactive, do: {:ok, :user_inactive?}, else: {:error, :user_inactive?}
   end
 
   def user_active?(user_status) do
     if user_status == :active, do: {:ok, :user_active?}, else: {:error, :user_active?}
+  end
+
+
+  def permissions(id) do
+    query = from user in User,
+      where: user.id == ^id,
+      join: roles in assoc(user, :roles),
+      join: permissions in assoc(roles, :permissions),
+      select: %{
+        value: permissions.value,
+      }
+    MishkaDatabase.Repo.all(query)
   end
 
 end

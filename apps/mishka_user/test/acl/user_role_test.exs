@@ -81,6 +81,20 @@ defmodule MishkaUserTest.Acl.UserRolTest do
 
       {:ok, :get_record_by_id, :user_role, _record_info} = assert UserRole.show_by_id(user_role_data.id)
     end
+
+    test "get all users role and permissions" do
+      {:ok, :add, :user, user_data} = assert User.create(@right_user_info)
+      {:ok, :add, :role, role_admin} = assert Role.create(%{name: "admin", display_name: "admin"})
+      {:ok, :add, :role, role_shop_editor} = assert Role.create(%{name: "editor", display_name: "editor"})
+
+      {:ok, :add, :permission, _permission_data_one} = assert Permission.create(%{role_id: role_admin.id, value: "Product:#{Ecto.UUID.generate}:edit"})
+      {:ok, :add, :permission, _permission_data_two} = assert Permission.create(%{role_id: role_shop_editor.id, value: "Shop:#{Ecto.UUID.generate}:editor"})
+
+      {:ok, :add, :user_role, _user_role_data} = assert UserRole.create(%{role_id: role_admin.id, user_id: user_data.id})
+      {:ok, :add, :user_role, _user_role_data} = assert UserRole.create(%{role_id: role_shop_editor.id, user_id: user_data.id})
+
+      2 = assert Enum.count(User.permissions(user_data.id))
+    end
   end
 
 

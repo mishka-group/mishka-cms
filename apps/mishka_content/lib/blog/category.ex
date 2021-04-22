@@ -1,12 +1,161 @@
-# menu = [
-#   %{id: 1, title: "menu 1 main", link: "#", sub: nil},
-#   %{id: 2, title: "menu 2 sub menu 1", link: "#", sub: 1},
-#   %{id: 3, title: "menu 3 sub menu 1", link: "#", sub: 1},
-#   %{id: 4, title: "menu 4 main", link: "#", sub: nil},
-#   %{id: 5, title: "menu 5 main", link: "#", sub: nil},
-#   %{id: 6, title: "menu 6 sub menu 4", link: "#", sub: 4},
-# ]
+defmodule MishkaContent.Blog.Category do
 
-# Enum.reject(menu, fn x -> x.sub != nil end) |> Enum.map(fn main_menu ->
-#   Map.merge(main_menu, %{subs: Enum.filter(menu, fn x -> x.sub == main_menu.id end)})
-# end)
+  alias MishkaDatabase.Schema.MishkaContent.Blog.Category
+
+  import Ecto.Query
+  use MishkaDatabase.CRUD,
+          module: Category,
+          error_atom: :category,
+          repo: MishkaDatabase.Repo
+
+  @behaviour MishkaDatabase.CRUD
+
+
+  def create(attrs) do
+    crud_add(attrs)
+  end
+
+  def edit(attrs) do
+    crud_edit(attrs)
+  end
+
+  def delete(id) do
+    crud_delete(id)
+  end
+
+  def show_by_id(id) do
+    crud_get_record(id)
+  end
+
+  def show_by_alias_link(alias_link) do
+    crud_get_by_field("alias_link", alias_link)
+  end
+
+
+  def categories(status) do
+    query = from cat in Category,
+    where: cat.status == ^status,
+    select: %{
+      category_id: cat.id,
+      category_title: cat.title,
+      category_status: cat.status,
+      category_alias_link: cat.alias_link,
+      category_short_description: cat.short_description,
+      category_main_image: cat.main_image,
+    }
+
+    MishkaDatabase.Repo.all(query)
+  end
+
+  def categories() do
+    query = from cat in Category,
+      select: %{
+      category_id: cat.id,
+      category_title: cat.title,
+      category_status: cat.status,
+      category_alias_link: cat.alias_link,
+      category_short_description: cat.short_description,
+      category_main_image: cat.main_image,
+    }
+
+    MishkaDatabase.Repo.all(query)
+  end
+
+  # we should remove repeated block code
+  def posts(:basic_data, id, _page_number, _count, status) do
+    query = from cat in Category,
+      where: cat.id == ^id,
+      where: cat.status == ^status,
+      join: post in assoc(cat, :blog_posts),
+      where: post.status == ^status,
+      select: %{
+        category_id: cat.id,
+        category_title: cat.title,
+        category_status: cat.status,
+        category_alias_link: cat.alias_link,
+        category_short_description: cat.short_description,
+        category_main_image: cat.main_image,
+
+        post_id: post.title,
+        post_short_description: post.short_description,
+        post_main_image: post.main_image,
+        post_status: post.status,
+        post_alias_link: post.alias_link,
+      }
+
+    # add paginate
+    MishkaDatabase.Repo.all(query)
+  end
+
+  def posts(:extra_data, id, _page_number, _count, status) do
+    query = from cat in Category,
+      where: cat.id == ^id,
+      where: cat.status == ^status,
+      join: post in assoc(cat, :blog_posts),
+      where: post.status == ^status,
+      select: %{
+        category_id: cat.id,
+        category_title: cat.title,
+        category_status: cat.status,
+        category_alias_link: cat.alias_link,
+        category_short_description: cat.short_description,
+        category_main_image: cat.main_image,
+
+        post_id: post.title,
+        post_short_description: post.short_description,
+        post_main_image: post.main_image,
+        post_status: post.status,
+        post_alias_link: post.alias_link,
+      }
+
+    # add paginate
+    MishkaDatabase.Repo.all(query)
+  end
+
+  def posts(:basic_data, id, _page_number, _count) do
+    query = from cat in Category,
+      where: cat.id == ^id,
+      join: post in assoc(cat, :blog_posts),
+      select: %{
+        category_id: cat.id,
+        category_title: cat.title,
+        category_status: cat.status,
+        category_alias_link: cat.alias_link,
+        category_short_description: cat.short_description,
+        category_main_image: cat.main_image,
+
+        post_id: post.title,
+        post_short_description: post.short_description,
+        post_main_image: post.main_image,
+        post_status: post.status,
+        post_alias_link: post.alias_link,
+      }
+
+    # add paginate
+    MishkaDatabase.Repo.all(query)
+  end
+
+  def posts(:extra_data, id, _page_number, _count) do
+    query = from cat in Category,
+      where: cat.id == ^id,
+      join: post in assoc(cat, :blog_posts),
+      select: %{
+        category_id: cat.id,
+        category_title: cat.title,
+        category_status: cat.status,
+        category_alias_link: cat.alias_link,
+        category_short_description: cat.short_description,
+        category_main_image: cat.main_image,
+
+        post_id: post.title,
+        post_short_description: post.short_description,
+        post_main_image: post.main_image,
+        post_status: post.status,
+        post_alias_link: post.alias_link,
+      }
+
+    # add paginate
+    MishkaDatabase.Repo.all(query)
+  end
+
+end

@@ -3,8 +3,8 @@ defmodule MishkaUser.User do
     this module helps us to handle users and connect to users database.
     this module is tested in MishkaDatabase CRUD macro
   """
+
   import Ecto.Query
-  # alias MishkaDatabase.Schema.MishkaUser.UserRole
   alias MishkaDatabase.Schema.MishkaUser.User
 
   use MishkaDatabase.CRUD,
@@ -14,7 +14,6 @@ defmodule MishkaUser.User do
 
 
   # MishkaUser.User custom Typespecs
-  # برای درک بهتر و همینطور یکپارچه سازی توسعه نوشته شدند
   @type data_uuid() :: Ecto.UUID.t
   @type record_input() :: map()
   @type error_tag() :: :user
@@ -128,16 +127,18 @@ defmodule MishkaUser.User do
     end
   end
 
-  # def user_inactive, do
-  def user_inactive?(user_status) do
-    if user_status == :inactive, do: {:ok, :user_inactive?}, else: {:error, :user_inactive?}
+
+  @spec active?(atom()) :: {:error, :active?, atom()} | {:ok, :active?, :active | :inactive}
+  def active?(user_status) do
+    user_status
+    |> case do
+      :active -> {:ok, :active?, :active}
+      :inactive -> {:ok, :active?, :inactive}
+      status -> {:error, :active?, status}
+    end
   end
 
-  def user_active?(user_status) do
-    if user_status == :active, do: {:ok, :user_active?}, else: {:error, :user_active?}
-  end
-
-
+  @spec permissions(data_uuid()) :: list()
   def permissions(id) do
     query = from user in User,
       where: user.id == ^id,

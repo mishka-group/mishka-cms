@@ -580,7 +580,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
   def deactive_account({:ok, :get_record_by_id, _user, user_info}, :sent, {conn, code}, allowed_fields_output) do
 
     with [{:ok, :get_user, _code, _email}] <- MishkaDatabase.Cache.RandomCode.get_user(user_info.email, code),
-         {:error, :user_inactive?} <- MishkaUser.User.user_inactive?(user_info.status),
+         {:error, :active?, _status} <- MishkaUser.User.active?(user_info.status),
          {:ok, :edit, _error_tag, repo_data} <- MishkaUser.User.edit(%{id: user_info.id, status: :inactive}) do
 
           RandomCode.delete_code(code, user_info.email)
@@ -635,7 +635,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
           message: "کد غیر فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید."
         })
 
-      {:ok, :user_inactive?} ->
+      {:ok, :active?, :inactive} ->
         conn
         |> put_status(401)
         |> json(%{
@@ -648,7 +648,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
 
   def verify_email({:ok, :get_record_by_id, _user, user_info}, :sent, {conn, code}, allowed_fields_output) do
     with [{:ok, :get_user, _code, _email}] <- MishkaDatabase.Cache.RandomCode.get_user(user_info.email, code),
-         {:error, :user_active?} <- MishkaUser.User.user_active?(user_info.status),
+         {:error, :active?, _status} <- MishkaUser.User.active?(user_info.status),
          {:ok, :edit, _error_tag, repo_data} <- MishkaUser.User.edit(%{id: user_info.id, status: :active, unconfirmed_email: nil}) do
 
           RandomCode.delete_code(code, user_info.email)
@@ -701,7 +701,7 @@ defimpl MishkaApi.ClientAuthProtocol, for: Any do
           message: "کد فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید."
         })
 
-      {:ok, :user_active?} ->
+      {:ok, :active?, :active} ->
         conn
         |> put_status(401)
         |> json(%{

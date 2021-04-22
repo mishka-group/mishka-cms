@@ -6,6 +6,8 @@ defmodule MishkaUser.Acl.UserRole do
           error_atom: :user_role,
           repo: MishkaDatabase.Repo
 
+  @behaviour MishkaDatabase.CRUD
+
   def create(attrs) do
     crud_add(attrs)
   end

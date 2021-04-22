@@ -8,14 +8,13 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
 
   schema "blog_posts" do
 
-    field :full_name, :string, size: 60, null: false
     field :title, :string, size: 200, null: false
     field :short_description, :string, size: 350, null: false
     field :main_image, :string, size: 200, null: false
     field :header_image, :string, size: 200, null: true
     field :description, :string, null: false
-    field :status, ContentStatusEnum, null: false
-    field :priority, ContentPriorityEnum, null: false
+    field :status, ContentStatusEnum, null: false, default: :active
+    field :priority, ContentPriorityEnum, null: false, default: :none
 
 
     field :location, :string, size: 200, null: true
@@ -26,7 +25,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     field :meta_keywords, :string, size: 200, null: true
     field :meta_description, :string, size: 164, null: true
     field :custom_title, :string, size: 200, null: true
-    field :robots, ContentRobotsEnum, null: false
+    field :robots, ContentRobotsEnum, null: false, default: :IndexFollow
 
 
     field :post_visibility, :boolean, null: false, default: true
@@ -53,7 +52,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
 
 
   @all_fields ~w(
-    full_name title short_description main_image header_image description
+    title short_description main_image header_image description
     status priority location unpublish alias_link meta_keywords meta_description
     custom_title robots post_visibility allow_commenting allow_liking allow_printing
     allow_reporting allow_social_sharing allow_bookmarking show_hits show_time
@@ -61,7 +60,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
   )a
 
   @required_fields ~w(
-    full_name title short_description main_image description
+    title short_description main_image description
     status priority alias_link robots post_visibility category_id
   )a
 

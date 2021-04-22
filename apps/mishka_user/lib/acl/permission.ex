@@ -10,6 +10,7 @@ defmodule MishkaUser.Acl.Permission do
           error_atom: :permission,
           repo: MishkaDatabase.Repo
 
+  @behaviour MishkaDatabase.CRUD
 
   def create(attrs) do
     crud_add(attrs)

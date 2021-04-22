@@ -14,7 +14,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Category do
     field :description, :string, null: false
 
 
-    field :status, ContentStatusEnum, null: false, default: :registered
+    field :status, ContentStatusEnum, null: false, default: :active
     field :sub, :binary_id, null: true
 
 
@@ -23,11 +23,11 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Category do
     field :meta_description, :string, size: 164, null: true
     field :custom_title, :string, size: 200, null: true
 
-    field :robots, ContentRobotsEnum, null: false, default: :registered
+    field :robots, ContentRobotsEnum, null: false, default: :IndexFollow
 
 
 
-    field :category_visibility, UserStatusEnum, null: false, default: :registered
+    field :category_visibility, CategoryVisibility, null: false, default: :show
 
 
     field :allow_commenting, :boolean, null: false, default: true

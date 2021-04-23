@@ -32,7 +32,8 @@ defmodule MishkaDatabase.MixProject do
       {:comeonin, "~> 5.3"},
       {:bcrypt_elixir, "~> 2.3"},
       {:ecto_enum, "~> 1.4"},
-      {:jason, "~> 1.2"}
+      {:jason, "~> 1.2"},
+      {:scrivener_ecto, "~> 2.7"}
     ]
   end
 

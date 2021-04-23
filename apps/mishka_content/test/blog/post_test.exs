@@ -65,7 +65,16 @@ defmodule MishkaContentTest.Blog.PostTest do
     end
 
     test "posts of a cteagory" do
-      {:ok, :add, :category, _data} = assert Category.create(@category_info)
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      {:ok, :add, :post, _post_data} = assert Post.create(
+        Map.merge(@post_info, %{"category_id" => category_data.id})
+      )
+
+      {:ok, :add, :post, _post_data} = assert Post.create(
+        Map.merge(@post_info, %{"category_id" => category_data.id, "alias_link" => "test-two-of-post"})
+      )
+
+      2 = assert length(Category.posts(:extra_data, category_data.id, 1, 20).entries)
     end
   end
 
@@ -81,8 +90,8 @@ defmodule MishkaContentTest.Blog.PostTest do
 
 
     test "posts of a cteagory" do
-      # it will be changed by Pginate
-      {:ok, :add, :category, _data} = assert Category.create(@category_info)
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      0 = assert length(Category.posts(:extra_data, category_data.id, 1, 20).entries)
     end
   end
 

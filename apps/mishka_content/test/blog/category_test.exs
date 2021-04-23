@@ -59,12 +59,8 @@ defmodule MishkaContentTest.Blog.CategoryTest do
 
 
     test "category posts" do
-      # it will be changed by Pginate
       {:ok, :add, :category, data} = assert Category.create(@category_info)
-      [] = assert Category.posts(:basic_data, data.id, 1, 10)
-      [] = assert Category.posts(:basic_data, data.id, 1, 10, :active)
-      [] = assert Category.posts(:extra_data, data.id, 1, 10)
-      [] = assert Category.posts(:extra_data, data.id, 1, 10, :active)
+      0 = assert length(Category.posts(:basic_data, data.id, 1, 10).entries)
     end
   end
 

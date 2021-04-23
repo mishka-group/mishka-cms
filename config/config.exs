@@ -9,11 +9,15 @@
 # move said applications out of the umbrella.
 use Mix.Config
 
+config :mishka_api, :auth,
+token_type: :jwt_token
+
+
 config :mishka_database, MishkaDatabase.Repo,
   database: "mishka_database_repo",
-  username: "postgres",
+  username: "mishka_database_repo",
   password: "postgres",
-  hostname: "localhost",
+  hostname: "postgresql",
   pool_size: 10,
   show_sensitive_data_on_connection_error: true
 
@@ -46,6 +50,15 @@ config :mishka_api, MishkaApiWeb.Endpoint,
 
 
 
+config :mishka_user, MishkaUser.Guardian,
+  issuer: "mishka_user",
+  allowed_algos: ["HS256"],
+  secret_key: %{
+  "alg" => "HS256",
+  "k" => "Exe6Qk6YPWWNmOS7rAtXQfPPngruPtEIivDB1nsXwSk",
+  "kty" => "oct",
+  "use" => "sig"
+}
 
 # Configures Elixir's Logger
 config :logger, :console,

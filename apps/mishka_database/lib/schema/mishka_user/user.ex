@@ -21,6 +21,8 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
     has_many :users_roles, MishkaDatabase.Schema.MishkaUser.UserRole, foreign_key: :user_id, on_delete: :delete_all
 
 
+    has_many :comments, MishkaDatabase.Schema.MishkaContent.Comment, foreign_key: :user_id
+
     many_to_many :roles, MishkaDatabase.Schema.MishkaUser.Role, join_through: MishkaDatabase.Schema.MishkaUser.UserRole
 
     timestamps(type: :utc_datetime)

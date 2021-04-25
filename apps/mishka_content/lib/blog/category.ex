@@ -46,7 +46,7 @@ defmodule MishkaContent.Blog.Category do
     |> MishkaDatabase.Repo.all()
   end
 
-  def posts(:basic_data, id, page, page_size, status) do
+  def posts(:basic_data, condition: {id, page, page_size, status}) do
     from(cat in Category,
       where: cat.id == ^id,
       where: cat.status == ^status,
@@ -56,7 +56,7 @@ defmodule MishkaContent.Blog.Category do
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def posts(:extra_data, id, page, page_size, status) do
+  def posts(:extra_data, condition: {id, page, page_size, status}) do
     from(cat in Category,
       where: cat.id == ^id,
       where: cat.status == ^status,
@@ -66,13 +66,13 @@ defmodule MishkaContent.Blog.Category do
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def posts(:basic_data, id, page, page_size) do
+  def posts(:basic_data, condition: {id, page, page_size}) do
     from(cat in Category, where: cat.id == ^id, join: post in assoc(cat, :blog_posts))
     |> fields(:basic_data)
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def posts(:extra_data, id, page, page_size) do
+  def posts(:extra_data, condition: {id, page, page_size}) do
     from(cat in Category, where: cat.id == ^id, join: post in assoc(cat, :blog_posts))
     |> fields(:extra_data)
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)

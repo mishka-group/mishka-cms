@@ -74,8 +74,20 @@ defmodule MishkaContentTest.Blog.PostTest do
         Map.merge(@post_info, %{"category_id" => category_data.id, "alias_link" => "test-two-of-post"})
       )
 
-      2 = assert length(Category.posts(:extra_data, category_data.id, 1, 20).entries)
+      2 = assert length(Category.posts(:extra_data, condition: {category_data.id, 1, 20}).entries)
     end
+
+    test "posts and post priority" do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      {:ok, :add, :post, _post_data} = assert Post.create(
+        Map.merge(@post_info, %{"category_id" => category_data.id})
+      )
+      1 = assert length(Post.posts(condition: {1, 20, nil}).entries)
+      1 = assert length(Post.posts(condition: {1, 20, :active}).entries)
+      1 = assert length(Post.posts_with_priority(condition: {:none, 1, 20, :active}).entries)
+      1 = assert length(Post.posts_with_priority(condition: {:none, 1, 20}).entries)
+    end
+
   end
 
 
@@ -91,7 +103,7 @@ defmodule MishkaContentTest.Blog.PostTest do
 
     test "posts of a cteagory" do
       {:ok, :add, :category, category_data} = assert Category.create(@category_info)
-      0 = assert length(Category.posts(:extra_data, category_data.id, 1, 20).entries)
+      0 = assert length(Category.posts(:extra_data, condition: {category_data.id, 1, 20}).entries)
     end
   end
 

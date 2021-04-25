@@ -8,26 +8,34 @@ defmodule MishkaDatabase.Schema.MishkaContent.Comment do
 
   schema "comments" do
 
-    field :description, :string, null: false
-    field :status, ContentStatusEnum, null: false, default: :active
-    # sub_comment I think just quate the main replay
-    # user_id
-    # type like {:blog, :content_category, :social}
+    field(:description, :string, null: false)
+    field(:status, ContentStatusEnum, null: false)
+    field(:priority, ContentPriorityEnum, null: false)
+    field(:section, CommentSection, null: false)
+    field(:section_id, :binary_id, null: false)
+    field(:sub, :binary_id, null: true)
+
+    belongs_to :users, MishkaDatabase.Schema.MishkaUser.User, foreign_key: :user_id, type: :binary_id
+    has_many :comments_likes, MishkaDatabase.Schema.MishkaContent.CommentLike, foreign_key: :comment_id
 
     timestamps(type: :utc_datetime)
   end
 
-  @all_fields ~w(title description)a
+
+  @all_fields ~w(
+    description status priority sub user_id section_id section
+  )a
+
+  @all_required ~w(
+    description status priority user_id section_id section
+  )a
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_fields, message: "can't be blank")
-    |> validate_length(:title, min: 10, max: 200, message: "minimum 10 characters and maximum 200 characters")
-    |> validate_length(:short_description, min: 20, max: 350, message: "minimum 20 characters and maximum 350 characters")
-    |> validate_length(:alias_link, min: 5, max: 200, message: "minimum 5 characters and maximum 200 characters")
-    |> validate_length(:meta_keywords, min: 8, max: 200, message: "minimum 8 characters and maximum 200 characters")
-    |> validate_length(:meta_description, min: 8, max: 164, message: "minimum 8 characters and maximum 164 characters")
+    |> validate_required(@all_required, message: "can't be blank")
+    |> validate_length(:description, max: 2000, message: "maximum 2000 characters")
+    |> foreign_key_constraint(:users, message: "this comment has already been taken or you can't delete it because there is a dependency")
   end
 
 end

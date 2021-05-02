@@ -6,18 +6,16 @@ defmodule MishkaDatabase.Repo.Migrations.Bookmarks do
       add(:id, :uuid, primary_key: true)
 
       add(:status, :integer, null: false)
-      add(:section, :string, size: 100, null: false)
-      add(:user_id, references(:users, on_delete: :nothing, type: :uuid))
-
-      add(:page_id, :uuid, primary_key: false)
-
+      add(:section, :integer, null: false, null: false)
+      add(:section_id, :uuid, primary_key: false, null: false)
       add(:extra, :map, null: true)
 
+      add(:user_id, references(:users, on_delete: :nothing, type: :uuid))
       timestamps()
     end
     create(
-      index(:bookmarks, [:page_id, :user_id],
-        name: :index_bookmarks_on_page_id_and_user_id,
+      index(:bookmarks, [:section, :section_id, :user_id],
+        name: :index_bookmarks_on_section_and_section_id_and_user_id,
         unique: true
       )
     )

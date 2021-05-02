@@ -12,9 +12,17 @@ defmodule MishkaDatabase.Repo.Migrations.BlogLinks do
       add(:link, :string, size: 350, null: false)
       add(:short_link, :string, size: 350, null: true)
 
+      add(:section_id, :uuid, primary_key: false, null: false)
+
       add(:robots, :integer, null: false)
 
-      add(:post_id, references(:blog_posts, on_delete: :nothing, type: :uuid))
+      timestamps()
     end
+    create(
+      index(:blog_links, [:short_link],
+        name: :index_blog_links_on_short_link,
+        unique: true
+      )
+    )
   end
 end

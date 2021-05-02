@@ -8,29 +8,24 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
 
   schema "activities" do
 
-    field :type, :string, size: 100, null: false
-    field :section, :string, size: 100, null: false
-    field :priority, ContentPriorityEnum, null: false
-    field :status, ActivitiesStatusEnum, null: false
-    field :extra, :map, null: true
-
-    # user_id
-    # action like {:delete, :edit, etc...}
-    # type like {:blog, :content_category, :social, :email}
-    # status like {:error, :info, :warning, :report}
+    field(:type, ActivitiesTypeEnum, null: false)
+    field(:section, ActivitiesSection, null: false, null: false)
+    field(:section_id, :binary_id, primary_key: false, null: true)
+    field(:priority, ContentPriorityEnum, null: false)
+    field(:status, ActivitiesStatusEnum, null: false)
+    field(:action, ActivitiesAction, null: false)
+    field(:extra, :map, null: true)
 
     timestamps(type: :utc_datetime)
   end
 
-  @all_fields ~w(type section priority status extra)a
-  @all_required ~w(type section priority status)a
+  @all_fields ~w(type section section_id priority status action extra)a
+  @all_required ~w(type section priority status action)a
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@all_required, message: "can't be blank")
-    |> validate_length(:type, max: 100, message: "maximum 100 characters")
-    |> validate_length(:section, max: 100, message: "maximum 100 characters")
   end
 
 end

@@ -10,5 +10,11 @@ defmodule MishkaDatabase.Repo.Migrations.BlogAuthors do
 
       timestamps()
     end
+    create(
+      index(:blog_authors, [:post_id, :user_id],
+        name: :index_blog_authors_on_post_id_and_user_id,
+        unique: true
+      )
+    )
   end
 end

@@ -1,0 +1,91 @@
+defmodule MishkaContentTest.Blog.BlogLinkTest do
+  use ExUnit.Case, async: true
+  doctest MishkaDatabase
+  alias MishkaContent.Blog.BlogLink
+  alias MishkaContent.Blog.Category
+  alias MishkaContent.Blog.Post
+
+
+
+  setup do
+    # Explicitly get a connection before each test
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(MishkaDatabase.Repo)
+  end
+
+  @category_info %{
+    "title" => "Test Category",
+    "short_description" => "Test category description",
+    "main_image" => "https://test.com/png.png",
+    "description" => "Test category description",
+    "alias_link" => "test-category-test",
+  }
+
+
+  @post_info %{
+    "title" => "Test Post",
+    "short_description" => "Test post description",
+    "main_image" => "https://test.com/png.png",
+    "description" => "Test post description",
+    "status" => :active,
+    "priority" => :none,
+    "alias_link" => "test-post-test",
+    "robots" => :IndexFollow,
+  }
+
+  @blog_link %{
+    "short_description" => "this is a link",
+    "status" => :active,
+    "type" => :inside,
+    "title" => "this is link title",
+    "link" => "https://test.com/test.json",
+    "short_link" => "#{Ecto.UUID.generate}",
+    "robots" => :IndexFollow
+  }
+
+
+  setup _context do
+    {:ok, :add, :category, category_data} = Category.create(@category_info)
+    post_info = Map.merge(@post_info, %{"category_id" => category_data.id})
+    {:ok, :add, :post, post_info} = Post.create(post_info)
+    {:ok, post_info: post_info}
+  end
+
+  describe "Happy | Comment CRUD DB (▰˘◡˘▰)" do
+    test "create a blog link", context do
+      {:ok, :add, :blog_link, _link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{"section_id" => context.post_info.id})
+      )
+    end
+
+    test "edit a blog link", context do
+      {:ok, :add, :blog_link, link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{"section_id" => context.post_info.id})
+      )
+      {:ok, :edit, :blog_link, _link_info} = assert BlogLink.edit(
+        %{id: link_info.id, robots: :NoIndexNoFollow}
+      )
+    end
+
+    test "delete a blog link", context do
+      {:ok, :add, :blog_link, link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{"section_id" => context.post_info.id})
+      )
+      {:ok, :delete, :blog_link, _link_info} = assert BlogLink.delete(link_info.id)
+    end
+
+    test "links", context do
+      {:ok, :add, :blog_link, link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{"section_id" => context.post_info.id})
+      )
+      1 = assert length(BlogLink.links(link_info.section_id, condition: %{status: link_info.status, type: link_info.type}))
+    end
+
+    test "show by short link", context do
+      {:ok, :add, :blog_link, link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{"section_id" => context.post_info.id})
+      )
+      {:ok, :get_record_by_field, :blog_link, _record_info} = assert BlogLink.show_by_short_link(link_info.short_link)
+    end
+
+  end
+end

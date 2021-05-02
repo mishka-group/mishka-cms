@@ -1,12 +1,11 @@
-defmodule MishkaContent.General.CommentLike do
-
-  alias MishkaDatabase.Schema.MishkaContent.CommentLike
+defmodule MishkaContent.Blog.Like do
+  alias MishkaDatabase.Schema.MishkaContent.BlogLike
 
 
   import Ecto.Query
   use MishkaDatabase.CRUD,
-          module: CommentLike,
-          error_atom: :comment_like,
+          module: BlogLike,
+          error_atom: :post_like,
           repo: MishkaDatabase.Repo
 
   @behaviour MishkaDatabase.CRUD
@@ -27,11 +26,9 @@ defmodule MishkaContent.General.CommentLike do
     crud_get_record(id)
   end
 
-
-  # subquery
   def likes() do
-    from(like in CommentLike,
-    group_by: like.comment_id,
-    select: %{count: count(like.id), comment_id: like.comment_id})
+    from(like in BlogLike,
+    group_by: like.post_id,
+    select: %{count: count(like.id), post_id: like.post_id})
   end
 end

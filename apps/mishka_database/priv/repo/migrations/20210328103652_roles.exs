@@ -8,7 +8,7 @@ defmodule MishkaDatabase.Repo.Migrations.Roles do
 
       add(:name, :string, null: false)
       add(:display_name, :string, null: false)
-      # اگر رول پاک شد  پریمیشن ها هم پاک بشه
+
       timestamps()
     end
     create(

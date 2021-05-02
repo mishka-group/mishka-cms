@@ -1,10 +1,10 @@
 defmodule MishkaContentTest.Blog.CommentTest do
   use ExUnit.Case, async: true
   doctest MishkaDatabase
-  alias MishkaContent.Comments
+  alias MishkaContent.General.Comments
   alias MishkaContent.Blog.Category
   alias MishkaContent.Blog.Post
-  alias MishkaContent.CommentLike
+  alias MishkaContent.General.CommentLike
 
   @right_user_info %{
     "full_name" => "username",
@@ -58,7 +58,7 @@ defmodule MishkaContentTest.Blog.CommentTest do
   end
 
 
-  describe "Happy | Blog Category CRUD DB (▰˘◡˘▰)" do
+  describe "Happy | Comment CRUD DB (▰˘◡˘▰)" do
     test "create a commnt", context do
       {:ok, :add, :comment, _comment_info} = assert Comments.create(
         Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
@@ -164,7 +164,4 @@ defmodule MishkaContentTest.Blog.CommentTest do
     end
   end
 
-  describe "UnHappy | Blog Category CRUD DB ಠ╭╮ಠ" do
-
-  end
 end

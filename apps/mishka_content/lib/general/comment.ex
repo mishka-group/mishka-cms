@@ -1,6 +1,6 @@
-defmodule MishkaContent.Comments do
+defmodule MishkaContent.General.Comments do
   alias MishkaDatabase.Schema.MishkaContent.Comment
-  alias MishkaContent.CommentLike
+  alias MishkaContent.General.CommentLike
 
   import Ecto.Query
   use MishkaDatabase.CRUD,

@@ -3,7 +3,7 @@ defmodule MishkaContentTest.Blog.PostTest do
   doctest MishkaDatabase
   alias MishkaContent.Blog.Category
   alias MishkaContent.Blog.Post
-
+  alias MishkaContent.Blog.Like
 
   setup do
     # Explicitly get a connection before each test
@@ -27,6 +27,15 @@ defmodule MishkaContentTest.Blog.PostTest do
     "priority" => :none,
     "alias_link" => "test-post-test",
     "robots" => :IndexFollow,
+  }
+
+  @right_user_info %{
+    "full_name" => "username",
+    "username" => "usernameuniq_#{Enum.random(100000..999999)}",
+    "email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
+    "password" => "pass1Test",
+    "status" => 1,
+    "unconfirmed_email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
   }
 
   describe "Happy | Blog Category CRUD DB (▰˘◡˘▰)" do
@@ -88,6 +97,26 @@ defmodule MishkaContentTest.Blog.PostTest do
       1 = assert length(Post.posts_with_priority(condition: {:none, 1, 20}).entries)
     end
 
+    test "show post with counted like" do
+      {:ok, :add, :user, user_info} = MishkaUser.User.create(@right_user_info)
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      {:ok, :add, :post, post_data} = assert Post.create(
+        Map.merge(@post_info, %{"category_id" => category_data.id})
+      )
+
+      {:ok, :add, :post_like, _like_info} = assert Like.create(%{
+        "user_id" => user_info.id,
+        "post_id" => post_data.id,
+      })
+
+      {:ok, :add, :blog_author, _author_info} = assert MishkaContent.Blog.Author.create(
+        %{
+          "post_id" => post_data.id,
+          "user_id" => user_info.id
+        }
+      )
+      1 = assert length(Post.post(post_data.id, post_data.status).blog_likes)
+    end
   end
 
 

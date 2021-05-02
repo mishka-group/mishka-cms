@@ -74,12 +74,52 @@ defmodule MishkaContent.Blog.Post do
       category_short_description: cat.short_description,
       category_main_image: cat.main_image,
 
-      post_id: post.title,
+      post_id: post.id,
+      post_title: post.title,
       post_short_description: post.short_description,
       post_main_image: post.main_image,
       post_status: post.status,
       post_alias_link: post.alias_link,
-      post_priority: post.priority
+      post_priority: post.priority,
     }
+  end
+
+  def post(post_id, status) do
+    # when this project has many records as like, I think like counter should be seprated or create a
+    # lazy query instead of this
+    # Post comments were seperated because the comment module is going to be used whole the project not only post
+    from(post in Post,
+    where: post.id == ^post_id and post.status == ^status,
+    join: cat in assoc(post, :blog_categories),
+    where: cat.status == ^status,
+    order_by: [desc: post.inserted_at, desc: post.id],
+    left_join: author in assoc(post, :blog_authors),
+    left_join: like in assoc(post, :blog_likes),
+    left_join: user in assoc(author, :users),
+    preload: [blog_categories: cat, blog_likes: like, blog_authors: {author, users: user}],
+    select: map(post, [
+        :id, :title, :short_description, :main_image, :header_image, :description, :status,
+        :priority, :location, :unpublish, :alias_link, :meta_keywords,
+        :meta_description, :custom_title, :robots, :post_visibility, :allow_commenting,
+        :allow_liking, :allow_printing, :allow_reporting, :allow_social_sharing,
+        :allow_bookmarking, :show_hits, :show_time, :show_authors, :show_category,
+        :show_links, :show_location, :category_id,
+
+        blog_categories: [:id, :title, :short_description, :main_image, :header_image, :description, :status,
+        :sub, :alias_link, :meta_keywords, :meta_description, :custom_title, :robots,
+        :category_visibility, :allow_commenting, :allow_liking, :allow_printing,
+        :allow_reporting, :allow_social_sharing, :allow_subscription,
+        :allow_bookmarking, :allow_notif, :show_hits, :show_time, :show_authors,
+        :show_category, :show_links, :show_location],
+
+        blog_likes: [:id],
+
+        blog_authors: [
+          :id, :user_id, :post_id,
+          users: [:id, :full_name, :username]
+        ]
+      ]
+    ))
+    |> MishkaDatabase.Repo.one()
   end
 end

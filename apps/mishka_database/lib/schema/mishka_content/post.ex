@@ -6,6 +6,17 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
+  @all_fields ~w(
+    title short_description main_image header_image description
+    status priority location unpublish alias_link meta_keywords meta_description
+    custom_title robots post_visibility allow_commenting allow_liking allow_printing
+    allow_reporting allow_social_sharing allow_bookmarking show_hits show_time
+    show_authors show_category show_links show_location category_id
+  )a
+
+
+  alias MishkaDatabase.Schema.MishkaContent.{BlogTag, BlogTagMapper}
+
   schema "blog_posts" do
 
     field :title, :string, size: 200, null: false
@@ -15,28 +26,20 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     field :description, :string, null: false
     field :status, ContentStatusEnum, null: false, default: :active
     field :priority, ContentPriorityEnum, null: false, default: :none
-
-
     field :location, :string, size: 200, null: true
     field :unpublish, :utc_datetime, null: true
-
-
     field :alias_link, :string, size: 200, null: false
     field :meta_keywords, :string, size: 200, null: true
     field :meta_description, :string, size: 164, null: true
     field :custom_title, :string, size: 200, null: true
     field :robots, ContentRobotsEnum, null: false, default: :IndexFollow
-
-
     field :post_visibility, :boolean, null: false, default: true
-
     field :allow_commenting, :boolean, null: true
     field :allow_liking, :boolean, null: true
     field :allow_printing, :boolean, null: true
     field :allow_reporting, :boolean, null: true
     field :allow_social_sharing, :boolean, null: true
     field :allow_bookmarking, :boolean, null: true
-
     field :show_hits, :boolean, null: true
     field :show_time, :boolean, null: true
     field :show_authors, :boolean, null: true
@@ -44,20 +47,17 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     field :show_links, :boolean, null: true
     field :show_location, :boolean, null: true
 
-
     belongs_to :blog_categories, MishkaDatabase.Schema.MishkaContent.Blog.Category, foreign_key: :category_id, type: :binary_id
+    has_many :blog_authors, MishkaDatabase.Schema.MishkaContent.BlogAuthor, foreign_key: :post_id
+
+    has_many :blog_likes, MishkaDatabase.Schema.MishkaContent.BlogLike, foreign_key: :post_id
+    has_many :blog_tags_mappers, MishkaDatabase.Schema.MishkaContent.BlogTagMapper, foreign_key: :post_id, on_delete: :delete_all
+
+
+    many_to_many :blog_tags, BlogTag, join_through: BlogTagMapper
 
     timestamps(type: :utc_datetime)
   end
-
-
-  @all_fields ~w(
-    title short_description main_image header_image description
-    status priority location unpublish alias_link meta_keywords meta_description
-    custom_title robots post_visibility allow_commenting allow_liking allow_printing
-    allow_reporting allow_social_sharing allow_bookmarking show_hits show_time
-    show_authors show_category show_links show_location category_id
-  )a
 
   @required_fields ~w(
     title short_description main_image description

@@ -10,5 +10,11 @@ defmodule MishkaDatabase.Repo.Migrations.BlogTagsMappers do
 
       timestamps()
     end
+    create(
+      index(:blog_tags_mappers, [:post_id, :tag_id],
+        name: :index_blog_tags_mappers_on_post_id_and_tag_id,
+        unique: true
+      )
+    )
   end
 end

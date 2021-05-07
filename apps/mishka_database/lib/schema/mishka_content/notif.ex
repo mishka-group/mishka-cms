@@ -1,4 +1,4 @@
-defmodule MishkaDatabase.Schema.MishkaContent.Notifs do
+defmodule MishkaDatabase.Schema.MishkaContent.Notif do
   use Ecto.Schema
 
 

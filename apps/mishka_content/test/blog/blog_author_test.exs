@@ -49,7 +49,7 @@ defmodule MishkaContentTest.Blog.BlogAuthorTest do
     {:ok, post_info: post_info, user_info: user_info}
   end
 
-  describe "Happy | Comment CRUD DB (▰˘◡˘▰)" do
+  describe "Happy | Author CRUD DB (▰˘◡˘▰)" do
     test "create an author for a post", context do
       {:ok, :add, :blog_author, _author_info} = assert Author.create(
         %{
@@ -58,7 +58,6 @@ defmodule MishkaContentTest.Blog.BlogAuthorTest do
         }
       )
     end
-
 
     test "edit an author for a post", context do
       {:ok, :add, :blog_author, author_info} = assert Author.create(
@@ -75,8 +74,6 @@ defmodule MishkaContentTest.Blog.BlogAuthorTest do
       })
 
       {:ok, :add, :user, user_info} = MishkaUser.User.create(new_user)
-
-
       {:ok, :edit, :blog_author, _author_info} = assert Author.edit(
         %{
           id: author_info.id,
@@ -104,8 +101,6 @@ defmodule MishkaContentTest.Blog.BlogAuthorTest do
         }
       )
       {:ok, :get_record_by_id, :blog_author, _author_info} = assert Author.show_by_id(author_info.id)
-
-
     end
 
     test "show Authors of a post", context do
@@ -123,8 +118,6 @@ defmodule MishkaContentTest.Blog.BlogAuthorTest do
       })
 
       {:ok, :add, :user, user_info} = MishkaUser.User.create(new_user)
-
-
       {:ok, :add, :blog_author, _author_info} = assert Author.create(
         %{
           "post_id" => context.post_info.id,
@@ -136,5 +129,18 @@ defmodule MishkaContentTest.Blog.BlogAuthorTest do
     end
   end
 
+  describe "UnHappy | Author CRUD DB ಠ╭╮ಠ" do
+    test "show Authors of a post", context do
+      [] = assert Post.post(context.post_info.id, context.post_info.status).blog_authors
+    end
 
+    test "create an author for a post", context do
+      {:error, :add, :blog_author, _author_info} = assert Author.create(
+        %{
+          "post_id" => Ecto.UUID.generate,
+          "user_id" => context.user_info.id
+        }
+      )
+    end
+  end
 end

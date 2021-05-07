@@ -1,4 +1,4 @@
-defmodule MishkaContentTest.Blog.CommentTest do
+defmodule MishkaContentTest.CommentTest do
   use ExUnit.Case, async: true
   doctest MishkaDatabase
   alias MishkaContent.General.Comments
@@ -161,6 +161,29 @@ defmodule MishkaContentTest.Blog.CommentTest do
           section: :blog_post, paginate: {1, 20}
         }
       ).entries)
+    end
+  end
+
+  describe "UnHappy | Comment CRUD DB ಠ╭╮ಠ" do
+    test "get comment with condition: {section_id, section, priority, status}", context do
+      0 = assert length(Comments.comments(context.user_info.id,
+        condition: %{
+          section: :blog_post, paginate: {1, 20}}).entries)
+
+      0 = assert length(Comments.comments(Ecto.UUID.generate,
+        condition: %{
+          section: :blog_post, paginate: {1, 20}, status: :active}).entries)
+
+      0 = assert length(Comments.comments(Ecto.UUID.generate,
+      condition: %{
+        section: :blog_post, priority: :none, paginate: {1, 20}, status: :active
+      }).entries)
+    end
+
+    test "create a commnt", context do
+      {:error, :add, :comment, _comment_info} = assert Comments.create(
+        %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
+      )
     end
   end
 

@@ -47,7 +47,6 @@ defmodule MishkaUserTest.Token.TokenTest do
 
       {:ok, :verify_token, _action, _map} = assert Token.verify_access_token(access_token.token, :phoenix_token)
 
-
       %{
         access_token: access_jwt_token,
         refresh_token: _refresh_token
@@ -77,7 +76,6 @@ defmodule MishkaUserTest.Token.TokenTest do
       for _item <- Enum.shuffle(1..10) do
         Token.create_token(%{id: id}, :phoenix_token)
       end
-
       {:error, :more_device} = assert Token.create_token(%{id: id}, :phoenix_token)
     end
 
@@ -91,18 +89,11 @@ defmodule MishkaUserTest.Token.TokenTest do
       end)
       |> List.first()
 
-
-
-
       user_token.refresh_token.token
       |> Token.refresh_token(:phoenix_token)
 
-
       clime = user_token.refresh_token.clime
-
-
       {:error, :more_device} = assert Token.create_token(%{id: clime["id"]}, :phoenix_token)
-
     end
 
     test "verify access token" do
@@ -114,8 +105,5 @@ defmodule MishkaUserTest.Token.TokenTest do
       {:error, :delete_refresh_token, _result} = assert Token.delete_token("token", :phoenix_token)
       {:error, :delete_refresh_token, _result} = assert Token.delete_token("token", :jwt_token)
     end
-
   end
-
-
 end

@@ -1,4 +1,4 @@
-defmodule MishkaContentTest.Blog.CommentLikeTest do
+defmodule MishkaContentTest.CommentLikeTest do
 
   use ExUnit.Case, async: true
   doctest MishkaDatabase
@@ -62,14 +62,14 @@ defmodule MishkaContentTest.Blog.CommentLikeTest do
   end
 
 
-  describe "Happy | Blog Category CRUD DB (▰˘◡˘▰)" do
-    test "create a comment", context do
+  describe "Happy | CommentLike CRUD DB (▰˘◡˘▰)" do
+    test "create a comment like", context do
       {:ok, :add, :comment_like, _comment_info} = assert CommentLike.create(
         %{"user_id" => context.user_info.id, "comment_id" => context.comment_info.id}
       )
     end
 
-    test "edit a comment", context do
+    test "edit a comment like", context do
       {:ok, :add, :comment_like, comment_info} = assert CommentLike.create(
         %{"user_id" => context.user_info.id, "comment_id" => context.comment_info.id}
       )
@@ -78,7 +78,7 @@ defmodule MishkaContentTest.Blog.CommentLikeTest do
       )
     end
 
-    test "delete a comment", context do
+    test "delete a comment like", context do
       {:ok, :add, :comment_like, comment_like_info} = assert CommentLike.create(
         %{"user_id" => context.user_info.id, "comment_id" => context.comment_info.id}
       )
@@ -118,7 +118,21 @@ defmodule MishkaContentTest.Blog.CommentLikeTest do
 
     true = assert Enum.any?(query, fn x -> x.like.count == 2 end)
     end
-
   end
 
+  describe "UnHappy | CommentLike CRUD DB ಠ╭╮ಠ" do
+    test "likes", _context do
+      [] = assert Comments.comments(Ecto.UUID.generate,
+        condition: %{
+          section: :blog_post, priority: :none, paginate: {1, 20}, status: :active
+        }
+      ).entries
+    end
+
+    test "create a comment like", context do
+      {:error, :add, :comment_like, _comment_info} = assert CommentLike.create(
+        %{"user_id" => context.user_info.id}
+      )
+    end
+  end
 end

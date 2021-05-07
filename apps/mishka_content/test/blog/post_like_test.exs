@@ -50,7 +50,7 @@ defmodule MishkaContentTest.Blog.BlogLikeTest do
   end
 
 
-  describe "Happy | Comment CRUD DB (▰˘◡˘▰)" do
+  describe "Happy | Like CRUD DB (▰˘◡˘▰)" do
     test "create a like post", context do
       {:ok, :add, :post_like, _like_info} = assert Like.create(%{
         "user_id" => context.user_info.id,
@@ -77,7 +77,7 @@ defmodule MishkaContentTest.Blog.BlogLikeTest do
     end
   end
 
-  describe "UnHappy |Comment CRUD DB ಠ╭╮ಠ" do
+  describe "UnHappy | Like CRUD DB ಠ╭╮ಠ" do
     test "create a post like", context do
       {:ok, :add, :post_like, _like_info} = assert Like.create(%{
         "user_id" => context.user_info.id,

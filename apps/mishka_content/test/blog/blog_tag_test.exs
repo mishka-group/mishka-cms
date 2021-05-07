@@ -50,7 +50,7 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
     {:ok, post_info: post_info, category_info: category_data}
   end
 
-  describe "Happy | Comment CRUD DB (▰˘◡˘▰)" do
+  describe "Happy | Blog Tag CRUD DB (▰˘◡˘▰)" do
     test "create a tag", _context do
       {:ok, :add, :blog_tag, _tag_info} = assert Tag.create(@tag_info)
     end
@@ -102,6 +102,17 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
 
       5 = assert length(Tag.post_tags(context.post_info.id))
     end
+  end
 
+  describe "UnHappy | Blog Tag CRUD DB ಠ╭╮ಠ" do
+    test "link some tag to a post", context do
+      0 = assert length(Tag.post_tags(context.post_info.id))
+      0 = assert length(Tag.tag_posts(Ecto.UUID.generate, condition: %{paginate: {1, 20}}).entries)
+      {:error, :add, :blog_tag_mapper, _tag_info} = assert TagMapper.create(%{post_id: Ecto.UUID.generate})
+    end
+
+    test "create a tag", _context do
+      {:error, :add, :blog_tag, _tag_info} = assert Tag.create(%{title: "tag1"})
+    end
   end
 end

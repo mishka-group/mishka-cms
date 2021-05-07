@@ -50,7 +50,7 @@ defmodule MishkaContentTest.Blog.BlogLinkTest do
     {:ok, post_info: post_info}
   end
 
-  describe "Happy | Comment CRUD DB (▰˘◡˘▰)" do
+  describe "Happy | BlogLink CRUD DB (▰˘◡˘▰)" do
     test "create a blog link", context do
       {:ok, :add, :blog_link, _link_info} = assert BlogLink.create(
         Map.merge(@blog_link, %{"section_id" => context.post_info.id})
@@ -87,5 +87,15 @@ defmodule MishkaContentTest.Blog.BlogLinkTest do
       {:ok, :get_record_by_field, :blog_link, _record_info} = assert BlogLink.show_by_short_link(link_info.short_link)
     end
 
+  end
+
+  describe "UnHappy | BlogLink CRUD DB ಠ╭╮ಠ" do
+    test "links", _context do
+      0 = assert length(BlogLink.links(Ecto.UUID.generate, condition: %{status: :active, type: :inside}))
+    end
+
+    test "show by short link", _context do
+      {:error, :get_record_by_field, :blog_link} = assert BlogLink.show_by_short_link(Ecto.UUID.generate)
+    end
   end
 end

@@ -1,4 +1,4 @@
-defmodule MishkaDatabase.Schema.MishkaContent.Bookmarks do
+defmodule MishkaDatabase.Schema.MishkaContent.Bookmark do
   use Ecto.Schema
 
 

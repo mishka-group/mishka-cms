@@ -38,7 +38,7 @@ defmodule MishkaContentTest.Blog.PostTest do
     "unconfirmed_email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
   }
 
-  describe "Happy | Blog Category CRUD DB (▰˘◡˘▰)" do
+  describe "Happy | Blog Post CRUD DB (▰˘◡˘▰)" do
     test "create a post" do
       {:ok, :add, :category, category_data} = assert Category.create(@category_info)
       post_info = Map.merge(@post_info, %{"category_id" => category_data.id})
@@ -120,7 +120,7 @@ defmodule MishkaContentTest.Blog.PostTest do
   end
 
 
-  describe "UnHappy | Blog Category CRUD DB ಠ╭╮ಠ" do
+  describe "UnHappy | Blog Post CRUD DB ಠ╭╮ಠ" do
     test "create a post" do
       {:ok, :add, :category, category_data} = assert Category.create(@category_info)
       post_not_right =

@@ -70,15 +70,15 @@ defmodule MishkaContentTest.NotifTest do
         Map.merge(@notif_info, %{user_id: context.user_info.id}
       ))
 
-      1 = assert length Notif.notifs(notif_info.user_id, condition: %{paginate: {1, 10}}).entries
-      1 = assert length Notif.notifs(condition: %{paginate: {1, 10}}).entries
+      1 = assert length Notif.notifs(conditions: {1, 10}, filters: %{user_id: notif_info.user_id}).entries
+      1 = assert length Notif.notifs(conditions: {1, 10}, filters: %{}).entries
     end
   end
 
   describe "UnHappy | Notif CRUD DB ಠ╭╮ಠ" do
-    test "show user notifs", context do
-      0 = assert length Notif.notifs(context.user_info.id, condition: %{paginate: {1, 10}}).entries
-      0 = assert length Notif.notifs(condition: %{paginate: {1, 10}}).entries
+    test "show user notifs", _context do
+      0 = assert length Notif.notifs(conditions: {1, 10}, filters: %{user_id: Ecto.UUID.generate}).entries
+      0 = assert length Notif.notifs(conditions: {1, 10}, filters: %{}).entries
     end
 
     test "create a notif", context do

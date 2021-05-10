@@ -1,4 +1,4 @@
-defmodule MishkaContent.General.Comments do
+defmodule MishkaContent.General.Comment do
   alias MishkaDatabase.Schema.MishkaContent.Comment
   alias MishkaContent.General.CommentLike
 
@@ -12,6 +12,10 @@ defmodule MishkaContent.General.Comments do
 
   def create(attrs) do
     crud_add(attrs)
+  end
+
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
   end
 
   def edit(attrs) do
@@ -30,98 +34,21 @@ defmodule MishkaContent.General.Comments do
     crud_get_by_field("user_id", user_id)
   end
 
-  def comments(section_id, condition: %{priority: priority, paginate: {page, page_size}, status: status}) do
-    from(com in Comment,
-    where: com.section_id == ^section_id and com.priority == ^priority,
-    where: com.status == ^status,
-    join: user in assoc(com, :users))
+  def comments(conditions: {page, page_size}, filters: filters) do
+    from(com in Comment) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def comments(section_id, condition: %{priority: priority, paginate: {page, page_size}}) do
-    from(com in Comment,
-    where: com.section_id == ^section_id and com.priority == ^priority,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from bk in query, where: field(bk, ^key) == ^value
+    end)
   end
-
-  def comments(section_id, condition: %{section: section, priority: priority, paginate: {page, page_size}, status: status}) do
-    from(com in Comment,
-    where: com.section_id == ^section_id,
-    where: com.section == ^section,
-    where: com.priority == ^priority,
-    where: com.status == ^status,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def comments(section_id, condition: %{section: section, paginate: {page, page_size}, status: status}) do
-    from(com in Comment,
-    where: com.section_id == ^section_id,
-    where: com.section == ^section,
-    where: com.status == ^status,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def comments(section_id, condition: %{section: section, paginate: {page, page_size}}) do
-    from(com in Comment,
-    where: com.section_id == ^section_id,
-    where: com.section == ^section,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def comments(section_id, condition: %{section: section, priority: priority, paginate: {page, page_size}}) do
-    from(com in Comment,
-    where: com.section_id == ^section_id,
-    where: com.section == ^section,
-    where: com.priority == ^priority,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def comments(condition: %{priority: priority, paginate: {page, page_size}, status: status}) do
-    from(com in Comment,
-    where: com.priority == ^priority,
-    where: com.status == ^status,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def comments(condition: %{priority: priority, paginate: {page, page_size}}) do
-    from(com in Comment,
-    where: com.priority == ^priority,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def comments(condition: %{status: status, paginate: {page, page_size}}) do
-    from(com in Comment,
-    where: com.status == ^status,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def comments(condition: %{paginate: {page, page_size}}) do
-    from(com in Comment,
-    join: user in assoc(com, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
 
   defp fields(query) do
-    from [com, user] in query,
+    from [com] in query,
+    join: user in assoc(com, :users),
     order_by: [desc: com.inserted_at, desc: com.id],
     left_join: like in subquery(CommentLike.likes()),
     on: com.id == like.comment_id,

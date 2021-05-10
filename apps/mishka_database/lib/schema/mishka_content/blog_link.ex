@@ -35,7 +35,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@all_required, message: "can't be blank")
-    |> unique_constraint(:short_link, name: :index_blog_links_on_short_link, message: "this post alias link has already been taken.")
+    |> unique_constraint(:short_link, name: :index_blog_links_on_short_link, message: "this short link has already been taken.")
   end
 
 end

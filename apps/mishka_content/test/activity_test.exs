@@ -69,13 +69,14 @@ defmodule MishkaContentTest.ActivityTest do
 
     test "activities", context do
       {:ok, :add, :activity, _activity_info} = assert Activity.create(Map.merge(@activity_info, %{section_id: context.post_info.id}))
-      1 = assert length Activity.activities(condition: %{paginate: {1, 10}}).entries
+      1 = assert length Activity.activities(conditions: {1, 10}, filters: %{}).entries
+      1 = assert length Activity.activities(conditions: {1, 10}, filters: %{type: :section, action: :create}).entries
     end
   end
 
   describe "UnHappy | Activity CRUD DB ಠ╭╮ಠ" do
     test "activities", _context do
-      0 = assert length Activity.activities(condition: %{paginate: {1, 10}}).entries
+      0 = assert length Activity.activities(conditions: {1, 10}, filters: %{type: :section, action: :create}).entries
     end
 
     test "create a activity", context do

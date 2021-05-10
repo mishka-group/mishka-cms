@@ -68,15 +68,18 @@ defmodule MishkaContentTest.BookmarkTest do
         Map.merge(@bookmark_info, %{user_id: context.user_info.id}
       ))
 
-      1 = assert length Bookmark.bookmarks(bookmark_info.user_id, condition: %{paginate: {1, 10}}).entries
-      1 = assert length Bookmark.bookmarks(condition: %{paginate: {1, 10}}).entries
+
+      1 = assert length Bookmark.bookmarks(conditions: {1, 10}, filters: %{user_id: bookmark_info.user_id}).entries
+      1 = assert length Bookmark.bookmarks(conditions: {1, 10}, filters: %{}).entries
+      1 = assert length Bookmark.bookmarks(conditions: {1, 10}, filters: %{user_id: bookmark_info.user_id, status: :active}).entries
+
     end
   end
 
   describe "UnHappy | Bookmark CRUD DB ಠ╭╮ಠ" do
     test "show user Bookmark", context do
-      0 = assert length Bookmark.bookmarks(context.user_info.id, condition: %{paginate: {1, 10}}).entries
-      0 = assert length Bookmark.bookmarks(condition: %{paginate: {1, 10}}).entries
+      0 = assert length Bookmark.bookmarks(conditions: {1, 10}, filters: %{user_id: context.user_info.id}).entries
+      0 = assert length Bookmark.bookmarks(conditions: {1, 10}, filters: %{}).entries
     end
 
     test "create a bookmark", context do

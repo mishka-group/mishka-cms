@@ -27,6 +27,19 @@ defmodule MishkaContent.Blog.Author do
     crud_get_record(id)
   end
 
+  def authors(post_id) do
+    from(author in BlogAuthor,
+    where: author.post_id == ^post_id,
+    join: user in assoc(author, :users),
+    select: %{
+      id: author.id,
+      post_id: author.post_id,
+      user_id: user.id,
+      user_full_name: user.full_name
+    })
+    |> MishkaDatabase.Repo.all()
+  end
+
   def authors() do
     from(author in BlogAuthor,
     join: user in assoc(author, :users),

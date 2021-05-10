@@ -14,8 +14,16 @@ defmodule MishkaContent.Blog.BlogLink do
     crud_add(attrs)
   end
 
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
+  end
+
   def edit(attrs) do
     crud_edit(attrs)
+  end
+
+  def edit(attrs, allowed_fields) do
+    crud_edit(attrs, allowed_fields)
   end
 
   def delete(id) do
@@ -30,42 +38,22 @@ defmodule MishkaContent.Blog.BlogLink do
     crud_get_by_field("short_link", short_link)
   end
 
-  def links(section_id, condition: %{status: status, type: type}) do
-    from(link in BlogLink,
-    where: link.section_id == ^section_id,
-    where: link.status == ^status,
-    where: link.type == ^type)
+  def links(conditions: {page, page_size}, filters: filters) do
+    from(link in BlogLink) |> convert_filters_to_where(filters)
+    |> fields()
+    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  end
+
+  def links(filters: filters) do
+    from(link in BlogLink) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.all()
   end
 
-  def links(section_id, condition: %{status: status}) do
-    from(link in BlogLink,
-    where: link.section_id == ^section_id,
-    where: link.status == ^status)
-    |> fields()
-    |> MishkaDatabase.Repo.all()
-  end
-
-  def links(section_id, condition: %{type: type}) do
-    from(link in BlogLink,
-    where: link.section_id == ^section_id,
-    where: link.type == ^type)
-    |> fields()
-    |> MishkaDatabase.Repo.all()
-  end
-
-  def links(section_id) do
-    from(link in BlogLink,
-    where: link.section_id == ^section_id)
-    |> fields()
-    |> MishkaDatabase.Repo.all()
-  end
-
-  def links() do
-    from(link in BlogLink)
-    |> fields()
-    |> MishkaDatabase.Repo.all()
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from link in query, where: field(link, ^key) == ^value
+    end)
   end
 
   defp fields(query) do

@@ -1,7 +1,7 @@
 defmodule MishkaContentTest.CommentTest do
   use ExUnit.Case, async: true
   doctest MishkaDatabase
-  alias MishkaContent.General.Comments
+  alias MishkaContent.General.Comment
   alias MishkaContent.Blog.Category
   alias MishkaContent.Blog.Post
   alias MishkaContent.General.CommentLike
@@ -60,67 +60,45 @@ defmodule MishkaContentTest.CommentTest do
 
   describe "Happy | Comment CRUD DB (▰˘◡˘▰)" do
     test "create a commnt", context do
-      {:ok, :add, :comment, _comment_info} = assert Comments.create(
+      {:ok, :add, :comment, _comment_info} = assert Comment.create(
         Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
       ))
     end
 
     test "edit a comment", context do
-      {:ok, :add, :comment, comment_info} = assert Comments.create(
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
         Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
       ))
-      {:ok, :edit, :comment, _comment_edit_info} = assert Comments.edit(%{id: comment_info.id, description: "this is a Edit test comment we need"})
+      {:ok, :edit, :comment, _comment_edit_info} = assert Comment.edit(%{id: comment_info.id, description: "this is a Edit test comment we need"})
     end
 
     test "delete a comment", context do
-      {:ok, :add, :comment, comment_info} = assert Comments.create(
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
         Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
       ))
-      {:ok, :delete, :comment, _comment_delete_info} = assert Comments.delete(comment_info.id)
+      {:ok, :delete, :comment, _comment_delete_info} = assert Comment.delete(comment_info.id)
     end
 
     test "show comment by id and user id", context do
-      {:ok, :add, :comment, comment_info} = assert Comments.create(
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
         Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
       ))
-      {:ok, :get_record_by_id, :comment, _comment_id} = assert Comments.show_by_id(comment_info.id)
-      {:ok, :get_record_by_field, :comment, _comment_user_id} = assert Comments.show_by_user_id(comment_info.user_id)
+      {:ok, :get_record_by_id, :comment, _comment_id} = assert Comment.show_by_id(comment_info.id)
+      {:ok, :get_record_by_field, :comment, _comment_user_id} = assert Comment.show_by_user_id(comment_info.user_id)
     end
 
     test "get comment with condition: {section_id, priority, status}", context do
-      {:ok, :add, :comment, comment_info} = assert Comments.create(
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
         Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
       ))
-      1 = assert length(
-        Comments.comments(comment_info.section_id, condition: %{priority: :none, paginate: {1, 20}, status: :active}).entries
-      )
-      1 = assert length(
-        Comments.comments(comment_info.section_id, condition: %{priority: :none, paginate: {1, 20}}).entries
-      )
+
+      1 = assert length(Comment.comments(conditions: {1, 20}, filters: %{priority: :none, status: :active}).entries)
+      1 = assert length(Comment.comments(conditions: {1, 20}, filters: %{id: comment_info.id}).entries)
     end
 
-    test "get comment with condition: {priority, status}", context do
-      {:ok, :add, :comment, _comment_info} = assert Comments.create(
-        Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
-      ))
-      1 = assert length(
-        Comments.comments(condition: %{priority: :none, paginate: {1, 20}, status: :active}).entries
-      )
-      1 = assert length(
-        Comments.comments(condition: %{priority: :none, paginate: {1, 20}}).entries
-      )
-
-      1 = assert length(
-        Comments.comments(condition: %{status: :active, paginate: {1, 20}}).entries
-      )
-
-      1 = assert length(
-        Comments.comments(condition: %{paginate: {1, 20}}).entries
-      )
-    end
 
     test "get comment with condition: {section_id, section, priority, status}", context do
-      {:ok, :add, :comment, comment_info} = assert Comments.create(
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
         Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
       ))
 
@@ -132,7 +110,7 @@ defmodule MishkaContentTest.CommentTest do
         }))
 
 
-      {:ok, :add, :comment, comment_2_info} = assert Comments.create(
+      {:ok, :add, :comment, comment_2_info} = assert Comment.create(
         Map.merge(@comment_info, %{"description" => "test 2", "section_id" => context.post_info.id, "user_id" => user_info_2.id}
       ))
 
@@ -141,47 +119,18 @@ defmodule MishkaContentTest.CommentTest do
       CommentLike.create(%{user_id: user_info_2.id, comment_id: comment_2_info.id})
       CommentLike.create(%{user_id: user_info_2.id, comment_id: comment_info.id})
 
+      2 = assert length Comment.comments(conditions: {1, 20}, filters: %{priority: comment_info.priority, status: :active, section: :blog_post}).entries
 
-
-      2 = assert length(Comments.comments(comment_info.section_id,
-        condition: %{
-          section: :blog_post, priority: comment_info.priority, paginate: {1, 20}, status: comment_info.status
-        }
-      ).entries)
-
-
-      2 = assert length(Comments.comments(comment_info.section_id,
-        condition: %{
-          section: :blog_post, paginate: {1, 20}, status: comment_info.status
-        }
-      ).entries)
-
-      2 = assert length(Comments.comments(comment_info.section_id,
-        condition: %{
-          section: :blog_post, paginate: {1, 20}
-        }
-      ).entries)
     end
   end
 
   describe "UnHappy | Comment CRUD DB ಠ╭╮ಠ" do
     test "get comment with condition: {section_id, section, priority, status}", context do
-      0 = assert length(Comments.comments(context.user_info.id,
-        condition: %{
-          section: :blog_post, paginate: {1, 20}}).entries)
-
-      0 = assert length(Comments.comments(Ecto.UUID.generate,
-        condition: %{
-          section: :blog_post, paginate: {1, 20}, status: :active}).entries)
-
-      0 = assert length(Comments.comments(Ecto.UUID.generate,
-      condition: %{
-        section: :blog_post, priority: :none, paginate: {1, 20}, status: :active
-      }).entries)
+      0 = assert length(Comment.comments(conditions: {1, 20}, filters: %{user_id: context.user_info.id, section_id: Ecto.UUID.generate, priority: :none, status: :active, section: :blog_post}).entries)
     end
 
     test "create a commnt", context do
-      {:error, :add, :comment, _comment_info} = assert Comments.create(
+      {:error, :add, :comment, _comment_info} = assert Comment.create(
         %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
       )
     end

@@ -15,8 +15,16 @@ defmodule MishkaContent.Blog.Post do
     crud_add(attrs)
   end
 
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
+  end
+
   def edit(attrs) do
     crud_edit(attrs)
+  end
+
+  def edit(attrs, allowed_fields) do
+    crud_edit(attrs, allowed_fields)
   end
 
   def delete(id) do
@@ -31,37 +39,17 @@ defmodule MishkaContent.Blog.Post do
     crud_get_by_field("alias_link", alias_link)
   end
 
-  def posts_with_priority(condition: {priority, page, page_size, status}) do
-    from(post in Post,
-    where: post.priority == ^priority,
-    where: post.status == ^status,
-    join: cat in assoc(post, :blog_categories),
-    where: cat.status == ^status)
+  def posts(conditions: {page, page_size}, filters: filters) do
+    query = from(post in Post) |> convert_filters_to_where(filters)
+    from(post in query, join: cat in assoc(post, :blog_categories))
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def posts_with_priority(condition: {priority, page, page_size}) do
-    from(post in Post,
-    where: post.priority == ^priority,
-    join: cat in assoc(post, :blog_categories))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def posts(condition: {page, page_size, nil}) do
-    from(post in Post, join: cat in assoc(post, :blog_categories))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def posts(condition: {page, page_size, status}) do
-    from(post in Post,
-    where: post.status == ^status,
-    join: cat in assoc(post, :blog_categories),
-    where: cat.status == ^status)
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from link in query, where: field(link, ^key) == ^value
+    end)
   end
 
   defp fields(query) do

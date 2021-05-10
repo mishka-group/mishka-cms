@@ -3,7 +3,7 @@ defmodule MishkaContentTest.CommentLikeTest do
   use ExUnit.Case, async: true
   doctest MishkaDatabase
 
-  alias MishkaContent.General.Comments
+  alias MishkaContent.General.Comment
   alias MishkaContent.General.CommentLike
   alias MishkaContent.Blog.Category
   alias MishkaContent.Blog.Post
@@ -55,7 +55,7 @@ defmodule MishkaContentTest.CommentLikeTest do
     {:ok, :add, :category, category_data} = Category.create(@category_info)
     post_info = Map.merge(@post_info, %{"category_id" => category_data.id})
     {:ok, :add, :post, post_info} = Post.create(post_info)
-    {:ok, :add, :comment, comment_info} = assert Comments.create(
+    {:ok, :add, :comment, comment_info} = assert Comment.create(
         Map.merge(@comment_info, %{"section_id" => post_info.id, "user_id" => user_info.id}
       ))
     {:ok, post_info: post_info, user_info: user_info, comment_info: comment_info}
@@ -101,32 +101,22 @@ defmodule MishkaContentTest.CommentLikeTest do
           "email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
       }))
 
-      {:ok, :add, :comment, comment_2_info} = assert Comments.create(
+      {:ok, :add, :comment, comment_2_info} = assert Comment.create(
         Map.merge(@comment_info, %{"description" => "test 2", "section_id" => context.post_info.id, "user_id" => user_info_2.id}
       ))
 
       {:ok, :add, :comment_like, _comment_like_info} = assert CommentLike.create(%{user_id: context.user_info.id, comment_id: context.comment_info.id})
-      {:ok, :add, :comment_like, _comment_like_info} = assert CommentLike.create(%{user_id: user_info_2.id, comment_id: comment_2_info.id})
       {:ok, :add, :comment_like, _comment_like_info} = assert CommentLike.create(%{user_id: user_info_2.id, comment_id: context.comment_info.id})
+      {:ok, :add, :comment_like, _comment_like_info} = assert CommentLike.create(%{user_id: user_info_2.id, comment_id: comment_2_info.id})
 
-
-      query = Comments.comments(context.comment_info.section_id,
-      condition: %{
-        section: :blog_post, priority: context.comment_info.priority, paginate: {1, 20}, status: context.comment_info.status
-      }
-    ).entries
-
+    query = Comment.comments(conditions: {1, 20}, filters: %{id: context.comment_info.id, section_id: context.comment_info.section_id, section: :blog_post, priority: context.comment_info.priority, status: context.comment_info.status}).entries
     true = assert Enum.any?(query, fn x -> x.like.count == 2 end)
     end
   end
 
   describe "UnHappy | CommentLike CRUD DB ಠ╭╮ಠ" do
     test "likes", _context do
-      [] = assert Comments.comments(Ecto.UUID.generate,
-        condition: %{
-          section: :blog_post, priority: :none, paginate: {1, 20}, status: :active
-        }
-      ).entries
+      [] = assert Comment.comments(conditions: {1, 20}, filters: %{section_id: Ecto.UUID.generate, section: :blog_post, priority: :none,}).entries
     end
 
     test "create a comment like", context do

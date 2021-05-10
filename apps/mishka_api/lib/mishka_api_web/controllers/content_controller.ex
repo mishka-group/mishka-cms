@@ -4,141 +4,291 @@ defmodule MishkaApiWeb.ContentController do
   # add ip limitter and os info
   # handel cache of contents
 
-  def posts(_conn, %{"category_id" => _category_id, "page" => _page}) do
+
+  alias MishkaContent.Blog.{Category, Post, Like, Tag, TagMapper, BlogLink, Author}
+  alias MishkaContent.General.{Comment, CommentLike, Bookmark, Notif, Subscription}
+
+  # Activity module needs a good way to store data
+  # all the Strong paramiters which is loaded here should be chacked and test ID in create
+
+  @allowed_category_fields ["full_name", "username", "email", "password", "unconfirmed_email"]
+  @allowed_post_fields ["full_name", "username", "email", "password", "unconfirmed_email"]
+  @allowed_comment_fields ["section_id", "description", "sub", "user_id"]
+  @tag ["title", "alias_link", "robots", "id"]
+  @post_filter ["category_id"]
+  @blog_link ["id", "short_description", "status", "type", "title", "link", "short_link", "robots", "section_id"]
+  @notif ["status", "section", "section_id", "short_description", "expire_time", "extra",
+  "user_id"]
+
+  def posts(conn, %{"page" => page, "filters" => %{"status" => status} = params})  when status in [:active, :archive] do
     # action blogs:view
     # list of categories
+    filters = Map.take(params, @post_filter |> Enum.map(&String.to_existing_atom/1))
+
+    Post.posts(conditions: {page, 20}, filters: filters)
+    |> MishkaApi.ContentProtocol.posts(conn)
   end
 
-  def posts(_conn, %{"page" => _page}) do
+  def posts(conn, %{"category_id" => _category_id, "page" => page, "filters" => params}) do
+    # action blogs:edit
+    # list of categories
+    filters = Map.take(params, @post_filter |> Enum.map(&String.to_existing_atom/1))
+
+    Post.posts(conditions: {page, 20}, filters: filters)
+    |> MishkaApi.ContentProtocol.posts(conn)
+  end
+
+  def post(conn, %{"post_id" => post_id, "status" => status}) when status in [:active, :archive] do
     # action blogs:view
     # list of categories
+    Post.post(post_id, status)
+    |> MishkaApi.ContentProtocol.post(conn)
   end
 
-  def post(_conn, %{"post_id" => _post_id}) do
+  def post(conn, %{"post_id" => post_id, "status" => status, "comment" => %{"page" => _page}}) when status in [:active, :archive] do
     # action blogs:view
     # list of categories
+    Post.post(post_id, status)
+    |> MishkaApi.ContentProtocol.post(conn)
   end
 
-  def post_with_comments(_conn, %{"post_id" => _post_id, "page" => _page}) do
-    # action blogs:view
-    # list of categories
+
+  def post(conn, %{"post_id" => post_id, "status" => status, "comment" => %{"page" => _page}})do
+    # action blogs:edit
+    Post.post(post_id, status)
+    |> MishkaApi.ContentProtocol.post(conn)
   end
 
-  def create_post(_conn, _params) do
+  def post(conn, %{"post_id" => post_id, "status" => status})do
+    # action blogs:edit
+    Post.post(post_id, status)
+    |> MishkaApi.ContentProtocol.post(conn)
+  end
+
+  def create_post(conn, params) do
     # action blogs:edit
     # action blogs:create
+    Post.create(params, @allowed_category_fields)
+    |> MishkaApi.ContentProtocol.create_post(conn)
   end
 
-  def create_category(_conn, _params) do
+  def create_category(conn, params) do
     # action blogs:edit
+    Category.create(params, @allowed_category_fields)
+    |> MishkaApi.ContentProtocol.create_category(conn)
   end
 
-  def like_post(_conn, %{"post_id" => _post_id}) do
+  def like_post(conn, %{"post_id" => post_id}) do
     # action blogs:view
+    Like.create(%{user_id: Ecto.UUID.generate, post_id: post_id})
+    |> MishkaApi.ContentProtocol.like_post(conn)
   end
 
-  def delete_post_like(_conn, %{"post_id" => _post_id}) do
+  def delete_post_like(conn, %{"post_id" => post_id}) do
     # action blogs:user_id:view
+    Like.delete(Ecto.UUID.generate, post_id)
+    |> MishkaApi.ContentProtocol.delete_post_like(conn)
   end
 
-  def edit_post(_conn, %{"post_id" => _post_id} = _params) do
+  def edit_post(conn, %{"post_id" => post_id} = params) do
     # action blogs:edit
+    Post.edit(Map.merge(params, %{"id" => post_id}), @allowed_post_fields)
+    |> MishkaApi.ContentProtocol.edit_post(conn)
   end
 
-  def delete_post(_conn, %{"post_id" => _post_id}) do
+  def delete_post(conn, %{"post_id" => post_id}) do
     # action blogs:edit
     # change flag of status
+    Post.edit(%{id: post_id, status: :soft_delete})
+    |> MishkaApi.ContentProtocol.delete_post(conn)
   end
 
-  def destroy_post(_conn, %{"post_id" => _post_id}) do
+  def destroy_post(conn, %{"post_id" => post_id}) do
     # action blogs:*
+    Post.delete(post_id)
+    |> MishkaApi.ContentProtocol.delete_post(conn)
   end
 
-  def edit_category(_conn, %{"category_id" => _category_id} = _params) do
+  def edit_category(conn, %{"category_id" => category_id} = params) do
     # action blogs:edit
+    Category.edit(Map.merge(params, %{"id" => category_id}), @allowed_post_fields)
+    |> MishkaApi.ContentProtocol.edit_category(conn)
   end
 
-  def delete_category(_conn, %{"category_id" => _category_id}) do
+  def delete_category(conn, %{"category_id" => category_id}) do
     # action blogs:edit
     # change flag of status
+    Category.edit(%{id: category_id, status: :soft_delete})
+    |> MishkaApi.ContentProtocol.delete_category(conn)
   end
 
-  def destroy_category(_conn, %{"category_id" => _category_id}) do
+  def destroy_category(conn, %{"category_id" => category_id}) do
     # action *
+    Category.delete(category_id)
+    |> MishkaApi.ContentProtocol.delete_category(conn)
   end
 
-  def comment(_conn, %{"comment_id" => _comment_id}) do
+  def comment(conn, %{"comment_id" => comment_id, "status" => status}) when status in [:active, :archive] do
     # action blogs:view
+    Comment.comments(conditions: {1, 1}, filters: %{id: comment_id, status: status})
+    |> MishkaApi.ContentProtocol.comment(conn)
   end
 
-  def comments(_conn, %{"section" => _section, "page" => _page}) do
+  def comment(conn, %{"comment_id" => comment_id, "filters" => filters}) do
     # action blogs:edit
+    Comment.comments(conditions: {1, 1}, filters: Map.merge(%{"id" => comment_id}, filters))
+    |> MishkaApi.ContentProtocol.comment(conn)
   end
 
-  def comments(_conn, %{"page" => _page}) do
+  def comments(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in [:active, :archive] do
     # action blogs:edit
+    Comment.comments(conditions: {page, 20}, filters: params)
+    |> MishkaApi.ContentProtocol.comment(conn)
   end
 
-  def comments(_conn, %{"section_id" => _section_id}) do
+  def comments(conn, %{"page" => page, "filters" => params}) do
+    # action blogs:edit
+    Comment.comments(conditions: {page, 20}, filters: params)
+    |> MishkaApi.ContentProtocol.comment(conn)
+  end
+
+  def create_comment(conn, %{"section_id" => _section_id, "description" => _description} = params) do
     # action blogs:view
+    Comment.create(Map.merge(params, %{"user_id" => Ecto.UUID.generate}), @allowed_comment_fields)
+    |> MishkaApi.ContentProtocol.create_comment(conn)
   end
 
-  def create_comment(_conn, %{"section_id" => _section_id, "description" => _description, "sub" => _sup
-  }) do
-    # action blogs:view
-  end
-
-  def create_comment(_conn, %{"section_id" => _section_id, "description" => _description
-  }) do
-    # action blogs:view
-  end
-
-  def like_comment(_conn, %{"comment_id" => _comment_id}) do
+  def like_comment(conn, %{"comment_id" => comment_id}) do
     # action *:view
+    CommentLike.create(%{user_id: Ecto.UUID.generate, comment_id: comment_id})
+    |> MishkaApi.ContentProtocol.like_comment(conn)
   end
 
-  def delete_comment_like(_conn, %{"comment_id" => _comment_id}) do
+  def delete_comment_like(conn, %{"comment_id" => comment_id}) do
     # action blogs:user_id:view
+    CommentLike.delete(Ecto.UUID.generate, comment_id)
+    |> MishkaApi.ContentProtocol.delete_comment_like(conn)
   end
 
-  def delete_comment(_conn, %{"comment_id" => _comment_id}) do
+  def delete_comment(conn, %{"comment_id" => comment_id}) do
     # action blog:edit
     # change flag of status
+    Comment.edit(%{id: comment_id, status: :soft_delete})
+    |> MishkaApi.ContentProtocol.delete_comment(conn)
   end
 
-  def destroy_comment(_conn, %{"comment_id" => _comment_id}) do
+  def destroy_comment(conn, %{"comment_id" => comment_id}) do
     # action *
+    Comment.delete(comment_id)
+    |> MishkaApi.ContentProtocol.destroy_comment(conn)
   end
 
-  def edit_comment(_conn, %{"comment_id" => _comment_id, "description" => _description}) do
+  def edit_comment(conn, %{"comment_id" => comment_id, "description" => description}) do
     # action blog:edit
+    Comment.edit(%{id: comment_id, description: description})
+    |> MishkaApi.ContentProtocol.edit_comment(conn)
   end
 
-  def author(_conn, _params) do
-    # action blog:create
+  def authors(conn, %{"post_id" => post_id}) do
+    # action blog:view
+    Author.authors(post_id)
+    |> MishkaApi.ContentProtocol.authors(conn)
   end
 
-  def create_tag(_conn, _params) do
+  def create_tag(conn, %{"title" => _title, "alias_link" => _alias_link, "robots" => _robots} = params) do
      # action blog:create
+     Tag.create(params, @tag)
+     |> MishkaApi.ContentProtocol.create_tag(conn)
   end
 
-  def edit_tag(_conn, _params) do
+  def edit_tag(conn, %{"tag_id" => tag_id, "title" => _title, "alias_link" => _alias_link, "robots" => _robots} = params) do
     # action blog:edit
+    Tag.edit(Map.merge(params, %{"id" => tag_id}), @tag)
+     |> MishkaApi.ContentProtocol.edit_tag(conn)
   end
 
-  def create_bookmark(_conn, _params) do
+  def create_bookmark(conn, %{"status" => status, "section" => section, "section_id" => section_id}) do
     # action blog:view
+    Bookmark.create(%{"status" => status, "section" => section, "section_id" => section_id, "user_id" => Ecto.UUID.generate})
+    |> MishkaApi.ContentProtocol.create_bookmark(conn)
   end
 
-  def delete_bookmark(_conn, _params) do
+  def delete_bookmark(conn, %{"section_id" => section_id}) do
     # action blog:user_id:view
+    Bookmark.delete(Ecto.UUID.generate, section_id)
+    |> MishkaApi.ContentProtocol.delete_bookmark(conn)
   end
 
-  def create_subscription(_conn, _params) do
+  def create_subscription(conn, %{"section" => section, "section_id" => section_id}) do
     # action blog:view
+    Subscription.create(%{"section" => section, "section_id" => section_id, "user_id" => Ecto.UUID.generate})
+    |> MishkaApi.ContentProtocol.create_subscription(conn)
   end
 
-  def delete_subscription(_conn, _params) do
+  def delete_subscription(conn, %{"section_id" => section_id}) do
     # action blog:user_id:view
+    Subscription.delete(Ecto.UUID.generate, section_id)
+    |> MishkaApi.ContentProtocol.delete_subscription(conn)
+  end
+
+
+  def add_tag_to_post(conn, %{"post_id" => post_id, "tag_id" => tag_id}) do
+    # action blog:create
+    TagMapper.create(%{"post_id" => post_id, "tag_id" => tag_id})
+    |> MishkaApi.ContentProtocol.add_tag_to_post(conn)
+  end
+
+  def remove_post_tag(conn, %{"post_id" => post_id, "tag_id" => tag_id}) do
+    # action blog:create
+    TagMapper.delete(post_id, tag_id)
+    |> MishkaApi.ContentProtocol.remove_post_tag(conn)
+  end
+
+  def create_blog_link(conn, params) do
+    # action blog:create
+    BlogLink.create(params, @blog_link)
+    |> MishkaApi.ContentProtocol.create_blog_link(conn)
+  end
+
+  def edit_blog_link(conn, %{"blog_link_id" => id} = params) do
+    # action blog:create
+    BlogLink.edit(Map.merge(params, %{"id" => id}), @blog_link)
+    |> MishkaApi.ContentProtocol.edit_blog_link(conn)
+  end
+
+  def delete_blog_link(conn, %{"blog_link_id" => id}) do
+    # action blog:create
+    BlogLink.delete(id)
+    |> MishkaApi.ContentProtocol.delete_blog_link(conn)
+  end
+
+  def links(conn, %{"page" => page, "section_id" => section_id}) do
+    # action blog:view
+    BlogLink.links(conditions: {page, 30}, filters: %{section_id: section_id})
+    |> MishkaApi.ContentProtocol.links(conn)
+  end
+
+  def links(conn, %{"page" => page, "filters" => params}) do
+    # action blog:editor
+    BlogLink.links(conditions: {page, 30}, filters: params)
+    |> MishkaApi.ContentProtocol.links(conn)
+  end
+
+  def notifs(conn, %{"page" => page, "filters" => params}) do
+    # action *
+    Notif.notifs(conditions: {page, 30}, filters: params)
+    |> MishkaApi.ContentProtocol.notifs(conn)
+  end
+
+  def notifs(conn, %{"page" => page, "status" => status}) when status in [:active, :archived] do
+    # action notif:user_id
+    Notif.notifs(conditions: {page, 30}, filters: %{user_id: Ecto.UUID.generate, status: status})
+    |> MishkaApi.ContentProtocol.notifs(conn)
+  end
+
+  def send_notif(conn, %{"status" => _status, "section" => _section} = params) do
+    # action *
+    Notif.create(params, @notif)
+    |> MishkaApi.ContentProtocol.send_notif(conn)
   end
 end

@@ -34,7 +34,7 @@ defmodule MishkaContentTest.Blog.BlogLinkTest do
 
   @blog_link %{
     "short_description" => "this is a link",
-    "status" => :active,
+    "status" => :archived,
     "type" => :inside,
     "title" => "this is link title",
     "link" => "https://test.com/test.json",
@@ -77,7 +77,8 @@ defmodule MishkaContentTest.Blog.BlogLinkTest do
       {:ok, :add, :blog_link, link_info} = assert BlogLink.create(
         Map.merge(@blog_link, %{"section_id" => context.post_info.id})
       )
-      1 = assert length(BlogLink.links(link_info.section_id, condition: %{status: link_info.status, type: link_info.type}))
+      1 = assert length BlogLink.links(conditions: {1, 20}, filters: %{section_id: link_info.section_id, status: link_info.status, type: link_info.type}).entries
+      1 = assert length BlogLink.links(filters: %{section_id: link_info.section_id, status: link_info.status, type: link_info.type})
     end
 
     test "show by short link", context do
@@ -91,7 +92,8 @@ defmodule MishkaContentTest.Blog.BlogLinkTest do
 
   describe "UnHappy | BlogLink CRUD DB ಠ╭╮ಠ" do
     test "links", _context do
-      0 = assert length(BlogLink.links(Ecto.UUID.generate, condition: %{status: :active, type: :inside}))
+      0 = assert length BlogLink.links(conditions: {1, 20}, filters: %{section_id: Ecto.UUID.generate, status: :active, type: :inside}).entries
+      0 = assert length BlogLink.links(conditions: {1, 20}, filters: %{}).entries
     end
 
     test "show by short link", _context do

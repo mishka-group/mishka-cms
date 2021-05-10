@@ -13,8 +13,16 @@ defmodule MishkaContent.General.Notif do
     crud_add(attrs)
   end
 
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
+  end
+
   def edit(attrs) do
     crud_edit(attrs)
+  end
+
+  def edit(attrs, allowed_fields) do
+    crud_edit(attrs, allowed_fields)
   end
 
   def delete(id) do
@@ -25,25 +33,21 @@ defmodule MishkaContent.General.Notif do
     crud_get_record(id)
   end
 
-
-  # it should be asked how can we create  multi params of advanced search
-  def notifs(user_id, condition: %{paginate: {page, page_size}}) do
-    from(notif in Notif,
-    where: notif.user_id == ^user_id,
-    join: user in assoc(notif, :users))
+  def notifs(conditions: {page, page_size}, filters: filters) do
+    from(notif in Notif) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def notifs(condition: %{paginate: {page, page_size}}) do
-    from(notif in Notif,
-    join: user in assoc(notif, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from notif in query, where: field(notif, ^key) == ^value
+    end)
   end
 
   defp fields(query) do
-    from [notif, user] in query,
+    from [notif] in query,
+    join: user in assoc(notif, :users),
     order_by: [desc: notif.inserted_at, desc: notif.id],
     select: %{
       id: notif.id,

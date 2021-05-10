@@ -96,9 +96,7 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
         tag_id: List.first(tags)
       })
 
-      2 = assert length(
-        Tag.tag_posts(List.first(tags), condition: %{paginate: {1, 20}}).entries
-        )
+      2 = assert length(Tag.tag_posts(conditions: {1, 20}, filters: %{id: List.first(tags)}).entries)
 
       5 = assert length(Tag.post_tags(context.post_info.id))
     end
@@ -107,7 +105,7 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
   describe "UnHappy | Blog Tag CRUD DB ಠ╭╮ಠ" do
     test "link some tag to a post", context do
       0 = assert length(Tag.post_tags(context.post_info.id))
-      0 = assert length(Tag.tag_posts(Ecto.UUID.generate, condition: %{paginate: {1, 20}}).entries)
+      0 = assert length(Tag.tag_posts(conditions: {1, 20}, filters: %{id: Ecto.UUID.generate}).entries)
       {:error, :add, :blog_tag_mapper, _tag_info} = assert TagMapper.create(%{post_id: Ecto.UUID.generate})
     end
 

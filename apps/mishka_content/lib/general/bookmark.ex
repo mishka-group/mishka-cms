@@ -13,36 +13,45 @@ defmodule MishkaContent.General.Bookmark do
     crud_add(attrs)
   end
 
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
+  end
+
   def edit(attrs) do
     crud_edit(attrs)
+  end
+
+  def edit(attrs, allowed_fields) do
+    crud_edit(attrs, allowed_fields)
   end
 
   def delete(id) do
     crud_delete(id)
   end
 
+  def delete(user_id, section_id) do
+    [user_id, section_id]
+  end
+
   def show_by_id(id) do
     crud_get_record(id)
   end
 
-  # it should be asked how can we create  multi params of advanced search
-  def bookmarks(user_id, condition: %{paginate: {page, page_size}}) do
-    from(bk in Bookmark,
-    where: bk.user_id == ^user_id,
-    join: user in assoc(bk, :users))
+  def bookmarks(conditions: {page, page_size}, filters: filters) do
+    from(bk in Bookmark) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def bookmarks(condition: %{paginate: {page, page_size}}) do
-    from(bk in Bookmark,
-    join: user in assoc(bk, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from bk in query, where: field(bk, ^key) == ^value
+    end)
   end
 
   defp fields(query) do
-    from [bk, user] in query,
+    from [bk] in query,
+    join: user in assoc(bk, :users),
     order_by: [desc: bk.inserted_at, desc: bk.id],
     select: %{
       id: bk.id,

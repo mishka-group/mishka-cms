@@ -21,6 +21,10 @@ defmodule MishkaContent.Blog.TagMapper  do
     crud_delete(id)
   end
 
+  def delete(post_id, tag_id) do
+    [post_id, tag_id]
+  end
+
   def show_by_id(id) do
     crud_get_record(id)
   end

@@ -5,6 +5,7 @@ defmodule MishkaUser.Identity do
   """
   alias MishkaDatabase.Schema.MishkaUser.IdentityProvider
 
+  import Ecto.Query
   use MishkaDatabase.CRUD,
           module: IdentityProvider,
           error_atom: :identity,
@@ -74,35 +75,30 @@ defmodule MishkaUser.Identity do
     crud_get_by_field("provider_uid", provider_uid)
   end
 
+  def identities(conditions: {page, page_size}, filters: filters) do
+    from(identity in IdentityProvider) |> convert_filters_to_where(filters)
+    |> fields()
+    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  end
 
-  # def find_user_identity(user_id, provider) do
-  #   query = from u in ClientIdentitySchema,
-  #       where: u.user_id == ^user_id,
-  #       where: u.identity_provider == ^provider,
-  #       select: %{
-  #         id: u.id,
-  #         identity_provider: u.identity_provider,
-  #         uid: u.uid,
-  #         token: u.token,
-  #         user_id: u.user_id
-  #       }
-  #   case Db.repo.one(query) do
-  #     nil       -> {:error, :find_user_identity, provider}
-  #     identity  -> {:ok, :find_user_identity, identity}
-  #   end
-  # end
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from notif in query, where: field(notif, ^key) == ^value
+    end)
+  end
 
-
-  # def find_user_identities(user_id) do
-  #   query = from u in ClientIdentitySchema,
-  #       where: u.user_id == ^user_id,
-  #       select: %{
-  #         id: u.id,
-  #         identity_provider: u.identity_provider,
-  #         uid: u.uid,
-  #         token: u.token,
-  #         user_id: u.user_id
-  #       }
-  #   Db.repo.all(query)
-  # end
+  defp fields(query) do
+    from [identity] in query,
+    join: user in assoc(identity, :users),
+    order_by: [desc: identity.inserted_at, desc: identity.id],
+    select: %{
+      id: identity.id,
+      provider_uid: identity.provider_uid,
+      token: identity.token,
+      identity_provider: identity.identity_provider,
+      user_full_name: user.full_name,
+      user_username: user.username,
+      user_id: user.id
+    }
+  end
 end

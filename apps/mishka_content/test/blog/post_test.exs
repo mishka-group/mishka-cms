@@ -83,7 +83,8 @@ defmodule MishkaContentTest.Blog.PostTest do
         Map.merge(@post_info, %{"category_id" => category_data.id, "alias_link" => "test-two-of-post"})
       )
 
-      2 = assert length(Category.posts(:extra_data, condition: {category_data.id, 1, 20}).entries)
+
+      2 = assert length Category.posts(conditions: {:extra_data, 1, 20}, filters: %{status: :active, id: category_data.id}).entries
     end
 
     test "posts and post priority" do
@@ -91,10 +92,9 @@ defmodule MishkaContentTest.Blog.PostTest do
       {:ok, :add, :post, _post_data} = assert Post.create(
         Map.merge(@post_info, %{"category_id" => category_data.id})
       )
-      1 = assert length(Post.posts(condition: {1, 20, nil}).entries)
-      1 = assert length(Post.posts(condition: {1, 20, :active}).entries)
-      1 = assert length(Post.posts_with_priority(condition: {:none, 1, 20, :active}).entries)
-      1 = assert length(Post.posts_with_priority(condition: {:none, 1, 20}).entries)
+      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{status: :active}).entries)
+      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{priority: :none, status: :active, category_id: category_data.id}).entries)
+      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{}).entries)
     end
 
     test "show post with counted like" do
@@ -131,8 +131,8 @@ defmodule MishkaContentTest.Blog.PostTest do
 
 
     test "posts of a cteagory" do
-      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
-      0 = assert length(Category.posts(:extra_data, condition: {category_data.id, 1, 20}).entries)
+      {:ok, :add, :category, _category_data} = assert Category.create(@category_info)
+      0 = assert length Category.posts(conditions: {:extra_data, 1, 20}, filters: %{}).entries
     end
   end
 

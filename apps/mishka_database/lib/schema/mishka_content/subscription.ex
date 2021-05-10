@@ -8,7 +8,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Subscription do
 
   schema "subscriptions" do
 
-    field(:status, ContentStatusEnum, null: false)
+    field(:status, ContentStatusEnum, null: false, default: :active)
     field(:section, SubscriptionSection, null: false, null: false)
     field(:section_id, :binary_id, primary_key: false, null: false)
     field(:expire_time, :utc_datetime, null: true)

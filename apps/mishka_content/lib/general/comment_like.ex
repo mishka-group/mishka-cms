@@ -23,6 +23,10 @@ defmodule MishkaContent.General.CommentLike do
     crud_delete(id)
   end
 
+  def delete(user_id, comment_id) do
+    {comment_id, user_id}
+  end
+
   def show_by_id(id) do
     crud_get_record(id)
   end

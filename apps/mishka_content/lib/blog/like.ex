@@ -22,6 +22,10 @@ defmodule MishkaContent.Blog.Like do
     crud_delete(id)
   end
 
+  def delete(_user_id, _post_id) do
+
+  end
+
   def show_by_id(id) do
     crud_get_record(id)
   end

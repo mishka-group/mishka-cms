@@ -27,24 +27,16 @@ defmodule MishkaContent.General.Activity do
     crud_get_record(id)
   end
 
-  # it should be changed, this is a dirty code and I need to improve it as mocro or any way which can simple
-  def activities(condition: %{paginate: {page, page_size}, type: type, section: section, section_id: section_id, priority: priority, status: status, action: action
-  }) do
-    from(activity in Activity,
-      where: activity.type == ^type,
-      where: activity.section == ^section,
-      where: activity.section_id == ^section_id,
-      where: activity.priority == ^priority,
-      where: activity.status == ^status,
-      where: activity.action == ^action)
+  def activities(conditions: {page, page_size}, filters: filters) do
+    from(activity in Activity) |> convert_filters_to_where(filters)
     |> field()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def activities(condition: %{paginate: {page, page_size}}) do
-    from(activity in Activity)
-    |> field()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from activity in query, where: field(activity, ^key) == ^value
+    end)
   end
 
   defp field(query) do

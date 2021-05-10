@@ -21,28 +21,30 @@ defmodule MishkaContent.General.Subscription do
     crud_delete(id)
   end
 
+  def delete(user_id, section_id) do
+    [user_id, section_id]
+  end
+
   def show_by_id(id) do
     crud_get_record(id)
   end
 
   # it should be asked how can we create  multi params of advanced search
-  def subscription(user_id, condition: %{paginate: {page, page_size}}) do
-    from(sub in Subscription,
-    where: sub.user_id == ^user_id,
-    join: user in assoc(sub, :users))
+  def subscription(conditions: {page, page_size}, filters: filters) do
+    from(sub in Subscription) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def subscription(condition: %{paginate: {page, page_size}}) do
-    from(sub in Subscription,
-    join: user in assoc(sub, :users))
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from sub in query, where: field(sub, ^key) == ^value
+    end)
   end
 
   defp fields(query) do
-    from [sub, user] in query,
+    from [sub] in query,
+    join: user in assoc(sub, :users),
     order_by: [desc: sub.inserted_at, desc: sub.id],
     select: %{
       id: sub.id,

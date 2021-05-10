@@ -1,4 +1,4 @@
-defmodule MishkaContent.Blog.Tag  do
+defmodule MishkaContent.Blog.Tag do
   alias MishkaDatabase.Schema.MishkaContent.BlogTag
   alias MishkaDatabase.Schema.MishkaContent.Blog.Post
 
@@ -15,8 +15,16 @@ defmodule MishkaContent.Blog.Tag  do
     crud_add(attrs)
   end
 
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
+  end
+
   def edit(attrs) do
     crud_edit(attrs)
+  end
+
+  def edit(attrs, allowed_fields) do
+    crud_edit(attrs, allowed_fields)
   end
 
   def delete(id) do
@@ -44,9 +52,9 @@ defmodule MishkaContent.Blog.Tag  do
     MishkaDatabase.Repo.all(query)
   end
 
-  def tag_posts(id, condition: %{paginate: {page, page_size}}) do
-    from(tag in BlogTag,
-      where: tag.id == ^id,
+  def tag_posts(conditions: {page, page_size}, filters: filters) do
+    query = from(tag in BlogTag) |> convert_filters_to_where(filters)
+      from(tag in query,
       left_join: mapper in assoc(tag, :blog_tags_mappers),
       join: post in assoc(mapper, :blog_posts),
       join: cat in assoc(post, :blog_categories),
@@ -76,5 +84,11 @@ defmodule MishkaContent.Blog.Tag  do
         post_priority: post.priority,
     })
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  end
+
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from tag in query, where: field(tag, ^key) == ^value
+    end)
   end
 end

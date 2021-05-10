@@ -15,8 +15,16 @@ defmodule MishkaContent.Blog.Category do
     crud_add(attrs)
   end
 
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
+  end
+
   def edit(attrs) do
     crud_edit(attrs)
+  end
+
+  def edit(attrs, allowed_fields) do
+    crud_edit(attrs, allowed_fields)
   end
 
   def delete(id) do
@@ -46,55 +54,31 @@ defmodule MishkaContent.Blog.Category do
     |> MishkaDatabase.Repo.all()
   end
 
-  def posts(:basic_data, condition: {id, page, page_size, status}) do
-    from(cat in Category,
-      where: cat.id == ^id,
-      where: cat.status == ^status,
-      join: post in assoc(cat, :blog_posts),
-      where: post.status == ^status)
-    |> fields(:extra_data)
+  def posts(conditions: {type, page, page_size}, filters: filters) when type in [:extra_data, :basic_data] do
+    query = from(cat in Category) |> convert_filters_to_where(filters)
+    from([cat] in query, join: post in assoc(cat, :blog_posts))
+    |> fields(type)
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   end
 
-  def posts(:extra_data, condition: {id, page, page_size, status}) do
-    from(cat in Category,
-      where: cat.id == ^id,
-      where: cat.status == ^status,
-      join: post in assoc(cat, :blog_posts),
-      where: post.status == ^status)
-    |> fields(:extra_data)
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from cat in query, where: field(cat, ^key) == ^value
+    end)
   end
-
-  def posts(:basic_data, condition: {id, page, page_size}) do
-    from(cat in Category, where: cat.id == ^id, join: post in assoc(cat, :blog_posts))
-    |> fields(:basic_data)
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  def posts(:extra_data, condition: {id, page, page_size}) do
-    from(cat in Category, where: cat.id == ^id, join: post in assoc(cat, :blog_posts))
-    |> fields(:extra_data)
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
 
   defp fields(query, :basic_data) do
     from [cat, post] in query,
     order_by: [desc: post.inserted_at, desc: post.id],
     select: %{
-      category_id: cat.id,
-      category_title: cat.title,
-      category_status: cat.status,
-      category_alias_link: cat.alias_link,
-      category_short_description: cat.short_description,
-      category_main_image: cat.main_image,
-
-      post_id: post.title,
-      post_short_description: post.short_description,
-      post_main_image: post.main_image,
-      post_status: post.status,
-      post_alias_link: post.alias_link,
+      category: map(cat,
+        [
+          :id, :title, :short_description, :main_image, :status, :alias_link
+        ]),
+      post: map(post,
+        [
+          :id, :title, :short_description, :main_image, :status, :alias_link
+        ])
     }
   end
 
@@ -102,8 +86,24 @@ defmodule MishkaContent.Blog.Category do
     from [cat, post] in query,
     order_by: [desc: post.inserted_at, desc: post.id],
     select: %{
-      category: cat,
-      posts: post
+      category: map(cat,
+        [
+          :id, :title, :short_description, :main_image, :header_image, :description, :status,
+          :sub, :alias_link, :meta_keywords, :meta_description, :custom_title, :robots,
+          :category_visibility, :allow_commenting, :allow_liking, :allow_printing,
+          :allow_reporting, :allow_social_sharing, :allow_subscription,
+          :allow_bookmarking, :allow_notif, :show_hits, :show_time, :show_authors,
+          :show_category, :show_links, :show_location
+        ]),
+      post: map(post,
+        [
+          :id, :title, :short_description, :main_image, :header_image, :description, :status,
+          :priority, :location, :unpublish, :alias_link, :meta_keywords,
+          :meta_description, :custom_title, :robots, :post_visibility, :allow_commenting,
+          :allow_liking, :allow_printing, :allow_reporting, :allow_social_sharing,
+          :allow_bookmarking, :show_hits, :show_time, :show_authors, :show_category,
+          :show_links, :show_location, :category_id
+        ])
     }
   end
 end

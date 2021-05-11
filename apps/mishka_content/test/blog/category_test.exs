@@ -45,8 +45,8 @@ defmodule MishkaContentTest.Blog.CategoryTest do
 
     test "categories" do
       {:ok, :add, :category, _data} = assert Category.create(@category_info)
-      1 = assert length(Category.categories())
-      1 = assert length(Category.categories(:active))
+      1 = assert length(Category.categories(filters: %{status: :active}))
+      1 = assert length(Category.categories(filters: %{}))
     end
   end
 

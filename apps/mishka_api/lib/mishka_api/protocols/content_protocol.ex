@@ -99,6 +99,26 @@ defimpl MishkaApi.ContentProtocol, for: Any do
 
   end
 
+  def like_post(_parametr, _conn) do
+
+  end
+
+  def delete_post_like(_parametr, _conn) do
+
+  end
+
+  def edit_post(_parametr, _conn) do
+
+  end
+
+  def delete_post(_parametr, _conn) do
+
+  end
+
+  def destroy_post(_parametr, _conn) do
+
+  end
+
   def create_category({:error, :add, :category, repo_error}, conn, _allowed_fields) do
     conn
     |> put_status(401)
@@ -119,26 +139,6 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       message: "داده شما با موفقیت ذخیره شد.",
       category_info: Map.take(repo_data, allowed_fields)
     })
-  end
-
-  def like_post(_parametr, _conn) do
-
-  end
-
-  def delete_post_like(_parametr, _conn) do
-
-  end
-
-  def edit_post(_parametr, _conn) do
-
-  end
-
-  def delete_post(_parametr, _conn) do
-
-  end
-
-  def destroy_post(_parametr, _conn) do
-
   end
 
   def edit_category({:error, :edit, _, :category}, conn, _allowed_fields) do
@@ -224,7 +224,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     conn
     |> put_status(200)
     |> json(%{
-      action: :destroy_category,
+      action: :categories,
       system: @request_error_tag,
       message: "درخواست شما با موفقیت دریافت شد.",
       categories: parametr
@@ -249,7 +249,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: :category,
       system: @request_error_tag,
       message: "درخواست شما با موفقیت دریافت شد.",
-      category: Map.take(category_info, allowed_fields)
+      category_info: Map.take(category_info, allowed_fields)
     })
   end
 
@@ -348,7 +348,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
 
   defp not_available_record(action: action, conn: conn, msg: msg) do
     conn
-    |> put_status(401)
+    |> put_status(404)
     |> json(%{
       action: action,
       system: @request_error_tag,

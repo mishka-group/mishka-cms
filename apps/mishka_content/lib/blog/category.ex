@@ -10,7 +10,6 @@ defmodule MishkaContent.Blog.Category do
 
   @behaviour MishkaDatabase.CRUD
 
-
   def create(attrs) do
     crud_add(attrs)
   end
@@ -39,19 +38,22 @@ defmodule MishkaContent.Blog.Category do
     crud_get_by_field("alias_link", alias_link)
   end
 
-  def categories(status \\ nil) do
-    query = if is_nil(status), do: from(cat in Category), else: from(cat in Category, where: cat.status == ^status)
-
-    from([cat] in query,
-    select: %{
-      category_id: cat.id,
-      category_title: cat.title,
-      category_status: cat.status,
-      category_alias_link: cat.alias_link,
-      category_short_description: cat.short_description,
-      category_main_image: cat.main_image,
-    })
-    |> MishkaDatabase.Repo.all()
+  def categories(filters: filters) do
+    try do
+      query = from(cat in Category) |> convert_filters_to_where(filters)
+      from([cat] in query,
+      select: %{
+        category_id: cat.id,
+        category_title: cat.title,
+        category_status: cat.status,
+        category_alias_link: cat.alias_link,
+        category_short_description: cat.short_description,
+        category_main_image: cat.main_image,
+      })
+      |> MishkaDatabase.Repo.all()
+    rescue
+      _e -> []
+    end
   end
 
   def posts(conditions: {type, page, page_size}, filters: filters) when type in [:extra_data, :basic_data] do
@@ -106,4 +108,7 @@ defmodule MishkaContent.Blog.Category do
         ])
     }
   end
+
+  def allowed_fields(:atom), do: Category.__schema__(:fields)
+  def allowed_fields(:string), do: Category.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

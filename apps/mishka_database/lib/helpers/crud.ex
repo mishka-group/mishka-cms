@@ -309,7 +309,7 @@ defmodule MishkaDatabase.CRUD do
 
   @doc false
   def edit_record(attrs, module, error_atom, repo) do
-    with {:ok, :uuid, record_id} <- uuid(attrs.id),
+    with {:ok, :uuid, record_id} <- uuid(if Map.has_key?(attrs, :id), do: attrs.id, else: attrs["id"]),
         {:ok, :get_record_by_id, error_atom, record_info} <- get_record_by_id(record_id, module, error_atom, repo),
         {:ok, info} <- update(record_info, attrs, module, repo) do
 

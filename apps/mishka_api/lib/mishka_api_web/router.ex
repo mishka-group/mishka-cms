@@ -34,13 +34,12 @@ defmodule MishkaApiWeb.Router do
   scope "/api/content/v1", MishkaApiWeb do
     pipe_through :api
 
-    post "/create-post", AuthController, :ContentController
-    post "/edit-post", AuthController, :ContentController
-    post "/show-posts", AuthController, :ContentController
-    post "/show-post", AuthController, :ContentController
-    post "/user-comments", AuthController, :ContentController
-    post "/send-comment", AuthController, :ContentController
-    post "/edit-comment", AuthController, :ContentController
+    post "/create-category", ContentController, :create_category
+    post "/edit-category", ContentController, :edit_category
+    post "/delete-category", ContentController, :delete_category
+    post "/destroy-category", ContentController, :destroy_category
+    post "/categories", ContentController, :categories
+    post "/category", ContentController, :category
   end
 
 

@@ -135,17 +135,17 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.destroy_category(conn, Category.allowed_fields(:atom))
   end
 
-  # def like_post(conn, %{"post_id" => post_id}) do
-  #   # action blogs:view
-  #   Like.create(%{user_id: Ecto.UUID.generate, post_id: post_id})
-  #   |> MishkaApi.ContentProtocol.like_post(conn)
-  # end
+  def like_post(conn, %{"post_id" => post_id}) do
+    # action blogs:view
+    Like.create(%{user_id: conn.assigns.user_id, post_id: post_id})
+    |> MishkaApi.ContentProtocol.like_post(conn, Like.allowed_fields(:atom))
+  end
 
-  # def delete_post_like(conn, %{"post_id" => post_id}) do
-  #   # action blogs:user_id:view
-  #   Like.delete(Ecto.UUID.generate, post_id)
-  #   |> MishkaApi.ContentProtocol.delete_post_like(conn)
-  # end
+  def delete_post_like(conn, %{"post_id" => post_id}) do
+    # action blogs:user_id:view
+    Like.delete(conn.assigns.user_id, post_id)
+    |> MishkaApi.ContentProtocol.delete_post_like(conn, Like.allowed_fields(:atom))
+  end
 
   # def comment(conn, %{"comment_id" => comment_id, "status" => status}) when status in [:active, :archive] do
   #   # action blogs:view

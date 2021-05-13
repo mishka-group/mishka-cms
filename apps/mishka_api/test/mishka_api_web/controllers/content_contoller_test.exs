@@ -3,7 +3,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
 
   alias MishkaContent.Blog.Category
   alias MishkaContent.Blog.Post
-
+  alias MishkaContent.Blog.Like
 
   setup_all do
     start_supervised(MishkaDatabase.Cache.MnesiaToken)
@@ -354,7 +354,48 @@ defmodule MishkaApiWeb.ContentControllerTest do
         "total_pages" =>  _total_pages
       } = json_response(conn, 200)
     end
+
+    test "like a post", %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :like_post), %{"post_id" => post_data.id})
+
+      assert %{
+        "action" => "like_post",
+        "system" => "content",
+        "message" => _msg,
+        "like_info" => _like_info
+      } = json_response(conn, 200)
+    end
+
+    test "delete a like post", %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :post_like, _like_info} = assert Like.create(%{"user_id" => user_info.id, "post_id" => post_data.id})
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_post_like), %{"post_id" => post_data.id})
+
+      assert %{
+        "action" => "delete_post_like",
+        "system" => "content",
+        "message" => _msg,
+        "like_info" => _like_info
+      } = json_response(conn, 200)
+    end
   end
+
+
+
+
 
 
   describe "UnHappy | MishkaApi Content Controller ಠ╭╮ಠ" do
@@ -559,5 +600,39 @@ defmodule MishkaApiWeb.ContentControllerTest do
       } = json_response(conn, 200)
     end
 
+
+    test "like a post", %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :post_like, _like_info} = assert Like.create(%{"user_id" => user_info.id, "post_id" => post_data.id})
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :like_post), %{"post_id" => post_data.id})
+
+      assert %{
+        "action" => "like_post",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 400)
+    end
+
+    test "delete a like post", %{user_info: _user_info, conn: conn, auth: auth} do
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_post_like), %{"post_id" => Ecto.UUID.generate})
+
+      assert %{
+        "action" => "delete_post_like",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _like_info
+      } = json_response(conn, 404)
+    end
   end
 end

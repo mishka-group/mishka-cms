@@ -9,9 +9,9 @@ defprotocol MishkaApi.ContentProtocol do
 
   def create_category(parametr, conn, allowed_fields)
 
-  def like_post(parametr, conn)
+  def like_post(parametr, conn, allowed_fields)
 
-  def delete_post_like(parametr, conn)
+  def delete_post_like(parametr, conn, allowed_fields)
 
   def edit_post(parametr, conn, allowed_fields)
 
@@ -368,6 +368,65 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     })
   end
 
+  def like_post({:ok, :add, :post_like, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :like_post,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      like_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def like_post({:error, :add, :post_like, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :like_post,
+      system: @request_error_tag,
+      message: "خطایی در پسند کردن پست مورد نظر پیش آماده است",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def delete_post_like({:error, :delete, :post_like, :not_found}, conn, _allowed_fields) do
+    conn
+    |> put_status(404)
+    |> json(%{
+      action: :delete_post_like,
+      system: @request_error_tag,
+      message: "خطایی در پسند کردن پست مورد نظر پیش آماده است",
+      errors: :not_found
+    })
+  end
+
+  def delete_post_like({:ok, :delete, :post_like, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_post_like,
+      system: @request_error_tag,
+      message: "پسند شما با موفقیت از پست مذکور حذف شد.",
+      like_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def delete_post_like({:error, :delete, :post_like, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :delete_post_like,
+      system: @request_error_tag,
+      message: "خطایی در حذف رکورد مورد نظر پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def delete_post_like({:error, :delete, _, :post_like}, conn, _allowed_fields) do
+    not_available_record(action: :post_like, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
   def comment(_parametr, _conn) do
 
   end
@@ -377,14 +436,6 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_comment(_parametr, _conn) do
-
-  end
-
-  def like_post(_parametr, _conn) do
-
-  end
-
-  def delete_post_like(_parametr, _conn) do
 
   end
 

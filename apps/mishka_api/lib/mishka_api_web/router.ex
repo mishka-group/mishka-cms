@@ -7,8 +7,11 @@ defmodule MishkaApiWeb.Router do
 
   scope "/api", MishkaApiWeb do
     pipe_through :api
-
   end
+
+  pipeline :access_token do
+    plug MishkaApi.Plug.AccessTokenPlug
+   end
 
   scope "/api/auth/v1", MishkaApiWeb do
     pipe_through :api
@@ -32,7 +35,7 @@ defmodule MishkaApiWeb.Router do
 
 
   scope "/api/content/v1", MishkaApiWeb do
-    pipe_through :api
+    pipe_through [:api, :access_token]
 
     post "/create-category", ContentController, :create_category
     post "/edit-category", ContentController, :edit_category
@@ -49,36 +52,6 @@ defmodule MishkaApiWeb.Router do
     post "/posts", ContentController, :posts
     post "/post", ContentController, :post
   end
-
-
-  scope "/api/admin/content/v1", MishkaApiWeb do
-    pipe_through :api
-    # load admin plug for api
-
-    post "/create-category", AuthController, :AdminContentController
-    post "/create-blog", AuthController, :AdminContentController
-    post "/blogs", AuthController, :AdminContentController
-    post "/categories", AuthController, :AdminContentController
-    post "/category", AuthController, :AdminContentController
-    post "/edit-blog", AuthController, :AdminContentController
-    post "/edit-category", AuthController, :AdminContentController
-    post "/delete-blog", AuthController, :AdminContentController
-    post "/delete-category", AuthController, :AdminContentController
-    post "/delete-categories", AuthController, :AdminContentController
-    post "/delete-posts", AuthController, :AdminContentController
-    post "/comments", AuthController, :AdminContentController
-    post "/comment", AuthController, :AdminContentController
-    post "/edit-comment", AuthController, :AdminContentController
-    post "/delete-comment", AuthController, :AdminContentController
-    post "/delete-comments", AuthController, :AdminContentController
-    post "/delete-likes", AuthController, :AdminContentController
-    post "/activities", AuthController, :AdminContentController
-    post "/delete-activities", AuthController, :AdminContentController
-    post "/activity", AuthController, :AdminContentController
-    post "/delete-activity", AuthController, :AdminContentController
-    post "/edit-activity", AuthController, :AdminContentController
-  end
-
 
   # Enables LiveDashboard only for development
   #

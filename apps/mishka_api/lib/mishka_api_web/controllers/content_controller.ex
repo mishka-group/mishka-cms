@@ -14,47 +14,81 @@ defmodule MishkaApiWeb.ContentController do
 
   @allowed_category_fields Category.allowed_fields(:string)
 
-  def posts(conn, %{"page" => page, "filters" => %{"status" => status} = params})  when status in [:active, :archive] do
+  def posts(conn, %{"page" => page, "filters" => %{"status" => status} = params})  when status in ["active", "archive"] do
     # action blogs:view
     # list of categories
-    filters = Map.take(params, @allowed_category_fields |> Enum.map(&String.to_existing_atom/1))
+    filters = Map.take(params, Post.allowed_fields(:string))
 
-    Post.posts(conditions: {page, 20}, filters: filters)
+    Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters))
     |> MishkaApi.ContentProtocol.posts(conn)
   end
 
-  def posts(conn, %{"category_id" => _category_id, "page" => page, "filters" => params}) do
+  def posts(conn, %{"page" => page, "filters" => params}) do
     # action blogs:edit
     # list of categories
-    filters = Map.take(params, @allowed_category_fields |> Enum.map(&String.to_existing_atom/1))
+    filters = Map.take(params, Post.allowed_fields(:string))
 
-    Post.posts(conditions: {page, 20}, filters: filters)
+    Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters))
     |> MishkaApi.ContentProtocol.posts(conn)
   end
+
+  def post(conn, %{"post_id" => post_id, "status" => status, "comment" =>
+  %{
+    "page" => _page,
+    "filters" => %{"status" => status}
+  } = comment}) when status in [:active, :archive] do
+    # action blogs:view
+    Post.post(post_id, status)
+    |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: comment})
+  end
+
+  def post(conn, %{"post_id" => post_id, "status" => status, "comment" =>
+  %{
+    "page" => _page,
+    "filters" => _filters
+  } = comment})do
+    # action blogs:edit
+    Post.post(post_id, status)
+    |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: comment})
+  end
+
   def post(conn, %{"post_id" => post_id, "status" => status}) when status in [:active, :archive] do
     # action blogs:view
     # list of categories
     Post.post(post_id, status)
-    |> MishkaApi.ContentProtocol.post(conn)
-  end
-
-  def post(conn, %{"post_id" => post_id, "status" => status, "comment" => %{"page" => _page}}) when status in [:active, :archive] do
-    # action blogs:view
-    # list of categories
-    Post.post(post_id, status)
-    |> MishkaApi.ContentProtocol.post(conn)
-  end
-
-  def post(conn, %{"post_id" => post_id, "status" => status, "comment" => %{"page" => _page}})do
-    # action blogs:edit
-    Post.post(post_id, status)
-    |> MishkaApi.ContentProtocol.post(conn)
+    |> MishkaApi.ContentProtocol.post(conn, %{type: :none_comment})
   end
 
   def post(conn, %{"post_id" => post_id, "status" => status})do
     # action blogs:edit
     Post.post(post_id, status)
-    |> MishkaApi.ContentProtocol.post(conn)
+    |> MishkaApi.ContentProtocol.post(conn, %{type: :none_comment})
+  end
+
+  def create_post(conn, params) do
+    # action blogs:edit
+    # action blogs:create
+    Post.create(params, Post.allowed_fields(:string))
+    |> MishkaApi.ContentProtocol.create_post(conn, Post.allowed_fields(:atom))
+  end
+
+  def edit_post(conn, %{"post_id" => post_id} = params) do
+    # action blogs:edit
+    Post.edit(Map.merge(params, %{"id" => post_id}), Post.allowed_fields(:string))
+    |> MishkaApi.ContentProtocol.edit_post(conn, Post.allowed_fields(:atom))
+  end
+
+  def delete_post(conn, %{"post_id" => post_id}) do
+    # action blogs:edit
+    # change flag of status
+    Post.edit(%{id: post_id, status: :soft_delete})
+    |> MishkaApi.ContentProtocol.delete_post(conn, Post.allowed_fields(:atom))
+  end
+
+  def destroy_post(conn, %{"post_id" => post_id}) do
+    # action blogs:*
+    Post.delete(post_id)
+    |> MishkaApi.ContentProtocol.destroy_post(conn, Post.allowed_fields(:atom))
   end
 
   def category(conn, %{"category_id" => id}) do
@@ -78,13 +112,6 @@ defmodule MishkaApiWeb.ContentController do
     Category.categories(filters: %{status: :active})
     |> MishkaApi.ContentProtocol.categories(conn)
   end
-
-  def create_post(conn, params) do
-    # action blogs:edit
-    # action blogs:create
-    Post.create(params, @allowed_category_fields)
-    |> MishkaApi.ContentProtocol.create_post(conn)
-  end
   def create_category(conn, params) do
     # action blogs:edit
     Category.create(params, Category.allowed_fields(:string))
@@ -100,25 +127,6 @@ defmodule MishkaApiWeb.ContentController do
     # action blogs:user_id:view
     Like.delete(Ecto.UUID.generate, post_id)
     |> MishkaApi.ContentProtocol.delete_post_like(conn)
-  end
-
-  def edit_post(conn, %{"post_id" => post_id} = params) do
-    # action blogs:edit
-    Post.edit(Map.merge(params, %{"id" => post_id}), @allowed_category_fields)
-    |> MishkaApi.ContentProtocol.edit_post(conn)
-  end
-
-  def delete_post(conn, %{"post_id" => post_id}) do
-    # action blogs:edit
-    # change flag of status
-    Post.edit(%{id: post_id, status: :soft_delete})
-    |> MishkaApi.ContentProtocol.delete_post(conn)
-  end
-
-  def destroy_post(conn, %{"post_id" => post_id}) do
-    # action blogs:*
-    Post.delete(post_id)
-    |> MishkaApi.ContentProtocol.delete_post(conn)
   end
 
   def edit_category(conn, %{"category_id" => category_id} = params) do

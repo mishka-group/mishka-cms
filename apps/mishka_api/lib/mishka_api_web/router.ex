@@ -40,6 +40,14 @@ defmodule MishkaApiWeb.Router do
     post "/destroy-category", ContentController, :destroy_category
     post "/categories", ContentController, :categories
     post "/category", ContentController, :category
+
+
+    post "/create-post", ContentController, :create_post
+    post "/edit-post", ContentController, :edit_post
+    post "/delete-post", ContentController, :delete_post
+    post "/destroy-post", ContentController, :destroy_post
+    post "/posts", ContentController, :posts
+    post "/post", ContentController, :post
   end
 
 

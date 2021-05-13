@@ -34,17 +34,17 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     field :custom_title, :string, size: 200, null: true
     field :robots, ContentRobotsEnum, null: false, default: :IndexFollow
     field :post_visibility, :boolean, null: false, default: true
-    field :allow_commenting, :boolean, null: true
-    field :allow_liking, :boolean, null: true
-    field :allow_printing, :boolean, null: true
-    field :allow_reporting, :boolean, null: true
-    field :allow_social_sharing, :boolean, null: true
-    field :allow_bookmarking, :boolean, null: true
-    field :show_hits, :boolean, null: true
-    field :show_time, :boolean, null: true
-    field :show_authors, :boolean, null: true
-    field :show_category, :boolean, null: true
-    field :show_links, :boolean, null: true
+    field :allow_commenting, :boolean, null: true, default: true
+    field :allow_liking, :boolean, null: true, default: true
+    field :allow_printing, :boolean, null: true, default: true
+    field :allow_reporting, :boolean, null: true, default: true
+    field :allow_social_sharing, :boolean, null: true, default: true
+    field :allow_bookmarking, :boolean, null: true, default: true
+    field :show_hits, :boolean, null: true, default: true
+    field :show_time, :boolean, null: true, default: true
+    field :show_authors, :boolean, null: true, default: true
+    field :show_category, :boolean, null: true, default: true
+    field :show_links, :boolean, null: true, default: true
     field :show_location, :boolean, null: true
 
     belongs_to :blog_categories, MishkaDatabase.Schema.MishkaContent.Blog.Category, foreign_key: :category_id, type: :binary_id
@@ -77,7 +77,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     |> validate_length(:meta_description, max: 164, message: "maximum 164 characters")
     |> validate_length(:custom_title, max: 200, message: "maximum 200 characters")
     |> foreign_key_constraint(:category_id, message: "this post has already been taken or you can't delete it because there is a dependency")
-    |> unique_constraint(:alias_link, name: :index_on_blog_post_alias_link, message: "this post alias link has already been taken.")
+    |> unique_constraint(:alias_link, name: :index_blog_posts_on_alias_link, message: "this post alias link has already been taken.")
   end
 
 end

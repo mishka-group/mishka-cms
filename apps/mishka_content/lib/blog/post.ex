@@ -110,4 +110,7 @@ defmodule MishkaContent.Blog.Post do
     ))
     |> MishkaDatabase.Repo.one()
   end
+
+  def allowed_fields(:atom), do: Post.__schema__(:fields)
+  def allowed_fields(:string), do: Post.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

@@ -67,4 +67,7 @@ defmodule MishkaContent.General.Comment do
       like: like
     }
   end
+
+  def allowed_fields(:atom), do: Comment.__schema__(:fields)
+  def allowed_fields(:string), do: Comment.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

@@ -3,9 +3,9 @@ defprotocol MishkaApi.ContentProtocol do
 
   def posts(parametr, conn)
 
-  def post(parametr, conn)
+  def post(parametr, conn, type)
 
-  def create_post(parametr, conn)
+  def create_post(parametr, conn, allowed_fields)
 
   def create_category(parametr, conn, allowed_fields)
 
@@ -13,11 +13,11 @@ defprotocol MishkaApi.ContentProtocol do
 
   def delete_post_like(parametr, conn)
 
-  def edit_post(parametr, conn)
+  def edit_post(parametr, conn, allowed_fields)
 
-  def delete_post(parametr, conn)
+  def delete_post(parametr, conn, allowed_fields)
 
-  def destroy_post(parametr, conn)
+  def destroy_post(parametr, conn, allowed_fields)
 
   def edit_category(parametr, conn, allowed_fields)
 
@@ -79,49 +79,171 @@ end
 defimpl MishkaApi.ContentProtocol, for: Any do
   use MishkaApiWeb, :controller
   @request_error_tag :content
-  def posts(_parametr, _conn) do
+  alias MishkaContent.General.Comment
+  alias MishkaContent.Blog.BlogLink
 
+  def posts(parametr, conn) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :posts,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      entries: parametr.entries,
+      page_number: parametr.page_number,
+      page_size: parametr.page_size,
+      total_entries: parametr.total_entries,
+      total_pages: parametr.total_pages
+    })
   end
 
-  def post(_parametr, _conn) do
-
+  def post(nil, conn, _type) do
+    not_available_record(action: :post, conn: conn, msg: "داده مورد نظر وجود ندارد")
   end
 
-  def post_with_comments(_parametr, _conn) do
+  def post(parametr, conn, %{type: :comment, comment: comment}) do
+    filters =
+      Map.take(comment["filters"], Comment.allowed_fields(:string))
+      |> MishkaDatabase.convert_string_map_to_atom_map()
 
+    comments = Comment.comments(conditions: {comment["page"], 20}, filters: filters)
+    links = BlogLink.links(filters: %{section_id: parametr.id, status: parametr.status})
+
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :post,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      post_info: Map.merge(parametr, %{
+        comments: %{
+          entries: comments.entries,
+          page_number: comments.page_number,
+          page_size: comments.page_size,
+          total_entries: comments.total_entries,
+          total_pages: comments.total_pages
+        },
+        links: links
+      }),
+    })
   end
 
-  def create_post({:error, :add, :category, _changeset}, _conn) do
-
+  def post(parametr, conn, %{type: :none_comment}) do
+    links = BlogLink.links(filters: %{section_id: parametr.id})
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :post,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      post_info: Map.merge(parametr, %{links: links}),
+    })
   end
 
-  def create_post({:ok, :add, :category, _category_info}, _conn) do
-
+  def create_post({:error, :add, :post, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :create_post,
+      system: @request_error_tag,
+      message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
 
-  def like_post(_parametr, _conn) do
-
+  def create_post({:ok, :add, :post, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :create_post,
+      system: @request_error_tag,
+      message: "داده شما با موفقیت ذخیره شد.",
+      post_info: Map.take(repo_data, allowed_fields)
+    })
   end
 
-  def delete_post_like(_parametr, _conn) do
-
+  def edit_post({:error, :edit, :post, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :edit_post,
+      system: @request_error_tag,
+      message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
 
-  def edit_post(_parametr, _conn) do
-
+  def edit_post({:ok, :edit, :post, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :edit_post,
+      system: @request_error_tag,
+      message: "داده شما با موفقیت ذخیره شد.",
+      post_info: Map.take(repo_data, allowed_fields)
+    })
   end
 
-  def delete_post(_parametr, _conn) do
-
+  def edit_post({:error, :edit, _, :post}, conn, _allowed_fields) do
+    not_available_record(action: :edit_post, conn: conn, msg: "داده مورد نظر وجود ندارد")
   end
 
-  def destroy_post(_parametr, _conn) do
-
+  def delete_post({:error, :edit, :post, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :delete_post,
+      system: @request_error_tag,
+      message: "رکورد موردنظر با موفقیت تغییر وضعیت داده است. در صورت تایید مدیریت رکورد به صورت کامل حذف خواهد شد.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
+
+  def delete_post({:ok, :edit, :post, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_post,
+      system: @request_error_tag,
+      message: "داده شما با موفقیت ذخیره شد.",
+      post_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def delete_post({:error, :edit, _, :post}, conn, _allowed_fields) do
+    not_available_record(action: :delete_post, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def destroy_post({:ok, :delete, :post, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :destroy_post,
+      system: @request_error_tag,
+      message: "رکورد مورد نظر با موفقیت حذف شد.",
+      post_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def destroy_post({:error, :delete, :post, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :destroy_post,
+      system: @request_error_tag,
+      message: "رکورد موردنظر با موفقیت تغییر وضعیت داده است. در صورت تایید مدیریت رکورد به صورت کامل حذف خواهد شد.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def destroy_post({:error, :delete, _, :post}, conn, _allowed_fields) do
+    not_available_record(action: :destroy_post, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
 
   def create_category({:error, :add, :category, repo_error}, conn, _allowed_fields) do
     conn
-    |> put_status(401)
+    |> put_status(400)
     |> json(%{
       action: :create_category,
       system: @request_error_tag,
@@ -159,7 +281,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
 
   def edit_category({:error, :edit, :category, repo_error}, conn, _allowed_fields) do
     conn
-    |> put_status(401)
+    |> put_status(400)
     |> json(%{
       action: :edit_category,
       system: @request_error_tag,
@@ -185,7 +307,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
 
   def delete_category({:error, :edit, :category, repo_error}, conn, _allowed_fields) do
     conn
-    |> put_status(401)
+    |> put_status(400)
     |> json(%{
       action: :delete_category,
       system: @request_error_tag,
@@ -196,7 +318,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
 
   def destroy_category({:error, :delete, :category, repo_error}, conn, _allowed_fields) do
     conn
-    |> put_status(401)
+    |> put_status(400)
     |> json(%{
       action: :destroy_category,
       system: @request_error_tag,
@@ -215,7 +337,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :destroy_category,
       system: @request_error_tag,
-      message: "رکورد با موفقیت حذف گردید.",
+      message: "رکورد مورد نظر با موفقیت حذف شد.",
       category_info: Map.take(repo_data, allowed_fields)
     })
   end
@@ -232,14 +354,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def category({:error, _, :category}, conn, _allowed_fields) do
-    conn
-    |> put_status(404)
-    |> json(%{
-      action: :category,
-      system: @request_error_tag,
-      message: "خطایی در فراخوانی داده مورد نیاز شما پیش آماده است",
-      error: "not_found"
-    })
+    not_available_record(action: :category, conn: conn, msg: "خطایی در فراخوانی داده مورد نیاز شما پیش آماده است")
   end
 
   def category({:ok, _, :category, category_info}, conn, allowed_fields) do
@@ -262,6 +377,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_comment(_parametr, _conn) do
+
+  end
+
+  def like_post(_parametr, _conn) do
+
+  end
+
+  def delete_post_like(_parametr, _conn) do
 
   end
 

@@ -4,6 +4,10 @@ defmodule MishkaApiWeb.ContentControllerTest do
   alias MishkaContent.Blog.Category
   alias MishkaContent.Blog.Post
   alias MishkaContent.Blog.Like
+  alias MishkaContent.General.Comment
+  alias MishkaContent.General.CommentLike
+  alias MishkaContent.Blog.TagMapper
+  alias MishkaContent.Blog.Tag
 
   setup_all do
     start_supervised(MishkaDatabase.Cache.MnesiaToken)
@@ -41,6 +45,13 @@ defmodule MishkaApiWeb.ContentControllerTest do
     "password" => "pass1Test",
     "status" => 1,
     "unconfirmed_email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
+  }
+
+  @comment_info %{
+    "description" => "test one",
+    "status" => :active,
+    "priority" => :none,
+    "section" => :blog_post
   }
 
   setup _context do
@@ -391,7 +402,440 @@ defmodule MishkaApiWeb.ContentControllerTest do
         "like_info" => _like_info
       } = json_response(conn, 200)
     end
+
+    test "comment" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :comment), %{"filters" => %{"comment_id" => comment_info.id, "status" => "active"}})
+
+      assert %{
+        "action" => "comment",
+        "system" => "content",
+        "message" => _msg,
+        "comment_info" => _comment_info
+      } = json_response(conn, 200)
+
+      new_conn = Phoenix.ConnTest.build_conn()
+      conn1 =
+        new_conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :comment), %{
+          "filters" => %{"comment_id" => comment_info.id, "status" => "active", "section" => :blog_post}})
+
+      assert %{
+        "action" => "comment",
+        "system" => "content",
+        "message" => _msg,
+        "comment_info" => _comment_info
+      } = json_response(conn1, 200)
+    end
+
+    test "comments" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :comment, _comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+      {:ok, :add, :comment, _comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :comments), %{"page" => 1, "filters" => %{"status" => "active"}})
+
+        assert %{
+          "action" => "comments",
+          "system" => "content",
+          "message" => _msg,
+          "entries" => _entries,
+          "page_number" => _page_number,
+          "page_size" => _page_size,
+          "total_entries" => _total_entries,
+          "total_pages" => _total_pages
+        } = json_response(conn, 200)
+    end
+
+    test "create comment" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_comment), %{"section_id" => post_data.id, description: "this is a test"})
+
+      assert %{
+        "action" => "create_comment",
+        "system" => "content",
+        "message" => _msg,
+        "comment_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+    test "edit comment" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :edit_comment), %{"id" => comment_info.id, description: "this is a edit test"})
+
+      assert %{
+        "action" => "edit_comment",
+        "system" => "content",
+        "message" => _msg,
+        "comment_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+
+    test "delete comment" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_comment), %{"user_id" => user_info.id, "comment_id" => comment_info.id})
+
+      assert %{
+        "action" => "delete_comment",
+        "system" => "content",
+        "message" => _msg,
+        "comment_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+    test "destroy comment" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :destroy_comment), %{"comment_id" => comment_info.id})
+
+      assert %{
+        "action" => "destroy_comment",
+        "system" => "content",
+        "message" => _msg,
+        "comment_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+    test "like comment" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :like_comment), %{"comment_id" => comment_info.id})
+
+      assert %{
+        "action" => "like_comment",
+        "system" => "content",
+        "message" => _msg,
+        "comment_like_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+    test "delete like comment" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+
+
+      {:ok, :add, :comment_like, _comment_info} = assert CommentLike.create(
+        %{"user_id" => user_info.id, "comment_id" => comment_info.id}
+      )
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_comment_like), %{"comment_id" => comment_info.id})
+
+      assert %{
+        "action" => "delete_comment_like",
+        "system" => "content",
+        "message" => _msg,
+        "comment_like_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+    test "create tag" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_tag), %{
+          "title" => "tag one",
+          "alias_link" => "tag1",
+          "robots" => "IndexFollow"
+        })
+
+      assert %{
+        "action" => "create_tag",
+        "system" => "content",
+        "message" => _msg,
+        "tag_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+    test "edit tag" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :blog_tag, tag_info} = assert Tag.create(%{
+        title: "tag1",
+        alias_link: "tag1",
+        meta_keywords: "tag1",
+        meta_description: "tag1",
+        custom_title: "tag1",
+        robots: :IndexFollow,
+      })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :edit_tag), %{
+          "tag_id" => tag_info.id,
+          "title" => "tag one",
+        })
+
+      assert %{
+        "action" => "edit_tag",
+        "system" => "content",
+        "message" => _msg,
+        "tag_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+    test "delete tag" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :blog_tag, tag_info} = assert Tag.create(%{
+        title: "tag1",
+        alias_link: "tag1",
+        meta_keywords: "tag1",
+        meta_description: "tag1",
+        custom_title: "tag1",
+        robots: :IndexFollow,
+      })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_tag), %{"tag_id" => tag_info.id})
+
+      assert %{
+        "action" => "delete_tag",
+        "system" => "content",
+        "message" => _msg,
+        "tag_info" => _comment_info
+      } = json_response(conn, 200)
+    end
+
+    test "add tag to post" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :blog_tag, tag_info} = assert Tag.create(%{
+        title: "tag1",
+        alias_link: "tag1",
+        meta_keywords: "tag1",
+        meta_description: "tag1",
+        custom_title: "tag1",
+        robots: :IndexFollow,
+      })
+
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :add_tag_to_post), %{"tag_id" => tag_info.id, "post_id" => post_data.id})
+
+      assert %{
+        "action" => "add_tag_to_post",
+        "system" => "content",
+        "message" => _msg,
+        "post_tag_info" => _post_tag_info
+      } = json_response(conn, 200)
+    end
+
+    test "remove post tag" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :blog_tag, tag_info} = assert Tag.create(%{
+        title: "tag1",
+        alias_link: "tag1",
+        meta_keywords: "tag1",
+        meta_description: "tag1",
+        custom_title: "tag1",
+        robots: :IndexFollow,
+      })
+
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      {:ok, :add, :blog_tag_mapper, _tag_info} = assert TagMapper.create(%{
+        post_id: post_data.id,
+        tag_id: tag_info.id
+      })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :remove_post_tag), %{"tag_id" => tag_info.id, "post_id" => post_data.id})
+
+      assert %{
+        "action" => "remove_post_tag",
+        "system" => "content",
+        "message" => _msg,
+        "post_tag_info" => _post_tag_info
+      } = json_response(conn, 200)
+    end
+
+    test "tags" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :blog_tag, _tag_info} = assert Tag.create(%{
+        title: "tag1",
+        alias_link: "tag1",
+        meta_keywords: "tag1",
+        meta_description: "tag1",
+        custom_title: "tag1",
+        robots: :IndexFollow,
+      })
+
+      {:ok, :add, :blog_tag, _tag_info} = assert Tag.create(%{
+        title: "tag2",
+        alias_link: "tag2",
+        robots: :IndexFollow,
+      })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :tags), %{"page" => 1, "filters" => %{}})
+
+      assert %{
+        "action" => "tags",
+        "system" => "content",
+        "message" => _msg,
+        "entries" => entries,
+        "page_number" => _page_number,
+        "page_size" => _page_size,
+        "total_entries" => _total_entries,
+        "total_pages" => _total_pages
+      } = json_response(conn, 200)
+
+      2 = assert length(entries)
+    end
+
+    test "tag posts" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :blog_tag, tag_info} = assert Tag.create(%{
+        title: "tag1",
+        alias_link: "tag1",
+        meta_keywords: "tag1",
+        meta_description: "tag1",
+        custom_title: "tag1",
+        robots: :IndexFollow,
+      })
+
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      {:ok, :add, :blog_tag_mapper, _tag_info} = assert TagMapper.create(%{
+        post_id: post_data.id,
+        tag_id: tag_info.id
+      })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :tag_posts), %{"page" => 1, "filters" => %{"tag_id" => tag_info.id}})
+
+      assert %{
+        "action" => "tag_posts",
+        "system" => "content",
+        "message" => _msg,
+        "entries" => entries,
+        "page_number" => _page_number,
+        "page_size" => _page_size,
+        "total_entries" => _total_entries,
+        "total_pages" => _total_pages
+      } = json_response(conn, 200)
+
+      1 = assert length entries
+
+    end
+
+    test "post tags" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :blog_tag, tag_info} = assert Tag.create(%{
+        title: "tag1",
+        alias_link: "tag1",
+        meta_keywords: "tag1",
+        meta_description: "tag1",
+        custom_title: "tag1",
+        robots: :IndexFollow,
+      })
+
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      {:ok, :add, :blog_tag_mapper, _tag_info} = assert TagMapper.create(%{
+        post_id: post_data.id,
+        tag_id: tag_info.id
+      })
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :post_tags), %{"post_id" => post_data.id})
+
+        assert %{
+          "action" => "post_tags",
+          "system" => "content",
+          "message" => _msg,
+          "tags" => tags,
+        } = json_response(conn, 200)
+
+        1 = assert length(tags)
+    end
   end
+
+
+
+
+
+
+
 
 
 

@@ -22,8 +22,21 @@ defmodule MishkaContent.General.Comment do
     crud_edit(attrs)
   end
 
+  def edit(attrs, allowed_fields) do
+    crud_edit(attrs, allowed_fields)
+  end
+
   def delete(id) do
     crud_delete(id)
+  end
+
+  def delete(user_id, id) do
+    from(com in Comment, where: com.user_id == ^user_id and com.id == ^id)
+    |> MishkaDatabase.Repo.one()
+    |> case do
+      nil -> {:error, :edit, :comment, :not_found}
+      comment -> edit(%{id: comment.id, status: :soft_delete})
+    end
   end
 
   def show_by_id(id) do
@@ -44,6 +57,12 @@ defmodule MishkaContent.General.Comment do
     Enum.reduce(filters, query, fn {key, value}, query ->
       from bk in query, where: field(bk, ^key) == ^value
     end)
+  end
+
+  def comment(filters: filters) do
+    from(com in Comment) |> convert_filters_to_where(filters)
+    |> fields()
+    |> MishkaDatabase.Repo.one()
   end
 
   defp fields(query) do

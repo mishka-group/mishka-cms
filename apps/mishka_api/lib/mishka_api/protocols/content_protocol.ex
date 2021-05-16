@@ -25,27 +25,35 @@ defprotocol MishkaApi.ContentProtocol do
 
   def destroy_category(parametr, conn, allowed_fields)
 
-  def comment(parametr, conn)
+  def comment(parametr, conn, allowed_fields)
 
-  def comments(parametr, conn)
+  def comments(parametr, conn, allowed_fields)
 
-  def create_comment(parametr, conn)
+  def create_comment(parametr, conn, allowed_fields)
 
-  def like_comment(parametr, conn)
+  def like_comment(parametr, conn, allowed_fields)
 
-  def delete_comment_like(parametr, conn)
+  def delete_comment_like(parametr, conn, allowed_fields)
 
-  def delete_comment(parametr, conn)
+  def delete_comment(parametr, conn, allowed_fields)
 
-  def destroy_comment(parametr, conn)
+  def destroy_comment(parametr, conn, allowed_fields)
 
-  def edit_comment(parametr, conn)
+  def edit_comment(parametr, conn, allowed_fields)
 
   def authors(parametr, conn)
 
-  def create_tag(parametr, conn)
+  def create_tag(parametr, conn, allowed_fields)
 
-  def edit_tag(parametr, conn)
+  def edit_tag(parametr, conn, allowed_fields)
+
+  def delete_tag(parametr, conn, allowed_fields)
+
+  def tags(parametr, conn, allowed_fields)
+
+  def post_tags(parametr, conn, allowed_fields)
+
+  def tag_posts(parametr, conn, allowed_fields)
 
   def create_bookmark(parametr, conn)
 
@@ -55,9 +63,9 @@ defprotocol MishkaApi.ContentProtocol do
 
   def delete_subscription(parametr, conn)
 
-  def add_tag_to_post(parametr, conn)
+  def add_tag_to_post(parametr, conn, allowed_fields)
 
-  def remove_post_tag(parametr, conn)
+  def remove_post_tag(parametr, conn, allowed_fields)
 
   def create_blog_link(parametr, conn)
 
@@ -427,48 +435,357 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     not_available_record(action: :post_like, conn: conn, msg: "داده مورد نظر وجود ندارد")
   end
 
-  def comment(_parametr, _conn) do
-
+  def comment(nil, conn, _allowed_fields) do
+    not_available_record(action: :comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
   end
 
-  def comments(_parametr, _conn) do
-
+  def comment(parametr, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :comment,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      comment_info: Map.take(parametr, allowed_fields)
+    })
   end
 
-  def create_comment(_parametr, _conn) do
-
+  def comments(parametr, conn, _allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :comments,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      entries: parametr.entries,
+      page_number: parametr.page_number,
+      page_size: parametr.page_size,
+      total_entries: parametr.total_entries,
+      total_pages: parametr.total_pages
+    })
   end
 
-  def like_comment(_parametr, _conn) do
-
+  def create_comment({:error, :add, :comment, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :create_comment,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
 
-  def delete_comment_like(_parametr, _conn) do
-
+  def create_comment({:ok, :add, :comment, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :create_comment,
+      system: @request_error_tag,
+      message: "نظر شما با موفقیت ذخیره شد.",
+      comment_info: Map.take(repo_data, allowed_fields)
+    })
   end
 
-  def delete_comment(_parametr, _conn) do
-
+  def edit_comment({:ok, :edit, :comment, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :edit_comment,
+      system: @request_error_tag,
+      message: "نظر شما با موفقیت ذخیره شد.",
+      comment_info: Map.take(repo_data, allowed_fields)
+    })
   end
 
-  def destroy_comment(_parametr, _conn) do
-
+  def edit_comment({:error, :edit, :comment, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :edit_comment,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
 
-  def edit_comment(_parametr, _conn) do
-
+  def edit_comment({:error, :edit, _, :comment}, conn, _allowed_fields) do
+    not_available_record(action: :edit_comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
   end
 
-  def authors(_parametr, _conn) do
-
+  def like_comment({:ok, :add, :comment_like, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :like_comment,
+      system: @request_error_tag,
+      message: "با موفقیت کامنت مورد نظر پسند شد.",
+      comment_like_info: Map.take(repo_data, allowed_fields)
+    })
   end
 
-  def create_tag(_parametr, _conn) do
-
+  def like_comment({:error, :add, :comment_like, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :like_comment,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
 
-  def edit_tag(_parametr, _conn) do
+  def delete_comment_like({:error, :delete, :comment_like, :not_found}, conn, _allowed_fields) do
+    not_available_record(action: :delete_comment_like, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
 
+  def delete_comment_like({:error, :delete, :comment_like, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :delete_comment_like,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def delete_comment_like({:error, :delete, _, :comment_like}, conn, _allowed_fields) do
+    not_available_record(action: :delete_comment_like, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def delete_comment_like({:ok, :delete, :comment_like, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_comment_like,
+      system: @request_error_tag,
+      message: "پسند شما با موفقیت برداشته شد.",
+      comment_like_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def delete_comment({:error, :edit, :comment, :not_found}, conn, _allowed_fields) do
+    not_available_record(action: :delete_comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def delete_comment({:error, :edit, :comment, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :delete_comment,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def delete_comment({:ok, :edit, :comment, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_comment,
+      system: @request_error_tag,
+      message: "نظر شما با موفقیت ویرایش شد.",
+      comment_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def delete_comment({:error, :edit, _, :comment}, conn, _allowed_fields) do
+    not_available_record(action: :delete_comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def destroy_comment({:error, :delete, :comment, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :destroy_comment,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def destroy_comment({:ok, :delete, :comment, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :destroy_comment,
+      system: @request_error_tag,
+      message: "نظر شما با موفقیت حذف شد.",
+      comment_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def destroy_comment({:error, :delete, _, :comment}, conn, _allowed_fields) do
+    not_available_record(action: :destroy_comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def create_tag({:ok, :add, :blog_tag, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :create_tag,
+      system: @request_error_tag,
+      message: "برچسب مورد نظر با موفقیت ذخیره شد.",
+      tag_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def create_tag({:error, :add, :blog_tag, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :create_tag,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def edit_tag({:error, :edit, _, :blog_tag}, conn, _allowed_fields) do
+    not_available_record(action: :edit_tag, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def edit_tag({:error, :edit, :blog_tag, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :edit_tag,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def edit_tag({:ok, :edit, :blog_tag, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :edit_tag,
+      system: @request_error_tag,
+      message: "برچسب مورد نظر با موفقیت ویرایش شد.",
+      tag_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def delete_tag({:error, :delete, _, :blog_tag}, conn, _allowed_fields) do
+    not_available_record(action: :delete_tag, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def delete_tag({:error, :delete, :blog_tag, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :delete_tag,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def delete_tag({:ok, :delete, :blog_tag, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_tag,
+      system: @request_error_tag,
+      message: "برچسب مورد نظر با موفقیت ویرایش شد.",
+      tag_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def add_tag_to_post({:ok, :add, :blog_tag_mapper, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :add_tag_to_post,
+      system: @request_error_tag,
+      message: "برچست مورد نظر با موفقیت به پست مذکور تخصیص پیدا کرد.",
+      post_tag_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def add_tag_to_post({:error, :add, :blog_tag_mapper, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :add_tag_to_post,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def remove_post_tag({:error, :delete, :blog_tag_mapper, :not_found}, conn, _allowed_fields) do
+    not_available_record(action: :remove_post_tag, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def remove_post_tag({:error, :delete, _, :blog_tag_mapper}, conn, _allowed_fields) do
+    not_available_record(action: :remove_post_tag, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def remove_post_tag({:error, :delete, :blog_tag_mapper, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :remove_post_tag,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def remove_post_tag({:ok, :delete, :blog_tag_mapper, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :remove_post_tag,
+      system: @request_error_tag,
+      message: "برچست مورد نظر با موفقیت به پست مذکور تخصیص پیدا کرد.",
+      post_tag_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def tags(parametr, conn, _allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :tags,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      entries: parametr.entries,
+      page_number: parametr.page_number,
+      page_size: parametr.page_size,
+      total_entries: parametr.total_entries,
+      total_pages: parametr.total_pages
+    })
+  end
+
+  def post_tags(parametr, conn, _allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :post_tags,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      tags: parametr,
+    })
+  end
+
+  def tag_posts(parametr, conn, _allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :tag_posts,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      entries: parametr.entries,
+      page_number: parametr.page_number,
+      page_size: parametr.page_size,
+      total_entries: parametr.total_entries,
+      total_pages: parametr.total_pages
+    })
   end
 
   def create_bookmark(_parametr, _conn) do
@@ -484,14 +801,6 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_subscription(_parametr, _conn) do
-
-  end
-
-  def add_tag_to_post(_parametr, _connn) do
-
-  end
-
-  def remove_post_tag(_parametr, _connn) do
 
   end
 
@@ -519,6 +828,9 @@ defimpl MishkaApi.ContentProtocol, for: Any do
 
   end
 
+  def authors(_parametr, _conn) do
+
+  end
 
   defp not_available_record(action: action, conn: conn, msg: msg) do
     conn

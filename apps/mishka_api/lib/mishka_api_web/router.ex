@@ -55,6 +55,28 @@ defmodule MishkaApiWeb.Router do
 
     post "/like-post", ContentController, :like_post
     post "/delete-like-post", ContentController, :delete_post_like
+
+
+    post "/comment", ContentController, :comment
+    post "/comments", ContentController, :comments
+    post "/create-comment", ContentController, :create_comment
+    post "/edit-comment", ContentController, :edit_comment
+    post "/delete-comment", ContentController, :delete_comment
+    post "/destroy-comment", ContentController, :destroy_comment
+
+
+    post "/like-comment", ContentController, :like_comment
+    post "/delete-comment-like", ContentController, :delete_comment_like
+
+
+    post "/create-tag", ContentController, :create_tag
+    post "/edit-tag", ContentController, :edit_tag
+    post "/delete-tag", ContentController, :delete_tag
+    post "/add-tag-to-post", ContentController, :add_tag_to_post
+    post "/remove-post-tag", ContentController, :remove_post_tag
+    post "/tags", ContentController, :tags
+    post "/tag-posts", ContentController, :tag_posts
+    post "/post-tags", ContentController, :post_tags
   end
 
   # Enables LiveDashboard only for development

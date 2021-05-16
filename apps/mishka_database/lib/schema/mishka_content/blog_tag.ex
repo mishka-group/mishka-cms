@@ -22,11 +22,12 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogTag do
   end
 
   @all_fields ~w(title alias_link meta_keywords meta_description custom_title robots)a
+  @required_fields ~w(title alias_link robots)a
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_fields, message: "can't be blank")
+    |> validate_required(@required_fields, message: "can't be blank")
     |> validate_length(:title, max: 200, message: "maximum 200 characters")
     |> validate_length(:alias_link, max: 200, message: "maximum 200 characters")
     |> validate_length(:meta_keywords, max: 200, message: "maximum 200 characters")

@@ -248,81 +248,87 @@ defmodule MishkaApiWeb.ContentController do
   end
 
   def tags(conn, %{"page" => page, "filters" => params}) do
+    # action blog:view
     filters = Map.take(params, Tag.allowed_fields(:string))
     Tag.tags(conditions: {page, 30}, filters: filters)
     |> MishkaApi.ContentProtocol.tags(conn, Tag.allowed_fields(:atom))
   end
 
   def post_tags(conn, %{"post_id" => post_id}) do
+    # action blog:view
     Tag.post_tags(post_id)
     |> MishkaApi.ContentProtocol.post_tags(conn, Tag.allowed_fields(:atom))
   end
 
   def tag_posts(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in ["active", "archive"] do
+    # action blog:view
     filters = Map.take(params, Tag.allowed_fields(:string))
     Tag.tag_posts(conditions: {page, 20}, filters: Map.merge(filters, %{"status" => status}))
     |> MishkaApi.ContentProtocol.tag_posts(conn, Tag.allowed_fields(:atom))
   end
 
   def tag_posts(conn, %{"page" => page, "filters" => params}) do
+    # action blog:edit
     filters = Map.take(params, Tag.allowed_fields(:string))
     Tag.tag_posts(conditions: {page, 20}, filters: filters)
     |> MishkaApi.ContentProtocol.tag_posts(conn, Tag.allowed_fields(:atom))
   end
 
-  # def create_bookmark(conn, %{"status" => status, "section" => section, "section_id" => section_id}) do
-  #   # action blog:view
-  #   Bookmark.create(%{"status" => status, "section" => section, "section_id" => section_id, "user_id" => Ecto.UUID.generate})
-  #   |> MishkaApi.ContentProtocol.create_bookmark(conn)
-  # end
+  def create_bookmark(conn, %{"section" => section, "section_id" => section_id}) do
+    # action blog:view
+    Bookmark.create(%{"status" => "active", "section" => section, "section_id" => section_id, "user_id" => conn.assigns.user_id})
+    |> MishkaApi.ContentProtocol.create_bookmark(conn, Bookmark.allowed_fields(:atom))
+  end
 
-  # def delete_bookmark(conn, %{"section_id" => section_id}) do
-  #   # action blog:user_id:view
-  #   Bookmark.delete(Ecto.UUID.generate, section_id)
-  #   |> MishkaApi.ContentProtocol.delete_bookmark(conn)
-  # end
+  def delete_bookmark(conn, %{"section_id" => section_id}) do
+    # action blog:user_id:view
+    Bookmark.delete(conn.assigns.user_id, section_id)
+    |> MishkaApi.ContentProtocol.delete_bookmark(conn, Bookmark.allowed_fields(:atom))
+  end
 
-  # def create_subscription(conn, %{"section" => section, "section_id" => section_id}) do
-  #   # action blog:view
-  #   Subscription.create(%{"section" => section, "section_id" => section_id, "user_id" => Ecto.UUID.generate})
-  #   |> MishkaApi.ContentProtocol.create_subscription(conn)
-  # end
+  def create_subscription(conn, %{"section" => section, "section_id" => section_id}) do
+    # action blog:view
+    Subscription.create(%{"section" => section, "section_id" => section_id, "user_id" => conn.assigns.user_id})
+    |> MishkaApi.ContentProtocol.create_subscription(conn, Subscription.allowed_fields(:atom))
+  end
 
-  # def delete_subscription(conn, %{"section_id" => section_id}) do
-  #   # action blog:user_id:view
-  #   Subscription.delete(Ecto.UUID.generate, section_id)
-  #   |> MishkaApi.ContentProtocol.delete_subscription(conn)
-  # end
+  def delete_subscription(conn, %{"section_id" => section_id}) do
+    # action blog:user_id:view
+    Subscription.delete(conn.assigns.user_id, section_id)
+    |> MishkaApi.ContentProtocol.delete_subscription(conn, Subscription.allowed_fields(:atom))
+  end
 
-  # def create_blog_link(conn, params) do
-  #   # action blog:create
-  #   BlogLink.create(params, @blog_link)
-  #   |> MishkaApi.ContentProtocol.create_blog_link(conn)
-  # end
+  def create_blog_link(conn, params) do
+    # action blog:create
+    BlogLink.create(params, BlogLink.allowed_fields(:string))
+    |> MishkaApi.ContentProtocol.create_blog_link(conn, BlogLink.allowed_fields(:atom))
+  end
 
-  # def edit_blog_link(conn, %{"blog_link_id" => id} = params) do
-  #   # action blog:create
-  #   BlogLink.edit(Map.merge(params, %{"id" => id}), @blog_link)
-  #   |> MishkaApi.ContentProtocol.edit_blog_link(conn)
-  # end
+  def edit_blog_link(conn, %{"blog_link_id" => id} = params) do
+    # action blog:create
+    BlogLink.edit(Map.merge(params, %{"id" => id}), BlogLink.allowed_fields(:string))
+    |> MishkaApi.ContentProtocol.edit_blog_link(conn, BlogLink.allowed_fields(:atom))
+  end
 
-  # def delete_blog_link(conn, %{"blog_link_id" => id}) do
-  #   # action blog:create
-  #   BlogLink.delete(id)
-  #   |> MishkaApi.ContentProtocol.delete_blog_link(conn)
-  # end
+  def delete_blog_link(conn, %{"blog_link_id" => id}) do
+    # action blog:create
+    BlogLink.delete(id)
+    |> MishkaApi.ContentProtocol.delete_blog_link(conn, BlogLink.allowed_fields(:atom))
+  end
 
-  # def links(conn, %{"page" => page, "section_id" => section_id}) do
-  #   # action blog:view
-  #   BlogLink.links(conditions: {page, 30}, filters: %{section_id: section_id})
-  #   |> MishkaApi.ContentProtocol.links(conn)
-  # end
+  def links(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in ["active", "archive"] do
+    # action blog:view
+    filters = Map.take(params, BlogLink.allowed_fields(:string))
+    BlogLink.links(conditions: {page, 30}, filters: Map.merge(filters, %{"status" => status}))
+    |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
+  end
 
-  # def links(conn, %{"page" => page, "filters" => params}) do
-  #   # action blog:editor
-  #   BlogLink.links(conditions: {page, 30}, filters: params)
-  #   |> MishkaApi.ContentProtocol.links(conn)
-  # end
+  def links(conn, %{"page" => page, "filters" => params}) do
+    # action blog:edit
+    filters = Map.take(params, BlogLink.allowed_fields(:string))
+    BlogLink.links(conditions: {page, 30}, filters: filters)
+    |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
+  end
 
   # def notifs(conn, %{"page" => page, "filters" => params}) do
   #   # action *

@@ -70,4 +70,7 @@ defmodule MishkaContent.Blog.BlogLink do
       section_id: link.section_id,
     }
   end
+
+  def allowed_fields(:atom), do: BlogLink.__schema__(:fields)
+  def allowed_fields(:string), do: BlogLink.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

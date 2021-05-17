@@ -30,7 +30,12 @@ defmodule MishkaContent.General.Bookmark do
   end
 
   def delete(user_id, section_id) do
-    [user_id, section_id]
+    from(bm in Bookmark, where: bm.user_id == ^user_id and bm.section_id == ^section_id)
+    |> MishkaDatabase.Repo.one()
+    |> case do
+      nil -> {:error, :delete, :bookmark, :not_found}
+      comment -> delete(comment.id)
+    end
   end
 
   def show_by_id(id) do
@@ -61,4 +66,7 @@ defmodule MishkaContent.General.Bookmark do
       extra: bk.extra,
     }
   end
+
+  def allowed_fields(:atom), do: Bookmark.__schema__(:fields)
+  def allowed_fields(:string), do: Bookmark.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

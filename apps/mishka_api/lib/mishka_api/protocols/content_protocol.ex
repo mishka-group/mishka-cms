@@ -55,25 +55,25 @@ defprotocol MishkaApi.ContentProtocol do
 
   def tag_posts(parametr, conn, allowed_fields)
 
-  def create_bookmark(parametr, conn)
+  def create_bookmark(parametr, conn, allowed_fields)
 
-  def delete_bookmark(parametr, conn)
+  def delete_bookmark(parametr, conn, allowed_fields)
 
-  def create_subscription(parametr, conn)
+  def create_subscription(parametr, conn, allowed_fields)
 
-  def delete_subscription(parametr, conn)
+  def delete_subscription(parametr, conn, allowed_fields)
 
   def add_tag_to_post(parametr, conn, allowed_fields)
 
   def remove_post_tag(parametr, conn, allowed_fields)
 
-  def create_blog_link(parametr, conn)
+  def create_blog_link(parametr, conn, allowed_fields)
 
-  def edit_blog_link(parametr, conn)
+  def edit_blog_link(parametr, conn, allowed_fields)
 
-  def delete_blog_link(parametr, conn)
+  def delete_blog_link(parametr, conn, allowed_fields)
 
-  def links(parametr, conn)
+  def links(parametr, conn, allowed_fields)
 
   def send_notif(parametr, conn)
 
@@ -788,36 +788,197 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     })
   end
 
-  def create_bookmark(_parametr, _conn) do
-
+  def create_bookmark({:ok, :add, :bookmark, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :create_bookmark,
+      system: @request_error_tag,
+      message: "پست مورد نظر بوکمارک شد.",
+      bookmark_info: Map.take(repo_data, allowed_fields)
+    })
   end
 
-  def delete_bookmark(_parametr, _conn) do
-
+  def create_bookmark({:error, :add, :bookmark, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :create_bookmark,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
 
-  def create_subscription(_parametr, _conn) do
-
+  def delete_bookmark({:ok, :delete, :bookmark, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_bookmark,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت ذخیره شد.",
+      bookmark_info: Map.take(repo_data, allowed_fields)
+    })
   end
 
-  def delete_subscription(_parametr, _conn) do
-
+  def delete_bookmark({:error, :delete, :bookmark, :not_found}, conn, _allowed_fields) do
+    not_available_record(action: :delete_bookmark, conn: conn, msg: "داده مورد نظر وجود ندارد")
   end
 
-  def create_blog_link(_parametr, _connn) do
-
+  def delete_bookmark({:error, :delete, _, :bookmark}, conn, _allowed_fields) do
+    not_available_record(action: :delete_bookmark, conn: conn, msg: "داده مورد نظر وجود ندارد")
   end
 
-  def edit_blog_link(_parametr, _connn) do
-
+  def delete_bookmark({:error, :delete, :bookmark, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :delete_bookmark,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
 
-  def delete_blog_link(_parametr, _connn) do
-
+  def create_subscription({:error, :add, :subscription, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :create_subscription,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
   end
 
-  def links(_parametr, _connn) do
+  def create_subscription({:ok, :add, :subscription, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :create_subscription,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت ذخیره شد.",
+      subscription_info: Map.take(repo_data, allowed_fields)
+    })
+  end
 
+  def delete_subscription({:error, :delete, :subscription, :not_found}, conn, _allowed_fields) do
+    not_available_record(action: :delete_subscription, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def delete_subscription({:error, :delete, _, :subscription}, conn, _allowed_fields) do
+    not_available_record(action: :delete_subscription, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def delete_subscription({:error, :delete, :subscription, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :delete_subscription,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def delete_subscription({:ok, :delete, :subscription, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_subscription,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت ذخیره شد.",
+      subscription_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def create_blog_link({:ok, :add, :blog_link, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :create_blog_link,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت ذخیره شد.",
+      blog_link_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def create_blog_link({:error, :add, :blog_link, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :create_blog_link,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def edit_blog_link({:ok, :edit, :blog_link, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :edit_blog_link,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت ذخیره شد.",
+      blog_link_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def edit_blog_link({:error, :edit, _, :blog_link}, conn, _allowed_fields) do
+    not_available_record(action: :edit_blog_link, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def edit_blog_link({:error, :edit, :blog_link, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :edit_blog_link,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def delete_blog_link({:error, :delete, _, :blog_link}, conn, _allowed_fields) do
+    not_available_record(action: :delete_blog_link, conn: conn, msg: "داده مورد نظر وجود ندارد")
+  end
+
+  def delete_blog_link({:error, :delete, :blog_link, repo_error}, conn, _allowed_fields) do
+    conn
+    |> put_status(400)
+    |> json(%{
+      action: :delete_blog_link,
+      system: @request_error_tag,
+      message: "خطایی در ارسال داده ها پیش آماده است.",
+      errors: MishkaDatabase.translate_errors(repo_error)
+    })
+  end
+
+  def delete_blog_link({:ok, :delete, :blog_link, repo_data}, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :delete_blog_link,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت انجام شد.",
+      blog_link_info: Map.take(repo_data, allowed_fields)
+    })
+  end
+
+  def links(parametr, conn, _allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :links,
+      system: @request_error_tag,
+      message: "درخواست شما با موفقیت دریافت شد.",
+      entries: parametr.entries,
+      page_number: parametr.page_number,
+      page_size: parametr.page_size,
+      total_entries: parametr.total_entries,
+      total_pages: parametr.total_pages
+    })
   end
 
   def send_notif(_parametr, _connn) do

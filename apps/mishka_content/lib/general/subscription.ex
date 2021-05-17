@@ -22,7 +22,12 @@ defmodule MishkaContent.General.Subscription do
   end
 
   def delete(user_id, section_id) do
-    [user_id, section_id]
+    from(sub in Subscription, where: sub.user_id == ^user_id and sub.section_id == ^section_id)
+    |> MishkaDatabase.Repo.one()
+    |> case do
+      nil -> {:error, :delete, :subscription, :not_found}
+      comment -> delete(comment.id)
+    end
   end
 
   def show_by_id(id) do
@@ -55,4 +60,7 @@ defmodule MishkaContent.General.Subscription do
       extra: sub.extra,
     }
   end
+
+  def allowed_fields(:atom), do: Subscription.__schema__(:fields)
+  def allowed_fields(:string), do: Subscription.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

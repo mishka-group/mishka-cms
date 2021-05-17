@@ -8,6 +8,9 @@ defmodule MishkaApiWeb.ContentControllerTest do
   alias MishkaContent.General.CommentLike
   alias MishkaContent.Blog.TagMapper
   alias MishkaContent.Blog.Tag
+  alias MishkaContent.General.Bookmark
+  alias MishkaContent.General.Subscription
+  alias MishkaContent.Blog.BlogLink
 
   setup_all do
     start_supervised(MishkaDatabase.Cache.MnesiaToken)
@@ -52,6 +55,16 @@ defmodule MishkaApiWeb.ContentControllerTest do
     "status" => :active,
     "priority" => :none,
     "section" => :blog_post
+  }
+
+  @blog_link %{
+    "short_description" => "this is a link",
+    "status" => :archived,
+    "type" => :inside,
+    "title" => "this is link title",
+    "link" => "https://test.com/test.json",
+    "short_link" => "#{Ecto.UUID.generate}",
+    "robots" => :IndexFollow
   }
 
   setup _context do
@@ -828,7 +841,227 @@ defmodule MishkaApiWeb.ContentControllerTest do
 
         1 = assert length(tags)
     end
+
+    test "create bookmark" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_bookmark), %{
+          "section_id" => post_data.id,
+          "section" => "blog_post"
+        })
+
+        assert %{
+          "action" => "create_bookmark",
+          "system" => "content",
+          "message" => _msg,
+          "bookmark_info" => _bookmark_info,
+        } = json_response(conn, 200)
+    end
+
+    test "delete bookmark" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      {:ok, :add, :bookmark, _bookmark_info} = assert Bookmark.create(
+        %{
+          "status" => "active",
+          "section" => "blog_post",
+          "section_id" => post_data.id,
+          "user_id" => user_info.id
+        })
+
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_bookmark), %{
+          "section_id" => post_data.id
+        })
+
+      assert %{
+        "action" => "delete_bookmark",
+        "system" => "content",
+        "message" => _msg,
+        "bookmark_info" => _bookmark_info,
+      } = json_response(conn, 200)
+    end
+
+    test "create Subscription" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_subscription), %{
+          "section_id" => post_data.id,
+          "section" => "blog_post"
+        })
+
+        assert %{
+          "action" => "create_subscription",
+          "system" => "content",
+          "message" => _msg,
+          "subscription_info" => _subscription_info,
+        } = json_response(conn, 200)
+    end
+
+    test "delete Subscription" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      subscription_info = %{
+        status: :active,
+        section: :blog_post,
+        extra: %{test: "this is a test of Subscription"},
+      }
+
+      {:ok, :add, :subscription, _subscription_info} = assert Subscription.create(
+        Map.merge(subscription_info, %{section_id: post_data.id, user_id: user_info.id}
+      ))
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_subscription), %{
+          "section_id" => post_data.id,
+          "section" => "blog_post"
+        })
+
+        assert %{
+          "action" => "delete_subscription",
+          "system" => "content",
+          "message" => _msg,
+          "subscription_info" => _subscription_info,
+        } = json_response(conn, 200)
+    end
+
+    test "create blog link" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_blog_link), Map.merge(@blog_link, %{"section_id" => post_data.id}))
+
+        assert %{
+          "action" => "create_blog_link",
+          "system" => "content",
+          "message" => _msg,
+          "blog_link_info" => _blog_link_info,
+        } = json_response(conn, 200)
+    end
+
+    test "edit blog link" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      {:ok, :add, :blog_link, link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{"section_id" => post_data.id})
+      )
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :edit_blog_link), %{"blog_link_id" => link_info.id, "status" => "active"})
+
+        assert %{
+          "action" => "edit_blog_link",
+          "system" => "content",
+          "message" => _msg,
+          "blog_link_info" => _blog_link_info,
+        } = json_response(conn, 200)
+    end
+
+    test "delete blog link" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      {:ok, :add, :blog_link, link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{"section_id" => post_data.id})
+      )
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_blog_link), %{"blog_link_id" => link_info.id})
+
+        assert %{
+          "action" => "delete_blog_link",
+          "system" => "content",
+          "message" => _msg,
+          "blog_link_info" => _blog_link_info,
+        } = json_response(conn, 200)
+    end
+
+    test "links" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      {:ok, :add, :blog_link, _link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{"section_id" => post_data.id})
+      )
+
+      {:ok, :add, :blog_link, _link_info} = assert BlogLink.create(
+        Map.merge(@blog_link, %{
+          "section_id" => post_data.id,
+          "link" => "https://test.com/test1.json",
+          "short_link" => "test-#{Ecto.UUID.generate}"
+        })
+      )
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :links), %{"page" => 1, "filters" => %{}})
+
+        assert %{
+          "action" => "links",
+          "system" => "content",
+          "message" => _msg,
+          "entries" =>  entries,
+          "page_number" =>  _page_number,
+          "page_size" =>  _page_size,
+          "total_entries" =>  _total_entries,
+          "total_pages" =>  _total_pages
+        } = json_response(conn, 200)
+
+        2 = assert length(entries)
+    end
   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

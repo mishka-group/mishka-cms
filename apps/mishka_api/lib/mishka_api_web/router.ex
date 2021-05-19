@@ -91,6 +91,15 @@ defmodule MishkaApiWeb.Router do
     post "/delete-blog-link", ContentController, :delete_blog_link
     post "/links", ContentController, :links
 
+
+    post "/notifs", ContentController, :notifs
+    post "/send-notif", ContentController, :send_notif
+
+
+    post "/authors", ContentController, :authors
+    post "/create-author", ContentController, :create_author
+    post "/delete-author", ContentController, :delete_author
+
   end
 
   # Enables LiveDashboard only for development

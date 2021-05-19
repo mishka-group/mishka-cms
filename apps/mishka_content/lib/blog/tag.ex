@@ -48,6 +48,9 @@ defmodule MishkaContent.Blog.Tag do
       robots: tag.robots,
     })
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   def post_tags(post_id) do
@@ -65,6 +68,8 @@ defmodule MishkaContent.Blog.Tag do
         robots: tag.robots,
       }
     MishkaDatabase.Repo.all(query)
+  rescue
+    Ecto.Query.CastError -> []
   end
 
   def tag_posts(conditions: {page, page_size}, filters: %{"status" => status} = filters) when status in ["active", "archive"] do
@@ -76,6 +81,9 @@ defmodule MishkaContent.Blog.Tag do
     where: post.status == ^status and cat.status == ^status)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   def tag_posts(conditions: {page, page_size}, filters: filters) do
@@ -86,6 +94,9 @@ defmodule MishkaContent.Blog.Tag do
     join: cat in assoc(post, :blog_categories))
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   defp convert_filters_to_where(query, filters) do

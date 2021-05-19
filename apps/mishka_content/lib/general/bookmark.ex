@@ -36,6 +36,9 @@ defmodule MishkaContent.General.Bookmark do
       nil -> {:error, :delete, :bookmark, :not_found}
       comment -> delete(comment.id)
     end
+  rescue
+    Ecto.Query.CastError ->
+      {:error, :delete, :bookmark, :not_found}
   end
 
   def show_by_id(id) do
@@ -46,6 +49,9 @@ defmodule MishkaContent.General.Bookmark do
     from(bk in Bookmark) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   defp convert_filters_to_where(query, filters) do

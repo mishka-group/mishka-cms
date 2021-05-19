@@ -148,6 +148,8 @@ defmodule MishkaUser.User do
         value: permissions.value,
       }
     MishkaDatabase.Repo.all(query)
+  rescue
+    Ecto.Query.CastError -> []
   end
 
 end

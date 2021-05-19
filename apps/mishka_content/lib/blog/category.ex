@@ -61,6 +61,9 @@ defmodule MishkaContent.Blog.Category do
     from([cat] in query, join: post in assoc(cat, :blog_posts))
     |> fields(type)
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   defp convert_filters_to_where(query, filters) do

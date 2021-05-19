@@ -18,6 +18,8 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogAuthor do
     struct
     |> cast(params, [:post_id, :user_id])
     |> validate_required([:user_id, :post_id], message: "can't be blank")
+    |> MishkaDatabase.validate_binary_id(:post_id)
+    |> MishkaDatabase.validate_binary_id(:user_id)
     |> foreign_key_constraint(:post_id, message: "you can't delete it because there is a dependency")
     |> foreign_key_constraint(:user_id, message: "you can't delete it because there is a dependency")
     |> unique_constraint(:post_id, name: :index_blog_authors_on_post_id_and_user_id, message: "this author has already been created.")

@@ -31,6 +31,9 @@ defmodule MishkaContent.General.Activity do
     from(activity in Activity) |> convert_filters_to_where(filters)
     |> field()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   defp convert_filters_to_where(query, filters) do

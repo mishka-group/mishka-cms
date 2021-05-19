@@ -44,6 +44,9 @@ defmodule MishkaContent.Blog.Post do
     from(post in query, join: cat in assoc(post, :blog_categories))
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   defp convert_filters_to_where(query, filters) do
@@ -109,6 +112,8 @@ defmodule MishkaContent.Blog.Post do
       ]
     ))
     |> MishkaDatabase.Repo.one()
+  rescue
+    Ecto.Query.CastError -> nil
   end
 
   def allowed_fields(:atom), do: Post.__schema__(:fields)

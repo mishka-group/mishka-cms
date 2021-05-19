@@ -30,8 +30,9 @@ defmodule MishkaContent.General.CommentLike do
       nil -> {:error, :delete, :comment_like, :not_found}
       comment -> delete(comment.id)
     end
+  rescue
+    Ecto.Query.CastError -> {:error, :delete, :comment_like, :not_found}
   end
-
 
   def show_by_id(id) do
     crud_get_record(id)

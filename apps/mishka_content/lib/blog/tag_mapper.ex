@@ -29,6 +29,8 @@ defmodule MishkaContent.Blog.TagMapper  do
       nil -> {:error, :delete, :blog_tag_mapper, :not_found}
       tag_record -> delete(tag_record.id)
     end
+  rescue
+    Ecto.Query.CastError -> {:error, :delete, :blog_tag_mapper, :not_found}
   end
 
   def show_by_id(id) do

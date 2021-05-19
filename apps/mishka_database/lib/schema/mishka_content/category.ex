@@ -67,6 +67,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Category do
     |> validate_length(:meta_keywords, max: 200, message: "maximum 200 characters")
     |> validate_length(:meta_description, max: 164, message: "maximum 164 characters")
     |> validate_length(:custom_title, max: 200, message: "maximum 200 characters")
+    |> MishkaDatabase.validate_binary_id(:sub)
     |> unique_constraint(:alias_link, name: :index_blog_categories_on_alias_link, message: "this category's alias link has already been taken.")
   end
 

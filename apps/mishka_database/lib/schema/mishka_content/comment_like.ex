@@ -23,6 +23,8 @@ defmodule MishkaDatabase.Schema.MishkaContent.CommentLike do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@all_fields, message: "can't be blank")
+    |> MishkaDatabase.validate_binary_id(:user_id)
+    |> MishkaDatabase.validate_binary_id(:comment_id)
     |> foreign_key_constraint(:users, message: "you can't delete it because there is a dependency")
     |> foreign_key_constraint(:comments, message: "you can't delete it because there is a dependency")
     |> unique_constraint(:user_id, name: :index_comments_on_likes, message: "this comment has already been liked.")

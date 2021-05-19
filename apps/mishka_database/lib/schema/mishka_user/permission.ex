@@ -16,6 +16,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.Permission do
     struct
     |> cast(params, [:value, :role_id])
     |> validate_required([:value, :role_id], message: "can't be blank")
+    |> MishkaDatabase.validate_binary_id(:role_id)
     |> foreign_key_constraint(:role_id, message: "this role has already been taken or you can't delete it because there is a dependency")
     |> unique_constraint(:value, name: :index_permissions_on_value_and_role_id, message: "this role has already been taken.")
   end

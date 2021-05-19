@@ -26,6 +26,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@all_required, message: "can't be blank")
+    |> MishkaDatabase.validate_binary_id(:section_id)
   end
 
 end

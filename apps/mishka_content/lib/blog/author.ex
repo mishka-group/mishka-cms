@@ -15,12 +15,27 @@ defmodule MishkaContent.Blog.Author do
     crud_add(attrs)
   end
 
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
+  end
+
   def edit(attrs) do
     crud_edit(attrs)
   end
 
   def delete(id) do
     crud_delete(id)
+  end
+
+  def delete(user_id, post_id) do
+    from(author in BlogAuthor, where: author.user_id == ^user_id and author.post_id == ^post_id)
+    |> MishkaDatabase.Repo.one()
+    |> case do
+      nil -> {:error, :delete, :blog_author, :not_found}
+      author_record -> delete(author_record.id)
+    end
+  rescue
+    Ecto.Query.CastError -> {:error, :delete, :blog_author, :not_found}
   end
 
   def show_by_id(id) do
@@ -38,6 +53,8 @@ defmodule MishkaContent.Blog.Author do
       user_full_name: user.full_name
     })
     |> MishkaDatabase.Repo.all()
+  rescue
+    Ecto.Query.CastError -> []
   end
 
   def authors() do
@@ -50,4 +67,7 @@ defmodule MishkaContent.Blog.Author do
       user_full_name: user.full_name
     })
   end
+
+  def allowed_fields(:atom), do: BlogAuthor.__schema__(:fields)
+  def allowed_fields(:string), do: BlogAuthor.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

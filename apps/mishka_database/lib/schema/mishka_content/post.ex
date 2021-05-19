@@ -76,6 +76,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     |> validate_length(:meta_keywords, max: 200, message: "maximum 200 characters")
     |> validate_length(:meta_description, max: 164, message: "maximum 164 characters")
     |> validate_length(:custom_title, max: 200, message: "maximum 200 characters")
+    |> MishkaDatabase.validate_binary_id(:category_id)
     |> foreign_key_constraint(:category_id, message: "this post has already been taken or you can't delete it because there is a dependency")
     |> unique_constraint(:alias_link, name: :index_blog_posts_on_alias_link, message: "this post alias link has already been taken.")
   end

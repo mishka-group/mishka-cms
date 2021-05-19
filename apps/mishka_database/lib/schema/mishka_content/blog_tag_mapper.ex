@@ -18,6 +18,8 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogTagMapper do
     struct
     |> cast(params, [:post_id, :tag_id])
     |> validate_required([:post_id, :tag_id], message: "can't be blank")
+    |> MishkaDatabase.validate_binary_id(:post_id)
+    |> MishkaDatabase.validate_binary_id(:tag_id)
     |> foreign_key_constraint(:post_id, message: "you can't delete it because there is a dependency")
     |> foreign_key_constraint(:tag_id, message: "you can't delete it because there is a dependency")
     |> unique_constraint(:post_id, name: :index_blog_tags_mappers_on_post_id_and_tag_id, message: "this tag has already been created.")

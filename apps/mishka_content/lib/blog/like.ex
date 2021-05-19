@@ -29,6 +29,8 @@ defmodule MishkaContent.Blog.Like do
       nil -> {:error, :delete, :post_like, :not_found}
       liked_record -> delete(liked_record.id)
     end
+  rescue
+    Ecto.Query.CastError -> {:error, :delete, :post_like, :not_found}
   end
 
   def show_by_id(id) do

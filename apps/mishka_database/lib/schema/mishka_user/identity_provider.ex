@@ -21,6 +21,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.IdentityProvider do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@required_fields, message: "can't be blank")
+    |> MishkaDatabase.validate_binary_id(:user_id)
     |> foreign_key_constraint(:user_id, message: "this username has already been taken or you can't delete it because there is a dependency")
     |> unique_constraint(:provider_uid, name: :index_identities_on_provider_uid_and_identity_provider, message: "this account has already been taken.")
     |> unique_constraint(:identity_provider, name: :index_identities_on_user_id_and_identity_provider, message: "this account has already been taken.")

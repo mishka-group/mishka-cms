@@ -37,6 +37,8 @@ defmodule MishkaContent.General.Comment do
       nil -> {:error, :edit, :comment, :not_found}
       comment -> edit(%{id: comment.id, status: :soft_delete})
     end
+  rescue
+    Ecto.Query.CastError -> {:error, :edit, :comment, :not_found}
   end
 
   def show_by_id(id) do
@@ -51,18 +53,23 @@ defmodule MishkaContent.General.Comment do
     from(com in Comment) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  end
-
-  defp convert_filters_to_where(query, filters) do
-    Enum.reduce(filters, query, fn {key, value}, query ->
-      from bk in query, where: field(bk, ^key) == ^value
-    end)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   def comment(filters: filters) do
     from(com in Comment) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.one()
+  rescue
+    Ecto.Query.CastError -> nil
+  end
+
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from com in query, where: field(com, ^key) == ^value
+    end)
   end
 
   defp fields(query) do

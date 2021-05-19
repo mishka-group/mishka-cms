@@ -11,6 +11,9 @@ defmodule MishkaApiWeb.ContentControllerTest do
   alias MishkaContent.General.Bookmark
   alias MishkaContent.General.Subscription
   alias MishkaContent.Blog.BlogLink
+  alias MishkaContent.General.Notif
+  alias alias MishkaContent.Blog.Author
+
 
   setup_all do
     start_supervised(MishkaDatabase.Cache.MnesiaToken)
@@ -65,6 +68,15 @@ defmodule MishkaApiWeb.ContentControllerTest do
     "link" => "https://test.com/test.json",
     "short_link" => "#{Ecto.UUID.generate}",
     "robots" => :IndexFollow
+  }
+
+  @notif_info %{
+    status: :active,
+    section: :other,
+    section_id: Ecto.UUID.generate,
+    short_description: "this is a test of notif",
+    expire_time: DateTime.utc_now(),
+    extra: %{test: "this is a test of notif"},
   }
 
   setup _context do
@@ -1043,6 +1055,164 @@ defmodule MishkaApiWeb.ContentControllerTest do
 
         2 = assert length(entries)
     end
+
+    test "Notifs client" , %{user_info: user_info, conn: conn, auth: auth} do
+      user_right_info =  %{
+        "full_name" => "username",
+        "username" => "usernameuniq_#{Enum.random(100000..999999)}",
+        "email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
+        "password" => "pass1Test",
+        "status" => 1,
+        "unconfirmed_email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
+      }
+
+      {:ok, :add, :user, user_info1} = MishkaUser.User.create(user_right_info)
+
+      {:ok, :add, :notif, _notif_info} = assert Notif.create(Map.merge(@notif_info, %{user_id: user_info.id}))
+      {:ok, :add, :notif, _notif_info} = assert Notif.create(@notif_info)
+      {:ok, :add, :notif, _notif_info} = assert Notif.create(Map.merge(@notif_info, %{user_id: user_info1.id}))
+
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :notifs), %{"page" => 1, "filters" => %{}})
+
+        assert %{
+          "action" => "notifs",
+          "system" => "content",
+          "message" => _msg,
+          "entries" =>  entries,
+          "page_number" =>  _page_number,
+          "page_size" =>  _page_size,
+          "total_entries" =>  _total_entries,
+          "total_pages" =>  _total_pages
+        } = json_response(conn, 200)
+
+
+        3 = assert length(entries)
+
+        new_conn = Phoenix.ConnTest.build_conn()
+        conn1 =
+          new_conn
+          |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+          |> post(Routes.content_path(conn, :notifs), %{"type" => "client", "page" => 1, "filters" => %{}})
+
+        assert %{
+          "action" => "notifs",
+          "system" => "content",
+          "message" => _msg,
+          "entries" =>  entries1,
+          "page_number" =>  _page_number,
+          "page_size" =>  _page_size,
+          "total_entries" =>  _total_entries,
+          "total_pages" =>  _total_pages
+        } = json_response(conn1, 200)
+
+        2 = assert length(entries1)
+    end
+
+    test "send notif" , %{user_info: _user_info, conn: conn, auth: auth} do
+      notif_info = %{
+        status: :active,
+        section: :other,
+        section_id: Ecto.UUID.generate,
+        short_description: "this is a test of notif",
+        expire_time: DateTime.utc_now(),
+        extra: %{test: "this is a test of notif"},
+      }
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :send_notif), notif_info)
+
+      assert %{
+        "action" => "send_notif",
+        "system" => "content",
+        "message" => _msg,
+        "notif_info" => _notif_info,
+      } = json_response(conn, 200)
+    end
+
+    test "authors" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      user_right_info =  %{
+        "full_name" => "username",
+        "username" => "usernameuniq_#{Enum.random(100000..999999)}",
+        "email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
+        "password" => "pass1Test",
+        "status" => 1,
+        "unconfirmed_email" => "user_name_#{Enum.random(100000..999999)}@gmail.com",
+      }
+
+      {:ok, :add, :user, user_info1} = MishkaUser.User.create(user_right_info)
+      {:ok, :add, :blog_author, _author_info} = assert Author.create(
+        %{"post_id" => post_data.id, "user_id" => user_info.id}
+      )
+      {:ok, :add, :blog_author, _author_info} = assert Author.create(
+        %{"post_id" => post_data.id, "user_id" => user_info1.id}
+      )
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :authors), %{"post_id" => post_data.id})
+
+      assert %{
+        "action" => "authors",
+        "system" => "content",
+        "message" => _msg,
+        "authors" => authors,
+      } = json_response(conn, 200)
+
+      2 = assert length(authors)
+    end
+
+    test "create author" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_author), %{"post_id" => post_data.id, "user_id" => user_info.id})
+
+      assert %{
+        "action" => "create_author",
+        "system" => "content",
+        "message" => _msg,
+        "author_info" => _authors,
+      } = json_response(conn, 200)
+
+    end
+
+    test "delete author" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      {:ok, :add, :blog_author, _author_info} = assert Author.create(
+        %{"post_id" => post_data.id, "user_id" => user_info.id}
+      )
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_author), %{"post_id" => post_data.id, "user_id" => user_info.id})
+
+      assert %{
+        "action" => "delete_author",
+        "system" => "content",
+        "message" => _msg,
+        "author_info" => _authors,
+      } = json_response(conn, 200)
+
+    end
   end
 
 
@@ -1310,6 +1480,514 @@ defmodule MishkaApiWeb.ContentControllerTest do
         "message" => _msg,
         "errors" => _like_info
       } = json_response(conn, 404)
+    end
+
+    test "comment" , %{user_info: user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+      {:ok, :add, :comment, comment_info} = assert Comment.create(
+        Map.merge(@comment_info, %{"section_id" => post_data.id, "user_id" => user_info.id}
+      ))
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :comment), %{"filters" => %{"comment_id" => "Ecto.UUID.generate", "status" => "active"}})
+
+      assert %{
+        "action" => "comment",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 404)
+
+      new_conn = Phoenix.ConnTest.build_conn()
+      conn1 =
+        new_conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :comment), %{
+          "filters" => %{"comment_id" => comment_info.id, "status" => "inactive", "section" => "blog_post"}})
+
+      assert %{
+        "action" => "comment",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _comment_info
+      } = json_response(conn1, 404)
+    end
+
+    test "comments" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :comments), %{"page" => 1, "filters" =>
+        %{"some_none" => 12, "section" => :blog_post, "status" => :inactive}})
+
+        assert %{
+          "action" => "comments",
+          "system" => "content",
+          "message" => _msg,
+          "entries" => entries,
+          "page_number" => _page_number,
+          "page_size" => _page_size,
+          "total_entries" => _total_entries,
+          "total_pages" => _total_pages
+        } = json_response(conn, 200)
+
+        0 = assert length(entries)
+    end
+
+    test "create comment" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_comment), %{"section_id" => "test", description: "this is a test"})
+
+      assert %{
+        "action" => "create_comment",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 400)
+    end
+
+    test "edit comment" , %{user_info: _user_info, conn: conn, auth: auth} do
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :edit_comment), %{"id" => "bad_id_test", description: "this is a edit test"})
+
+      assert %{
+        "action" => "edit_comment",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _comment_info
+      } = json_response(conn, 404)
+    end
+
+    test "delete comment" , %{user_info: user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_comment), %{"user_id" => user_info.id, "comment_id" => "bad_id_test"})
+
+      assert %{
+        "action" => "delete_comment",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 404)
+    end
+
+    test "destroy comment" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :destroy_comment), %{"comment_id" => "bad_id_test"})
+
+      assert %{
+        "action" => "destroy_comment",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 404)
+    end
+
+    test "like comment" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :like_comment), %{"comment_id" => "bad_id_test"})
+
+      assert %{
+        "action" => "like_comment",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 400)
+    end
+
+    test "delete like comment" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_comment_like), %{"comment_id" => "bad_id_test"})
+
+      assert %{
+        "action" => "delete_comment_like",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 404)
+    end
+
+    test "create tag" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_tag), %{
+          "title" => "",
+          "alias_link" => "tag1",
+          "robots" => "IndexFollow"
+        })
+
+      assert %{
+        "action" => "create_tag",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 400)
+    end
+
+    test "edit tag" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :edit_tag), %{
+          "tag_id" => "bad_id_test",
+          "title" => "tag one",
+        })
+
+      assert %{
+        "action" => "edit_tag",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 404)
+    end
+
+    test "delete tag" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_tag), %{"tag_id" => "bad_id_test"})
+
+      assert %{
+        "action" => "delete_tag",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 404)
+    end
+
+    test "add tag to post" , %{user_info: _user_info, conn: conn, auth: auth} do
+      {:ok, :add, :category, category_data} = assert Category.create(@category_info)
+      post_info = Map.merge(@post_info, %{category_id: category_data.id})
+      {:ok, :add, :post, post_data} = assert Post.create(post_info)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :add_tag_to_post), %{"tag_id" => "bad_id_test", "post_id" => post_data.id})
+
+      assert %{
+        "action" => "add_tag_to_post",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 400)
+    end
+
+    test "remove post tag" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :remove_post_tag), %{"tag_id" => "bad_id_test", "post_id" => "bad_id_test"})
+
+      assert %{
+        "action" => "remove_post_tag",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors
+      } = json_response(conn, 404)
+    end
+
+    test "tags" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :tags), %{"page" => 1, "filters" => %{}})
+
+      assert %{
+        "action" => "tags",
+        "system" => "content",
+        "message" => _msg,
+        "entries" => entries,
+        "page_number" => _page_number,
+        "page_size" => _page_size,
+        "total_entries" => _total_entries,
+        "total_pages" => _total_pages
+      } = json_response(conn, 200)
+
+      0 = assert length(entries)
+    end
+
+    test "tag posts" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :tag_posts), %{"page" => 1, "filters" => %{"tag_id" => "bad_id_test"}})
+
+      assert %{
+        "action" => "tag_posts",
+        "system" => "content",
+        "message" => _msg,
+        "entries" => entries,
+        "page_number" => _page_number,
+        "page_size" => _page_size,
+        "total_entries" => _total_entries,
+        "total_pages" => _total_pages
+      } = json_response(conn, 200)
+
+      0 = assert length entries
+
+    end
+
+    test "post tags" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :post_tags), %{"post_id" => "bad_id_test"})
+
+        assert %{
+          "action" => "post_tags",
+          "system" => "content",
+          "message" => _msg,
+          "tags" => tags,
+        } = json_response(conn, 200)
+
+        0 = assert length(tags)
+    end
+
+    test "create bookmark" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_bookmark), %{
+          "section_id" => "bad_id_test",
+          "section" => "blog_post"
+        })
+
+        assert %{
+          "action" => "create_bookmark",
+          "system" => "content",
+          "message" => _msg,
+          "errors" => _errors,
+        } = json_response(conn, 400)
+    end
+
+    test "delete bookmark" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_bookmark), %{
+          "section_id" => "bad_id_test"
+        })
+
+      assert %{
+        "action" => "delete_bookmark",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors,
+      } = json_response(conn, 404)
+    end
+
+    test "create Subscription" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_subscription), %{
+          "section_id" => "bad_id_test",
+          "section" => "blog_post"
+        })
+
+        assert %{
+          "action" => "create_subscription",
+          "system" => "content",
+          "message" => _msg,
+          "errors" => _errors,
+        } = json_response(conn, 400)
+    end
+
+    test "delete Subscription" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_subscription), %{
+          "section_id" => "bad_id_test",
+          "section" => "blog_post"
+        })
+
+        assert %{
+          "action" => "delete_subscription",
+          "system" => "content",
+          "message" => _msg,
+          "errors" => _errors,
+        } = json_response(conn, 404)
+    end
+
+    test "create blog link" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_blog_link), %{"section_id" => "bad_id_test"})
+
+        assert %{
+          "action" => "create_blog_link",
+          "system" => "content",
+          "message" => _msg,
+          "errors" => _errors,
+        } = json_response(conn, 400)
+    end
+
+    test "edit blog link" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :edit_blog_link), %{"blog_link_id" => "bad_id_test", "status" => "active"})
+
+        assert %{
+          "action" => "edit_blog_link",
+          "system" => "content",
+          "message" => _msg,
+          "errors" => _errors,
+        } = json_response(conn, 404)
+    end
+
+    test "delete blog link" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_blog_link), %{"blog_link_id" => "bad_id_test"})
+
+        assert %{
+          "action" => "delete_blog_link",
+          "system" => "content",
+          "message" => _msg,
+          "errors" => _errors,
+        } = json_response(conn, 404)
+    end
+
+    test "links" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :links), %{"page" => 1, "filters" => %{}})
+
+        assert %{
+          "action" => "links",
+          "system" => "content",
+          "message" => _msg,
+          "entries" =>  entries,
+          "page_number" =>  _page_number,
+          "page_size" =>  _page_size,
+          "total_entries" =>  _total_entries,
+          "total_pages" =>  _total_pages
+        } = json_response(conn, 200)
+
+        0 = assert length(entries)
+    end
+
+    test "Notifs client" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :notifs), %{"page" => 1, "filters" => %{}})
+
+        assert %{
+          "action" => "notifs",
+          "system" => "content",
+          "message" => _msg,
+          "entries" =>  entries,
+          "page_number" =>  _page_number,
+          "page_size" =>  _page_size,
+          "total_entries" =>  _total_entries,
+          "total_pages" =>  _total_pages
+        } = json_response(conn, 200)
+
+
+        0 = assert length(entries)
+
+        new_conn = Phoenix.ConnTest.build_conn()
+        conn1 =
+          new_conn
+          |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+          |> post(Routes.content_path(conn, :notifs), %{"type" => "client", "page" => 1, "filters" => %{}})
+
+        assert %{
+          "action" => "notifs",
+          "system" => "content",
+          "message" => _msg,
+          "entries" =>  entries1,
+          "page_number" =>  _page_number,
+          "page_size" =>  _page_size,
+          "total_entries" =>  _total_entries,
+          "total_pages" =>  _total_pages
+        } = json_response(conn1, 200)
+
+        0 = assert length(entries1)
+    end
+
+    test "send notif" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :send_notif), %{})
+
+      assert %{
+        "action" => "send_notif",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _notif_info,
+      } = json_response(conn, 400)
+    end
+
+    test "authors" , %{user_info: _user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :authors), %{"post_id" => "bad_id_test"})
+
+      assert %{
+        "action" => "authors",
+        "system" => "content",
+        "message" => _msg,
+        "authors" => authors,
+      } = json_response(conn, 200)
+
+      0 = assert length(authors)
+    end
+
+    test "create author" , %{user_info: user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :create_author), %{"post_id" => "bad_id_test", "user_id" => user_info.id})
+
+      assert %{
+        "action" => "create_author",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _authors,
+      } = json_response(conn, 400)
+
+    end
+
+    test "delete author" , %{user_info: user_info, conn: conn, auth: auth} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
+        |> post(Routes.content_path(conn, :delete_author), %{"post_id" => "bad_id_test", "user_id" => user_info.id})
+
+      assert %{
+        "action" => "delete_author",
+        "system" => "content",
+        "message" => _msg,
+        "errors" => _errors,
+      } = json_response(conn, 404)
+
     end
   end
 end

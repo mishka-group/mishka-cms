@@ -10,10 +10,10 @@ use Mix.Config
 # Configures the endpoint
 # config :mishka_html, MishkaHtmlWeb.Endpoint,
 #   url: [host: "localhost"],
-#   secret_key_base: "afY0EvH0QD34GEhkEiXGjDAnxp9lskQjRbMQ1K8v69t3ZzPCK8RU+rbD4K3E3yHa",
+#   secret_key_base: "98NzHZQ95itzgO2UCrdowx9jKAZm3m4fGVe58gFYHlAUF3zzN4VEefMJPlpkzbPk",
 #   render_errors: [view: MishkaHtmlWeb.ErrorView, accepts: ~w(html json), layout: false],
 #   pubsub_server: MishkaHtml.PubSub,
-#   live_view: [signing_salt: "wqSr52l4"]
+#   live_view: [signing_salt: "Zr3H8/Vv"]
 
 # Configures Elixir's Logger
 config :logger, :console,

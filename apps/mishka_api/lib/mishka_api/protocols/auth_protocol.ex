@@ -68,85 +68,88 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def login({:ok, user_info, _error_tag}, action, conn, allowed_fields) do
-    case token = Token.create_token(user_info, MishkaApi.get_config(:token_type)) do
+    Token.create_token(user_info, MishkaApi.get_config(:token_type))
+    |> case do
       {:error, :more_device} ->
-
         MishkaUser.Token.TokenManagemnt.get_all(user_info.id)
-
         login({:error, :more_device, :user}, action, conn, allowed_fields)
 
-      _ ->
-
-        conn
-        |> put_status(200)
-        |> json(%{
-          action: :login,
-          system: @request_error_tag,
-          message: "با موفقیت وارد سیستم شدید.",
-          user_info: Map.take(user_info, allowed_fields |> Enum.map(&String.to_existing_atom/1)),
-          auth: %{
-
-            refresh_token: token.refresh_token.token,
-            refresh_expires_in: token.refresh_token.clime["exp"],
-            refresh_token_type: token.refresh_token.clime["typ"],
-
-            access_token: token.access_token.token,
-            access_expires_in: token.access_token.clime["exp"],
-            access_token_type: token.access_token.clime["typ"],
-          }
-        })
+      %{access_token: _access_token, refresh_token: _refresh_token} = record ->
+        record
+        |> login(user_info, conn, allowed_fields)
+      record ->
+        record
+        |> login(action, conn, allowed_fields)
     end
   end
 
+  def login(%{access_token: access_token, refresh_token: refresh_token}, user_info, conn, allowed_fields) do
+    conn
+    |> put_status(200)
+    |> json(%{
+      action: :login,
+      system: @request_error_tag,
+      message: "با موفقیت وارد سیستم شدید.",
+      user_info: Map.take(user_info, allowed_fields |> Enum.map(&String.to_existing_atom/1)),
+      auth: %{
+        refresh_token: refresh_token.token,
+        refresh_expires_in: refresh_token.clime["exp"],
+        refresh_token_type: refresh_token.clime["typ"],
 
-  def login(error_struct, _action, conn, _allowed_fields) do
-    case error_struct do
-      {:error, :get_record_by_field, _error_tag} ->
-        conn
-        |> put_status(401)
-        |> json(%{
-          action: :login,
-          system: @request_error_tag,
-          message: "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
-        })
+        access_token: access_token.token,
+        access_expires_in: access_token.clime["exp"],
+        access_token_type: access_token.clime["typ"],
+      }
+    })
+  end
 
-      {:error, :check_password, _error_tag} ->
-        conn
-        |> put_status(401)
-        |> json(%{
-          action: :login,
-          system: @request_error_tag,
-          message: "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
-        })
+  def login({:error, :get_record_by_field, _error_tag}, _action, conn, _allowed_fields) do
+    conn
+    |> put_status(401)
+    |> json(%{
+      action: :login,
+      system: @request_error_tag,
+      message: "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
+    })
+  end
 
-      {:error, :more_device, _error_tag} ->
-        conn
-        |> put_status(401)
-        |> json(%{
-          action: :login,
-          system: @request_error_tag,
-          message: "با حساب کاربری شما بیشتر از 5 دستگاه وارد سیستم شدند. برای ورود باید از یکی از دستگاه ها خارج شوید و اگر خودتان وارد نشدید سریعا پسورد خود را تغییر داده و همینطور تمام توکن ها را درحساب کاربری خود حذف نمایید."
-        })
+  def login({:error, :check_password, _error_tag}, _action, conn, _allowed_fields) do
+    conn
+    |> put_status(401)
+    |> json(%{
+      action: :login,
+      system: @request_error_tag,
+      message: "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
+    })
+  end
 
-      _ ->
-        conn
-        |> put_status(500)
-        |> json(%{
-          action: :login,
-          system: @request_error_tag,
-          message: "خطای غیر قابل پیشبینی روخ داده است."
-        })
-    end
+  def login({:error, :more_device, _error_tag}, _action, conn, _allowed_fields) do
+    conn
+    |> put_status(401)
+    |> json(%{
+      action: :login,
+      system: @request_error_tag,
+      message: "شما در بیش از ۵ دستگاه لاگین نمودید لطفا از یکی از پلتفرما خارج شوید."
+    })
+  end
 
+  def login(_n , _action, conn, _allowed_fields) do
+    conn
+    |> put_status(500)
+    |> json(%{
+      action: :login,
+      system: @request_error_tag,
+      message: "خطای غیر قابل پیشبینی روخ داده است."
+    })
   end
 
   def refresh_token({:error, :more_device}, _token, conn, _allowed_fields) do
     conn
-    |> put_status(301)
+    |> put_status(401)
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: "شما بیشتر از پنج بار در سیستم وارد شدید. لطفا برای ورود جدید از یکی از سیستم های لاگین شده خارج شوید."
+      message: "با حساب کاربری شما بیشتر از 5 دستگاه وارد سیستم شدند. برای ورود باید از یکی از دستگاه ها خارج شوید و اگر خودتان وارد نشدید سریعا پسورد خود را تغییر داده و همینطور تمام توکن ها را درحساب کاربری خود حذف نمایید."
     })
   end
 

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "phoenix_live_view": "^0.15.5"
+  }
+}

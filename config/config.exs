@@ -15,8 +15,8 @@ token_type: :jwt_token
 
 config :mishka_database, MishkaDatabase.Repo,
   database: "mishka_database_repo",
-  username: "mishka_database_repo",
-  password: "postgres",
+  username: System.get_env("DB_USER"),
+  password: System.get_env("DB_PASSWORD"),
   hostname: "postgresql",
   pool_size: 10,
   show_sensitive_data_on_connection_error: true

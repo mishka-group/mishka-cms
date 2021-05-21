@@ -7,7 +7,7 @@ defmodule MishkaHtmlWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_mishka_html_key",
-    signing_salt: "ysn050la"
+    signing_salt: "fRn0ebz4"
   ]
 
   socket "/socket", MishkaHtmlWeb.UserSocket,

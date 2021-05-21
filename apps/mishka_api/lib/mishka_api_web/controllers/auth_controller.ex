@@ -39,7 +39,6 @@ defmodule MishkaApiWeb.AuthController do
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
         MishkaApi.AuthProtocol.login({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
-
     else
       error_struct ->
         MishkaApi.AuthProtocol.login(error_struct, :login, conn, @allowed_fields_output)
@@ -52,7 +51,6 @@ defmodule MishkaApiWeb.AuthController do
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
         MishkaApi.AuthProtocol.login({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
-
     else
       error_struct ->
         MishkaApi.AuthProtocol.login(error_struct, :login, conn, @allowed_fields_output)

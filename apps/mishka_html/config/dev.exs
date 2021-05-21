@@ -46,15 +46,15 @@ use Mix.Config
 # different ports.
 
 # Watch static and templates for browser reloading.
-# config :mishka_html, MishkaHtmlWeb.Endpoint,
-#   live_reload: [
-#     patterns: [
-#       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
-#       ~r"priv/gettext/.*(po)$",
-#       ~r"lib/mishka_html_web/(live|views)/.*(ex)$",
-#       ~r"lib/mishka_html_web/templates/.*(eex)$"
-#     ]
-#   ]
+config :mishka_html, MishkaHtmlWeb.Endpoint,
+  live_reload: [
+    patterns: [
+      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/gettext/.*(po)$",
+      ~r"lib/mishka_html_web/(live|views)/.*(ex)$",
+      ~r"lib/mishka_html_web/templates/.*(eex)$"
+    ]
+  ]
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

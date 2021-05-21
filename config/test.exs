@@ -12,8 +12,8 @@ config :mishka_api, MishkaApiWeb.Endpoint,
 
 
 config :mishka_database, MishkaDatabase.Repo,
-  username: "mishka_database_repo",
-  password: "postgres",
+  username: System.get_env("DB_USER"),
+  password: System.get_env("DB_PASSWORD"),
   database: "mishka_database_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "postgresql",
   pool_size: 10,

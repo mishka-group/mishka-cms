@@ -2,7 +2,8 @@ defmodule MishkaHtmlWeb.PageLive do
   use MishkaHtmlWeb, :live_view
 
   @impl true
-  def mount(_params, _session, _socket) do
+  def mount(_params, _session, socket) do
+    {:ok, socket}
   end
 
   @impl true
@@ -12,5 +13,6 @@ defmodule MishkaHtmlWeb.PageLive do
 
   @impl true
   def handle_event("search", _params, _socket) do
+
   end
 end

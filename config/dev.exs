@@ -16,7 +16,8 @@ config :mishka_html, MishkaHtmlWeb.Endpoint,
       "node_modules/webpack/bin/webpack.js",
       "--mode",
       "development",
-      "--watch-stdin",
+      "--watch",
+      "--watch-options-stdin",
       cd: Path.expand("../apps/mishka_html/assets", __DIR__)
     ]
   ]

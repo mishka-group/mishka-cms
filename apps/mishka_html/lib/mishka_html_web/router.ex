@@ -14,10 +14,18 @@ defmodule MishkaHtmlWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", MishkaHtmlWeb do
+  scope "/admin", MishkaHtmlWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", AdminDashboardLive
+    live "/blog-posts", AdminBlogPostsLive
+    live "/blog-categories", AdminBlogCategoriesLive
+    live "/bookmarks", AdminBookmarksLive
+    live "/subscriptions", AdminSubscriptionsLive
+    live "/comments", AdminCommentsLive
+    live "/users", AdminUsersLive
+    live "/logs", AdminLogsLive
+    live "/seo", AdminSeoLive
   end
 
   # Other scopes may use custom stacks.

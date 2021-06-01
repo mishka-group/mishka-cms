@@ -1,0 +1,44 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_component @socket, MishkaHtmlWeb.Admin.Public.MenuComponent, id: :admin_menu %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+                <button type="button" class="btn btn-outline-primary">
+                مطلب جدید
+                </button>
+
+                <button type="button" class="btn btn-outline-info">
+                نظرات
+                </button>
+
+                <button type="button" class="btn btn-outline-success">
+                تنظیمات سئو
+                </button>
+
+                <button type="button" class="btn btn-outline-danger">
+                مجموعه ها
+                </button>
+            </div>
+        </div>
+
+
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.PostInfoAndlastFpostComponent , id: :admin_post_info %>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.PostSearchComponent , id: :admin_post_search %>
+
+
+
+        <div class="clearfix"></div>
+        <div class="col space30"> </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.LastPostsComponent , id: :admin_last_posts %>
+
+    </div>
+    <div class="clearfix"></div>
+</div>

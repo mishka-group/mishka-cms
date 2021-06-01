@@ -49,6 +49,9 @@ defmodule MishkaContent.Blog.Category do
         category_alias_link: cat.alias_link,
         category_short_description: cat.short_description,
         category_main_image: cat.main_image,
+        category_visibility: cat.category_visibility,
+        category_updated_at: cat.updated_at,
+        category_inserted_at: cat.inserted_at,
       })
       |> MishkaDatabase.Repo.all()
     rescue

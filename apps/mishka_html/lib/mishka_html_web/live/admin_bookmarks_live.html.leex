@@ -1,0 +1,44 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_component @socket, MishkaHtmlWeb.Admin.Public.MenuComponent, id: :admin_menu %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+                <button type="button" class="btn btn-outline-danger">
+                    آمار و اطلاعات
+                </button>
+            </div>
+        </div>
+
+
+
+            <div class="space20"></div>
+            <div class="clearfix"></div>
+            <div class="row">
+              <div class="col">
+              <h3 class="admin-dashbord-h3-right-side-title vazir">بوک مارک ها</h3>
+              <span class="admin-dashbord-right-side-text vazir">
+              در این بخش می توانید بوک مارک های مربوط به کاربران را مدیریت نمایید.
+              </span>
+              <div class="space20"></div>
+
+            </div>
+
+      </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Bookmark.BookmarkSearchComponent, id: :admin_bookmark_search %>
+
+
+
+        <div class="clearfix"></div>
+        <div class="col space30"> </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Bookmark.LastBookmarkComponent, id: :admin_last_bookmars %>
+
+    </div>
+    <div class="clearfix"></div>
+</div>

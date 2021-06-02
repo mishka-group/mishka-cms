@@ -96,7 +96,7 @@ defmodule MishkaHtmlWeb.Admin.Log.LogSearchComponent do
             <div class="col-sm-2">
                 <label for="country" class="form-label vazir">عملیات سریع</label>
                 <div class="col space10"> </div>
-                <button type="button" class="vazir col-sm-8 btn btn-primary">ریست</button>
+                <button type="button" class="vazir col-sm-8 btn btn-primary reset-admin-search-btn">ریست</button>
             </div>
       </div>
     """

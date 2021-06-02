@@ -95,7 +95,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
             <%# activity %>
             <div class="col activity-menu vazir">
               <h3 class="text-center activities-title-admin-home"  phx-click="activities" phx-target="<%= @myself %>">
-                <span class="activities-title-admin-home-text">گزارش لحظه ای</span>
+                <span class="activities-title-admin-home-text">لاگ لحظه ای</span>
 
                 <a class="iconly-bulkArrow---Right-Square"><span class="path1"></span><span class="path2"></span></a>
               </h3>

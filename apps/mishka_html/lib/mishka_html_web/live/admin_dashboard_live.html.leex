@@ -15,10 +15,8 @@
     <div class="col bw admin-home-calendar">
 
 
-      <div phx-update="ignore">
-        <div id="calendar" phx-hook="Calendar"></div>
-      </div>
 
+      <%= live_component @socket, MishkaHtmlWeb.Admin.Public.CalendarComponent, id: :admin_calendar %>
 
 
       <div class="clearfix"></div>

@@ -44,7 +44,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent do
             <div class="clearfix"></div>
 
             <%= for {item, color} <- Enum.zip(@categories, Stream.cycle(["wlist", "glist"])) do %>
-                <div class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
+                <div id="<%= item.category_id %>" class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
                     <div class="col-sm-1">
                         <div class="col"
                             style="min-height: 100px;
@@ -97,12 +97,12 @@ defmodule MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent do
             <% end %>
         </div>
 
-
+        <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent ,
+                            id: :pagination,
+                            pagination_url: MishkaHtmlWeb.AdminBlogCategoriesLive,
+                            data: @categories
+        %>
       </div>
     """
-  end
-
-  def handle_event("close", _, socket) do
-    {:noreply, push_patch(socket, to: socket.assigns.return_to)}
   end
 end

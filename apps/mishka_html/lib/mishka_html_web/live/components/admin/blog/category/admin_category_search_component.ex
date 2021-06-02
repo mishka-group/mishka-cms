@@ -15,82 +15,83 @@ defmodule MishkaHtmlWeb.Admin.Blog.CategorySearchComponent do
       <div class="col space30"> </div>
       <div class="col space10"> </div>
 
-      <div class="row vazir">
-            <div class="col-md-2">
-              <label for="country" class="form-label">وضعیت</label>
-              <div class="col space10"> </div>
-              <select class="form-select" id="country" required="">
-                <option value="">انتخاب</option>
-                <option>فعال</option>
-                <option>آرشیو</option>
-                <option>حذف با پرچم</option>
-              </select>
-              <div class="invalid-feedback">
-                Please select a valid country.
-              </div>
-            </div>
-
-            <div class="col-md-2">
-              <label for="country" class="form-label">نحوه نمایش</label>
-              <div class="col space10"> </div>
-              <select class="form-select" id="country" required="">
-                <option value="">انتخاب</option>
-                <option>هیچ</option>
-                <option>بالا</option>
-                <option>متوسط</option>
-              </select>
-              <div class="invalid-feedback">
-                Please select a valid country.
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <label for="country" class="form-label">تیتر</label>
-              <div class="space10"> </div>
-              <input type="text" class="title-input-text form-control">
-              <div class="col space10"> </div>
-            </div>
-
-            <div class="col-md-1">
-              <label for="country" class="form-label">تعداد</label>
-              <div class="col space10"> </div>
-              <select class="form-select" id="country" required="">
-                <option value="">انتخاب</option>
-                <option>20 عدد</option>
-                <option>30 عدد</option>
-                <option>40 عدد</option>
-              </select>
-              <div class="invalid-feedback">
-                Please select a valid country.
-              </div>
-            </div>
-
-            <div class="col-md-2">
-              <label for="country" class="form-label">رباط</label>
-              <div class="col space10"> </div>
-              <select class="form-select" id="country" required="">
-                <option value="">انتخاب</option>
-                <option>IndexFollow</option>
-                <option>IndexNoFollow</option>
-                <option>NoIndexFollow</option>
-                <option>NoIndexNoFollow</option>
-              </select>
-              <div class="invalid-feedback">
-                Please select a valid country.
-              </div>
-            </div>
-
-
-            <div class="col-sm-2">
-                <label for="country" class="form-label vazir">عملیات سریع</label>
+      <form  phx-change="search">
+        <div class="row vazir">
+              <div class="col-md-2">
+                <label for="country" class="form-label">وضعیت</label>
                 <div class="col space10"> </div>
-                <button type="button" class="vazir col-sm-8 btn btn-primary">ریست</button>
-            </div>
-      </div>
-    """
-  end
+                <select class="form-select" name="status" id="ContentStatus">
+                  <option value="">انتخاب</option>
+                  <option value="inactive">غیر فعال</option>
+                  <option value="active">فعال</option>
+                  <option value="archived">آرشیو شده</option>
+                  <option value="soft_delete">حذف با پرچم</option>
+                </select>
+                <div class="invalid-feedback">
+                  لطفا گزینه درست را انتخاب کنید.
+                </div>
+              </div>
 
-  def handle_event("close", _, socket) do
-    {:noreply, push_patch(socket, to: socket.assigns.return_to)}
+              <div class="col-md-2">
+                <label for="country" class="form-label">نحوه نمایش</label>
+                <div class="col space10"> </div>
+                <select class="form-select" name="category_visibility" id="CategoryVisibility">
+                  <option value="">انتخاب</option>
+                  <option value="0">نمایش</option>
+                  <option value="1">مخفی</option>
+                  <option value="2">نمایش تست</option>
+                  <option value="3">غیر نمایش تست</option>
+                </select>
+                <div class="invalid-feedback">
+                لطفا گزینه درست را انتخاب کنید.
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <label for="country" class="form-label">تیتر</label>
+                <div class="space10"> </div>
+                <input type="text" class="title-input-text form-control" name="title">
+                <div class="col space10"> </div>
+              </div>
+
+              <div class="col-md-1">
+                <label for="country" class="form-label">تعداد</label>
+                <div class="col space10"> </div>
+                <select class="form-select" id="countrecords" name="count">
+                  <option value="10">انتخاب</option>
+                  <option value="2">20 عدد</option>
+                  <option value="30">30 عدد</option>
+                  <option value="40">40 عدد</option>
+                </select>
+                <div class="invalid-feedback">
+                لطفا گزینه درست را انتخاب کنید.
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <label for="country" class="form-label">رباط</label>
+                <div class="col space10"> </div>
+                <select class="form-select" id="ContentRobots" name="robots">
+                  <option value="">انتخاب</option>
+                  <option value="0">IndexFollow</option>
+                  <option value="1">IndexNoFollow</option>
+                  <option value="2">NoIndexFollow</option>
+                  <option value="3">NoIndexNoFollow</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please select a valid country.
+                </div>
+              </div>
+
+
+              <div class="col-sm-2">
+                  <label for="country" class="form-label vazir">عملیات سریع</label>
+                  <div class="col space10"> </div>
+                  <button type="button" class="vazir col-sm-8 btn btn-primary reset-admin-search-btn" phx-click="reset">ریست</button>
+              </div>
+
+        </div>
+      </form>
+    """
   end
 end

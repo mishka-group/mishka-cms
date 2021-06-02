@@ -52,7 +52,11 @@
         <div class="clearfix"></div>
         <div class="col space30"> </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent , id: :admin_last_categories, categories: @categories %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent ,
+                           id: :admin_last_categories,
+                           categories: @categories,
+                           pagination_url: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive)
+        %>
 
     </div>
     <div class="clearfix"></div>

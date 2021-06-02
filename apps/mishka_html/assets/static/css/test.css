@@ -374,6 +374,16 @@ body {
 .list-activity-blog-post-and-category {
   font-size: 14px;
 }
+
+button.reset-admin-search-btn {
+  font-family: Vazir-Regular !important;
+  font-size: 14px;
+}
+select option,
+select.form-select {
+  font-size: 14px;
+  font-family: Vazir-Regular !important;
+}
 /* colors */
 .bw {
   background-color: white;

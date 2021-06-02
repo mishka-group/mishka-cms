@@ -59,6 +59,27 @@ defmodule MishkaContent.Blog.Category do
     end
   end
 
+  def categories(conditions: {page, page_size}, filters: filters) do
+    try do
+      query = from(cat in Category) |> convert_filters_to_where(filters)
+      from([cat] in query,
+      select: %{
+        category_id: cat.id,
+        category_title: cat.title,
+        category_status: cat.status,
+        category_alias_link: cat.alias_link,
+        category_short_description: cat.short_description,
+        category_main_image: cat.main_image,
+        category_visibility: cat.category_visibility,
+        category_updated_at: cat.updated_at,
+        category_inserted_at: cat.inserted_at,
+      })
+      |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+    rescue
+      _e -> []
+    end
+  end
+
   def posts(conditions: {type, page, page_size}, filters: filters) when type in [:extra_data, :basic_data] do
     query = from(cat in Category) |> convert_filters_to_where(filters)
     from([cat] in query, join: post in assoc(cat, :blog_posts))

@@ -24,7 +24,7 @@ defmodule MishkaHtml.MixProject do
   def application do
     [
       mod: {MishkaHtml.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :mishka_user, :mishka_content]
     ]
   end
 
@@ -47,7 +47,9 @@ defmodule MishkaHtml.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:mishka_user, in_umbrella: true},
+      {:mishka_content, in_umbrella: true},
     ]
   end
 

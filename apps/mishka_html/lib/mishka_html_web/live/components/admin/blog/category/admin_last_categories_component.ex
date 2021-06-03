@@ -97,11 +97,16 @@ defmodule MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent do
             <% end %>
         </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent ,
+        <%= if @categories.entries != [] do %>
+            <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent ,
                             id: :pagination,
                             pagination_url: MishkaHtmlWeb.AdminBlogCategoriesLive,
-                            data: @categories
-        %>
+                            data: @categories,
+                            filters: @filters,
+                            count: @count
+            %>
+        <%= end %>
+
       </div>
     """
   end

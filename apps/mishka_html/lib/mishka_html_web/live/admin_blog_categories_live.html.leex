@@ -55,6 +55,8 @@
         <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent ,
                            id: :admin_last_categories,
                            categories: @categories,
+                           filters: @filters,
+                           count: @page_size,
                            pagination_url: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive)
         %>
 

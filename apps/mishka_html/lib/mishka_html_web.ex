@@ -46,7 +46,7 @@ defmodule MishkaHtmlWeb do
     quote do
       use Phoenix.LiveView,
         layout: {MishkaHtmlWeb.LayoutView, "live.html"}
-
+      alias MishkaHtmlWeb.Admin.Public.Notif
       unquote(view_helpers())
     end
   end

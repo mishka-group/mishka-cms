@@ -313,6 +313,16 @@ body {
   margin-top: 40px !important;
 }
 
+.space50 {
+  clear: both;
+  margin-top: 50px !important;
+}
+
+.space60 {
+  clear: both;
+  margin-top: 60px !important;
+}
+
 .test1 {
   background-image: url("../images/test3.jpg");
   background-repeat: no-repeat;
@@ -384,6 +394,33 @@ select.form-select {
   font-size: 14px;
   font-family: Vazir-Regular !important;
 }
+
+.admin-notif-live-title {
+  font-size: 14px;
+  padding: 0 5px;
+}
+
+.admin-notif-live-text {
+  font-size: 12px;
+  padding: 10px 10px !important;
+  line-height: 25px;
+  text-align: justify;
+}
+
+.toast-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
+.admin-create-category {
+  min-height: 300px;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f9f5f1;
+  color: black;
+}
+
 /* colors */
 .bw {
   background-color: white;
@@ -1564,4 +1601,39 @@ select.form-select {
   content: "\e9e2";
   margin-left: -1em;
   color: rgb(32, 14, 50);
+}
+
+
+
+.phx-modal-content {
+  background: transparent;
+  border: 0;
+}
+.error-card-modal  {
+  margin: 0 auto;
+  font-size: 14px;
+  text-align: justify;
+}
+
+.svg-div-error-modal {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.error-modal-badage-dark {
+  font-size: 16px !important;
+  font-family: Vazir-Regular !important;
+}
+
+.error-card-modal-main-text {
+  line-height: 28px;
+}
+
+.modal-close-btn {
+  margin: 0 auto;
+  text-align: center;
+}
+.modal-close-btn button {
+  font-size: 14px !important;
+  font-family: Vazir-Regular !important;
 }

@@ -44,8 +44,8 @@ defmodule MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent do
             <div class="clearfix"></div>
 
             <%= for {item, color} <- Enum.zip(@categories, Stream.cycle(["wlist", "glist"])) do %>
-                <div id="<%= item.category_id %>" class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
-                    <div class="col-sm-1">
+                <div phx-update="append" id="<%= item.id %>" class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
+                    <div class="col-sm-1" id="image-#{item.id}">
                         <div class="col"
                             style="min-height: 100px;
                             background-image: url(&quot;../images/test2.jpg&quot;);
@@ -55,38 +55,44 @@ defmodule MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent do
                         </div>
                     </div>
 
-                    <div class="col-sm-1">
+                    <div class="col-sm-1" id="title-#{item.id}">
                         <a href="#">
-                        <%= item.category_title %>
+                        <%= item.title %>
                         </a>
                     </div>
 
-                    <div class="col">
+                    <div class="col" id="category-visibility-#{item.id}">
                         <%= item.category_visibility %>
                     </div>
 
-                    <div class="col">
+                    <div class="col" id="status-#{item.id}">
                         <span class="badge bg-primary vazir">
-                            <%= item.category_status %>
+                            <%= item.status %>
                         </span>
                     </div>
 
-                    <div class="col">
+                    <div class="col" id="status-#{item.id}">
                         <span class="badge bg-success">
                         بالا
                         </span>
                     </div>
 
-                    <div class="col">
-                        <%= item.category_inserted_at %>
+                    <div class="col" id="inserted-#{item.id}">
+                        <%= item.inserted_at %>
                     </div>
 
-                    <div class="col">
-                        <%= item.category_updated_at %>
+                    <div class="col" id="updated-#{item.id}">
+                        <%= item.updated_at %>
                     </div>
 
-                    <div class="col-sm-3 opration-post-blog">
-                        <button type="button" class="btn btn-outline-primary vazir">حذف</button>
+                    <div class="col-sm-3 opration-post-blog" id="opration-#{item.id}">
+                        <button type="button"
+                                class="btn btn-outline-primary vazir",
+                                phx-click="delete"
+                                phx-value-id="<%= item.id %>"
+                        >
+                        حذف
+                        </button>
                         <button type="button" class="btn btn-outline-secondary vazir">ویرایش</button>
                         <button type="button" class="btn btn-outline-success vazir">نظرات</button>
                         <button type="button" class="btn btn-outline-danger vazir">حذف کامل </button>

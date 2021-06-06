@@ -4,10 +4,17 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
   alias MishkaContent.Blog.Category
 
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      MishkaContent.Blog.Category.subscribe()
+    end
+
     socket =
       assign(socket,
         page_size: 10,
         filters: %{},
+        page: 1,
+        open_modal: false,
+        component: nil,
         categories: Category.categories(conditions: {1, 10}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [categories: []]}
@@ -53,6 +60,57 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
     {:noreply, push_redirect(socket, to: Routes.live_path(socket, __MODULE__))}
   end
 
+  def handle_event("open_modal", _params, socket) do
+    {:noreply, assign(socket, [open_modal: true])}
+  end
+
+  def handle_event("close_modal", _params, socket) do
+    {:noreply, assign(socket, [open_modal: false, component: nil])}
+  end
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    case Category.delete(id) do
+      {:ok, :delete, :category, repo_data} ->
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} حذف شده است."})
+
+        socket = category_assign(
+          socket,
+          params: socket.assigns.filters,
+          page_size: socket.assigns.page_size,
+          page_number: socket.assigns.page,
+        )
+
+        {:noreply, socket}
+
+      {:error, :delete, :forced_to_delete, :category} ->
+
+        socket =
+          socket
+          |> assign([
+            open_modal: true,
+            component: MishkaHtmlWeb.Admin.Blog.ErrorCategoryDeleteComponent
+          ])
+
+        {:noreply, socket}
+
+      {:error, :delete, type, :category} when type in [:uuid, :get_record_by_id] ->
+
+        socket =
+          socket
+          |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+
+        {:noreply, socket}
+
+      {:error, :delete, :category, repo_error} ->
+
+        socket =
+          socket
+          |> put_flash(:error, "خطا در حذف مجموعه اتفاق افتاده است.")
+
+        {:noreply, socket}
+    end
+  end
+
   defp category_filter(params) when is_map(params) do
     Map.take(params, Category.allowed_fields(:string))
     |> Enum.reject(fn {_key, value} -> value == "" end)
@@ -67,7 +125,8 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
         [
           categories: Category.categories(conditions: {page, count}, filters: category_filter(params)),
           page_size: count,
-          filters: params
+          filters: params,
+          page: page
         ]
       )
   end

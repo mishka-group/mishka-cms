@@ -10,24 +10,33 @@ defmodule MishkaContent.Blog.Category do
 
   @behaviour MishkaDatabase.CRUD
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_category")
+  end
+
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:category)
   end
 
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
+    |> notify_subscribers(:category)
   end
 
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:category)
   end
 
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
+    |> notify_subscribers(:category)
   end
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:category)
   end
 
   def show_by_id(id) do
@@ -63,16 +72,17 @@ defmodule MishkaContent.Blog.Category do
     try do
       query = from(cat in Category) |> convert_filters_to_where(filters)
       from([cat] in query,
+      order_by: [desc: cat.inserted_at, desc: cat.id],
       select: %{
-        category_id: cat.id,
-        category_title: cat.title,
-        category_status: cat.status,
-        category_alias_link: cat.alias_link,
-        category_short_description: cat.short_description,
-        category_main_image: cat.main_image,
+        id: cat.id,
+        title: cat.title,
+        status: cat.status,
+        alias_link: cat.alias_link,
+        short_description: cat.short_description,
+        main_image: cat.main_image,
         category_visibility: cat.category_visibility,
-        category_updated_at: cat.updated_at,
-        category_inserted_at: cat.inserted_at,
+        updated_at: cat.updated_at,
+        inserted_at: cat.inserted_at,
       })
       |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
     rescue
@@ -139,4 +149,13 @@ defmodule MishkaContent.Blog.Category do
 
   def allowed_fields(:atom), do: Category.__schema__(:fields)
   def allowed_fields(:string), do: Category.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
+
+  def notify_subscribers({:ok, _, :category, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "blog_category", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _), do: params
+
+  def notify_subscribers({:error, _, _, _} = params, _), do: params
 end

@@ -3,9 +3,8 @@ defmodule MishkaHtmlWeb.Admin.Public.SearchComponent do
 
   def render(assigns) do
     ~L"""
-      <form class="col d-flex">
-        <input class="form-control me-2 ltr" type="search" placeholder="Search" aria-label="Search">
-      </form>
+      <div class="col space60"> </div>
+      <div class="clearfix"></div>
     """
   end
 

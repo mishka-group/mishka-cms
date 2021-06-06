@@ -14,7 +14,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.CategorySearchComponent do
       <div class="clearfix"></div>
       <div class="col space30"> </div>
       <div class="col space10"> </div>
-
       <form  phx-change="search">
         <div class="row vazir">
               <div class="col-md-2">
@@ -37,13 +36,13 @@ defmodule MishkaHtmlWeb.Admin.Blog.CategorySearchComponent do
                 <div class="col space10"> </div>
                 <select class="form-select" name="category_visibility" id="CategoryVisibility">
                   <option value="">انتخاب</option>
-                  <option value="0">نمایش</option>
-                  <option value="1">مخفی</option>
-                  <option value="2">نمایش تست</option>
-                  <option value="3">غیر نمایش تست</option>
+                  <option value="show">نمایش</option>
+                  <option value="invisibel">مخفی</option>
+                  <option value="test_show">نمایش تست</option>
+                  <option value="test_invisibel">غیر نمایش تست</option>
                 </select>
                 <div class="invalid-feedback">
-                لطفا گزینه درست را انتخاب کنید.
+                  لطفا گزینه درست را انتخاب کنید.
                 </div>
               </div>
 
@@ -64,7 +63,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.CategorySearchComponent do
                   <option value="40">40 عدد</option>
                 </select>
                 <div class="invalid-feedback">
-                لطفا گزینه درست را انتخاب کنید.
+                  لطفا گزینه درست را انتخاب کنید.
                 </div>
               </div>
 
@@ -73,23 +72,21 @@ defmodule MishkaHtmlWeb.Admin.Blog.CategorySearchComponent do
                 <div class="col space10"> </div>
                 <select class="form-select" id="ContentRobots" name="robots">
                   <option value="">انتخاب</option>
-                  <option value="0">IndexFollow</option>
-                  <option value="1">IndexNoFollow</option>
-                  <option value="2">NoIndexFollow</option>
-                  <option value="3">NoIndexNoFollow</option>
+                  <option value="IndexFollow">IndexFollow</option>
+                  <option value="IndexNoFollow">IndexNoFollow</option>
+                  <option value="NoIndexFollow">NoIndexFollow</option>
+                  <option value="NoIndexNoFollow">NoIndexNoFollow</option>
                 </select>
                 <div class="invalid-feedback">
-                  Please select a valid country.
+                  لطفا گزینه درست را انتخاب کنید.
                 </div>
               </div>
-
 
               <div class="col-sm-2">
                   <label for="country" class="form-label vazir">عملیات سریع</label>
                   <div class="col space10"> </div>
                   <button type="button" class="vazir col-sm-8 btn btn-primary reset-admin-search-btn" phx-click="reset">ریست</button>
               </div>
-
         </div>
       </form>
     """

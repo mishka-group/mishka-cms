@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.Admin.PaginationComponent do
             <li class="page-item <%= if(@data.page_number == item, do: "active") %>">
               <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= item %>" phx-target="<%= @myself %>"><%= item %></a>
             </li>
-            <%= end %>
+            <% end %>
             <li class="page-item">
                 <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= if(@data.page_number + 1 <= @data.total_pages, do: @data.page_number + 1, else: @data.page_number) %>" phx-target="<%= @myself %>">بعدی</a>
             </li>

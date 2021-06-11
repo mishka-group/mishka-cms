@@ -1,6 +1,5 @@
 defmodule MishkaHtmlWeb.Admin.Public.ModalComponent do
   use MishkaHtmlWeb, :live_component
-  alias MishkaHtmlWeb.Admin.Blog.ErrorCategoryDeleteComponent
 
   def render(assigns) do
     ~L"""

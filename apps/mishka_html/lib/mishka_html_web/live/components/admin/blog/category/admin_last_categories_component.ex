@@ -111,7 +111,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.LastCategoriesComponent do
                             filters: @filters,
                             count: @count
             %>
-        <%= end %>
+        <% end %>
 
       </div>
     """

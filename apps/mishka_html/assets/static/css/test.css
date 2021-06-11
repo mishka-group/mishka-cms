@@ -421,6 +421,89 @@ select.form-select {
   color: black;
 }
 
+.admin-create-category-tools {
+  color: white;
+  font-family: Vazir-Regular !important;
+  font-size: 18px !important;
+}
+
+
+.btn-info.admin-create-category-tools {
+  color: white !important;
+}
+
+.create-category-tools-items {
+  font-size: 14px;
+  font-family: Vazir-Regular !important;
+  text-align: justify;
+}
+
+.create-category-tools-items svg {
+  margin-left: 5px;
+}
+
+.admin-there-is-no-field {
+  border: #524e4e dashed 1px;
+  border-radius: 5px;
+  padding: 20px;
+  background: #e6e6e6;
+  font-size: 24px;
+  font-family: Vazir-Regular !important;
+  text-align: center;
+}
+
+.admin-there-is-no-field:hover {
+  background: #d2d2d2;
+  border: #000000 dashed 1px;
+  box-shadow: 1px 1px 16px 9px #dadada9c;
+}
+
+.admin-there-is-no-field span.text-muted {
+  font-size: 12px;
+}
+
+.field {
+  font-family: Vazir-Regular !important;
+  text-align: justify;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.form-error-tag span.invalid-feedback {
+  display: block;
+}
+
+.admin-upload-form div.drop {
+  border: #e0dbdb solid 1px;
+  border-radius: 5px;
+  padding: 20px;
+  background: #ffffff;
+  font-size: 24px;
+  font-family: Vazir-Regular !important;
+  text-align: center;
+  box-shadow: #dadada 1px 1px 20px 8px;
+
+}
+
+.admin-upload-img-form img {
+  border-radius: 8px;
+  max-height: 133px;
+}
+.admin-upload-form span.text-muted {
+  font-size: 14px;
+}
+
+.admin-upload-form-progress {
+  height: 20px !important;
+}
+
+.entry {
+  border: 1px solid #dadada;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: #dadada 1px 1px 11px 6px;
+  margin: 20px 10px;
+}
 /* colors */
 .bw {
   background-color: white;

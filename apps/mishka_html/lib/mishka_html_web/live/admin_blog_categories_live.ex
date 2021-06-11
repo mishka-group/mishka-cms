@@ -15,23 +15,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
         page: 1,
         open_modal: false,
         component: nil,
+        page_title: "مدیریت مجموعه ها",
         categories: Category.categories(conditions: {1, 10}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [categories: []]}
-  end
-
-  def handle_event("search", params, socket) do
-    socket =
-      push_patch(socket,
-        to:
-          Routes.live_path(
-            socket,
-            __MODULE__,
-            params: category_filter(params),
-            count: params["count"],
-          )
-      )
-    {:noreply, socket}
   end
 
   def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
@@ -52,7 +39,21 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
     }
   end
 
-  def handle_params(params, _url, socket) do
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("search", params, socket) do
+    socket =
+      push_patch(socket,
+        to:
+          Routes.live_path(
+            socket,
+            __MODULE__,
+            params: category_filter(params),
+            count: params["count"],
+          )
+      )
     {:noreply, socket}
   end
 
@@ -68,7 +69,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
     {:noreply, assign(socket, [open_modal: false, component: nil])}
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("delete", %{"id" => id} = _params, socket) do
     case Category.delete(id) do
       {:ok, :delete, :category, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} حذف شده است."})
@@ -109,6 +110,11 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
         {:noreply, socket}
     end
+  end
+
+  def handle_info({:category, :ok, repo_record}, socket) do
+    IO.inspect(repo_record.__meta__.state)
+   {:noreply, socket}
   end
 
   defp category_filter(params) when is_map(params) do

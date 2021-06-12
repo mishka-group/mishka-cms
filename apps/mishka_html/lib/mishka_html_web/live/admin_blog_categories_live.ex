@@ -113,8 +113,21 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
   end
 
   def handle_info({:category, :ok, repo_record}, socket) do
-    IO.inspect(repo_record.__meta__.state)
-   {:noreply, socket}
+    case repo_record.__meta__.state do
+      :loaded ->
+
+        socket = category_assign(
+          socket,
+          params: socket.assigns.filters,
+          page_size: socket.assigns.page_size,
+          page_number: socket.assigns.page,
+        )
+
+        {:noreply, socket}
+
+      :deleted -> {:noreply, socket}
+       _ ->  {:noreply, socket}
+    end
   end
 
   defp category_filter(params) when is_map(params) do

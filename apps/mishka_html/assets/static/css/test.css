@@ -482,7 +482,7 @@ select.form-select {
   font-family: Vazir-Regular !important;
   text-align: center;
   box-shadow: #dadada 1px 1px 20px 8px;
-
+  margin-bottom: 40px;
 }
 
 .admin-upload-img-form img {

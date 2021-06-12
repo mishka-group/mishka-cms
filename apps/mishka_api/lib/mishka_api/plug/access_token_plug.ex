@@ -21,8 +21,7 @@ defmodule MishkaApi.Plug.AccessTokenPlug do
       {:error, :verify_token, :access, :expired} ->
         error_message(conn, 401, "توکن شما منقضی شده است")
 
-      error ->
-        IO.inspect error
+      _error ->
         error_message(conn, 401, "توکن شما نامعتبر است")
     end
   end

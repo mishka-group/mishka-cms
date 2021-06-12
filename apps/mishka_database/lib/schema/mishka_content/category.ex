@@ -59,7 +59,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Category do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@required_fields, message: "can't be blank")
-    |> validate_length(:title, min: 10, max: 200, message: "maximum 200 characters")
+    |> validate_length(:title, max: 200, message: "maximum 200 characters")
     |> validate_length(:short_description, max: 350, message: "maximum 350 characters")
     |> validate_length(:main_image, max: 200, message: "maximum 200 characters")
     |> validate_length(:header_image, max: 200, message: "maximum 200 characters")

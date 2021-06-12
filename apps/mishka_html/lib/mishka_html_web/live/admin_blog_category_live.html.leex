@@ -112,8 +112,7 @@
 
             <%= f = form_for @changeset, "#",
                 phx_submit: "save",
-                phx_change: "draft",
-                phx_trigger_action: @trigger_submit %>
+                phx_change: "draft", multipart: true %>
 
                 <div class="clearfix"></div>
                 <div class="space30"></div>
@@ -123,22 +122,31 @@
 
                             <% "upload" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.UploadComponent,
-                                    id: String.to_atom("admin_form_upload_#{form.type}"),
-                                    max_entries: if(form.type == "main_image", do: @uploads.main_image.max_entries, else: @uploads.header_image.max_entries),
-                                    max_file_size: if(form.type == "main_image", do: trunc(@uploads.main_image.max_file_size / 1_000_000), else: trunc(@uploads.header_image.max_file_size / 1_000_000)),
-                                    live_file_input: if(form.type == "main_image", do: @uploads.main_image, else: @uploads.header_image),
-                                    errors: if(form.type == "main_image", do: @uploads.main_image.errors, else: @uploads.header_image.errors),
-                                    entries: if(form.type == "main_image", do: @uploads.main_image.entries, else: @uploads.header_image.entries),
-                                    upload_errors: if(form.type == "main_image", do: @uploads.main_image, else:  @uploads.header_image),
-                                    ref: if(form.type == "main_image", do: @uploads.main_image.ref, else: @uploads.header_image.ref),
-                                    upload_field: if(form.type == "main_image", do: :main_image, else: :header_image) %>
+                                    id: String.to_atom("admin_form_#{form.type}"),
+                                    max_entries: if(form.type == "main_image", do: @uploads.main_image_upload.max_entries, else: @uploads.header_image_upload.max_entries),
+                                    max_file_size: if(form.type == "main_image", do: trunc(@uploads.main_image_upload.max_file_size / 1_000_000), else: trunc(@uploads.header_image_upload.max_file_size / 1_000_000)),
+                                    live_file_input: if(form.type == "main_image", do: @uploads.main_image_upload, else: @uploads.header_image_upload),
+                                    errors: if(form.type == "main_image", do: @uploads.main_image_upload.errors, else: @uploads.header_image_upload.errors),
+                                    entries: if(form.type == "main_image", do: @uploads.main_image_upload.entries, else: @uploads.header_image_upload.entries),
+                                    upload_errors: if(form.type == "main_image", do: @uploads.main_image_upload, else:  @uploads.header_image_upload),
+                                    ref: if(form.type == "main_image", do: @uploads.main_image_upload.ref, else: @uploads.header_image_upload.ref),
+                                    upload_field: if(form.type == "main_image", do: :main_image_upload, else: :header_image_upload),
+                                    form_type: form.type,
+                                    f: f %>
+
+                           <% "select" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.SelectComponent,
+                                                id: String.to_atom("admin_form_#{form.type}"),
+                                                form: form,
+                                                f: f
+                                %>
                            <% _ -> %>
 
-                           <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
-                                            id: String.to_atom("admin_form_text_#{form.type}"),
-                                            form: form,
-                                            f: f
-                            %>
+                            <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
+                                                id: String.to_atom("admin_form_text_#{form.type}"),
+                                                form: form,
+                                                f: f
+                                %>
                         <% end %>
                     <% end %>
 

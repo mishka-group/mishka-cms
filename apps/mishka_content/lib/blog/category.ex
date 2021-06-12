@@ -80,6 +80,7 @@ defmodule MishkaContent.Blog.Category do
         alias_link: cat.alias_link,
         short_description: cat.short_description,
         main_image: cat.main_image,
+        header_image: cat.header_image,
         category_visibility: cat.category_visibility,
         updated_at: cat.updated_at,
         inserted_at: cat.inserted_at,

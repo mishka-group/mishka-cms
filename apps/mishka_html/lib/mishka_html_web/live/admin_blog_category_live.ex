@@ -4,22 +4,16 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   alias MishkaContent.Blog.Category
 
   def mount(_params, _session, socket) do
-    changeset =
-      MishkaDatabase.Schema.MishkaContent.Blog.Category.changeset(
-        %MishkaDatabase.Schema.MishkaContent.Blog.Category{}, %{}
-      )
-
     socket =
       assign(socket,
         dynamic_form: [],
         page_title: "مدیریت ساخت مجموعه",
         basic_menu: false,
         options_menu: false,
-        changeset: changeset,
-        trigger_submit: false)
+        changeset: category_changeset())
         |> assign(:uploaded_files, [])
-        |> allow_upload(:main_image, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000,)
-        |> allow_upload(:header_image, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000,)
+        |> allow_upload(:main_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
+        |> allow_upload(:header_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
     {:ok, socket}
   end
 
@@ -72,20 +66,40 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   def handle_event("save", %{"category" => params}, socket) do
-    socket = case Category.create(params) do
+
+    uploaded_main_image_files = upload(socket, :main_image_upload)
+    uploaded_header_image_files = upload(socket, :header_image_upload)
+
+
+    case Category.create(
+      Map.merge(params, %{
+        "main_image" => if(uploaded_main_image_files != [], do: List.first(uploaded_main_image_files), else: nil),
+        "header_image" =>  if(uploaded_header_image_files != [], do: List.first(uploaded_header_image_files), else: nil)
+      })
+
+    ) do
       {:error, :add, :category, repo_error} ->
-        IO.inspect(repo_error)
-          assign(socket,
-            changeset: repo_error)
+        socket = assign(socket, changeset: repo_error)
+          {:noreply, socket}
 
       {:ok, :add, :category, repo_data} ->
-          assign(socket,
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} درست شده است."})
+        socket =
+          socket
+          |> assign(
             dynamic_form: [],
             basic_menu: false,
             options_menu: false,
-            trigger_submit: false)
-    end
+            changeset: category_changeset()
+          )
+          |> update(:uploaded_files, &(&1 ++ uploaded_main_image_files))
+          |> update(:uploaded_files, &(&1 ++ uploaded_header_image_files))
 
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("save", _params, socket) do
     {:noreply, socket}
   end
 
@@ -114,16 +128,11 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   def handle_event("clear_all_field", _, socket) do
-    changeset =
-      MishkaDatabase.Schema.MishkaContent.Blog.Category.changeset(
-        %MishkaDatabase.Schema.MishkaContent.Blog.Category{}, %{}
-      )
-
     socket =
       socket
       |> assign([
         basic_menu: false,
-        changeset: changeset,
+        changeset: category_changeset(),
         options_menu: false,
         dynamic_form: []
       ])
@@ -146,7 +155,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   def handle_event("draft", %{"_target" => ["category", type], "category" => params}, socket) when type not in ["main_image", "main_image"] do
-    IO.inspect(params)
     {_key, value} = Map.take(params, [type])
     |> Map.to_list()
     |> List.first()
@@ -174,28 +182,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = params, socket) do
     {:noreply, cancel_upload(socket, String.to_atom(field), ref)}
   end
-
-  @impl Phoenix.LiveView
-  def handle_event("save", _params, socket) do
-    uploaded_files =
-      consume_uploaded_entries(socket, :avatar, fn %{path: path}, _entry ->
-        dest = Path.join([:code.priv_dir(:my_app), "static", "uploads", Path.basename(path)])
-        File.cp!(path, dest)
-        Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")
-      end)
-
-    {:noreply, update(socket, :uploaded_files, &(&1 ++ uploaded_files))}
-  end
-
-
-
-  defp error_to_string(:too_large), do: "Too large"
-  defp error_to_string(:too_many_files), do: "You have selected too many files"
-  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
-
-
-
-
 
   defp create_menu_list(menus_list, dynamic_form) do
     Enum.map(menus_list, fn menu ->
@@ -266,6 +252,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       %{type: "status", status: [
         %{title: "ضروری", class: "badge bg-danger"}
       ],
+      options: [
+        {"غیر فعال", :inactive},
+        {"فعال", :active},
+        {"آرشیو شده", :archived},
+        {"حذف با پرچم", :soft_delete},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "وضعیت",
@@ -334,6 +326,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         %{title: "غیر پیشنهادی", class: "badge bg-warning"},
         %{title: "هشدار", class: "badge bg-secondary"},
       ],
+      options: [
+        {"IndexFollow", :IndexFollow},
+        {"IndexNoFollow", :IndexNoFollow},
+        {"NoIndexFollow", :NoIndexFollow},
+        {"NoIndexNoFollow", :NoIndexNoFollow},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "وضعیت رباط ها",
@@ -341,6 +339,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
       %{type: "category_visibility", status: [
         %{title: "غیر ضروری", class: "badge bg-info"}
+      ],
+      options: [
+        {"نمایش", :show},
+        {"مخفی", :invisibel},
+        {"نمایش تست", :test_show},
+        {"مخفی تست", :test_invisibel},
       ],
       form: "select",
       class: "col-sm-2",
@@ -350,6 +354,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       %{type: "allow_commenting", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
         %{title: "غیر پیشنهادی", class: "badge bg-warning"},
+      ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
       ],
       form: "select",
       class: "col-sm-2",
@@ -361,6 +369,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         %{title: "غیر ضروری", class: "badge bg-info"},
         %{title: "غیر پیشنهادی", class: "badge bg-warning"},
       ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "اجازه پسند کردن",
@@ -369,6 +381,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       %{type: "allow_printing", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
       ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "اجازه پرینت گرفتن",
@@ -376,6 +392,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
       %{type: "allow_reporting", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
+      ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
       ],
       form: "select",
       class: "col-sm-2",
@@ -386,6 +406,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         %{title: "غیر ضروری", class: "badge bg-info"},
         %{title: "پیشنهادی", class: "badge bg-dark"}
       ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "شبکه های اجتماعی",
@@ -393,6 +417,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
       %{type: "allow_subscription", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
+      ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
       ],
       form: "select",
       class: "col-sm-2",
@@ -402,6 +430,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       %{type: "allow_bookmarking", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
       ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "بوکمارک",
@@ -409,6 +441,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
       %{type: "allow_notif", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
+      ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
       ],
       form: "select",
       class: "col-sm-2",
@@ -418,6 +454,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       %{type: "show_hits", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
       ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "نمایش تعداد بازدید",
@@ -425,6 +465,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
       %{type: "show_time", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
+      ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
       ],
       form: "select",
       class: "col-sm-2",
@@ -434,6 +478,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       %{type: "show_authors", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
       ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "نمایش نویسندگان",
@@ -441,6 +489,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
       %{type: "show_category", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
+      ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
       ],
       form: "select",
       class: "col-sm-2",
@@ -450,6 +502,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       %{type: "show_links", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
       ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "نمایش لینک ها",
@@ -458,10 +514,28 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       %{type: "show_location", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
       ],
+      options: [
+        {"بله", true},
+        {"خیر", false},
+      ],
       form: "select",
       class: "col-sm-2",
       title: "نمایش نقشه",
       description: "اجازه نمایش نقشه در هر محتوا مربوط به این مجموعه."},
     ]
+  end
+
+  defp upload(socket, upload_id) do
+    consume_uploaded_entries(socket, upload_id, fn %{path: path}, entry ->
+      dest = Path.join([:code.priv_dir(:mishka_html), "static", "uploads", Path.basename(path)])
+      File.cp!(path, dest)
+      Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")
+    end)
+  end
+
+  defp category_changeset(params \\ %{}) do
+    MishkaDatabase.Schema.MishkaContent.Blog.Category.changeset(
+        %MishkaDatabase.Schema.MishkaContent.Blog.Category{}, params
+      )
   end
 end

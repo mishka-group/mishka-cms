@@ -12,7 +12,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         options_menu: false,
         changeset: category_changeset())
         |> assign(:uploaded_files, [])
-        |> allow_upload(:main_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
+        |> allow_upload(:main_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000)
         |> allow_upload(:header_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
     {:ok, socket}
   end
@@ -183,6 +183,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, cancel_upload(socket, String.to_atom(field), ref)}
   end
 
+  def handle_event("set_tag", %{"key" => "Enter", "value" => value}, socket) do
+    IO.inspect(value)
+    {:noreply, socket}
+  end
+
+
   defp create_menu_list(menus_list, dynamic_form) do
     Enum.map(menus_list, fn menu ->
       case check_type_in_list(dynamic_form, %{type: menu.type, value: nil, class: menu.class}, menu.type) do
@@ -221,33 +227,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         %{title: "ضروری", class: "badge bg-danger"}
       ],
       form: "text",
-      class: "col-sm-6",
+      class: "col-sm-4",
       title: "تیتر",
       description: "ساخت تیتر مناسب برای مجموعه مورد نظر"},
 
-      %{type: "short_description", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
-      ],
-      form: "textarea",
-      class: "col-sm-12",
-      title: "توضیحات کوتاه",
-      description: "ساخت بلاک توضیحات کوتاه برای مجموعه"},
-
-      %{type: "main_image", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
-      ],
-      form: "upload",
-      class: "col-sm-6",
-      title: "تصویر اصلی",
-      description: "تصویر نمایه مجموعه. این فیلد به صورت تک تصویر می باشد."},
-
-      %{type: "description", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
-      ],
-      form: "editor",
-      class: "col-sm-12",
-      title: "توضیحات",
-      description: "توضیحات اصلی مربوط به مجموعه. این فیلد شامل یک ادیتور نیز می باشد."},
 
       %{type: "status", status: [
         %{title: "ضروری", class: "badge bg-danger"}
@@ -259,7 +242,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         {"حذف با پرچم", :soft_delete},
       ],
       form: "select",
-      class: "col-sm-2",
+      class: "col-sm-1",
       title: "وضعیت",
       description: "انتخاب نوع وضعیت می توانید بر اساس دسترسی های کاربران باشد یا نمایش یا عدم نمایش مجموعه به کاربران."},
 
@@ -281,6 +264,33 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       title: "کلمات کلیدی",
       description: "انتخاب چندین کلمه کلیدی برای ثبت بهتر مجموعه در موتور های جستجو."},
 
+
+      %{type: "description", status: [
+        %{title: "ضروری", class: "badge bg-danger"}
+      ],
+      form: "editor",
+      class: "col-sm-12",
+      title: "توضیحات",
+      description: "توضیحات اصلی مربوط به مجموعه. این فیلد شامل یک ادیتور نیز می باشد."},
+
+
+      %{type: "short_description", status: [
+        %{title: "ضروری", class: "badge bg-danger"}
+      ],
+      form: "textarea",
+      class: "col-sm-6",
+      title: "توضیحات کوتاه",
+      description: "ساخت بلاک توضیحات کوتاه برای مجموعه"},
+
+      %{type: "main_image", status: [
+        %{title: "ضروری", class: "badge bg-danger"}
+      ],
+      form: "upload",
+      class: "col-sm-6",
+      title: "تصویر اصلی",
+      description: "تصویر نمایه مجموعه. این فیلد به صورت تک تصویر می باشد."},
+
+
       %{type: "meta_description", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
         %{title: "پیشنهادی", class: "badge bg-dark"}
@@ -294,14 +304,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   defp more_options_menu_list() do
     [
-      %{type: "sub", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "غیر پیشنهادی", class: "badge bg-warning"}
-      ],
-      form: "text_search",
-      class: "col-sm-3",
-      title: "زیر مجموعه",
-      description: "شما می توانید به واسطه این فیلد مجموعه جدید را زیر مجموعه دیگری بکنید"},
 
       %{type: "header_image", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
@@ -311,6 +313,16 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       class: "col-sm-6",
       title: "تصویر هدر",
       description: "این تصویر در برخی از قالب ها بالای هدر مجموعه نمایش داده می شود"},
+
+
+      %{type: "sub", status: [
+        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: "غیر پیشنهادی", class: "badge bg-warning"}
+      ],
+      form: "text_search",
+      class: "col-sm-3",
+      title: "زیر مجموعه",
+      description: "شما می توانید به واسطه این فیلد مجموعه جدید را زیر مجموعه دیگری بکنید"},
 
       %{type: "custom_title", status: [
         %{title: "غیر ضروری", class: "badge bg-info"},
@@ -472,7 +484,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       ],
       form: "select",
       class: "col-sm-2",
-      title: "نمایش تاریخ ارسال مطلب",
+      title: "تاریخ ارسال مطلب",
       description: "نمایش یا عدم نمایش تاریخ ارسال در پست های تخصیص یافته در این مجموعه"},
 
       %{type: "show_authors", status: [
@@ -496,7 +508,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       ],
       form: "select",
       class: "col-sm-2",
-      title: "نمایش مجموعه",
+      title: "مجموعه",
       description: "اجازه نمایش مجموعه در محتوا های تخصیص یافته به این مجموعه"},
 
       %{type: "show_links", status: [
@@ -508,7 +520,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       ],
       form: "select",
       class: "col-sm-2",
-      title: "نمایش لینک ها",
+      title: "لینک ها",
       description: "اجازه نمایش یا عدم نمایش لینک های پیوستی محتوا های تخصیص یافته  به این مجموعه"},
 
       %{type: "show_location", status: [
@@ -527,10 +539,15 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   defp upload(socket, upload_id) do
     consume_uploaded_entries(socket, upload_id, fn %{path: path}, entry ->
-      dest = Path.join([:code.priv_dir(:mishka_html), "static", "uploads", Path.basename(path)])
+      dest = Path.join([:code.priv_dir(:mishka_html), "static", "uploads", file_name(entry)])
       File.cp!(path, dest)
-      Routes.static_path(socket, "/uploads/#{Path.basename(dest)}")
+      Routes.static_path(socket, "/uploads/#{file_name(entry)}")
     end)
+  end
+
+  defp file_name(entry) do
+    [ext | _] = MIME.extensions(entry.client_type)
+    "#{entry.uuid}.#{ext}"
   end
 
   defp category_changeset(params \\ %{}) do

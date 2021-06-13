@@ -89,7 +89,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
           socket
           |> assign([
             open_modal: true,
-            component: MishkaHtmlWeb.Admin.Blog.ErrorCategoryDeleteComponent
+            component: MishkaHtmlWeb.Admin.Blog.Category.DeleteErrorComponent
           ])
 
         {:noreply, socket}

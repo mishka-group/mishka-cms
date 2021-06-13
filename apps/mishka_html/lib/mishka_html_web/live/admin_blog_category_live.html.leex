@@ -85,7 +85,7 @@
             <% end %>
 
 
-            <div class="col-sm-3 create-category-tools-items" id="nonMainCategoryTools">
+            <div class="col-sm-3 create-category-tools-items" id="nonMainCategoryTools" >
 
                 <%= if @options_menu do %>
                     <%= for {item, color} <- Enum.zip(more_options_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
@@ -112,8 +112,9 @@
 
             <%= f = form_for @changeset, "#",
                 phx_submit: "save",
-                phx_change: "draft", multipart: true %>
-
+                phx_change: "draft",
+                multipart: true,
+                onkeydown: "return event.key != 'Enter';" %>
                 <div class="clearfix"></div>
                 <div class="space30"></div>
                 <div class="row">
@@ -134,27 +135,42 @@
                                     form_type: form.type,
                                     f: f %>
 
-                           <% "select" -> %>
+                           <% "add_tag" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddTagComponent,
+                                                id: String.to_atom("admin_form_#{form.type}"),
+                                                form: form,
+                                                f: f
+                                %>
+
+
+                            <% "select" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.SelectComponent,
                                                 id: String.to_atom("admin_form_#{form.type}"),
                                                 form: form,
                                                 f: f
                                 %>
-                           <% _ -> %>
 
-                            <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
-                                                id: String.to_atom("admin_form_text_#{form.type}"),
+                            <% "textarea" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextAreaComponent,
+                                                id: String.to_atom("admin_form_#{form.type}"),
                                                 form: form,
                                                 f: f
+                                %>
+
+                           <% _ -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
+                                                    id: String.to_atom("admin_form_text_#{form.type}"),
+                                                    form: form,
+                                                    f: f
                                 %>
                         <% end %>
                     <% end %>
 
                 </div>
 
-                <%= if @dynamic_form != [] do%>
-                    <div class="space30"></div>
-                    <%= submit "Save", phx_disable_with: "Saving..." %>
+                <%= if @dynamic_form != [] do %>
+                    <div class="space10"></div>
+                    <%= submit "Save", phx_disable_with: "Saving...", class: "btn btn-primary" %>
                 <% else %>
                     <div class="clearfix"></div>
                     <div class="space30"></div>

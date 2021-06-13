@@ -3,7 +3,8 @@ defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
 
   def render(assigns) do
     ~L"""
-    <div class="col-sm-6 admin-upload-form">
+    <div class="col-sm-6 admin-upload-form vazir">
+      <%= label @f , "#{MishkaHtmlWeb.AdminBlogCategoryLive.search_fields(@form_type).title}:" %>
       <div class="drop" phx-drop-target="<%= @ref %>">
           <button phx-click="delete_form" phx-value-type="<%= @form_type %>" type="button" class="btn-close" aria-label="Close"></button>
 
@@ -15,7 +16,7 @@ defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
           <div class="space30"></div>
           <div class="hint">
           <span class="badge bg-dark">
-              Add up to <%= @max_entries %> avatar
+              Add up to <%= @max_entries %> <%= humanize(@form_type) %>
               (max <%= @max_file_size %> MB each)
           </span>
           </div>
@@ -39,7 +40,7 @@ defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
 
           <div class="row mx-auto">
           <div class="clearfix"></div>
-          <div class="space30"></div>
+          <div class="space10"></div>
               <%= for {entry, color} <- Enum.zip(@entries, Stream.cycle(["success", "info", "warning", "danger"])) do %>
                   <div class="entry col-sm-3 ">
 

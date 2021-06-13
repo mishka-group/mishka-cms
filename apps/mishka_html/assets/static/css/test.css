@@ -506,7 +506,7 @@ select.form-select {
 }
 /* colors */
 .bw {
-  background-color: white;
+  background-color: white !important;
 }
 /* icon */
 @font-face {

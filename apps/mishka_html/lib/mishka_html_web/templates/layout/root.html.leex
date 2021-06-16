@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -10,14 +11,19 @@
 
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/test.css") %>"/>
 
+
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/bootstrap.min.css") %>"/>
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/bootstrap.min.js") %>"></script>
 
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/main.min.css") %>"/>
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/main.min.js") %>"></script>
 
-
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+
+
+    <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/quill.snow.css") %>"/>
+
+
   </head>
   <body>
     <%= @inner_content %>

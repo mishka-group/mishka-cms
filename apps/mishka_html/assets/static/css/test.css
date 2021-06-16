@@ -504,6 +504,27 @@ select.form-select {
   box-shadow: #dadada 1px 1px 11px 6px;
   margin: 20px 10px;
 }
+
+.admin-tag-field-size {
+  font-size: 14px !important;
+  margin-bottom: 10px;
+}
+
+.btn-close.delete-tag {
+  background-color: white !important;
+  opacity: 0.85;
+  font-size: 10px;
+}
+
+.editor-diver {
+  margin-bottom: 100px;
+  clear: both;
+  min-height: 150px;
+}
+
+.editor {
+  min-height: 120px;
+}
 /* colors */
 .bw {
   background-color: white !important;

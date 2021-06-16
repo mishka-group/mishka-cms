@@ -61,8 +61,9 @@
 
             <div class="clearfix"></div>
             <div class="space10"></div>
-            <%= if @basic_menu do %>
-                <div class="col-sm-3 create-category-tools-items" id="MainCategoryTools">
+
+            <div class="col-sm-3 create-category-tools-items" id="MainCategoryTools">
+                <%= if @basic_menu do %>
                     <%= for {item, color} <- Enum.zip(basic_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
                         <div class="d-flex text-muted pt-3" phx-click="basic_menu" phx-value-type="<%= item.type %>" phx-value-class="<%= item.class %>">
                             <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false">
@@ -81,8 +82,9 @@
                             </p>
                         </div>
                     <% end %>
-                </div>
-            <% end %>
+                <% end %>
+            </div>
+
 
 
             <div class="col-sm-3 create-category-tools-items" id="nonMainCategoryTools" >
@@ -139,7 +141,8 @@
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddTagComponent,
                                                 id: String.to_atom("admin_form_#{form.type}"),
                                                 form: form,
-                                                f: f
+                                                f: f,
+                                                tags: @tags
                                 %>
 
 
@@ -149,6 +152,14 @@
                                                 form: form,
                                                 f: f
                                 %>
+
+                            <% "editor" -> %>
+                                <div class="col-sm-12 editor-diver" phx-update="ignore">
+                                    <div id="editor" phx-hook="Editor" class="bw"></div>
+                                </div>
+                                <div class="form-error-tag">
+                                    <%= error_tag f, String.to_atom(form.type) %>
+                                </div>
 
                             <% "textarea" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextAreaComponent,
@@ -165,6 +176,7 @@
                                 %>
                         <% end %>
                     <% end %>
+
 
                 </div>
 

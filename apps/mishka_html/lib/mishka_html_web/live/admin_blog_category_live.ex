@@ -10,9 +10,11 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         page_title: "مدیریت ساخت مجموعه",
         basic_menu: false,
         options_menu: false,
+        tags: [],
+        editor: nil,
         changeset: category_changeset())
         |> assign(:uploaded_files, [])
-        |> allow_upload(:main_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000)
+        |> allow_upload(:main_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
         |> allow_upload(:header_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
     {:ok, socket}
   end
@@ -47,7 +49,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
         assign(socket, [
           basic_menu: false,
-          options_menu: false,
+          options_menu: !socket.assigns.options_menu,
           dynamic_form: socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
         ])
 
@@ -66,15 +68,18 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   def handle_event("save", %{"category" => params}, socket) do
-
     uploaded_main_image_files = upload(socket, :main_image_upload)
     uploaded_header_image_files = upload(socket, :header_image_upload)
+
+    meta_keywords = MishkaHtml.list_tag_to_string(socket.assigns.tags, ", ")
 
 
     case Category.create(
       Map.merge(params, %{
+        "meta_keywords" => if(meta_keywords == "", do: nil, else: meta_keywords),
         "main_image" => if(uploaded_main_image_files != [], do: List.first(uploaded_main_image_files), else: nil),
-        "header_image" =>  if(uploaded_header_image_files != [], do: List.first(uploaded_header_image_files), else: nil)
+        "header_image" =>  if(uploaded_header_image_files != [], do: List.first(uploaded_header_image_files), else: nil),
+        "description" =>  if(is_nil(socket.assigns.editor), do: nil, else: socket.assigns.editor)
       })
 
     ) do
@@ -100,6 +105,13 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   def handle_event("save", _params, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("save-editor", %{"html" => params}, socket) do
+    socket =
+      socket
+      |> assign([editor: params])
     {:noreply, socket}
   end
 
@@ -184,7 +196,22 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   def handle_event("set_tag", %{"key" => "Enter", "value" => value}, socket) do
-    IO.inspect(value)
+    new_socket = case Enum.any?(socket.assigns.tags, fn tag -> tag == value end) do
+      true -> socket
+      false ->
+        socket
+        |> assign([
+          tags: [value] ++ socket.assigns.tags,
+        ])
+    end
+
+    {:noreply, new_socket}
+  end
+
+  def handle_event("delete_tag", %{"tag" => value}, socket) do
+    socket =
+      socket
+      |> assign(:tags, Enum.reject(socket.assigns.tags, fn tag -> tag == value end))
     {:noreply, socket}
   end
 
@@ -555,4 +582,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         %MishkaDatabase.Schema.MishkaContent.Blog.Category{}, params
       )
   end
+
+
 end

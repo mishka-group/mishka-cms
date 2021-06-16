@@ -16,10 +16,17 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import topbar from "topbar"
 import {LiveSocket} from "phoenix_live_view"
+import * as Quill from 'quill';
+
 
 let Hooks = {}
 Hooks.Calendar = {
   mounted() {
+      var container = document.querySelector("#editor");
+      var editor = new Quill(container, {
+        theme: 'snow',
+      });
+
       var calendar = new FullCalendar.Calendar(this.el, {
         headerToolbar: {
           left: 'prev,next today',
@@ -114,6 +121,22 @@ Hooks.Calendar = {
     // });
   }
 }
+
+Hooks.Editor = {
+  mounted() {
+    const view = this;
+    var container = document.querySelector("#editor");
+    var editor = new Quill(container, {
+      theme: 'snow',
+    });
+
+    editor.on('editor-change', function(range, oldRange, source) {
+      var data = { html: editor.root.innerHTML};
+      view.pushEvent("save-editor", data);
+    });
+  }
+}
+
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}})

@@ -9,6 +9,16 @@ defmodule MishkaHtmlWeb.Admin.Form.AddTagComponent do
         <div class="form-error-tag">
             <%= error_tag @f, String.to_atom(@form.type) %>
         </div>
+
+        <div class="space20"></div>
+        <%= for {tag, color} <- Enum.zip(@tags, Stream.cycle(
+          ["bg-primary", "bg-secondary", "bg-success", "bg-danger", "bg-warning", "bg-info", "bg-dark"]
+        )) do %>
+        <span class="badge <%= color %> vazir admin-tag-field-size">
+          <%= tag %>
+          <button phx-click="delete_tag" phx-value-tag="<%= tag %>" type="button" class="btn-close delete-tag" aria-label="Close"></button>
+        </span>
+        <% end %>
       </div>
     """
   end

@@ -646,10 +646,14 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     end
   end
 
-    defp edit_category(socket, params: {params, meta_keywords, main_image, header_image, description, id},
+  defp edit_category(socket, params: {params, meta_keywords, main_image, header_image, description, id},
                                uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
-    case Category.edit(
-      Map.merge(params, %{"id" => id, "meta_keywords" => meta_keywords, "main_image" => main_image, "header_image" =>  header_image, "description" =>  description})) do
+
+    merge_map = %{"id" => id, "meta_keywords" => meta_keywords, "main_image" => main_image, "header_image" =>  header_image, "description" =>  description}
+    |> Enum.filter(fn {_, v} -> v != nil end)
+    |> Enum.into(%{})
+
+    case Category.edit(Map.merge(params, merge_map)) do
       {:error, :edit, :category, repo_error} ->
 
         socket =
@@ -659,7 +663,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         {:noreply, socket}
 
       {:ok, :edit, :category, repo_data} ->
-        IO.inspect("updated")
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} به روز شده است."})
 
         socket =

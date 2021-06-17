@@ -56,9 +56,9 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                     </div>
 
                     <div class="col-sm-1" id="<%= "title-#{item.id}" %>">
-                        <a href="#">
-                        <%= item.title %>
-                        </a>
+                        <%= live_redirect "#{item.title}",
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id)
+                        %>
                     </div>
 
                     <div class="col" id="<%= "category-visibility-#{item.id}" %>">
@@ -86,16 +86,24 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                     </div>
 
                     <div class="col-sm-3 opration-post-blog" id="<%= "opration-#{item.id}" %>">
-                        <button type="button"
-                                class="btn btn-outline-primary vazir",
+                        <a class="btn btn-outline-primary vazir",
                                 phx-click="delete"
-                                phx-value-id="<%= item.id %>"
-                        >
-                        حذف
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary vazir">ویرایش</button>
-                        <button type="button" class="btn btn-outline-success vazir">نظرات</button>
-                        <button type="button" class="btn btn-outline-danger vazir">حذف کامل </button>
+                                phx-value-id="<%= item.id %>">حذف</a>
+
+                        <%= live_redirect "ویرایش",
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
+                            class: "btn btn-outline-secondary vazir"
+                        %>
+
+                        <%= live_redirect "نظرات",
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
+                            class: "btn btn-outline-success vazir"
+                        %>
+
+                        <%= live_redirect "حذف کامل",
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
+                            class: "btn btn-outline-danger vazir"
+                        %>
                     </div>
                 </div>
                 <div class="space20"></div>

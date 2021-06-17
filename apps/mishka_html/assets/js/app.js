@@ -126,14 +126,21 @@ Hooks.Editor = {
   mounted() {
     const view = this;
     var container = document.querySelector("#editor");
-    var editor = new Quill(container, {
-      theme: 'snow',
-    });
-
-    editor.on('editor-change', function(range, oldRange, source) {
-      var data = { html: editor.root.innerHTML};
-      view.pushEvent("save-editor", data);
-    });
+    if (container != null) {
+      var editor = new Quill(container, {
+        theme: 'snow',
+      });
+  
+      editor.on('editor-change', function(range, oldRange, source) {
+        var data = { html: editor.root.innerHTML};
+        view.pushEvent("save-editor", data);
+      });
+  
+      this.handleEvent("update-editor-html", ({html}) => {
+        console.log(html)
+        editor.root.innerHTML = html
+      });
+    }
   }
 }
 

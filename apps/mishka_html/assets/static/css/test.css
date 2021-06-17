@@ -525,6 +525,10 @@ select.form-select {
 .editor {
   min-height: 120px;
 }
+
+.opration-post-blog a {
+  font-size: 16px !important;
+}
 /* colors */
 .bw {
   background-color: white !important;

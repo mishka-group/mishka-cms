@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.Blog.Category
+
   @error_atom :category
 
   def mount(_params, _session, socket) do
@@ -14,6 +15,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         tags: [],
         editor: nil,
         id: nil,
+        images: {},
         changeset: category_changeset())
         |> assign(:uploaded_files, [])
         |> allow_upload(:main_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
@@ -43,12 +45,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         get_tag = Enum.find(categories, fn cat -> cat.type == "meta_keywords" end)
         description = Enum.find(categories, fn cat -> cat.type == "description" end)
 
-
         socket
         |> assign([
           dynamic_form: categories,
           tags: if(is_nil(get_tag), do: [], else: if(is_nil(get_tag.value), do: [], else: String.split(get_tag.value, ","))),
-          id: repo_data.id
+          id: repo_data.id,
+          images: {repo_data.main_image, repo_data.header_image}
         ])
         |> push_event("update-editor-html", %{html: description.value})
     end
@@ -257,6 +259,19 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     String.trim(value)
     |> String.replace(" ", "-")
     |> IO.inspect()
+    {:noreply, socket}
+  end
+
+  def handle_event("delete_image", %{"image" => image, "type" => type}, socket) do
+    Path.join(["apps/mishka_html/priv/static/", image])
+    |> File.rm()
+
+    {main_image, header_image} = socket.assigns.images
+
+    socket =
+      socket
+      |> assign(:images, if(type == "main_image", do: {nil, header_image} , else: {main_image, nil}))
+
     {:noreply, socket}
   end
 
@@ -659,7 +674,15 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     |> Enum.filter(fn {_, v} -> v != nil end)
     |> Enum.into(%{})
 
-    case Category.edit(Map.merge(params, merge_map)) do
+    merged = Map.merge(params, merge_map)
+    {main_image, header_image} = socket.assigns.images
+
+    main_image_exist_file = if(Map.has_key?(merged, "main_image"), do: %{}, else: %{"main_image" => main_image})
+    header_image_exist_file = if(Map.has_key?(merged, "header_image"), do: %{}, else: %{"header_image" => header_image})
+
+    exist_images = Map.merge(main_image_exist_file, header_image_exist_file)
+
+    case Category.edit(Map.merge(merged, exist_images)) do
       {:error, :edit, :category, repo_error} ->
 
         socket =
@@ -689,6 +712,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     end
   end
 
+  def file_exist(file) do
+    Path.join(["apps/mishka_html/priv/static/", file])
+    |> File.exists?()
+  end
 
   defp creta_ctaegory_state(repo_data) do
     Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :blog_posts, :id])

@@ -136,7 +136,8 @@
                                     upload_field: if(form.type == "main_image", do: :main_image_upload, else: :header_image_upload),
                                     form_type: form.type,
                                     form: form,
-                                    f: f %>
+                                    f: f,
+                                    images: @images %>
 
                            <% "add_tag" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddTagComponent,

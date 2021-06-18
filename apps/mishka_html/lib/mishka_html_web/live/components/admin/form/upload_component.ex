@@ -73,14 +73,22 @@ defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
                   </div>
               <% end %>
 
-                <%= if @form.value != nil do %>
-                    <h3>تصاویر آپلود شده</h3>
-                    <div class="clearfix"></div>
-                    <div class="space20"></div>
-                    <div class="admin-upload-img-form ">
-                        <a href="#" phx-click="delete-image" phx-value-image="<%= @form.value %>" class="col-sm-2">&times;</a>
-                        <div class="clearfix"></div>
-                        <img src="<%= @form.value %>" alt="">
+              <%= if @images != {} do  %>
+              <%
+                    {main_image, header_image} = @images
+                    image = if(@form.type == "main_image", do: main_image, else: header_image)
+              %>
+                    <div id="Image<%= @form.type %>">
+                        <%= if !is_nil(image) do %>
+                            <h3>تصاویر آپلود شده</h3>
+                            <div class="clearfix"></div>
+                            <div class="space20"></div>
+                            <div class="admin-upload-img-form ">
+                                <a href="#" phx-click="delete_image" phx-value-image="<%= @form.value %>" phx-value-type="<%= @form.type %>" class="col-sm-2">&times;</a>
+                                <div class="clearfix"></div>
+                                <img src="<%= @form.value %>" alt="">
+                            </div>
+                        <% end %>
                     </div>
                 <% end %>
           </div>

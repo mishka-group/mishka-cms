@@ -10,7 +10,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                     تصویر
                 </div>
 
-                <div class="col-sm-1 titile-of-blog-posts alert alert-secondary">
+                <div class="col-sm-2 titile-of-blog-posts alert alert-warning">
                     تیتر
                 </div>
 
@@ -20,10 +20,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
 
                 <div class="col titile-of-blog-posts alert alert-danger">
                     وضعیت
-                </div>
-
-                <div class="col titile-of-blog-posts alert alert-warning">
-                    اولویت
                 </div>
 
                 <div class="col titile-of-blog-posts alert alert-success">
@@ -55,34 +51,42 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                         </div>
                     </div>
 
-                    <div class="col-sm-1" id="<%= "title-#{item.id}" %>">
+                    <div class="col-sm-2" id="<%= "title-#{item.id}" %>">
                         <%= live_redirect "#{item.title}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id)
                         %>
                     </div>
 
                     <div class="col" id="<%= "category-visibility-#{item.id}" %>">
-                        <%= item.category_visibility %>
+                        <%
+                            field = Enum.find(MishkaHtmlWeb.AdminBlogCategoryLive.more_options_menu_list, fn x -> x.type == "category_visibility" end)
+                            {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.category_visibility end)
+                        %>
+                        <%= title %>
                     </div>
 
                     <div class="col" id="<%= "status-#{item.id}" %>">
                         <span class="badge bg-primary vazir">
-                            <%= item.status %>
-                        </span>
-                    </div>
-
-                    <div class="col" id="<%= "status-#{item.id}" %>">
-                        <span class="badge bg-success">
-                        بالا
+                            <%
+                                field = Enum.find(MishkaHtmlWeb.AdminBlogCategoryLive.basic_menu_list, fn x -> x.type == "status" end)
+                                {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.status end)
+                            %>
+                            <%= title %>
                         </span>
                     </div>
 
                     <div class="col" id="<%= "inserted-#{item.id}" %>">
-                        <%= item.inserted_at %>
+                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                            id: "inserted-#{item.id}-component",
+                            time: item.inserted_at
+                        %>
                     </div>
 
                     <div class="col" id="<%= "updated-#{item.id}" %>">
-                        <%= item.updated_at %>
+                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                            id: "updated-#{item.id}-component",
+                            time: item.updated_at
+                        %>
                     </div>
 
                     <div class="col-sm-3 opration-post-blog" id="<%= "opration-#{item.id}" %>">

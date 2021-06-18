@@ -286,7 +286,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     Enum.find(basic_menu_list() ++ more_options_menu_list(), fn x -> x.type == type end)
   end
 
-  defp basic_menu_list() do
+  def basic_menu_list() do
     [
       %{type: "title", status: [
         %{title: "ضروری", class: "badge bg-danger"}
@@ -367,7 +367,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     ]
   end
 
-  defp more_options_menu_list() do
+  def more_options_menu_list() do
     [
 
       %{type: "header_image", status: [

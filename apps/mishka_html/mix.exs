@@ -51,7 +51,8 @@ defmodule MishkaHtml.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:mishka_user, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
-      {:jalaali, "~> 0.3.0"}
+      {:jalaali, "~> 0.3.0"},
+      {:slugify, "~> 1.3"}
     ]
   end
 

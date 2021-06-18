@@ -135,6 +135,7 @@
                                     ref: if(form.type == "main_image", do: @uploads.main_image_upload.ref, else: @uploads.header_image_upload.ref),
                                     upload_field: if(form.type == "main_image", do: :main_image_upload, else: :header_image_upload),
                                     form_type: form.type,
+                                    form: form,
                                     f: f %>
 
                            <% "add_tag" -> %>
@@ -158,6 +159,15 @@
                                                 id: String.to_atom("admin_form_#{form.type}"),
                                                 form: form,
                                                 f: f
+                                %>
+
+                            <% "convert-title-to-link" -> %>
+
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.ConvertTitleToLinkComponent,
+                                                    id: String.to_atom("admin_form_text_#{form.type}"),
+                                                    form: form,
+                                                    f: f,
+                                                    link: Enum.find(@dynamic_form, fn x -> x.type == "title" end)
                                 %>
 
                             <% "textarea" -> %>

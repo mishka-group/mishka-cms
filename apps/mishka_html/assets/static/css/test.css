@@ -529,6 +529,10 @@ select.form-select {
 .opration-post-blog a {
   font-size: 16px !important;
 }
+
+.link-converter-bdg {
+  font-size: 14px !important;
+}
 /* colors */
 .bw {
   background-color: white !important;

@@ -253,6 +253,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  def handle_event("set_link", %{"key" => "Enter", "value" => value}, socket) do
+    String.trim(value)
+    |> String.replace(" ", "-")
+    |> IO.inspect()
+    {:noreply, socket}
+  end
 
   defp create_menu_list(menus_list, dynamic_form) do
     Enum.map(menus_list, fn menu ->
@@ -315,7 +321,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         %{title: "ضروری", class: "badge bg-danger"},
         %{title: "یکتا", class: "badge bg-success"}
       ],
-      form: "text",
+      form: "convert-title-to-link",
       class: "col-sm-3",
       title: "لینک مجموعه",
       description: "انتخاب لینک مجموعه برای ثبت و نمایش به کاربر. این فیلد یکتا می باشد."},

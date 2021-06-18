@@ -1,5 +1,6 @@
 defmodule MishkaHtmlWeb.Admin.Form.AddTagComponent do
   use MishkaHtmlWeb, :live_component
+
   def render(assigns) do
     ~L"""
       <div class="<%= @form.class %> field">

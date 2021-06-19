@@ -79,12 +79,12 @@ defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
                     image = if(@form.type == "main_image", do: main_image, else: header_image)
               %>
                     <div id="Image<%= @form.type %>">
-                        <%= if !is_nil(image) do %>
+                        <%= if !is_nil(image) and image_exist(image) do %>
                             <h3>تصاویر آپلود شده</h3>
                             <div class="clearfix"></div>
                             <div class="space20"></div>
                             <div class="admin-upload-img-form ">
-                                <a href="#" phx-click="delete_image" phx-value-image="<%= @form.value %>" phx-value-type="<%= @form.type %>" class="col-sm-2">&times;</a>
+                                <a href="#" phx-click="delete_image" phx-value-type="<%= @form.type %>" class="col-sm-2">&times;</a>
                                 <div class="clearfix"></div>
                                 <img src="<%= @form.value %>" alt="">
                             </div>
@@ -95,5 +95,9 @@ defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
       </div>
     </div>
     """
+  end
+
+  def image_exist(image) do
+    Path.join([:code.priv_dir(:mishka_html), "static", image]) |> File.exists?()
   end
 end

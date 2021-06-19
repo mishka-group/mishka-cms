@@ -14,15 +14,9 @@ defmodule MishkaHtmlWeb.Admin.Form.ConvertTitleToLinkComponent do
         <div class="space10"></div>
         <span>
           <span class="badge bg-dark vazir link-converter-bdg">لینک:</span>
-          <%= create_link(@link) %>
+          <%= @alias_link %>
         </span>
       </div>
     """
-  end
-
-  def create_link(link) do
-    if !is_nil(link) do
-      Slug.slugify("#{link.value}", ignore: ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "چ", "ش", "س", "ی", "ب", "ل", "ا", "ت", "ن", "م", "ک", "گ", "پ", "‍‍‍ظ", "ط", "ز", "ر", "ذ", "ژ", "د", "و", "آ", "ي"])
-    end
   end
 end

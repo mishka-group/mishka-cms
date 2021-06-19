@@ -22,11 +22,6 @@ import * as Quill from 'quill';
 let Hooks = {}
 Hooks.Calendar = {
   mounted() {
-      var container = document.querySelector("#editor");
-      var editor = new Quill(container, {
-        theme: 'snow',
-      });
-
       var calendar = new FullCalendar.Calendar(this.el, {
         headerToolbar: {
           left: 'prev,next today',
@@ -122,6 +117,14 @@ Hooks.Calendar = {
   }
 }
 
+Hooks.TextSearch = {
+  mounted() {
+    this.handleEvent("update_text_search", ({value}) => {
+      document.getElementById("text_search").value = value;
+    });
+  }
+}
+
 Hooks.Editor = {
   mounted() {
     const view = this;
@@ -137,13 +140,12 @@ Hooks.Editor = {
       });
   
       this.handleEvent("update-editor-html", ({html}) => {
-        console.log(html)
         editor.root.innerHTML = html
       });
+
     }
   }
 }
-
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}})

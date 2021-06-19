@@ -47,6 +47,26 @@ defmodule MishkaContent.Blog.Category do
     crud_get_by_field("alias_link", alias_link)
   end
 
+
+  def search_category_title(title, limit) do
+    like = "%#{title}%"
+    try do
+      from(cat in Category,
+      where: like(cat.title, ^like),
+      order_by: [desc: cat.inserted_at, desc: cat.id],
+      limit: ^limit,
+      select: %{
+        id: cat.id,
+        title: cat.title,
+        inserted_at: cat.inserted_at,
+        short_description: cat.short_description,
+      })
+      |> MishkaDatabase.Repo.all()
+    rescue
+      _e -> []
+    end
+  end
+
   def categories(filters: filters) do
     try do
       query = from(cat in Category) |> convert_filters_to_where(filters)

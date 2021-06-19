@@ -15,7 +15,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         tags: [],
         editor: nil,
         id: nil,
-        images: {},
+        images: {nil, nil},
+        alias_link: nil,
+        category_search: [],
+        sub: nil,
         changeset: category_changeset())
         |> assign(:uploaded_files, [])
         |> allow_upload(:main_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
@@ -50,7 +53,9 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
           dynamic_form: categories,
           tags: if(is_nil(get_tag), do: [], else: if(is_nil(get_tag.value), do: [], else: String.split(get_tag.value, ","))),
           id: repo_data.id,
-          images: {repo_data.main_image, repo_data.header_image}
+          images: {repo_data.main_image, repo_data.header_image},
+          alias_link: repo_data.alias_link,
+          sub: repo_data.sub
         ])
         |> push_event("update-editor-html", %{html: description.value})
     end
@@ -117,8 +122,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
     meta_keywords = MishkaHtml.list_tag_to_string(socket.assigns.tags, ", ")
 
-    # if @id exists update category
-    # if @id is nil create this
     case socket.assigns.id do
       nil ->
         create_category(socket, params: {
@@ -126,7 +129,9 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
           if(meta_keywords == "", do: nil, else: meta_keywords),
           if(uploaded_main_image_files != [], do: List.first(uploaded_main_image_files), else: nil),
           if(uploaded_header_image_files != [], do: List.first(uploaded_header_image_files), else: nil),
-          if(is_nil(socket.assigns.editor), do: nil, else: socket.assigns.editor)
+          if(is_nil(socket.assigns.editor), do: nil, else: socket.assigns.editor),
+          socket.assigns.alias_link,
+          socket.assigns.sub
         },
         uploads: {uploaded_main_image_files, uploaded_header_image_files})
       id ->
@@ -137,7 +142,9 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
           if(uploaded_main_image_files != [], do: List.first(uploaded_main_image_files), else: nil),
           if(uploaded_header_image_files != [], do: List.first(uploaded_header_image_files), else: nil),
           if(is_nil(socket.assigns.editor), do: nil, else: socket.assigns.editor),
-          id
+          id,
+          socket.assigns.alias_link,
+          socket.assigns.sub
         },
         uploads: {uploaded_main_image_files, uploaded_header_image_files})
 
@@ -206,10 +213,30 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  def handle_event("text_search_click", %{"id" => id}, socket) do
+    socket =
+      socket
+      |> assign([
+        sub: id,
+        category_search: []
+      ])
+      |> push_event("update_text_search", %{value: id})
+
+    {:noreply, socket}
+  end
+
+  def handle_event("close_text_search", _, socket) do
+    socket =
+      socket
+      |> assign([category_search: []])
+    {:noreply, socket}
+  end
+
   def handle_event("draft", %{"_target" => ["category", type], "category" => params}, socket) when type not in ["main_image", "main_image"] do
     {_key, value} = Map.take(params, [type])
     |> Map.to_list()
     |> List.first()
+
 
     new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
       if x.type == type, do: Map.merge(x, %{value: value}), else: x
@@ -220,7 +247,9 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       |> assign([
         basic_menu: false,
         options_menu: false,
-        dynamic_form: new_dynamic_form
+        dynamic_form: new_dynamic_form,
+        alias_link: create_link(params["title"]),
+        category_search: Category.search_category_title(params["sub"], 5)
       ])
 
     {:noreply, socket}
@@ -256,23 +285,30 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   def handle_event("set_link", %{"key" => "Enter", "value" => value}, socket) do
-    String.trim(value)
-    |> String.replace(" ", "-")
-    |> IO.inspect()
+    alias_link = create_link(value)
+    socket =
+      socket
+      |> assign(:alias_link, alias_link)
     {:noreply, socket}
   end
 
-  def handle_event("delete_image", %{"image" => image, "type" => type}, socket) do
-    Path.join(["apps/mishka_html/priv/static/", image])
-    |> File.rm()
-
+  def handle_event("delete_image", %{"type" => type}, socket) do
     {main_image, header_image} = socket.assigns.images
+
+    image = if(type == "main_image", do: main_image, else: header_image)
+
+    Path.join([:code.priv_dir(:mishka_html), "static", image])
+    |> File.rm()
 
     socket =
       socket
       |> assign(:images, if(type == "main_image", do: {nil, header_image} , else: {main_image, nil}))
 
     {:noreply, socket}
+  end
+
+  def create_link(value) do
+    Slug.slugify("#{value}", ignore: ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "چ", "ش", "س", "ی", "ب", "ل", "ا", "ت", "ن", "م", "ک", "گ", "پ", "‍‍‍ظ", "ط", "ز", "ر", "ذ", "ژ", "د", "و", "آ", "ي"])
   end
 
   defp create_menu_list(menus_list, dynamic_form) do
@@ -307,6 +343,140 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     Enum.find(basic_menu_list() ++ more_options_menu_list(), fn x -> x.type == type end)
   end
 
+  defp upload(socket, upload_id) do
+    consume_uploaded_entries(socket, upload_id, fn %{path: path}, entry ->
+      dest = Path.join([:code.priv_dir(:mishka_html), "static", "uploads", file_name(entry)])
+      File.cp!(path, dest)
+      Routes.static_path(socket, "/uploads/#{file_name(entry)}")
+    end)
+  end
+
+  defp file_name(entry) do
+    [ext | _] = MIME.extensions(entry.client_type)
+    "#{entry.uuid}.#{ext}"
+  end
+
+  defp category_changeset(params \\ %{}) do
+    MishkaDatabase.Schema.MishkaContent.Blog.Category.changeset(
+      %MishkaDatabase.Schema.MishkaContent.Blog.Category{}, params
+    )
+  end
+
+  defp create_category(socket, params: {params, meta_keywords, main_image, header_image, description, alias_link, sub},
+                               uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
+
+      {state_main_image, state_header_image} = socket.assigns.images
+
+      main_image = if is_nil(main_image), do: state_main_image, else: main_image
+      header_image = if is_nil(header_image), do: state_header_image, else: header_image
+
+    case Category.create(
+      Map.merge(params, %{
+        "meta_keywords" => meta_keywords,
+        "main_image" => main_image,
+        "header_image" =>  header_image,
+        "description" =>  description,
+        "alias_link" => alias_link,
+        "sub" => sub
+      })) do
+
+      {:error, :add, :category, repo_error} ->
+
+        socket =
+          socket
+          |> assign([
+            changeset: repo_error,
+            images: {main_image, header_image}
+          ])
+        {:noreply, socket}
+
+      {:ok, :add, :category, repo_data} ->
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} درست شده است."})
+        socket =
+          socket
+          |> assign(
+            dynamic_form: [],
+            basic_menu: false,
+            options_menu: false,
+            changeset: category_changeset(),
+            images: {main_image, header_image}
+          )
+          |> update(:uploaded_files, &(&1 ++ uploaded_main_image_files))
+          |> update(:uploaded_files, &(&1 ++ uploaded_header_image_files))
+
+        {:noreply, socket}
+    end
+  end
+
+  defp edit_category(socket, params: {params, meta_keywords, main_image, header_image, description, id, alias_link, sub},
+                               uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
+
+    merge_map = %{
+      "id" => id,
+      "meta_keywords" => meta_keywords,
+      "main_image" => main_image,
+      "header_image" =>  header_image,
+      "description" =>  description,
+      "alias_link" => alias_link,
+      "sub" => sub
+    }
+    |> Enum.filter(fn {_, v} -> v != nil end)
+    |> Enum.into(%{})
+
+    merged = Map.merge(params, merge_map)
+    {main_image, header_image} = socket.assigns.images
+
+    main_image_exist_file = if(Map.has_key?(merged, "main_image"), do: %{}, else: %{"main_image" => main_image})
+    header_image_exist_file = if(Map.has_key?(merged, "header_image"), do: %{}, else: %{"header_image" => header_image})
+
+    exist_images = Map.merge(main_image_exist_file, header_image_exist_file)
+
+    case Category.edit(Map.merge(merged, exist_images)) do
+      {:error, :edit, :category, repo_error} ->
+
+        socket =
+          socket
+          |> assign([
+            changeset: repo_error,
+            images: {main_image, header_image}
+          ])
+
+        {:noreply, socket}
+
+      {:ok, :edit, :category, repo_data} ->
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} به روز شده است."})
+
+        socket =
+          socket
+          |> put_flash(:info, "مجموعه به روز رسانی شد")
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
+
+        {:noreply, socket}
+
+
+      {:error, :edit, :uuid, _error_tag} ->
+        socket =
+          socket
+          |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
+
+        {:noreply, socket}
+    end
+  end
+
+  defp creta_ctaegory_state(repo_data) do
+    Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :blog_posts, :id])
+    |> Map.to_list()
+    |> Enum.map(fn {key, value} ->
+      %{
+        class: "#{search_fields(Atom.to_string(key)).class}",
+        type: "#{Atom.to_string(key)}",
+        value: value
+      }
+    end)
+    |> Enum.reject(fn x -> x.value == nil end)
+  end
+
   def basic_menu_list() do
     [
       %{type: "title", status: [
@@ -336,7 +506,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         %{title: "ضروری", class: "badge bg-danger"},
         %{title: "یکتا", class: "badge bg-success"}
       ],
-      form: "convert-title-to-link",
+      form: "convert_title_to_link",
       class: "col-sm-3",
       title: "لینک مجموعه",
       description: "انتخاب لینک مجموعه برای ثبت و نمایش به کاربر. این فیلد یکتا می باشد."},
@@ -623,110 +793,4 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     ]
   end
 
-  defp upload(socket, upload_id) do
-    consume_uploaded_entries(socket, upload_id, fn %{path: path}, entry ->
-      dest = Path.join([:code.priv_dir(:mishka_html), "static", "uploads", file_name(entry)])
-      File.cp!(path, dest)
-      Routes.static_path(socket, "/uploads/#{file_name(entry)}")
-    end)
-  end
-
-  defp file_name(entry) do
-    [ext | _] = MIME.extensions(entry.client_type)
-    "#{entry.uuid}.#{ext}"
-  end
-
-  defp category_changeset(params \\ %{}) do
-    MishkaDatabase.Schema.MishkaContent.Blog.Category.changeset(
-        %MishkaDatabase.Schema.MishkaContent.Blog.Category{}, params
-      )
-  end
-
-  defp create_category(socket, params: {params, meta_keywords, main_image, header_image, description},
-                               uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
-    case Category.create(
-      Map.merge(params, %{"meta_keywords" => meta_keywords, "main_image" => main_image, "header_image" =>  header_image, "description" =>  description})) do
-      {:error, :add, :category, repo_error} ->
-        socket = assign(socket, changeset: repo_error)
-        {:noreply, socket}
-
-      {:ok, :add, :category, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} درست شده است."})
-        socket =
-          socket
-          |> assign(
-            dynamic_form: [],
-            basic_menu: false,
-            options_menu: false,
-            changeset: category_changeset()
-          )
-          |> update(:uploaded_files, &(&1 ++ uploaded_main_image_files))
-          |> update(:uploaded_files, &(&1 ++ uploaded_header_image_files))
-
-        {:noreply, socket}
-    end
-  end
-
-  defp edit_category(socket, params: {params, meta_keywords, main_image, header_image, description, id},
-                               uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
-
-    merge_map = %{"id" => id, "meta_keywords" => meta_keywords, "main_image" => main_image, "header_image" =>  header_image, "description" =>  description}
-    |> Enum.filter(fn {_, v} -> v != nil end)
-    |> Enum.into(%{})
-
-    merged = Map.merge(params, merge_map)
-    {main_image, header_image} = socket.assigns.images
-
-    main_image_exist_file = if(Map.has_key?(merged, "main_image"), do: %{}, else: %{"main_image" => main_image})
-    header_image_exist_file = if(Map.has_key?(merged, "header_image"), do: %{}, else: %{"header_image" => header_image})
-
-    exist_images = Map.merge(main_image_exist_file, header_image_exist_file)
-
-    case Category.edit(Map.merge(merged, exist_images)) do
-      {:error, :edit, :category, repo_error} ->
-
-        socket =
-          socket
-          |> assign(changeset: repo_error)
-
-        {:noreply, socket}
-
-      {:ok, :edit, :category, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} به روز شده است."})
-
-        socket =
-          socket
-          |> put_flash(:info, "مجموعه به روز رسانی شد")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
-
-        {:noreply, socket}
-
-
-      {:error, :edit, :uuid, _error_tag} ->
-        socket =
-          socket
-          |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
-
-        {:noreply, socket}
-    end
-  end
-
-  def file_exist(file) do
-    Path.join(["apps/mishka_html/priv/static/", file])
-    |> File.exists?()
-  end
-
-  defp creta_ctaegory_state(repo_data) do
-    Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :blog_posts, :id])
-    |> Map.to_list()
-    |> Enum.map(fn {key, value} ->
-      %{
-        class: "#{search_fields(Atom.to_string(key)).class}",
-        type: "#{Atom.to_string(key)}",
-        value: value
-      }
-    end)
-    |> Enum.reject(fn x -> x.value == nil end)
-  end
 end

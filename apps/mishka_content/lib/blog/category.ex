@@ -124,7 +124,12 @@ defmodule MishkaContent.Blog.Category do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from cat in query, where: field(cat, ^key) == ^value
+      case key do
+        :title ->
+          like = "%#{value}%"
+          from cat in query, where: like(cat.title, ^like)
+        _ -> from cat in query, where: field(cat, ^key) == ^value
+      end
     end)
   end
 

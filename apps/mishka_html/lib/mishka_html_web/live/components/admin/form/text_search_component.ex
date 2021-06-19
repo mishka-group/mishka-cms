@@ -22,7 +22,12 @@ defmodule MishkaHtmlWeb.Admin.Form.TextSearchComponent do
               <a class="list-group-item list-group-item-<%= color %>" aria-current="true" id="<%= item.id %>" phx-click="text_search_click" phx-value-id="<%= item.id %>">
                 <div class="d-flex w-100 justify-content-between">
                   <h4 class="mb-1"><%= item.title %></h4>
-                  <small>13 بهمن 1392</small>
+                  <small>
+                  <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                            id: "inserted-#{item.id}-component",
+                            time: item.inserted_at
+                  %>
+                  </small>
                 </div>
                 <small class="text-muted">
                   <%= item.short_description %>

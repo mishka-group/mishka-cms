@@ -20,50 +20,16 @@ defmodule MishkaHtmlWeb.Admin.Blog.PostInfoAndlastFpostComponent do
               </span>
               <div class="space30"></div>
               <div class="row">
-                  <div class="col-sm-2" style="
-                      background-image: url(../images/test2.jpg);
-                      background-repeat: no-repeat;
-                      box-shadow: 1px 1px 8px #dadada;
-                      background-size: cover;
-                      min-height: 100px;
-                      margin: 10px;
+                <%= for post <- @fpost do %>
+                  <div phx-value-id="<%= post.id %>" phx-click="featured_post" class="col-sm-2" style="
+                    background-image: url(<%= post.main_image %>);
+                    background-repeat: no-repeat;
+                    box-shadow: 1px 1px 8px #dadada;
+                    background-size: cover;
+                    min-height: 100px;
+                    margin: 10px;
                   "></div>
-
-                  <div class="col-sm-2" style="
-                      background-image: url(../images/test3.jpg);
-                      background-repeat: no-repeat;
-                      box-shadow: 1px 1px 8px #dadada;
-                      background-size: cover;
-                      min-height: 100px;
-                      margin: 10px;
-                  "></div>
-
-                  <div class="col-sm-2" style="
-                      background-image: url(../images/test1.jpg);
-                      background-repeat: no-repeat;
-                      box-shadow: 1px 1px 8px #dadada;
-                      background-size: cover;
-                      min-height: 100px;
-                      margin: 10px;
-                  "></div>
-
-                  <div class="col-sm-2" style="
-                      background-image: url(../images/test1.jpg);
-                      background-repeat: no-repeat;
-                      box-shadow: 1px 1px 8px #dadada;
-                      background-size: cover;
-                      min-height: 100px;
-                      margin: 10px;
-                  "></div>
-
-                  <div class="col-sm-2" style="
-                      background-image: url(../images/test3.jpg);
-                      background-repeat: no-repeat;
-                      box-shadow: 1px 1px 8px #dadada;
-                      background-size: cover;
-                      min-height: 100px;
-                      margin: 10px;
-                  "></div>
+                <% end %>
               </div>
           </div>
 

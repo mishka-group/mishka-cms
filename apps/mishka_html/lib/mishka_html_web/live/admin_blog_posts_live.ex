@@ -17,7 +17,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         open_modal: false,
         component: nil,
         page_title: "مدیریت مطالب",
-        posts: Post.posts(conditions: {1, 10}, filters: %{})
+        posts: Post.posts(conditions: {1, 10}, filters: %{}),
+        fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured})
       )
     {:ok, socket, temporary_assigns: [posts: []]}
   end
@@ -103,6 +104,13 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
         {:noreply, socket}
     end
+  end
+
+  def handle_event("featured_post", %{"id" => id} = _params, socket) do
+    socket =
+      socket
+      |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostLive, id: id))
+    {:noreply, socket}
   end
 
   def handle_info({:post, :ok, repo_record}, socket) do

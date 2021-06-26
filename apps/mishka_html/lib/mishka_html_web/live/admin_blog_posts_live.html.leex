@@ -21,7 +21,7 @@
         </div>
 
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.PostInfoAndlastFpostComponent , id: :admin_post_info %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.PostInfoAndlastFpostComponent , id: :admin_post_info, fpost: @fpost %>
 
         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
                             id: :live_flash,

@@ -99,11 +99,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                             class: "btn btn-outline-secondary vazir"
                         %>
 
-                        <%= live_redirect "نظرات",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
-                            class: "btn btn-outline-success vazir"
-                        %>
-
                         <%= live_redirect "حذف کامل",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
                             class: "btn btn-outline-danger vazir"

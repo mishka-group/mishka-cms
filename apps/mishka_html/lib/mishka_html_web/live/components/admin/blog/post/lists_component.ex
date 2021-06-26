@@ -60,19 +60,15 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                     </div>
 
                     <div class="col" id="<%= "title-#{item.id}" %>">
-                        <a href="#">
                         <%= live_redirect "#{item.title}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive, id: item.id)
                         %>
-                        </a>
                     </div>
 
                     <div class="col-sm-1">
-                        <a href="#">
                         <%= live_redirect "#{item.category_title}",
                         to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.category_id)
                         %>
-                        </a>
                     </div>
 
                     <div class="col">

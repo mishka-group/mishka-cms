@@ -6,31 +6,31 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
       <div class="col bw admin-blog-post-list">
         <div class="row vazir">
             <div class="row vazir">
-                <div class="col-sm-1 titile-of-blog-posts alert alert-primary">
+                <div class="col-sm-1 titile-of-blog-posts alert alert-primary" id="div-image">
                     تصویر
                 </div>
 
-                <div class="col-sm-2 titile-of-blog-posts alert alert-warning">
+                <div class="col-sm-2 titile-of-blog-posts alert alert-warning" id="div-title">
                     تیتر
                 </div>
 
-                <div class="col titile-of-blog-posts alert alert-success">
+                <div class="col titile-of-blog-posts alert alert-success" id="div-show">
                     نحوه نمایش
                 </div>
 
-                <div class="col titile-of-blog-posts alert alert-danger">
+                <div class="col titile-of-blog-posts alert alert-danger" id="div-status">
                     وضعیت
                 </div>
 
-                <div class="col titile-of-blog-posts alert alert-success">
+                <div class="col titile-of-blog-posts alert alert-success" id="div-insert">
                     ثبت
                 </div>
 
-                <div class="col titile-of-blog-posts alert alert-info">
+                <div class="col titile-of-blog-posts alert alert-info" id="div-update">
                     به روز رسانی
                 </div>
 
-                <div class="col-sm-3 titile-of-blog-posts alert alert-dark">
+                <div class="col-sm-3 titile-of-blog-posts alert alert-dark" id="div-opreation">
                     عملیات
                 </div>
             </div>
@@ -118,7 +118,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
         <%= if @categories.entries != [] do %>
             <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent ,
                             id: :pagination,
-                            pagination_url: MishkaHtmlWeb.AdminBlogCategoriesLive,
+                            pagination_url: @pagination_url,
                             data: @categories,
                             filters: @filters,
                             count: @count

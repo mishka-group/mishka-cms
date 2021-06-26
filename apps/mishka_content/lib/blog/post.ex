@@ -10,25 +10,33 @@ defmodule MishkaContent.Blog.Post do
 
   @behaviour MishkaDatabase.CRUD
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_post")
+  end
 
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:post)
   end
 
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
+    |> notify_subscribers(:post)
   end
 
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:post)
   end
 
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
+    |> notify_subscribers(:post)
   end
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:post)
   end
 
   def show_by_id(id) do
@@ -51,12 +59,18 @@ defmodule MishkaContent.Blog.Post do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from link in query, where: field(link, ^key) == ^value
+      case key do
+        :title ->
+          like = "%#{value}%"
+          from link in query, where: like(link.title, ^like)
+        _ -> from link in query, where: field(link, ^key) == ^value
+      end
     end)
   end
 
   defp fields(query) do
     from [post, cat] in query,
+    order_by: [desc: post.inserted_at, desc: post.id],
     select: %{
       category_id: cat.id,
       category_title: cat.title,
@@ -65,13 +79,16 @@ defmodule MishkaContent.Blog.Post do
       category_short_description: cat.short_description,
       category_main_image: cat.main_image,
 
-      post_id: post.id,
-      post_title: post.title,
-      post_short_description: post.short_description,
-      post_main_image: post.main_image,
-      post_status: post.status,
-      post_alias_link: post.alias_link,
-      post_priority: post.priority,
+      id: post.id,
+      title: post.title,
+      short_description: post.short_description,
+      main_image: post.main_image,
+      status: post.status,
+      alias_link: post.alias_link,
+      priority: post.priority,
+      inserted_at: post.inserted_at,
+      updated_at: post.updated_at,
+      unpublish: post.unpublish
     }
   end
 
@@ -118,4 +135,14 @@ defmodule MishkaContent.Blog.Post do
 
   def allowed_fields(:atom), do: Post.__schema__(:fields)
   def allowed_fields(:string), do: Post.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
+
+  def notify_subscribers({:ok, _, :post, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "blog_post", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _) do
+    IO.puts "this is a unformed"
+    params
+  end
 end

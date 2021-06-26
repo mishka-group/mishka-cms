@@ -154,7 +154,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
                   <div class="clearfix"></div>
 
                   <span class="text-center rtl vazir admin-home-comment-text">
-                    نظرات
+                    نظر ها
                   </span>
                   <div class="clearfix"></div>
                 </div>
@@ -188,7 +188,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
                   <div class="clearfix"></div>
 
                   <span class="text-center rtl vazir admin-home-comment-text">
-                    آمار و گزارشات
+                   آمار و گزارش ها
                   </span>
                   <div class="clearfix"></div>
                 </div>

@@ -29,7 +29,7 @@ defmodule MishkaDatabase.Repo.Migrations.BlogPosts do
 
 
       # ectra config
-      add(:post_visibility, :boolean, null: false)
+      add(:post_visibility, :integer, null: false)
 
       add(:allow_commenting, :boolean, null: true)
       add(:allow_liking, :boolean, null: true)
@@ -37,6 +37,7 @@ defmodule MishkaDatabase.Repo.Migrations.BlogPosts do
       add(:allow_reporting, :boolean, null: true)
       add(:allow_social_sharing, :boolean, null: true)
       add(:allow_bookmarking, :boolean, null: true)
+      add(:allow_subscription, :boolean, null: true)
 
       add(:show_hits, :boolean, null: true)
       add(:show_time, :boolean, null: true)

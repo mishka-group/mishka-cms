@@ -5,7 +5,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      MishkaContent.Blog.Category.subscribe()
+      Category.subscribe()
     end
 
     socket =

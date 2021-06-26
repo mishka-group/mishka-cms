@@ -31,7 +31,13 @@
 
         <div class="clearfix"></div>
         <div class="space50"></div>
-        <h2 class="vazir">ساخت مجموعه جدید</h2>
+        <h2 class="vazir">
+            <%= if is_nil(@id) do %>
+                ساخت مجموعه جدید
+            <% else %>
+                ویرایش مجموعه
+            <% end %>
+        </h2>
         <div class="space20"></div>
         <hr>
         <div class="clearfix"></div>
@@ -137,62 +143,71 @@
                                     form_type: form.type,
                                     form: form,
                                     f: f,
-                                    images: @images %>
+                                    images: @images,
+                                    search_fields: search_fields(form.type)
+                                %>
 
                            <% "add_tag" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddTagComponent,
-                                                id: String.to_atom("admin_form_#{form.type}"),
-                                                form: form,
-                                                f: f,
-                                                tags: @tags
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        tags: @tags,
+                                        search_fields: search_fields(form.type)
                                 %>
 
 
                             <% "select" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.SelectComponent,
-                                                id: String.to_atom("admin_form_#{form.type}"),
-                                                form: form,
-                                                f: f
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
                                 %>
 
                             <% "editor" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.EditorComponent,
-                                                id: String.to_atom("admin_form_#{form.type}"),
-                                                form: form,
-                                                f: f
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
                                 %>
 
                             <% "convert_title_to_link" -> %>
 
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.ConvertTitleToLinkComponent,
-                                                    id: String.to_atom("admin_form_text_#{form.type}"),
-                                                    form: form,
-                                                    f: f,
-                                                    alias_link: @alias_link
+                                        id: String.to_atom("admin_form_text_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        alias_link: @alias_link,
+                                        search_fields: search_fields(form.type)
                                 %>
 ‍‍‍‍‍
                            <% "text_search" -> %>
 
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextSearchComponent,
-                                                    id: String.to_atom("admin_form_text_#{form.type}"),
-                                                    form: form,
-                                                    f: f,
-                                                    search: @category_search
+                                        id: String.to_atom("admin_form_text_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search: @category_search,
+                                        search_fields: search_fields(form.type)
                                 %>
 
 
                             <% "textarea" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextAreaComponent,
-                                                id: String.to_atom("admin_form_#{form.type}"),
-                                                form: form,
-                                                f: f
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
                                 %>
 
                            <% _ -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
-                                                    id: String.to_atom("admin_form_text_#{form.type}"),
-                                                    form: form,
-                                                    f: f
+                                        id: String.to_atom("admin_form_text_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
                                 %>
                         <% end %>
                     <% end %>

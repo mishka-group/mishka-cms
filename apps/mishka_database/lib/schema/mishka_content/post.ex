@@ -33,18 +33,19 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     field :meta_description, :string, size: 164, null: true
     field :custom_title, :string, size: 200, null: true
     field :robots, ContentRobotsEnum, null: false, default: :IndexFollow
-    field :post_visibility, :boolean, null: false, default: true
-    field :allow_commenting, :boolean, null: true, default: true
-    field :allow_liking, :boolean, null: true, default: true
-    field :allow_printing, :boolean, null: true, default: true
-    field :allow_reporting, :boolean, null: true, default: true
-    field :allow_social_sharing, :boolean, null: true, default: true
-    field :allow_bookmarking, :boolean, null: true, default: true
-    field :show_hits, :boolean, null: true, default: true
-    field :show_time, :boolean, null: true, default: true
-    field :show_authors, :boolean, null: true, default: true
-    field :show_category, :boolean, null: true, default: true
-    field :show_links, :boolean, null: true, default: true
+    field :post_visibility, PostVisibility, null: false, default: :show
+    field :allow_commenting, :boolean, null: true
+    field :allow_liking, :boolean, null: true
+    field :allow_printing, :boolean, null: true
+    field :allow_reporting, :boolean, null: true
+    field :allow_social_sharing, :boolean, null: true
+    field :allow_bookmarking, :boolean, null: true
+    field :allow_subscription, :boolean, null: true
+    field :show_hits, :boolean, null: true
+    field :show_time, :boolean, null: true
+    field :show_authors, :boolean, null: true
+    field :show_category, :boolean, null: true
+    field :show_links, :boolean, null: true
     field :show_location, :boolean, null: true
 
     belongs_to :blog_categories, MishkaDatabase.Schema.MishkaContent.Blog.Category, foreign_key: :category_id, type: :binary_id

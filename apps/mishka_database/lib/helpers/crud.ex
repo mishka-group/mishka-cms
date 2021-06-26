@@ -295,6 +295,8 @@ defmodule MishkaDatabase.CRUD do
       nil -> {:error, :get_record_by_id, error_atom}
       record_info -> {:ok, :get_record_by_id, error_atom, record_info}
     end
+  rescue
+    _ -> {:error, :get_record_by_id, error_atom}
   end
 
 
@@ -304,6 +306,8 @@ defmodule MishkaDatabase.CRUD do
       nil -> {:error, :get_record_by_field, error_atom}
       record_info -> {:ok, :get_record_by_field, error_atom, record_info}
     end
+  rescue
+    _ -> {:error, :get_record_by_id, error_atom}
   end
 
 

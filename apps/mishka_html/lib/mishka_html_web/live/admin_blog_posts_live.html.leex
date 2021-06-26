@@ -8,37 +8,42 @@
             </div>
 
             <div class="col vazir text-start top-post-btn">
-                <button type="button" class="btn btn-outline-primary">
-                مطلب جدید
-                </button>
 
-                <button type="button" class="btn btn-outline-info">
-                نظرات
-                </button>
+                <%= live_redirect "مطلب جدید", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive), class: "btn btn-outline-primary" %>
 
-                <button type="button" class="btn btn-outline-success">
-                تنظیمات سئو
-                </button>
+                <%= live_redirect "مجموعه ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive), class: "btn btn-outline-danger" %>
 
-                <button type="button" class="btn btn-outline-danger">
-                مجموعه ها
-                </button>
+                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
+
+                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+
             </div>
         </div>
 
 
-
         <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.PostInfoAndlastFpostComponent , id: :admin_post_info %>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.PostSearchComponent , id: :admin_post_search %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.Post.SearchComponent , id: :admin_post_search %>
 
 
 
         <div class="clearfix"></div>
         <div class="col space30"> </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.LastPostsComponent , id: :admin_last_posts %>
+      <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.Post.ListComponent,
+                           id: :admin_last_posts,
+                           posts: @posts,
+                           filters: @filters,
+                           count: @page_size,
+                           pagination_url: MishkaHtmlWeb.AdminBlogPostsLive
+        %>
 
     </div>
     <div class="clearfix"></div>
 </div>
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

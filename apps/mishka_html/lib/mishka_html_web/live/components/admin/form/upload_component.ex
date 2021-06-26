@@ -4,7 +4,7 @@ defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
   def render(assigns) do
     ~L"""
     <div class="col-sm-6 admin-upload-form vazir">
-      <%= label @f , "#{MishkaHtmlWeb.AdminBlogCategoryLive.search_fields(@form_type).title}:" %>
+      <%= label @f , "#{@search_fields.title}:" %>
       <div class="drop" phx-drop-target="<%= @ref %>">
           <button phx-click="delete_form" phx-value-type="<%= @form_type %>" type="button" class="btn-close" aria-label="Close"></button>
 

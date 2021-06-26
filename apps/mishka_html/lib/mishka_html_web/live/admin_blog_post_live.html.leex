@@ -2,6 +2,240 @@
 <div class="container main-admin rtl">
     <div class="col admin-main-block-dashboard">
 
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_component @socket, MishkaHtmlWeb.Admin.Public.MenuComponent, id: :admin_menu %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+
+                <%= live_redirect "برگشت به مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-primary" %>
+
+                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
+
+                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+
+                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+            </div>
+        </div>
+
+
+
+
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+        <h2 class="vazir">
+            <%= if is_nil(@id) do %>
+                ساخت مطلب جدید
+            <% else %>
+                ویرایش مطلب
+            <% end %>
+        </h2>
+        <div class="space20"></div>
+        <hr>
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+
+        <div class="col admin-create-category">
+
+            <a phx-click="basic_menu" class="btn btn-info admin-create-category-tools" >
+                فیلد های پایه
+            </a>
+
+            <a phx-click="options_menu" class="btn btn-primary admin-create-category-tools" >
+                تنظیمات بیشتر
+            </a>
+
+            <a phx-click="make_all_basic_menu" class="btn btn-danger admin-create-category-tools" >
+                فیلدهای ضروری
+            </a>
+
+            <a phx-click="make_all_menu" class="btn btn-success admin-create-category-tools" >
+                تمامی فیلد ها
+            </a>
+
+            <a phx-click="clear_all_field" class="btn btn-secondary admin-create-category-tools" >
+                حذف تمام فیلد ها
+            </a>
+
+            <div class="clearfix"></div>
+            <div class="space10"></div>
+
+            <div class="col-sm-3 create-category-tools-items" id="MainCategoryTools">
+                <%= if @basic_menu do %>
+                    <%= for {item, color} <- Enum.zip(basic_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
+                        <div class="d-flex text-muted pt-3" phx-click="basic_menu" phx-value-type="<%= item.type %>" phx-value-class="<%= item.class %>">
+                            <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false">
+                                <title>Placeholder</title>
+                                <rect width="100%" height="100%" fill="<%= color %>"></rect>
+                                <text x="50%" y="50%" fill="#007bff" dy=".3em"></text>
+                            </svg>
+                            <p class="pb-3 mb-0 small lh-sm border-bottom">
+                                <strong class="d-block text-gray-dark">
+                                    <%= item.title %>
+                                    <%= for x <- item.status do %>
+                                        <span class="<%= x.class  %>"><%= x.title  %></span>
+                                    <% end %>
+                                </strong>
+                                <%= item.description %>
+                            </p>
+                        </div>
+                    <% end %>
+                <% end %>
+            </div>
+
+
+
+            <div class="col-sm-3 create-category-tools-items" id="nonMainCategoryTools" >
+
+                <%= if @options_menu do %>
+                    <%= for {item, color} <- Enum.zip(more_options_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
+                        <div class="d-flex text-muted pt-3" phx-click="options_menu" phx-value-type="<%= item.type %>" phx-value-class="<%= item.class %>">
+                            <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false">
+                                <title>Placeholder</title>
+                                <rect width="100%" height="100%" fill="<%= color %>"></rect>
+                                <text x="50%" y="50%" fill="#007bff" dy=".3em"></text>
+                            </svg>
+                            <p class="pb-3 mb-0 small lh-sm border-bottom">
+                                <strong class="d-block text-gray-dark">
+                                    <%= item.title %>
+                                    <%= for x <- item.status do %>
+                                        <span class="<%= x.class  %>"><%= x.title  %></span>
+                                    <% end %>
+                                </strong>
+                                <%= item.description %>
+                            </p>
+                        </div>
+                    <% end %>
+                <% end %>
+            </div>
+
+
+            <%= f = form_for @changeset, "#",
+                phx_submit: "save",
+                phx_change: "draft",
+                multipart: true,
+                onkeydown: "return event.key != 'Enter';" %>
+                <div class="clearfix"></div>
+                <div class="space30"></div>
+                <div class="row">
+
+                    <%= for form <- @dynamic_form do %>
+                        <%= case search_fields(form.type).form do %>
+
+                            <% "upload" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.UploadComponent,
+                                    id: String.to_atom("admin_form_#{form.type}"),
+                                    max_entries: if(form.type == "main_image", do: @uploads.main_image_upload.max_entries, else: @uploads.header_image_upload.max_entries),
+                                    max_file_size: if(form.type == "main_image", do: trunc(@uploads.main_image_upload.max_file_size / 1_000_000), else: trunc(@uploads.header_image_upload.max_file_size / 1_000_000)),
+                                    live_file_input: if(form.type == "main_image", do: @uploads.main_image_upload, else: @uploads.header_image_upload),
+                                    errors: if(form.type == "main_image", do: @uploads.main_image_upload.errors, else: @uploads.header_image_upload.errors),
+                                    entries: if(form.type == "main_image", do: @uploads.main_image_upload.entries, else: @uploads.header_image_upload.entries),
+                                    upload_errors: if(form.type == "main_image", do: @uploads.main_image_upload, else:  @uploads.header_image_upload),
+                                    ref: if(form.type == "main_image", do: @uploads.main_image_upload.ref, else: @uploads.header_image_upload.ref),
+                                    upload_field: if(form.type == "main_image", do: :main_image_upload, else: :header_image_upload),
+                                    form_type: form.type,
+                                    form: form,
+                                    f: f,
+                                    images: @images,
+                                    search_fields: search_fields(form.type)
+                             %>
+
+                           <% "add_tag" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddTagComponent,
+                                    id: String.to_atom("admin_form_#{form.type}"),
+                                    form: form,
+                                    f: f,
+                                    tags: @tags,
+                                    search_fields: search_fields(form.type)
+                                %>
+
+
+                            <% "select" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.SelectComponent,
+                                    id: String.to_atom("admin_form_#{form.type}"),
+                                    form: form,
+                                    f: f,
+                                    search_fields: search_fields(form.type)
+                                %>
+
+                            <% "editor" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.EditorComponent,
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
+                                %>
+
+                            <% "convert_title_to_link" -> %>
+
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.ConvertTitleToLinkComponent,
+                                        id: String.to_atom("admin_form_text_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        alias_link: @alias_link,
+                                        search_fields: search_fields(form.type)
+                                %>
+‍‍‍‍‍
+                           <% "text_search" -> %>
+
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextSearchComponent,
+                                        id: String.to_atom("admin_form_text_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search: @category_search,
+                                        search_fields: search_fields(form.type)
+                                %>
+
+
+                            <% "textarea" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextAreaComponent,
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
+                                %>
+
+                           <% _ -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
+                                        id: String.to_atom("admin_form_text_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
+                                %>
+                        <% end %>
+                    <% end %>
+
+
+                </div>
+
+                <%= if @dynamic_form != [] do %>
+                    <div class="space10"></div>
+                    <%= submit "Save", phx_disable_with: "Saving...", class: "btn btn-primary" %>
+                <% else %>
+                    <div class="clearfix"></div>
+                    <div class="space30"></div>
+                    <div class="col-sm-12 admin-there-is-no-field vazir">
+                    <div class="space30"></div>
+                        <span class="admin-there-is-no-field-text">هیچ فیلدی به فرم اضافه نشده است.</span>
+                        <div class="space10"></div>
+                        <span class="text-muted">از کلید های بالا می توانید فرم های مورد نظر خود را اضافه کنید.</span>
+                        <div class="space30"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                <% end %>
+
+            </form>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="space50"></div>
     </div>
-    <div class="clearfix"></div>
 </div>

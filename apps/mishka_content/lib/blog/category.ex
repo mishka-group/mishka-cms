@@ -185,6 +185,4 @@ defmodule MishkaContent.Blog.Category do
     IO.puts "this is a unformed"
     params
   end
-
-  def notify_subscribers({:error, _, _, _} = params, _), do: params
 end

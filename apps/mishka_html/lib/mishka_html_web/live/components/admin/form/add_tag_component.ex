@@ -4,7 +4,7 @@ defmodule MishkaHtmlWeb.Admin.Form.AddTagComponent do
   def render(assigns) do
     ~L"""
       <div class="<%= @form.class %> field">
-        <%= label @f , "#{MishkaHtmlWeb.AdminBlogCategoryLive.search_fields(@form.type).title}:" %>
+        <%= label @f , "#{@search_fields.title}:" %>
         <button phx-click="delete_form" phx-value-type="<%= @form.type %>" type="button" class="btn-close" aria-label="Close"></button>
         <%= text_input @f, String.to_atom(@form.type), class: "form-control bw", phx_keyup: "set_tag", phx_key: "Enter"%>
         <div class="form-error-tag">

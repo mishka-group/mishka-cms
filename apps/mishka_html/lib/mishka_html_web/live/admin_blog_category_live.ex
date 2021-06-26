@@ -39,7 +39,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       {:ok, :get_record_by_id, @error_atom, repo_data} ->
 
         categories = Enum.map(all_field, fn field ->
-         record = Enum.find(creta_ctaegory_state(repo_data), fn cat -> cat.type == field.type end)
+         record = Enum.find(creata_category_state(repo_data), fn cat -> cat.type == field.type end)
          Map.merge(field, %{value: if(is_nil(record), do: nil, else: record.value)})
         end)
         |> Enum.reject(fn x -> x.value == nil end)
@@ -47,6 +47,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
         get_tag = Enum.find(categories, fn cat -> cat.type == "meta_keywords" end)
         description = Enum.find(categories, fn cat -> cat.type == "description" end)
+
 
         socket
         |> assign([
@@ -466,7 +467,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     end
   end
 
-  defp creta_ctaegory_state(repo_data) do
+  defp creata_category_state(repo_data) do
     Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :blog_posts, :id])
     |> Map.to_list()
     |> Enum.map(fn {key, value} ->
@@ -488,7 +489,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       class: "col-sm-4",
       title: "تیتر",
       description: "ساخت تیتر مناسب برای مجموعه مورد نظر"},
-
 
       %{type: "status", status: [
         %{title: "ضروری", class: "badge bg-danger"}

@@ -28,6 +28,7 @@ defmodule MishkaHtmlWeb.Admin.PaginationComponent do
   end
 
   def handle_event("select-per-page", %{"page" => page}, socket) do
+
     socket =
       push_patch(socket,
         to:
@@ -39,6 +40,7 @@ defmodule MishkaHtmlWeb.Admin.PaginationComponent do
             count: socket.assigns.count
           )
       )
+
 
     {:noreply, socket}
   end

@@ -251,7 +251,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         basic_menu: false,
         options_menu: false,
         dynamic_form: new_dynamic_form,
-        alias_link: create_link(params["title"]),
+        alias_link: if(type == "title", do: create_link(params["title"]), else: socket.assigns.alias_link),
         category_search: Category.search_category_title(params["sub"], 5)
       ])
 

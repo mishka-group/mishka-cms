@@ -176,6 +176,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   def handle_event("draft", %{"_target" => ["post", type], "post" => params}, socket) when type not in ["main_image", "main_image"] do
     # save in genserver
 
+    IO.inspect(type)
     {_key, value} = Map.take(params, [type])
     |> Map.to_list()
     |> List.first()
@@ -191,7 +192,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         basic_menu: false,
         options_menu: false,
         dynamic_form: new_dynamic_form,
-        alias_link: create_link(params["title"]),
+        alias_link: if(type == "title", do: create_link(params["title"]), else: socket.assigns.alias_link),
         category_search: Category.search_category_title(params["category_id"], 5)
       ])
 

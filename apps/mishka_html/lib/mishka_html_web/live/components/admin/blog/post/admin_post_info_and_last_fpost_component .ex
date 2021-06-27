@@ -28,6 +28,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.PostInfoAndlastFpostComponent do
                     background-size: cover;
                     min-height: 100px;
                     margin: 10px;
+                    background-position: center center;
                   "></div>
                 <% end %>
               </div>

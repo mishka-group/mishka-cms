@@ -26,6 +26,7 @@ defmodule MishkaHtmlWeb.Router do
     live "/subscriptions", AdminSubscriptionsLive
     live "/comments", AdminCommentsLive
     live "/users", AdminUsersLive
+    live "/user", AdminUserLive
     live "/logs", AdminLogsLive
     live "/seo", AdminSeoLive
   end

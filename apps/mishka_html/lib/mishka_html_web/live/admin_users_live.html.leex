@@ -30,15 +30,42 @@
 
       </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.User.UserSearchComponent, id: :admin_user_search %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.User.SearchComponent,
+                           id: :admin_category_search,
+                           filters: @filters
+        %>
 
 
 
         <div class="clearfix"></div>
         <div class="col space30"> </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.User.LastUserComponent, id: :admin_last_users %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.User.ListComponent,
+                           id: :admin_last_users,
+                           users: @users,
+                           filters: @filters,
+                           count: @page_size,
+                           pagination_url: MishkaHtmlWeb.AdminUsersLive
+        %>
 
     </div>
     <div class="clearfix"></div>
 </div>
+<div class="clearfix"></div>
+
+<%= if @open_modal do %>
+    <%= live_component @socket, MishkaHtmlWeb.Admin.Public.ModalComponent,
+                            msg: "test",
+                            id: :modal_live,
+                            component: @component
+    %>
+<% end %>
+
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

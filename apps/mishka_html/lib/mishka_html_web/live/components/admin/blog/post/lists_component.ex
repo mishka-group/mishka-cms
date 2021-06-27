@@ -54,7 +54,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                             style="min-height: 100px;
                             background-image: url(&quot;<%= item.main_image %>&quot;);
                             background-repeat: no-repeat;
-                            box-shadow: 1px 1px 8px #dadada;background-size: cover;
+                            box-shadow: 1px 1px 8px #dadada;background-size: cover;background-position: center center;
                             border-radius: 10px;">
                         </div>
                     </div>

@@ -820,7 +820,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
       ],
       form: "text",
       class: "col-sm-3",
-      title: "تیتر",
+      title: "لوکیشن",
       description: "مشخص کردن لوکیشن مطلب برای سئو محلی سایت"},
     ]
   end

@@ -25,6 +25,11 @@ defmodule MishkaUser.User do
 
   @behaviour MishkaDatabase.CRUD
 
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "user")
+  end
+
   @doc """
     this function starts push notification in this module.
   """
@@ -34,6 +39,7 @@ defmodule MishkaUser.User do
 
   def create(attrs) do
     crud_add(Map.merge(attrs, %{"unconfirmed_email" => attrs["email"]}))
+    |> notify_subscribers(:user)
   end
 
 
@@ -42,6 +48,7 @@ defmodule MishkaUser.User do
 
   def create(attrs, allowed_fields) do
     crud_add(Map.merge(attrs, %{"unconfirmed_email" => attrs["email"]}), allowed_fields)
+    |> notify_subscribers(:user)
   end
 
   @doc """
@@ -55,6 +62,7 @@ defmodule MishkaUser.User do
 
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:user)
   end
 
 
@@ -70,6 +78,7 @@ defmodule MishkaUser.User do
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:user)
   end
 
 
@@ -152,4 +161,60 @@ defmodule MishkaUser.User do
     Ecto.Query.CastError -> []
   end
 
+  def users(conditions: {page, page_size}, filters: filters) do
+    from(u in User) |> convert_filters_to_where(filters)
+    |> fields()
+    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+  rescue
+    Ecto.Query.CastError ->
+      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+  end
+
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      case key do
+        :full_name ->
+          like = "%#{value}%"
+          from u in query, where: like(u.full_name, ^like)
+
+        :username ->
+          like = "%#{value}%"
+          from u in query, where: like(u.username, ^like)
+
+        :email ->
+          like = "%#{value}%"
+          from u in query, where: like(u.email, ^like)
+
+        _ -> from u in query, where: field(u, ^key) == ^value
+      end
+    end)
+  end
+
+  defp fields(query) do
+    from [u] in query,
+    order_by: [desc: u.inserted_at, desc: u.id],
+    select: %{
+      id: u.id,
+      full_name: u.full_name,
+      username: u.username,
+      email: u.email,
+      status: u.status,
+      unconfirmed_email: u.unconfirmed_email,
+      inserted_at: u.inserted_at,
+      updated_at: u.updated_at,
+    }
+  end
+
+  def allowed_fields(:atom), do: User.__schema__(:fields)
+  def allowed_fields(:string), do: User.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
+
+  def notify_subscribers({:ok, _, :user, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "user", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _) do
+    IO.puts "this is a unformed"
+    params
+  end
 end

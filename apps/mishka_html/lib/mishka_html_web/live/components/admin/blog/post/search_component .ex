@@ -65,10 +65,10 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.SearchComponent do
                 <label for="country" class="form-label">تعداد</label>
                 <div class="col space10"> </div>
                 <select class="form-select" id="countrecords" name="count">
-                  <option value="">انتخاب</option>
-                  <option>20 عدد</option>
-                  <option>30 عدد</option>
-                  <option>40 عدد</option>
+                  <option value="10">انتخاب</option>
+                  <option value="20">20 عدد</option>
+                  <option value="30">30 عدد</option>
+                  <option value="40">40 عدد</option>
                 </select>
                 <div class="invalid-feedback">
                   Please select a valid country.

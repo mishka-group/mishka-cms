@@ -58,7 +58,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.SearchComponent do
                 <div class="col space10"> </div>
                 <select class="form-select" id="countrecords" name="count">
                   <option value="10">انتخاب</option>
-                  <option value="2">20 عدد</option>
+                  <option value="20">20 عدد</option>
                   <option value="30">30 عدد</option>
                   <option value="40">40 عدد</option>
                 </select>

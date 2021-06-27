@@ -16,19 +16,19 @@
 
 
 
-            <div class="space20"></div>
-            <div class="clearfix"></div>
-            <div class="row">
-              <div class="col">
+        <div class="space20"></div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col">
               <h3 class="admin-dashbord-h3-right-side-title vazir">کاربران</h3>
               <span class="admin-dashbord-right-side-text vazir">
               شما در این بخش می توانید کاربران سایت را مدیریت نمایید.
               </span>
               <div class="space20"></div>
-
             </div>
 
-      </div>
+            <%= live_component @socket, MishkaHtmlWeb.Admin.User.ActivitiesComponent, id: :last_activities %>
+        </div>
 
         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
                             id: :live_flash,

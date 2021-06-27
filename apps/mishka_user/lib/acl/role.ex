@@ -4,6 +4,7 @@ defmodule MishkaUser.Acl.Role do
     this module is tested in MishkaDatabase CRUD macro
   """
   alias MishkaDatabase.Schema.MishkaUser.Role
+  import Ecto.Query
 
   use MishkaDatabase.CRUD,
           module: Role,
@@ -31,6 +32,18 @@ defmodule MishkaUser.Acl.Role do
 
   def show_by_display_name(name) do
     crud_get_by_field("name", name)
+  end
+
+  def roles() do
+    from(r in Role,
+      select: %{
+        id: r.id,
+        name: r.name,
+        display_name: r.display_name,
+      })
+    |> MishkaDatabase.Repo.all()
+  rescue
+    Ecto.Query.CastError -> []
   end
 
 end

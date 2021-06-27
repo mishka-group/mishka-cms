@@ -162,36 +162,40 @@ defmodule MishkaUser.User do
   end
 
   def users(conditions: {page, page_size}, filters: filters) do
-    from(u in User) |> convert_filters_to_where(filters)
+    from(u in User, left_join: roles in assoc(u, :roles)) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
     Ecto.Query.CastError ->
+      IO.inspect("Error")
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
       case key do
+        :role ->
+          from [u, roles] in query, where: field(roles, :id) == ^value
+
         :full_name ->
           like = "%#{value}%"
-          from u in query, where: like(u.full_name, ^like)
+          from [u, roles] in query, where: like(u.full_name, ^like)
 
         :username ->
           like = "%#{value}%"
-          from u in query, where: like(u.username, ^like)
+          from [u, roles] in query, where: like(u.username, ^like)
 
         :email ->
           like = "%#{value}%"
-          from u in query, where: like(u.email, ^like)
+          from [u, roles] in query, where: like(u.email, ^like)
 
-        _ -> from u in query, where: field(u, ^key) == ^value
+        _ -> from [u, roles] in query, where: field(u, ^key) == ^value
       end
     end)
   end
 
   defp fields(query) do
-    from [u] in query,
+    from [u, roles] in query,
     order_by: [desc: u.inserted_at, desc: u.id],
     select: %{
       id: u.id,
@@ -202,6 +206,7 @@ defmodule MishkaUser.User do
       unconfirmed_email: u.unconfirmed_email,
       inserted_at: u.inserted_at,
       updated_at: u.updated_at,
+      roles: roles
     }
   end
 

@@ -132,7 +132,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
                             class: "btn btn-outline-danger vazir"
                         %>
-
                     </div>
                 </div>
                 <div class="space20"></div>

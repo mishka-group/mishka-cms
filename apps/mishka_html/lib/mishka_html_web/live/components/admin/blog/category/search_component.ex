@@ -26,9 +26,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.SearchComponent do
                   <option value="archived">آرشیو شده</option>
                   <option value="soft_delete">حذف با پرچم</option>
                 </select>
-                <div class="invalid-feedback">
-                  لطفا گزینه درست را انتخاب کنید.
-                </div>
               </div>
 
               <div class="col-md-2">
@@ -41,9 +38,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.SearchComponent do
                   <option value="test_show">نمایش تست</option>
                   <option value="test_invisibel">غیر نمایش تست</option>
                 </select>
-                <div class="invalid-feedback">
-                  لطفا گزینه درست را انتخاب کنید.
-                </div>
               </div>
 
               <div class="col-md-3">
@@ -62,9 +56,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.SearchComponent do
                   <option value="30">30 عدد</option>
                   <option value="40">40 عدد</option>
                 </select>
-                <div class="invalid-feedback">
-                  لطفا گزینه درست را انتخاب کنید.
-                </div>
               </div>
 
               <div class="col-md-2">
@@ -77,9 +68,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.SearchComponent do
                   <option value="NoIndexFollow">NoIndexFollow</option>
                   <option value="NoIndexNoFollow">NoIndexNoFollow</option>
                 </select>
-                <div class="invalid-feedback">
-                  لطفا گزینه درست را انتخاب کنید.
-                </div>
               </div>
 
               <div class="col-sm-2">

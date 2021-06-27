@@ -107,6 +107,11 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.id),
                             class: "btn btn-outline-danger vazir"
                         %>
+
+                        <%= live_redirect "دسترسی",
+                        to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
+                        class: "btn btn-outline-info vazir"
+                        %>
                     </div>
                 </div>
                 <div class="space20"></div>

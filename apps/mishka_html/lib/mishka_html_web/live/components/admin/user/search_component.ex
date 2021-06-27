@@ -31,15 +31,12 @@ defmodule MishkaHtmlWeb.Admin.User.SearchComponent do
               <div class="col-sm-1">
                 <label for="country" class="form-label">نقش</label>
                 <div class="col space10"> </div>
-                <select class="form-select" id="country" required="">
+                <select class="form-select" id="role" name="role">
                   <option value="">انتخاب</option>
-                  <option>ادمین</option>
-                  <option>شاپ کیپر</option>
-                  <option>پشتیبانی</option>
+                  <%= for role <- MishkaUser.Acl.Role.roles() do %>
+                    <option value="<%= role.id %>"><%= role.display_name %></option>
+                  <% end %>
                 </select>
-                <div class="invalid-feedback">
-                  Please select a valid country.
-                </div>
               </div>
 
               <div class="col">
@@ -72,9 +69,6 @@ defmodule MishkaHtmlWeb.Admin.User.SearchComponent do
                   <option value="30">30 عدد</option>
                   <option value="40">40 عدد</option>
                 </select>
-                <div class="invalid-feedback">
-                  Please select a valid country.
-                </div>
               </div>
 
               <div class="col-sm-2">

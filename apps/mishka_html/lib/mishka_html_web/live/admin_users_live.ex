@@ -81,7 +81,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           socket
           |> assign([
             open_modal: true,
-            component: MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent
+            component: MishkaHtmlWeb.Admin.User.DeleteErrorComponent
           ])
 
         {:noreply, socket}

@@ -8,9 +8,14 @@
             </div>
 
             <div class="col vazir text-start top-post-btn">
-                <button type="button" class="btn btn-outline-danger">
-                    آمار و اطلاعات
-                </button>
+
+                <%= live_redirect "ساخت کاربر", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive), class: "btn btn-outline-primary" %>
+
+                <%= live_redirect "دسترسی ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
+
+                <%= live_redirect "آمار و گزارش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+
+                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
             </div>
         </div>
 

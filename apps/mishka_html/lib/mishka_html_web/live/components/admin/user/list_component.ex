@@ -100,11 +100,6 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
 
                         <%= live_redirect "ویرایش",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.id),
-                            class: "btn btn-outline-secondary vazir"
-                        %>
-
-                        <%= live_redirect "حذف کامل",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.id),
                             class: "btn btn-outline-danger vazir"
                         %>
 

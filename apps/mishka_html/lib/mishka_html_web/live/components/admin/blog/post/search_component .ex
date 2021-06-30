@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.SearchComponent do
       <div class="col space10"> </div>
       <form  phx-change="search">
         <div class="row vazir">
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <label for="country" class="form-label">وضعیت</label>
                 <div class="col space10"> </div>
                 <select class="form-select" name="status" id="ContentStatus">
@@ -34,6 +34,18 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.SearchComponent do
                 <select class="form-select" name="priority" id="PostVisibility">
                   <option value="">انتخاب</option>
                   <option value="none">بدون اولویت</option>
+                  <option value="low">پایین</option>
+                  <option value="medium">متوسط</option>
+                  <option value="high">بالا</option>
+                  <option value="featured">ویژه</option>
+                </select>
+              </div>
+
+              <div class="col-md-1">
+                <label for="country" class="form-label">نحوه نمایش</label>
+                <div class="col space10"> </div>
+                <select class="form-select" name="post_visibility" id="PostVisibility">
+                  <option value="">انتخاب</option>
                   <option value="show">نمایش</option>
                   <option value="invisibel">مخفی</option>
                   <option value="test_show">نمایش تست</option>

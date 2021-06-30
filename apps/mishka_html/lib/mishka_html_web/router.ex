@@ -29,6 +29,8 @@ defmodule MishkaHtmlWeb.Router do
     live "/user", AdminUserLive
     live "/logs", AdminLogsLive
     live "/seo", AdminSeoLive
+    live "/Subscriptions", AdminSubscriptionsLive
+    live "/subscription", AdminSubscriptionLive
   end
 
   # Other scopes may use custom stacks.

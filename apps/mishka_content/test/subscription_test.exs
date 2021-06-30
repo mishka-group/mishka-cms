@@ -69,16 +69,16 @@ defmodule MishkaContentTest.SubscriptionTest do
         Map.merge(@subscription_info, %{user_id: context.user_info.id}
       ))
 
-      1 = assert length Subscription.subscription(conditions: {1, 10}, filters: %{user_id: subscription_info.user_id}).entries
-      1 = assert length Subscription.subscription(conditions: {1, 10}, filters: %{}).entries
+      1 = assert length Subscription.subscriptions(conditions: {1, 10}, filters: %{user_id: subscription_info.user_id}).entries
+      1 = assert length Subscription.subscriptions(conditions: {1, 10}, filters: %{}).entries
     end
   end
 
 
   describe "UnHappy | subscription CRUD DB ಠ╭╮ಠ" do
     test "show user subscriptions", context do
-      0 = assert length Subscription.subscription(conditions: {1, 10}, filters: %{user_id: context.user_info.id}).entries
-      0 = assert length Subscription.subscription(conditions: {1, 10}, filters: %{}).entries
+      0 = assert length Subscription.subscriptions(conditions: {1, 10}, filters: %{user_id: context.user_info.id}).entries
+      0 = assert length Subscription.subscriptions(conditions: {1, 10}, filters: %{}).entries
     end
 
     test "create a subscription", context do

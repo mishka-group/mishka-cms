@@ -8,9 +8,9 @@
             </div>
 
             <div class="col vazir text-start top-post-btn">
-                <button type="button" class="btn btn-outline-danger">
-                    آمار و اطلاعات
-                </button>
+                <%= live_redirect "اشتراک جدید", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSubscriptionLive), class: "btn btn-outline-primary" %>
+
+                <%= live_redirect "آمار و گزارش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
             </div>
         </div>
 
@@ -30,15 +30,28 @@
 
       </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Subscription.SubscriptionSearchComponent, id: :admin_subscription_search %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Subscription.SearchComponent,
+            id: :admin_category_search,
+            filters: @filters
+        %>
 
-
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
 
         <div class="clearfix"></div>
         <div class="col space30"> </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Subscription.LastSubscriptionComponent, id: :admin_last_subscriptions %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Subscription.ListComponent,
+            id: :admin_last_users,
+            subscriptions: @subscriptions,
+            filters: @filters,
+            count: @page_size,
+            pagination_url: MishkaHtmlWeb.AdminSubscriptionsLive
+        %>
 
     </div>
     <div class="clearfix"></div>
 </div>
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

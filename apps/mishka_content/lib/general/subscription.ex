@@ -9,16 +9,23 @@ defmodule MishkaContent.General.Subscription do
 
   @behaviour MishkaDatabase.CRUD
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "subscription")
+  end
+
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:subscription)
   end
 
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:subscription)
   end
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:subscription)
   end
 
   def delete(user_id, section_id) do
@@ -37,8 +44,8 @@ defmodule MishkaContent.General.Subscription do
   end
 
   # it should be asked how can we create  multi params of advanced search
-  def subscription(conditions: {page, page_size}, filters: filters) do
-    from(sub in Subscription) |> convert_filters_to_where(filters)
+  def subscriptions(conditions: {page, page_size}, filters: filters) do
+    from(sub in Subscription, join: user in assoc(sub, :users)) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -48,13 +55,18 @@ defmodule MishkaContent.General.Subscription do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from sub in query, where: field(sub, ^key) == ^value
+      case key do
+        :full_name ->
+          like = "%#{value}%"
+          from([sub, user] in query, where: like(user.full_name, ^like))
+
+        _ -> from [sub, user] in query, where: field(sub, ^key) == ^value
+      end
     end)
   end
 
   defp fields(query) do
-    from [sub] in query,
-    join: user in assoc(sub, :users),
+    from [sub, user] in query,
     order_by: [desc: sub.inserted_at, desc: sub.id],
     select: %{
       id: sub.id,
@@ -63,9 +75,24 @@ defmodule MishkaContent.General.Subscription do
       section_id: sub.section_id,
       expire_time: sub.expire_time,
       extra: sub.extra,
+      user_full_name: user.full_name,
+      user_id: user.id,
+      username: user.username,
+      inserted_at: sub.inserted_at,
+      updated_at: sub.updated_at
     }
   end
 
   def allowed_fields(:atom), do: Subscription.__schema__(:fields)
   def allowed_fields(:string), do: Subscription.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
+
+  def notify_subscribers({:ok, _, :subscription, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "subscription", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _) do
+    IO.puts "this is a unformed"
+    params
+  end
 end

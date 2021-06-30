@@ -18,7 +18,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         component: nil,
         page_title: "مدیریت مطالب",
         posts: Post.posts(conditions: {1, 10}, filters: %{}),
-        fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured})
+        fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}),
       )
     {:ok, socket, temporary_assigns: [posts: []]}
   end
@@ -132,7 +132,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   end
 
   defp post_filter(params) when is_map(params) do
-    Map.take(params, Post.allowed_fields(:string))
+    Map.take(params, Post.allowed_fields(:string) ++ ["category_title"])
     |> Enum.reject(fn {_key, value} -> value == "" end)
     |> Map.new()
     |> MishkaDatabase.convert_string_map_to_atom_map()

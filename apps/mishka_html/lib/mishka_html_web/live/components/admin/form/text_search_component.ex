@@ -12,7 +12,6 @@ defmodule MishkaHtmlWeb.Admin.Form.TextSearchComponent do
         </div>
 
 
-
         <%= if @search != [] do %>
           <div class="list-group" id="list_of_text_search">
           <div class="space20"></div>
@@ -21,7 +20,7 @@ defmodule MishkaHtmlWeb.Admin.Form.TextSearchComponent do
             <%= for {item, color} <- Enum.zip(@search, Stream.cycle(["warning", "info", "danger", "success", "primary"])) do %>
               <a class="list-group-item list-group-item-<%= color %>" aria-current="true" id="<%= item.id %>" phx-click="text_search_click" phx-value-id="<%= item.id %>">
                 <div class="d-flex w-100 justify-content-between">
-                  <h4 class="mb-1"><%= item.title %></h4>
+                  <h4 class="mb-1"><%= get_in(item, [@title_field]) %></h4>
                   <small>
                   <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
                             id: "inserted-#{item.id}-component",
@@ -30,7 +29,7 @@ defmodule MishkaHtmlWeb.Admin.Form.TextSearchComponent do
                   </small>
                 </div>
                 <small class="text-muted">
-                  <%= item.short_description %>
+                  <%= if(!is_nil(get_in(item, [:short_description])), do: item.short_description) %>
                 </small>
               </a>
             <% end %>

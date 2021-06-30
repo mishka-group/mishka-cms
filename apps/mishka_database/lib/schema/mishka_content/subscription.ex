@@ -27,6 +27,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Subscription do
     |> cast(params, @all_fields)
     |> validate_required(@all_required, message: "can't be blank")
     |> MishkaDatabase.validate_binary_id(:section_id)
+    |> MishkaDatabase.validate_binary_id(:user_id)
     |> unique_constraint(:section, name: :index_subscriptions_on_section_and_section_id_and_user_id, message: "you have already been subscriped.")
   end
 

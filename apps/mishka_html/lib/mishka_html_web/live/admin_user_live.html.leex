@@ -11,15 +11,11 @@
 
                 <%= live_redirect "برگشت به مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-primary" %>
 
-                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
+                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-danger" %>
 
                 <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
-
-                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
             </div>
         </div>
-
-
 
 
 
@@ -93,9 +89,6 @@
                 <div class="row">
 
                     <%= for form <- @dynamic_form do %>
-
-                    <% IO.inspect form.type %>
-
                         <%= case search_fields(form.type).form do %>
 
                             <% "select" -> %>

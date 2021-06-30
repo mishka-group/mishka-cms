@@ -48,8 +48,7 @@ defmodule MishkaContent.Blog.Post do
   end
 
   def posts(conditions: {page, page_size}, filters: filters) do
-    query = from(post in Post) |> convert_filters_to_where(filters)
-    from(post in query, join: cat in assoc(post, :blog_categories))
+    from(post in Post, join: cat in assoc(post, :blog_categories)) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -60,10 +59,15 @@ defmodule MishkaContent.Blog.Post do
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
       case key do
+        :category_title ->
+          like = "%#{value}%"
+          from([post, cat] in query, where: like(cat.title, ^like))
+
         :title ->
           like = "%#{value}%"
-          from link in query, where: like(link.title, ^like)
-        _ -> from link in query, where: field(link, ^key) == ^value
+          from([post, cat] in query, where: like(post.title, ^like))
+
+        _ -> from([post, cat] in query, where: field(post, ^key) == ^value)
       end
     end)
   end

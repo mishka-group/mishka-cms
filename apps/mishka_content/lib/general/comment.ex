@@ -10,24 +10,33 @@ defmodule MishkaContent.General.Comment do
 
   @behaviour MishkaDatabase.CRUD
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "comment")
+  end
+
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:comment)
   end
 
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
+    |> notify_subscribers(:comment)
   end
 
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:comment)
   end
 
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
+    |> notify_subscribers(:comment)
   end
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:comment)
   end
 
   def delete(user_id, id) do
@@ -50,7 +59,7 @@ defmodule MishkaContent.General.Comment do
   end
 
   def comments(conditions: {page, page_size}, filters: filters) do
-    from(com in Comment) |> convert_filters_to_where(filters)
+    from(com in Comment, join: user in assoc(com, :users)) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -59,7 +68,7 @@ defmodule MishkaContent.General.Comment do
   end
 
   def comment(filters: filters) do
-    from(com in Comment) |> convert_filters_to_where(filters)
+    from(com in Comment, join: user in assoc(com, :users)) |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.one()
   rescue
@@ -73,8 +82,7 @@ defmodule MishkaContent.General.Comment do
   end
 
   defp fields(query) do
-    from [com] in query,
-    join: user in assoc(com, :users),
+    from [com, user] in query,
     order_by: [desc: com.inserted_at, desc: com.id],
     left_join: like in subquery(CommentLike.likes()),
     on: com.id == like.comment_id,
@@ -86,6 +94,8 @@ defmodule MishkaContent.General.Comment do
       sub: com.sub,
       section: com.section,
       section_id: com.section_id,
+      updated_at: com.updated_at,
+      inserted_at: com.inserted_at,
 
       user_id: user.id,
       user_full_name: user.full_name,
@@ -96,4 +106,14 @@ defmodule MishkaContent.General.Comment do
 
   def allowed_fields(:atom), do: Comment.__schema__(:fields)
   def allowed_fields(:string), do: Comment.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
+
+  def notify_subscribers({:ok, _, :comment, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "comment", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _) do
+    IO.puts "this is a unformed"
+    params
+  end
 end

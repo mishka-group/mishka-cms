@@ -30,10 +30,6 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                     ثبت
                 </div>
 
-                <div class="col-sm-1 titile-of-blog-posts alert alert-warning" id="div-update">
-                    آپدیت
-                </div>
-
                 <div class="col-sm-3 titile-of-blog-posts alert alert-dark" id="div-opreation">
                     عملیات
                 </div>
@@ -83,13 +79,6 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
                             id: "inserted-#{item.id}-component",
                             time: item.inserted_at
-                        %>
-                    </div>
-
-                    <div class="col-sm-1" id="<%= "updated-#{item.id}" %>">
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "updated-#{item.id}-component",
-                            time: item.updated_at
                         %>
                     </div>
 

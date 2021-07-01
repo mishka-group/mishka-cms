@@ -1,6 +1,12 @@
 defmodule MishkaUser.Acl.Access do
   @separator ":"
 
+  def permittes?(action, user_id) do
+    Enum.any?(MishkaUser.User.permissions(user_id), fn %{value: permission} ->
+      is_permitted?(action: action, permission: permission)
+    end)
+  end
+
   def is_permitted?(action: action, permission: permission) do
     permission_chunks = String.split(permission, @separator)
     String.split(action, @separator, parts: length(permission_chunks))

@@ -10,10 +10,6 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
                     بخش
                 </div>
 
-                <div class="col-sm-3 titile-of-blog-posts alert alert-secondary">
-                    شناسه بخش
-                </div>
-
                 <div class="col titile-of-blog-posts alert alert-danger">
                     وضعیت
                 </div>
@@ -26,13 +22,6 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
                     ثبت
                 </div>
 
-                <div class="col titile-of-blog-posts alert alert-danger">
-                    به روز رسانی
-                </div>
-
-                <div class="col titile-of-blog-posts alert alert-primary">
-                    وابسته
-                </div>
 
                 <div class="col-sm-2 titile-of-blog-posts alert alert-warning">
                     عملیات
@@ -49,10 +38,6 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
                         <span class="badge rounded-pill bg-warning"><%= item.section %></span>
                     </div>
 
-                    <div class="col-sm-3">
-                        <span class="badge rounded-pill bg-info"><%= item.section_id %></span>
-                    </div>
-
                     <div class="col">
                         <span class="badge rounded-pill bg-danger"><%= item.status %></span>
                     </div>
@@ -62,27 +47,11 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
                     </div>
 
                     <div class="col">
-                        <span class="badge rounded-pill bg-primary">
-                            <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                                id: "inserted_at-#{item.id}-component",
-                                time: item.inserted_at
-                            %>
-                        </span>
-                    </div>
+                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                            id: "inserted_at-#{item.id}-component",
+                            time: item.inserted_at
+                        %>
 
-                    <div class="col">
-                        <span class="badge rounded-pill bg-danger">
-                            <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                                id: "updated_at-#{item.id}-component",
-                                time: item.updated_at
-                            %>
-                        </span>
-                    </div>
-
-                    <div class="col">
-                        <span class="badge rounded-pill bg-success">
-                            <%= if(is_nil(item.sub) or item.sub == "", do: "ندارد", else: "متصل شده") %>
-                        </span>
                     </div>
 
                     <div class="col-sm-2 opration-post-blog">
@@ -92,10 +61,10 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
                             class: "btn btn-outline-danger vazir"
                         %>
 
-                        <%= live_redirect "وابستگی",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive, id: item.id),
-                            class: "btn btn-outline-info vazir"
-                        %>
+                        <a class="btn btn-outline-info vazir",
+                                phx-click="dependency"
+                                phx-value-id="<%= item.id %>">وابستگی</a>
+
 
                         <a class="btn btn-outline-dark vazir",
                                 phx-click="delete"

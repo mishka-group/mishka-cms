@@ -39,6 +39,12 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
     }
   end
 
+  def handle_params(%{"section_id" => section_id} = params, _url, socket) do
+    {:noreply,
+      comment_assign(socket, params: params, page_size: socket.assigns.page_size, page_number: 1)
+    }
+  end
+
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
@@ -52,6 +58,20 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
             __MODULE__,
             params: comment_filter(params),
             count: params["count"],
+          )
+      )
+    {:noreply, socket}
+  end
+
+  def handle_event("dependency", %{"id" => id}, socket) do
+    socket =
+      push_patch(socket,
+        to:
+          Routes.live_path(
+            socket,
+            __MODULE__,
+            params: comment_filter(Map.merge(socket.assigns.filters, %{"sub" => id})),
+            count: socket.assigns.page_size,
           )
       )
     {:noreply, socket}

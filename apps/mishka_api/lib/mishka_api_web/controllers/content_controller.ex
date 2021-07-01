@@ -71,7 +71,9 @@ defmodule MishkaApiWeb.ContentController do
   end
 
   def edit_post(conn, %{"post_id" => post_id} = params) do
-    # action blogs:edit
+
+    # MishkaUser.Acl.Access.permittes?("posts:edit", "27ad720a-4b97-4c7b-a175-396be2c95d1c")
+
     Post.edit(Map.merge(params, %{"id" => post_id}), Post.allowed_fields(:string))
     |> MishkaApi.ContentProtocol.edit_post(conn, Post.allowed_fields(:atom))
   end

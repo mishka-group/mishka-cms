@@ -124,7 +124,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                         %>
 
                         <%= live_redirect "نظرات",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive, section_id: item.id),
                             class: "btn btn-outline-success vazir"
                         %>
 

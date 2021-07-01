@@ -14,10 +14,6 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
                     وضعیت
                 </div>
 
-                <div class="col-sm-3 titile-of-blog-posts alert alert-secondary">
-                    شناسه بخش
-                </div>
-
                 <div class="col titile-of-blog-posts alert alert-success">
                     کاربر
                 </div>
@@ -42,7 +38,12 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
             <%= for {item, color} <- Enum.zip(@subscriptions, Stream.cycle(["wlist", "glist"])) do %>
                 <div class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
                     <div class="col">
-                        <span class="badge rounded-pill bg-warning"><%= item.section %></span>
+                        <%
+                            field = Enum.find(MishkaHtmlWeb.AdminSubscriptionLive.basic_menu_list, fn x -> x.type == "section" end)
+                            {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.section end)
+                        %>
+
+                        <span class="badge rounded-pill bg-warning"><%= title %></span>
                     </div>
 
                     <div class="col">
@@ -55,34 +56,26 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
                     </span>
                     </div>
 
-                    <div class="col-sm-3">
-                        <span class="badge rounded-pill bg-info"><%= item.section_id %></span>
-                    </div>
-
                     <div class="col">
                         <span class="badge rounded-pill bg-dark"><%= item.user_full_name %></span>
                     </div>
 
                     <div class="col">
-                        <span class="badge rounded-pill bg-primary">
-                            <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                                id: "inserted-#{item.id}-component",
-                                time: item.inserted_at
-                            %>
-                        </span>
+                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                            id: "inserted-#{item.id}-component",
+                            time: item.inserted_at
+                        %>
                     </div>
 
                     <div class="col">
-                        <span class="badge rounded-pill bg-secondary">
                         <%= if is_nil(item.expire_time) do %>
-                            ندارد
+                        <span class="badge rounded-pill bg-secondary"> ندارد </span>
                         <% else %>
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
                             id: "expire_time-#{item.id}-component",
                             time: item.expire_time
                         %>
                         <% end %>
-                        </span>
                     </div>
 
                     <div class="col opration-post-blog">

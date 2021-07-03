@@ -1,0 +1,13 @@
+<div class="space30"></div>
+<div class="container rtl client-main-container">
+
+    <%= live_component @socket, MishkaHtmlWeb.Client.Public.HeaderComponent, id: :client_header, notifs: 14 %>
+
+    <section class="col mx-auto client-content vazir">
+
+        <div class="space40"></div>
+        <%= live_component @socket, MishkaHtmlWeb.Client.Login.LoginFormComponent, id: :login_form, changeset: @changeset, trigger_submit: @trigger_submit %>
+        <div class="space40"></div>
+    </section>
+</div>
+<%= live_component @socket, MishkaHtmlWeb.Client.Public.CrightComponent , id: :cright %>

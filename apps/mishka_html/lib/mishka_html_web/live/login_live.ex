@@ -4,12 +4,39 @@ defmodule MishkaHtmlWeb.LoginLive do
   alias MishkaUser.User
 
   def mount(_params, _session, socket) do
+
+    user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}
+    |> MishkaDatabase.Schema.MishkaUser.User.login_changeset()
+
+    socket =
+      assign(socket,
+        page_title: "مدیریت کاربران",
+        body_color: "#40485d",
+        trigger_submit: false,
+        changeset: user_changeset
+      )
     {:ok, socket}
   end
 
-  def render(assigns) do
-    ~L"""
-      hi
-    """
+  def handle_event("save", %{"user" => params}, socket) do
+    changeset = user_changeset(params)
+    {:noreply,
+     assign(
+       socket,
+       changeset: changeset,
+       trigger_submit: changeset.valid?
+     )}
+  end
+
+  def handle_event("validate", %{"user" => params}, socket) do
+    changeset = user_changeset(params)
+    {:noreply, assign(socket, changeset: changeset)}
+  end
+
+
+  def user_changeset(params) do
+    %MishkaDatabase.Schema.MishkaUser.User{}
+    |> MishkaDatabase.Schema.MishkaUser.User.login_changeset(params)
+    |> Map.put(:action, :validation)
   end
 end

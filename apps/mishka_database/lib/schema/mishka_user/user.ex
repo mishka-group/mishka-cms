@@ -49,6 +49,15 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
     |> hash_password
   end
 
+  def login_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:email, :password])
+    |> validate_required([:email, :password], message: "can't be blank")
+    |> validate_length(:password, min: 8, max: 100, message: "minimum 8 characters and maximum 100 characters")
+    |> validate_length(:email, min: 8, max: 50, message: "minimum 8 characters and maximum 50 characters")
+  end
+
+
   defp hash_password(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->

@@ -23,6 +23,93 @@
   font-family: Vazir-Regular;
 }
 
+
+.client-header {
+ background-color: #31394c !important;
+ color: #e6ecfa;
+}
+
+.client-content {
+  background-color: #212735 !important;
+  color: #e6ecfa;
+  padding: 20px;
+ }
+
+.form-signin {
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+  padding: 30px;
+  /* background: #353535; */
+  /* border: 1px solid #dadada;
+  box-shadow: 1px 1px 11px 0px #dadadabd; */
+ }
+
+header {
+  background-color: transparent !important;
+  border: 0 !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.menu-space-hr {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.client-menu-header {
+  padding: 10px;
+}
+
+.nav-link {
+  color: #ffffff !important;
+  font-size: 18px !important;
+}
+
+.client-notif {
+  text-align: left !important;
+  padding-left: 20px !important;
+  font-size: 18px !important;
+  padding-top: 15px;
+}
+
+.client-notif-icon span {
+    position: absolute;
+    font-size: 10px;
+    left: 42px;
+    top: 9px;
+}
+
+.client-notif a {
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+.client-notif-icon svg {
+  width: 60%;
+  height: 60%;
+}
+
+.nav-item {
+  margin-left: 20px;
+}
+
+.navbar-nav {
+  padding-bottom: 5px;
+}
+
+
+.cright {
+  text-align: center; 
+  font-size: 14px; 
+  text-shadow: 1px 1px 8px #dadada;
+}
+
+.form-signin input {
+ color: #dadada;
+}
+
 .main-admin {
   background-color: #211d41;
   color: #f8f8f9;

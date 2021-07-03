@@ -16,11 +16,23 @@ defmodule MishkaHtmlWeb.Router do
 
   scope "/", MishkaHtmlWeb do
     pipe_through :browser
+    live "/", HomeLive
+    live "/blogs", BlogsLive
+    live "/blog/:alias_link", BlogsLive
 
+    # need token after login
+    # live "/auth/activation", ActivationLive
+    # can be a btn instead of a router
 
-
+    # without login and pass Capcha
     live "/auth/login", LoginLive
     post "/auth/login", AuthController, :login
+
+    live "/auth/reset", ResetPasswordLive
+    live "/auth/register", RegisterLive
+
+    # need token after login
+    live "/auth/notifications", NotificationsLive
   end
 
   scope "/admin", MishkaHtmlWeb do

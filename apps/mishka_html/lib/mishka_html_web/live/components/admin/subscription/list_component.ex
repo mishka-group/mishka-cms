@@ -40,7 +40,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
                     <div class="col">
                         <%
                             field = Enum.find(MishkaHtmlWeb.AdminSubscriptionLive.basic_menu_list, fn x -> x.type == "section" end)
-                            {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.section end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.section end)
                         %>
 
                         <span class="badge rounded-pill bg-warning"><%= title %></span>
@@ -50,7 +50,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
                     <span class="badge bg-primary vazir">
                         <%
                             field = Enum.find(MishkaHtmlWeb.AdminSubscriptionLive.basic_menu_list, fn x -> x.type == "status" end)
-                            {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.status end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.status end)
                         %>
                         <%= title %>
                     </span>

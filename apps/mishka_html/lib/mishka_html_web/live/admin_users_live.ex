@@ -16,6 +16,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         open_modal: false,
         component: nil,
         page_title: "مدیریت کاربران",
+        body_color: "#a29ac3cf",
         users: User.users(conditions: {1, 10}, filters: %{}),
       )
     {:ok, socket, temporary_assigns: [users: []]}

@@ -17,6 +17,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         open_modal: false,
         component: nil,
         page_title: "مدیریت مطالب",
+        body_color: "#a29ac3cf",
         posts: Post.posts(conditions: {1, 10}, filters: %{}),
         fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}),
       )

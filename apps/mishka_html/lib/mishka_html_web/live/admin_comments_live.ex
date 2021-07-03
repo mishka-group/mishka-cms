@@ -16,6 +16,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
         open_modal: false,
         component: nil,
         page_title: "مدیریت نظرات",
+        body_color: "#a29ac3cf",
         comments: Comment.comments(conditions: {1, 10}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [comments: []]}
@@ -39,7 +40,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
     }
   end
 
-  def handle_params(%{"section_id" => section_id} = params, _url, socket) do
+  def handle_params(%{"section_id" => _section_id} = params, _url, socket) do
     {:noreply,
       comment_assign(socket, params: params, page_size: socket.assigns.page_size, page_number: 1)
     }
@@ -122,7 +123,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
 
         {:noreply, socket}
 
-      {:error, :delete, :comment, repo_error} ->
+      {:error, :delete, :comment, _repo_error} ->
 
         socket =
           socket

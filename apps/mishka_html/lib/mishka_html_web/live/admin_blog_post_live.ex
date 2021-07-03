@@ -9,6 +9,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
       assign(socket,
         dynamic_form: [],
         page_title: "مدیریت ساخت مطلب",
+        body_color: "#a29ac3cf",
         basic_menu: false,
         options_menu: false,
         tags: [],

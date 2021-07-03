@@ -1,3 +1,8 @@
+<style>
+  body {
+    background-color: <%= if(!is_nil(assigns[:body_color]), do: @body_color, else: "#fff") %> !important;
+  }
+</style>
 <main role="main">
   <%= @inner_content %>
 </main>

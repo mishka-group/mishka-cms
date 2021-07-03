@@ -4,7 +4,7 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
   def mount(_params, _session, socket) do
     # push_event(socket, "Calendar", %{calendar: %{}})
 
-    {:ok, assign(socket, page_title: "داشبورد مدیریت")}
+    {:ok, assign(socket, page_title: "داشبورد مدیریت", body_color: "#a29ac3cf")}
   end
 
 end

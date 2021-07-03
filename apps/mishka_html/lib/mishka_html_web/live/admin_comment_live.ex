@@ -9,6 +9,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
       assign(socket,
         dynamic_form: [],
         page_title: "مدیریت ویرایش نظر",
+        body_color: "#a29ac3cf",
         basic_menu: false,
         id: nil,
         user_search: [],
@@ -133,7 +134,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
-  def handle_event("draft", params, socket) do
+  def handle_event("draft", _params, socket) do
     {:noreply, socket}
   end
 
@@ -148,7 +149,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
 
         {:noreply, socket}
 
-      {:ok, :edit, @error_atom, repo_data} ->
+      {:ok, :edit, @error_atom, _repo_data} ->
         socket =
           socket
           |> put_flash(:info, "نظر به روز رسانی شد")

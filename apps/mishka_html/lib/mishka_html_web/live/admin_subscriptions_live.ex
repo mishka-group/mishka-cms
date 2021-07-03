@@ -16,6 +16,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
         open_modal: false,
         component: nil,
         page_title: "مدیریت اشتراک ها",
+        body_color: "#a29ac3cf",
         subscriptions: Subscription.subscriptions(conditions: {1, 10}, filters: %{})
       )
 

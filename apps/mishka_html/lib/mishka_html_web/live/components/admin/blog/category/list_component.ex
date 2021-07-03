@@ -60,7 +60,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                     <div class="col" id="<%= "category-visibility-#{item.id}" %>">
                         <%
                             field = Enum.find(MishkaHtmlWeb.AdminBlogCategoryLive.more_options_menu_list, fn x -> x.type == "category_visibility" end)
-                            {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.category_visibility end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.category_visibility end)
                         %>
                         <%= title %>
                     </div>
@@ -69,7 +69,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                         <span class="badge bg-primary vazir">
                             <%
                                 field = Enum.find(MishkaHtmlWeb.AdminBlogCategoryLive.basic_menu_list, fn x -> x.type == "status" end)
-                                {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.status end)
+                                {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.status end)
                             %>
                             <%= title %>
                         </span>

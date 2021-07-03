@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.AdminMediaManagerLive do
 
   def mount(_params, _session, socket) do
 
-    {:ok, assign(socket, page_title: "مدیریت فایل ها")}
+    {:ok, assign(socket, page_title: "مدیریت فایل ها", body_color: "#a29ac3cf")}
   end
 
 end

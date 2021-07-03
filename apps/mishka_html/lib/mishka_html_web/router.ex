@@ -14,6 +14,15 @@ defmodule MishkaHtmlWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/", MishkaHtmlWeb do
+    pipe_through :browser
+
+
+
+    live "/auth/login", LoginLive
+    post "/auth/login", AuthController, :login
+  end
+
   scope "/admin", MishkaHtmlWeb do
     pipe_through :browser
 

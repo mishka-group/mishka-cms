@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.AdminLogLive do
 
   def mount(_params, _session, socket) do
 
-    {:ok, assign(socket, changeset: "changeset")}
+    {:ok, assign(socket, body_color: "#a29ac3cf")}
   end
 
 end

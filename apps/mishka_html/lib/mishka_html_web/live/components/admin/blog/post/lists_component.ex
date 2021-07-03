@@ -74,7 +74,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                     <div class="col">
                         <%
                         field = Enum.find(MishkaHtmlWeb.AdminBlogPostLive.basic_menu_list, fn x -> x.type == "status" end)
-                        {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.status end)
+                        {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.status end)
                         %>
                         <span class="badge bg-info"><%= title %></span>
                     </div>
@@ -83,7 +83,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
 
                         <%
                         field = Enum.find(MishkaHtmlWeb.AdminBlogPostLive.basic_menu_list, fn x -> x.type == "priority" end)
-                        {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.priority end)
+                        {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.priority end)
                         %>
                         <span class="badge bg-success"><%= title %></span>
                     </div>

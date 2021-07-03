@@ -70,7 +70,7 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                     <div class="col-sm-1" id="<%= "status-#{item.id}" %>">
                         <%
                             field = Enum.find(MishkaHtmlWeb.AdminUserLive.basic_menu_list, fn x -> x.type == "status" end)
-                            {title, _type} = Enum.find(field.options, fn {title, type} -> type == item.status end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.status end)
                         %>
                         <%= title %>
                     </div>

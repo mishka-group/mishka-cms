@@ -15,6 +15,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
         page: 1,
         open_modal: false,
         component: nil,
+        body_color: "#a29ac3cf",
         page_title: "مدیریت مجموعه ها",
         categories: Category.categories(conditions: {1, 10}, filters: %{})
       )

@@ -10,6 +10,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       assign(socket,
         dynamic_form: [],
         page_title: "مدیریت ساخت مجموعه",
+        body_color: "#a29ac3cf",
         basic_menu: false,
         options_menu: false,
         tags: [],

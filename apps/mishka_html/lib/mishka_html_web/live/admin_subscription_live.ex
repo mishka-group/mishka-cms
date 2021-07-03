@@ -11,6 +11,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
       assign(socket,
         dynamic_form: [],
         page_title: "ساخت یا ویرایش اشتراک",
+        body_color: "#a29ac3cf",
         basic_menu: false,
         id: nil,
         user_search: [],

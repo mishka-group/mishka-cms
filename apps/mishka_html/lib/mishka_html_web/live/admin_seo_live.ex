@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.AdminSeoLive do
 
   def mount(_params, _session, socket) do
 
-    {:ok, assign(socket, page_title: "تنظیمات سئو")}
+    {:ok, assign(socket, page_title: "تنظیمات سئو", body_color: "#a29ac3cf")}
   end
 
 end

@@ -62,7 +62,7 @@ header {
   padding: 10px;
 }
 
-.nav-link {
+.client-menu-nav-link {
   color: #ffffff !important;
   font-size: 18px !important;
 }
@@ -91,11 +91,11 @@ header {
   height: 60%;
 }
 
-.nav-item {
+.client-menu-nav-item{
   margin-left: 20px;
 }
 
-.navbar-nav {
+.client-menu-navbar-nav {
   padding-bottom: 5px;
 }
 

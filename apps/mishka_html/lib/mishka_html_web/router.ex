@@ -14,10 +14,14 @@ defmodule MishkaHtmlWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :user_logined do
+    plug MishkaHtml.Plug.CurrentTokenPlug
+   end
+
   scope "/", MishkaHtmlWeb do
     pipe_through :browser
     live "/", HomeLive
-    live "/blogs", BlogsLive
+
     live "/blog/:alias_link", BlogsLive
 
     # need token after login
@@ -34,6 +38,12 @@ defmodule MishkaHtmlWeb.Router do
     # need token after login
     live "/auth/notifications", NotificationsLive
   end
+
+  scope "/", MishkaHtmlWeb do
+    pipe_through [:browser, :user_logined]
+    live "/blogs", BlogsLive
+  end
+
 
   scope "/admin", MishkaHtmlWeb do
     pipe_through :browser

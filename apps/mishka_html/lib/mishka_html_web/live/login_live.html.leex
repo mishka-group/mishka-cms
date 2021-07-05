@@ -4,7 +4,10 @@
     <%= live_component @socket, MishkaHtmlWeb.Client.Public.HeaderComponent, id: :client_header, notifs: 14 %>
 
     <section class="col mx-auto client-content vazir">
-
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
         <div class="space40"></div>
         <%= live_component @socket, MishkaHtmlWeb.Client.Login.LoginFormComponent, id: :login_form, changeset: @changeset, trigger_submit: @trigger_submit %>
         <div class="space40"></div>

@@ -5,6 +5,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   @error_atom :category
 
+  @impl true
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
@@ -27,6 +28,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_params(%{"id" => id}, _url, socket) do
     all_field = create_menu_list(basic_menu_list() ++ more_options_menu_list(), [])
 
@@ -65,11 +67,13 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
 
 
+  @impl true
   def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
     new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
       {:ok, :add_new_item_to_list, _new_item} ->
@@ -90,10 +94,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, new_socket}
   end
 
+  @impl true
   def handle_event("basic_menu", _params, socket) do
     {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu, options_menu: false])}
   end
 
+  @impl true
   def handle_event("options_menu", %{"type" => type, "class" => class}, socket) do
     new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
       {:ok, :add_new_item_to_list, _new_item} ->
@@ -114,10 +120,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, new_socket}
   end
 
+  @impl true
   def handle_event("options_menu", _params, socket) do
     {:noreply, assign(socket, [basic_menu: false, options_menu: !socket.assigns.options_menu])}
   end
 
+  @impl true
   def handle_event("save", %{"category" => params}, socket) do
     uploaded_main_image_files = upload(socket, :main_image_upload)
     uploaded_header_image_files = upload(socket, :header_image_upload)
@@ -153,10 +161,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     end
   end
 
+  @impl true
   def handle_event("save", _params, socket) do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("save-editor", %{"html" => params}, socket) do
     socket =
       socket
@@ -164,6 +174,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("delete_form", %{"type" => type}, socket) do
     socket =
       socket
@@ -176,6 +187,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("make_all_basic_menu", _, socket) do
     socket =
       socket
@@ -188,6 +200,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("clear_all_field", _, socket) do
     socket =
       socket
@@ -201,6 +214,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("make_all_menu", _, socket) do
     fields = create_menu_list(basic_menu_list() ++ more_options_menu_list(), socket.assigns.dynamic_form)
 
@@ -215,6 +229,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("text_search_click", %{"id" => id}, socket) do
     socket =
       socket
@@ -227,6 +242,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("close_text_search", _, socket) do
     socket =
       socket
@@ -234,6 +250,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("draft", %{"_target" => ["category", type], "category" => params}, socket) when type not in ["main_image", "main_image"] do
     # save in genserver
 
@@ -259,15 +276,17 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
-  def handle_event("draft", params, socket) do
+  @impl true
+  def handle_event("draft", _params, socket) do
     {:noreply, socket}
   end
 
-  @impl Phoenix.LiveView
-  def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = params, socket) do
+  @impl true
+  def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = _params, socket) do
     {:noreply, cancel_upload(socket, String.to_atom(field), ref)}
   end
 
+  @impl true
   def handle_event("set_tag", %{"key" => "Enter", "value" => value}, socket) do
     new_socket = case Enum.any?(socket.assigns.tags, fn tag -> tag == value end) do
       true -> socket
@@ -281,6 +300,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, new_socket}
   end
 
+  @impl true
   def handle_event("delete_tag", %{"tag" => value}, socket) do
     socket =
       socket
@@ -288,6 +308,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("set_link", %{"key" => "Enter", "value" => value}, socket) do
     alias_link = create_link(value)
     socket =
@@ -296,6 +317,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("delete_image", %{"type" => type}, socket) do
     {main_image, header_image} = socket.assigns.images
 
@@ -413,7 +435,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   defp edit_category(socket, params: {params, meta_keywords, main_image, header_image, description, id, alias_link, sub},
-                               uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
+                               uploads: {_uploaded_main_image_files, _uploaded_header_image_files}) do
 
     merge_map = %{
       "id" => id,

@@ -14,11 +14,9 @@ defmodule MishkaHtmlWeb.Admin.Public.MenuComponent do
 
           <div class="col admin-home-quickmenu-top-menu rtl">
             <a class="col" phx-click="dashboard" phx-target="<%= @myself %>">داشبورد</a>
-            <a class="col" phx-click="media-manager" phx-target="<%= @myself %>">مدیریت فایل</a>
+            <a class="col" phx-click="media_manager" phx-target="<%= @myself %>">مدیریت فایل</a>
+            <a class="col" phx-click="client_side" phx-target="<%= @myself %>">سایت</a>
           </div>
-
-
-          <%= live_component @socket, MishkaHtmlWeb.Admin.Public.SearchComponent, id: :admin_search %>
 
         </div>
       </nav>
@@ -29,7 +27,11 @@ defmodule MishkaHtmlWeb.Admin.Public.MenuComponent do
     {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminDashboardLive))}
   end
 
-  def handle_event("media-manager", _, socket) do
+  def handle_event("media_manager", _, socket) do
     {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminCommentsLive))}
+  end
+
+  def handle_event("client_side", _, socket) do
+    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.HomeLive))}
   end
 end

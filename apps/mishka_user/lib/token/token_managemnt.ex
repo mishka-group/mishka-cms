@@ -105,6 +105,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
   def get_token(user_id, token) do
     with {:ok, :get_user_pid, pid} <- TokenDynamicSupervisor.get_user_pid(user_id) do
       schedule_delete_token(pid)
+      GenServer.cast(pid, {:update_last_used, token})
       GenServer.call(pid, {:get_token, token})
     else
       {:error, :get_user_pid} ->
@@ -112,6 +113,8 @@ defmodule MishkaUser.Token.TokenManagemnt do
         get_token(user_id, token)
     end
   end
+
+
 
   # Callbacks
 
@@ -216,6 +219,15 @@ defmodule MishkaUser.Token.TokenManagemnt do
   def handle_cast(:stop, stats) do
     Logger.info("OTP Token server was stoped and clean State")
     {:stop, :normal, stats}
+  end
+
+  @impl true
+  def handle_cast({:update_last_used, token}, stats) do
+    token_info = Enum.map(List.first(stats).token_info, fn x ->
+      if x.token == token, do: Map.merge(x, %{last_used: System.system_time(:second)}), else: x
+    end)
+
+    {:noreply, [%{id: List.first(stats).id, token_info: token_info }] }
   end
 
   @impl true

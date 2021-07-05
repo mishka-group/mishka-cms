@@ -1,6 +1,6 @@
 defmodule MishkaUser.Token.Token do
 
-  alias MishkaUser.Token.{PhoenixToken, JWTToken}
+  alias MishkaUser.Token.{PhoenixToken, JWTToken, CurrentPhoenixToken}
 
   @type token() :: String.t()
   @type user_info() :: map()
@@ -23,6 +23,9 @@ defmodule MishkaUser.Token.Token do
     JWTToken.create_refresh_acsses_token(user_info)
   end
 
+  def create_token(user_info, :current) do
+    CurrentPhoenixToken.save_token(user_info)
+  end
 
   @spec refresh_token(token(), :jwt_token | :phoenix_token) ::
           {:error, :more_device}

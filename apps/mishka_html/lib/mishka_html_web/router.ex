@@ -8,46 +8,45 @@ defmodule MishkaHtmlWeb.Router do
     plug :put_root_layout, {MishkaHtmlWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-  end
-
-  pipeline :api do
-    plug :accepts, ["json"]
+    plug MishkaHtml.Plug.AclCheckPlug
   end
 
   pipeline :user_logined do
     plug MishkaHtml.Plug.CurrentTokenPlug
-   end
+  end
+
+  pipeline :not_login do
+    plug MishkaHtml.Plug.NotLoginPlug
+  end
 
   scope "/", MishkaHtmlWeb do
     pipe_through :browser
+
     live "/", HomeLive
-
+    live "/blogs", BlogsLive
     live "/blog/:alias_link", BlogsLive
+  end
 
-    # need token after login
-    # live "/auth/activation", ActivationLive
-    # can be a btn instead of a router
+  scope "/", MishkaHtmlWeb do
+    pipe_through [:browser, :not_login]
 
     # without login and pass Capcha
     live "/auth/login", LoginLive
     post "/auth/login", AuthController, :login
-
     live "/auth/reset", ResetPasswordLive
     live "/auth/register", RegisterLive
-
-    get "/auth/log-out", AuthController, :log_out
-    # need token after login
-    live "/auth/notifications", NotificationsLive
   end
 
   scope "/", MishkaHtmlWeb do
     pipe_through [:browser, :user_logined]
-    live "/blogs", BlogsLive
+
+    get "/auth/log-out", AuthController, :log_out
+    live "/auth/notifications", NotificationsLive
   end
 
 
   scope "/admin", MishkaHtmlWeb do
-    pipe_through :browser
+    pipe_through [:browser, :user_logined]
 
     live "/", AdminDashboardLive
     live "/blog-posts", AdminBlogPostsLive
@@ -56,20 +55,14 @@ defmodule MishkaHtmlWeb.Router do
     live "/blog-category", AdminBlogCategoryLive
     live "/bookmarks", AdminBookmarksLive
     live "/subscriptions", AdminSubscriptionsLive
+    live "/subscription", AdminSubscriptionLive
     live "/comments", AdminCommentsLive
     live "/comment", AdminCommentLive
     live "/users", AdminUsersLive
     live "/user", AdminUserLive
     live "/logs", AdminLogsLive
     live "/seo", AdminSeoLive
-    live "/Subscriptions", AdminSubscriptionsLive
-    live "/subscription", AdminSubscriptionLive
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", MishkaHtmlWeb do
-  #   pipe_through :api
-  # end
 
   # Enables LiveDashboard only for development
   #
@@ -82,7 +75,7 @@ defmodule MishkaHtmlWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through [:browser, :user_logined]
       live_dashboard "/dashboard", metrics: MishkaHtmlWeb.Telemetry
     end
   end

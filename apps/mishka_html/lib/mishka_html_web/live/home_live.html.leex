@@ -3,5 +3,15 @@
 
     <%= live_component @socket, MishkaHtmlWeb.Client.Public.HeaderComponent, id: :client_header, notifs: 14, user_id: @user_id %>
 
+    <section class="col mx-auto client-content vazir">
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+        <div class="space40"></div>
+
+        <div class="space40"></div>
+    </section>
 </div>
 <%= live_component @socket, MishkaHtmlWeb.Client.Public.CrightComponent , id: :cright %>

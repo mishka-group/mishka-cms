@@ -2,6 +2,7 @@ defmodule MishkaUser.Acl.Access do
   @separator ":"
 
   def permittes?(action, user_id) do
+    # need to be loaded on OTP state instead of db every page
     Enum.any?(MishkaUser.User.permissions(user_id), fn %{value: permission} ->
       is_permitted?(action: action, permission: permission)
     end)

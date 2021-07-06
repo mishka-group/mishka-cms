@@ -1,16 +1,25 @@
 defmodule MishkaUser.Acl.Action do
 
-  def actions(:content) do
+  def actions() do
     %{
-      post_edit: "post:edit",
-      post_delete: "post:delete"
+      # client router
+      # admin router
+      "Elixir.MishkaHtmlWeb.AdminDashboardLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminBlogPostsLive" => "admin:edit" ,
+      "Elixir.MishkaHtmlWeb.AdminBlogPostLive" => "admin:edit" ,
+      "Elixir.MishkaHtmlWeb.AdminBlogCategoriesLive" => "admin:edit" ,
+      "Elixir.MishkaHtmlWeb.AdminBlogCategoryLive" => "admin:edit" ,
+      "Elixir.MishkaHtmlWeb.AdminBookmarksLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminSubscriptionsLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminSubscriptionLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminCommentsLive" => "admin:edit" ,
+      "Elixir.MishkaHtmlWeb.AdminCommentLive" => "admin:edit" ,
+      "Elixir.MishkaHtmlWeb.AdminUsersLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminUserLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminLogsLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminSeoLive" => "*" ,
     }
   end
 
-  def actions(:shop) do
-    %{
-      product_edit: "post:edit",
-      product_delete: "post:delete"
-    }
-  end
+
 end

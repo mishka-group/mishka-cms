@@ -1,10 +1,9 @@
 defmodule MishkaHtmlWeb.LoginLive do
   use MishkaHtmlWeb, :live_view
 
-  alias MishkaUser.User
+  # alias MishkaUser.User
 
-  def mount(_params, _session, socket) do
-
+  def mount(_params, session, socket) do
     user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}
     |> MishkaDatabase.Schema.MishkaUser.User.login_changeset()
 
@@ -13,7 +12,8 @@ defmodule MishkaHtmlWeb.LoginLive do
         page_title: "مدیریت کاربران",
         body_color: "#40485d",
         trigger_submit: false,
-        changeset: user_changeset
+        changeset: user_changeset,
+        user_id: Map.get(session, "user_id")
       )
     {:ok, socket}
   end

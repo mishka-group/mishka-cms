@@ -13,6 +13,7 @@ defmodule MishkaHtmlWeb.AuthController do
         conn
         |> renew_session()
         |> put_session(:current_token, token)
+        |> put_session(:user_id, user_info.id)
         |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(user_info.id)}")
         |> put_flash(:info, "با موفقیت وارد شده اید.")
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
@@ -28,6 +29,17 @@ defmodule MishkaHtmlWeb.AuthController do
         |> put_flash(:error, "ممکن است ایمیل یا پسورد شما اشتباه باشد.")
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
     end
+  end
+
+  def log_out(conn, _params) do
+    if live_socket_id = get_session(conn, :live_socket_id) do
+      MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :current_token), get_session(conn, :user_id))
+      MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
+    end
+
+    conn
+    |> configure_session(drop: true)
+    |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
   end
 
   defp renew_session(conn) do

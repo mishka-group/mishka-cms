@@ -1,7 +1,7 @@
 <div class="space30"></div>
 <div class="container rtl client-main-container">
 
-    <%= live_component @socket, MishkaHtmlWeb.Client.Public.HeaderComponent, id: :client_header, notifs: 14 %>
+    <%= live_component @socket, MishkaHtmlWeb.Client.Public.HeaderComponent, id: :client_header, notifs: 14, user_id: @user_id %>
 
     <section class="col mx-auto client-content vazir">
         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,

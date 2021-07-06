@@ -36,11 +36,15 @@ defmodule MishkaHtmlWeb.Client.Public.MenuComponent do
                       </li>
 
                       <li class="nav-item client-menu-nav-item">
-                          <%=
-                              live_redirect "ورود",
-                              to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
-                              class: "nav-link client-menu-nav-link"
-                          %>
+                            <%= if !is_nil(@user_id) do %>
+                                <%= link("خروج", to: Routes.auth_path(@socket, :log_out), class: "nav-link client-menu-nav-link") %>
+                            <% else %>
+                                <%=
+                                live_redirect "ورود",
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
+                                class: "nav-link client-menu-nav-link"
+                                %>
+                            <% end %>
                       </li>
                   </ul>
               </div>

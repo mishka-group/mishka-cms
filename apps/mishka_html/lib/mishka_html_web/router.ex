@@ -35,6 +35,7 @@ defmodule MishkaHtmlWeb.Router do
     live "/auth/reset", ResetPasswordLive
     live "/auth/register", RegisterLive
 
+    get "/auth/log-out", AuthController, :log_out
     # need token after login
     live "/auth/notifications", NotificationsLive
   end

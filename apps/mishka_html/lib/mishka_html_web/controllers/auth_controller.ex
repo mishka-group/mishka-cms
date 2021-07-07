@@ -9,6 +9,7 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do
 
+        MishkaUser.Acl.AclManagement.save(%{id: user_info.id, user_permission: MishkaUser.User.permissions(user_info.id), created: System.system_time(:second)}, user_info.id)
 
         conn
         |> renew_session()
@@ -24,7 +25,8 @@ defmodule MishkaHtmlWeb.AuthController do
         |> put_flash(:error, "حساب کاربری شما بیشتر از ۵ بار در سیستم های مختلف استفاده شده است. لطفا یکی از این موارد را غیر فعال کنید و خروج را بفشارید.")
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
 
-      _error ->
+      error ->
+        IO.inspect(error)
         conn
         |> put_flash(:error, "ممکن است ایمیل یا پسورد شما اشتباه باشد.")
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
@@ -33,7 +35,7 @@ defmodule MishkaHtmlWeb.AuthController do
 
   def log_out(conn, _params) do
     if live_socket_id = get_session(conn, :live_socket_id) do
-      MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :current_token), get_session(conn, :user_id))
+      MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end
 

@@ -3,15 +3,15 @@ defmodule MishkaHtmlWeb.HomeLive do
 
   def mount(_params, session, socket) do
     ### create a simple GenServer or Mnesia to store user id key, token, last_use
-    # add acl to another stroge to accsess fast not db
     ### update last use every mount
     ### redirect user to login page
     ### discounect endpoint
     ### clear token and all session
-    # create task to delete session after 24 hours if not to be used for 25 minists
     ### if user verify change login menu to logout
-    # force logiend user not to see register and reset password
-    # create a plug to check user login token and ACL
+    ### force logiend user not to see register and reset password
+    ### create a plug to check user login token and ACL
+    # add acl to another stroge to accsess fast not db
+    # create task to delete session after 24 hours if not to be used for 25 minists
     # create a handel info def to see user changed like (role and ACL etc, change password)
 
 

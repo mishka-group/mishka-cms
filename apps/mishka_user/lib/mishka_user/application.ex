@@ -12,9 +12,17 @@ defmodule MishkaUser.Application do
       name: MishkaUser.Token.TokenOtpRunner
     ]
 
+    acl_runner_config = [
+      strategy: :one_for_one,
+      name: MishkaUser.Acl.AclOtpRunner
+    ]
+
     children = [
       {Registry, keys: :unique, name: MishkaUser.Token.TokenRegistry},
-      {DynamicSupervisor, token_runner_config}
+      {DynamicSupervisor, token_runner_config},
+
+      {Registry, keys: :unique, name: MishkaUser.Acl.AclRegistry},
+      {DynamicSupervisor, acl_runner_config}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -10,13 +10,6 @@ defmodule MishkaUser.Acl.AclManagement do
   ##########################################
   # 1. create handle_info to delete expired Acl every 24 hours with Registery
   ##########################################
-  def test(id) do
-    # GenServer.call(via(id, "user_permission"), :pop)
-    {:ok, :get_user_pid, pid} = AclDynamicSupervisor.get_user_pid(id)
-    IO.inspect(pid)
-    GenServer.call(pid, :pop)
-    # DynamicSupervisor.terminate_child(MishkaUser.Acl.AclOtpRunner, pid)
-  end
 
   def start_link(args) do
     id = Keyword.get(args, :id)

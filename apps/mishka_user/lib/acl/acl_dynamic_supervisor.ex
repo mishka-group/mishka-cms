@@ -1,7 +1,7 @@
 defmodule MishkaUser.Acl.AclDynamicSupervisor do
 
   def start_job(args) do
-    DynamicSupervisor.start_child(MishkaUser.Acl.AclOtpRunner, {MishkaUser.Acl.AclSupervisor, args})
+    DynamicSupervisor.start_child(MishkaUser.Acl.AclOtpRunner, {MishkaUser.Acl.AclManagement, args})
   end
 
   @spec running_imports :: [any]
@@ -22,6 +22,4 @@ defmodule MishkaUser.Acl.AclDynamicSupervisor do
       [{pid, _type}] -> {:ok, :get_user_pid, pid}
     end
   end
-
-
 end

@@ -25,8 +25,7 @@ defmodule MishkaHtmlWeb.AuthController do
         |> put_flash(:error, "حساب کاربری شما بیشتر از ۵ بار در سیستم های مختلف استفاده شده است. لطفا یکی از این موارد را غیر فعال کنید و خروج را بفشارید.")
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
 
-      error ->
-        IO.inspect(error)
+      _error ->
         conn
         |> put_flash(:error, "ممکن است ایمیل یا پسورد شما اشتباه باشد.")
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
@@ -35,6 +34,7 @@ defmodule MishkaHtmlWeb.AuthController do
 
   def log_out(conn, _params) do
     if live_socket_id = get_session(conn, :live_socket_id) do
+      MishkaHtmlWeb.Client.Public.ClientMenuAndNotif.notify_subscribers({:user_logout, get_session(conn, :user_id)})
       MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end

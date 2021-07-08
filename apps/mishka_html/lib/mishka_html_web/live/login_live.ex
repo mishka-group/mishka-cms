@@ -9,7 +9,7 @@ defmodule MishkaHtmlWeb.LoginLive do
 
     socket =
       assign(socket,
-        page_title: "مدیریت کاربران",
+        page_title: "ورود کاربران",
         body_color: "#40485d",
         trigger_submit: false,
         changeset: user_changeset,

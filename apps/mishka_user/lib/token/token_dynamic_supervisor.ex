@@ -22,6 +22,4 @@ defmodule MishkaUser.Token.TokenDynamicSupervisor do
       [{pid, _type}] -> {:ok, :get_user_pid, pid}
     end
   end
-
-
 end

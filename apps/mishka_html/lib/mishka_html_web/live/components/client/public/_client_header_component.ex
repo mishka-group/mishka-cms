@@ -9,7 +9,7 @@ defmodule MishkaHtmlWeb.Client.Public.HeaderComponent do
         <div class="space10"></div>
         </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Client.Public.MenuComponent, id: :client_menu, user_id: @user_id, notifs: @notifs %>
+        <%= live_render(@socket, MishkaHtmlWeb.Client.Public.ClientMenuAndNotif, id: :client_menu_and_notif) %>
       </header>
     """
   end

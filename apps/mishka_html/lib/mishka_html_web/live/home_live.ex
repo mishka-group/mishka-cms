@@ -13,7 +13,6 @@ defmodule MishkaHtmlWeb.HomeLive do
     ### add acl to another stroge to accsess fast not db
     # create task to delete session after 24 hours if not to be used
     # create a handel info def to see user changed like (role and ACL etc, change password)
-
     socket =
       assign(socket,
         page_title: "تگرگ",

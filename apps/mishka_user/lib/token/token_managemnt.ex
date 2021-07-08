@@ -1,5 +1,5 @@
 defmodule MishkaUser.Token.TokenManagemnt do
-  use GenServer
+  use GenServer, restart: :temporary
 
   @refresh_interval :timer.seconds(1) # :timer.seconds(5)
   @saving_interval :timer.seconds(300) # :timer.seconds(5)

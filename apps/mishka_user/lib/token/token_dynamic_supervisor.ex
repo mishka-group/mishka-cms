@@ -1,7 +1,7 @@
 defmodule MishkaUser.Token.TokenDynamicSupervisor do
 
   def start_job(args) do
-    DynamicSupervisor.start_child(MishkaUser.Token.TokenOtpRunner, {MishkaUser.Token.TokenSupervisor, args})
+    DynamicSupervisor.start_child(MishkaUser.Token.TokenOtpRunner, {MishkaUser.Token.TokenManagemnt, args})
   end
 
   @spec running_imports :: [any]

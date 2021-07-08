@@ -1,5 +1,5 @@
 defmodule MishkaUser.Acl.AclManagement do
-  use GenServer
+  use GenServer, restart: :temporary
   require Logger
   alias MishkaUser.Acl.AclDynamicSupervisor
 

@@ -47,6 +47,7 @@ defmodule MishkaHtmlWeb do
       use Phoenix.LiveView,
         layout: {MishkaHtmlWeb.LayoutView, "live.html"}
       alias MishkaHtmlWeb.Admin.Public.Notif
+      alias MishkaHtmlWeb.Client.Public.ClientMenuAndNotif
       unquote(view_helpers())
     end
   end

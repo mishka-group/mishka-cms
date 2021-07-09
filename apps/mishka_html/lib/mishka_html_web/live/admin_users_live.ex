@@ -95,7 +95,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
         {:noreply, socket}
 
-      {:error, :delete, :user, repo_error} ->
+      {:error, :delete, :user, _repo_error} ->
 
         socket =
           socket

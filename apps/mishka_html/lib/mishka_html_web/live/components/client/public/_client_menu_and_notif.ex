@@ -5,7 +5,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   alias MishkaUser.Token.CurrentPhoenixToken
   def mount(_params, session, socket) do
     if connected?(socket), do: subscribe()
-    # Process.send_after(self(), :update, 1)
+    Process.send_after(self(), :update, 1)
     socket =
       assign(socket,
         user_id: Map.get(session, "user_id"),

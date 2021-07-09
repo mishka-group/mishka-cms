@@ -60,8 +60,8 @@ defmodule MishkaUser.Token.CurrentPhoenixToken do
 
   defp token_expire_time(:current) do
     %{
-      unix_time: DateTime.utc_now() |> DateTime.add(86400, :second) |> DateTime.to_unix(),
-      age: 86400
+      unix_time: DateTime.utc_now() |> DateTime.add(10800, :second) |> DateTime.to_unix(),
+      age: 10800
     }
   end
 end

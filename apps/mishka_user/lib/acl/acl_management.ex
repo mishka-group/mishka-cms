@@ -7,10 +7,6 @@ defmodule MishkaUser.Acl.AclManagement do
   @type id() :: String.t()
   @type token() :: String.t()
 
-  ##########################################
-  # 1. create handle_info to delete expired Acl every 24 hours with Registery
-  ##########################################
-
   def start_link(args) do
     id = Keyword.get(args, :id)
     type = Keyword.get(args, :type)

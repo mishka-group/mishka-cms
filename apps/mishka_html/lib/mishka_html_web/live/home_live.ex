@@ -12,8 +12,8 @@ defmodule MishkaHtmlWeb.HomeLive do
     ### force logiend user not to see register and reset password
     ### create a plug to check user login token and ACL
     ### add acl to another stroge to accsess fast not db
-    # create task to delete session after 24 hours if not to be used
-    # create a handel info def to see user changed like (role and ACL etc, change password)
+    ### create task to delete session after 24 hours if not to be used
+    ### create a handel info def to see user changed like (role and ACL etc, change password)
     socket =
       assign(socket,
         page_title: "تگرگ",

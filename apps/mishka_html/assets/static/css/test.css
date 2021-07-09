@@ -67,6 +67,13 @@ header {
   font-size: 18px !important;
 }
 
+.client-menu-nav-link.active {
+  background: #007eff !important;
+  border-radius: 8px !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+
 .client-notif {
   text-align: left !important;
   padding-left: 20px !important;

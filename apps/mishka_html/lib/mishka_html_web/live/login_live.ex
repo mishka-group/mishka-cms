@@ -4,6 +4,7 @@ defmodule MishkaHtmlWeb.LoginLive do
   # alias MishkaUser.User
 
   def mount(_params, session, socket) do
+    Process.send_after(self(), :menu, 1000)
     user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}
     |> MishkaDatabase.Schema.MishkaUser.User.login_changeset()
 
@@ -33,6 +34,10 @@ defmodule MishkaHtmlWeb.LoginLive do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
+  def handle_info(:menu, socket) do
+    MishkaHtmlWeb.Client.Public.ClientMenuAndNotif.notify_subscribers({:menu, "login"})
+    {:noreply, socket}
+  end
 
   def user_changeset(params) do
     %MishkaDatabase.Schema.MishkaUser.User{}

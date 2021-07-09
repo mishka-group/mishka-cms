@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.HomeLive do
   use MishkaHtmlWeb, :live_view
 
   def mount(_params, session, socket) do
+    Process.send_after(self(), :menu, 1000)
     ### create a simple GenServer or Mnesia to store user id key, token, last_use
     ### update last use every mount
     ### redirect user to login page
@@ -20,5 +21,10 @@ defmodule MishkaHtmlWeb.HomeLive do
         user_id: Map.get(session, "user_id")
       )
     {:ok, socket}
+  end
+
+  def handle_info(:menu, socket) do
+    MishkaHtmlWeb.Client.Public.ClientMenuAndNotif.notify_subscribers({:menu, "home"})
+    {:noreply, socket}
   end
 end

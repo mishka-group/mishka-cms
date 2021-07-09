@@ -34,7 +34,6 @@ defmodule MishkaHtmlWeb.AuthController do
 
   def log_out(conn, _params) do
     if live_socket_id = get_session(conn, :live_socket_id) do
-      MishkaHtmlWeb.Client.Public.ClientMenuAndNotif.notify_subscribers({:user_logout, get_session(conn, :user_id)})
       MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end

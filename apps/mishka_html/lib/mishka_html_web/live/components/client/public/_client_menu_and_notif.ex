@@ -5,12 +5,15 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   alias MishkaUser.Token.CurrentPhoenixToken
   def mount(_params, session, socket) do
     if connected?(socket), do: subscribe()
-    Process.send_after(self(), :update, 1)
+    # Process.send_after(self(), :update, 1)
     socket =
       assign(socket,
         user_id: Map.get(session, "user_id"),
         current_token: Map.get(session, "current_token"),
-        notifs: nil
+        # notifs should be edited and read field is added, true or false.
+        # notif read false count and paginate
+        notifs: nil,
+        menu_name: nil
       )
     {:ok, socket}
    end
@@ -29,7 +32,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                           <%=
                               live_redirect "خانه",
                               to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
-                              class: "nav-link client-menu-nav-link active"
+                              class: "nav-link client-menu-nav-link #{change_menu_name("home", @menu_name)}"
                           %>
                       </li>
 
@@ -37,7 +40,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                           <%=
                               live_redirect "بلاگ",
                               to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
-                              class: "nav-link client-menu-nav-link"
+                              class: "nav-link client-menu-nav-link #{change_menu_name("blog", @menu_name)}"
                           %>
                       </li>
 
@@ -45,7 +48,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                           <%=
                               live_redirect "گالری",
                               to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
-                              class: "nav-link client-menu-nav-link"
+                              class: "nav-link client-menu-nav-link #{change_menu_name("gallery", @menu_name)}"
                           %>
                       </li>
 
@@ -56,7 +59,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                                 <%=
                                 live_redirect "ورود",
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
-                                class: "nav-link client-menu-nav-link"
+                                class: "nav-link client-menu-nav-link #{change_menu_name("login", @menu_name)}"
                                 %>
                             <% end %>
                       </li>
@@ -84,6 +87,10 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
     """
   end
 
+  def handle_info({:menu, name}, socket) do
+     {:noreply, assign(socket, :menu_name, name)}
+  end
+
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 30000)
     socket.assigns.current_token
@@ -102,12 +109,17 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
         {:noreply, socket}
 
       _ ->
+
         socket =
           socket
-          |> assign(user_id: nil, current_token: nil)
+          |> redirect(to: Routes.auth_path(socket, :log_out))
 
         {:noreply, socket}
     end
+  end
+
+  defp change_menu_name(router_name, menu_name) do
+    if(router_name == menu_name, do: "active", else: "")
   end
 
   def subscribe do

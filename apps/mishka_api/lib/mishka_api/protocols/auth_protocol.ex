@@ -10,6 +10,7 @@ defprotocol MishkaApi.AuthProtocol do
 
   def logout(outputs, conn)
 
+  @spec change_password(any, any, any) :: Plug.Conn.t()
   def change_password(outputs, conn, allowed_fields)
 
   def user_tokens(outputs, conn, allowed_fields_output)
@@ -34,7 +35,7 @@ defprotocol MishkaApi.AuthProtocol do
 
   def deactive_account_by_email_link(outputs, conn, allowed_fields_output)
 
-  def delete_tokens_by_email_link(outputs, conn)
+  def send_delete_tokens_link_by_email(outputs, conn)
 end
 
 defimpl MishkaApi.AuthProtocol, for: Any do
@@ -84,6 +85,12 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def login(%{access_token: access_token, refresh_token: refresh_token}, user_info, conn, allowed_fields) do
+    MishkaUser.Acl.AclManagement.save(%{
+      id: user_info.id,
+      user_permission: MishkaUser.User.permissions(user_info.id),
+      created: System.system_time(:second)},
+      user_info.id
+    )
     conn
     |> put_status(200)
     |> json(%{
@@ -402,14 +409,10 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
 
   def reset_password({:ok, :get_record_by_field, :user, user_info}, conn) do
-    random_code = Enum.random(100000..999999)
-    case RandomCode.get_code_with_email(user_info.email) do
-      nil ->
-        RandomCode.save(user_info.email, random_code)
-        # send random code to user email
-
-      _user_data ->
-        RandomCode.save(user_info.email, random_code)
+    if is_nil(RandomCode.get_code_with_email(user_info.email)) do
+      random_code = Enum.random(100000..999999)
+      RandomCode.save(user_info.email, random_code)
+      # |> send to user email
     end
 
     conn
@@ -417,7 +420,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :reset_password,
       system: @request_error_tag,
-      message: "در صورتی که ایمیل شما در سیستم موجود باشد یک ایمیل حاوی تغییر پسورد برای شما ارسال می گردد. لطفا در صورت عدم وجود ایمیل در اینباکس لطفا در پوشه اسپم یا جانک نیز بازدید به عمل بیاورید"
+      message: "در صورتی که ایمیل شما در سیستم وجود داشته باشید به زودی کد تغییر پسورد برای شما ایمیل می گردد. لازم به ذکر می باشد شما هر 6 دقیقه امکان ارسال ایمیل مجدد دارید."
     })
   end
 
@@ -427,7 +430,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :reset_password,
       system: @request_error_tag,
-      message: "در صورتی که ایمیل شما در سیستم موجود باشد یک ایمیل حاوی تغییر پسورد برای شما ارسال می گردد. لطفا در صورت عدم وجود ایمیل در اینباکس لطفا در پوشه اسپم یا جانک نیز بازدید به عمل بیاورید"
+      message: "در صورتی که ایمیل شما در سیستم وجود داشته باشید به زودی کد تغییر پسورد برای شما ایمیل می گردد. لازم به ذکر می باشد شما هر 6 دقیقه امکان ارسال ایمیل مجدد دارید."
     })
   end
 
@@ -555,15 +558,19 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       _data ->
-        # send random code to user's email
-        random_code = Enum.random(100000..999999)
-        RandomCode.save(user_info.email, random_code)
+
+        if is_nil(RandomCode.get_code_with_email(user_info.email)) do
+          random_code = Enum.random(100000..999999)
+          RandomCode.save(user_info.email, random_code)
+          # |> send to user email
+        end
+
         conn
         |> put_status(200)
         |> json(%{
           action: :deactive_account,
           system: @request_error_tag,
-          message: "کد غیر فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید.",
+          message: "کد غیر فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید. لازم به ذکر هست هر 6 دقیقه امکان درخواست مجدد  کد غیر فعال سازی به ایمیل خود را خواهید داشت.",
           user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
         })
     end
@@ -728,15 +735,19 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       _data ->
-        # send random code to user's email
-        random_code = Enum.random(100000..999999)
-        RandomCode.save(user_info.email, random_code)
+
+        if is_nil(RandomCode.get_code_with_email(user_info.email)) do
+          random_code = Enum.random(100000..999999)
+          RandomCode.save(user_info.email, random_code)
+          # |> send to user email
+        end
+
         conn
         |> put_status(200)
         |> json(%{
           action: :verify_email,
           system: @request_error_tag,
-          message: "کد فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید.",
+          message: "کد فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید.لازم به ذکر هست هر 6 دقیقه امکان ارسال ایمیل مجدد کد فعال سازی را خواهید داشت.",
           user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
         })
     end
@@ -754,14 +765,18 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       _ ->
-        RandomLink.save(user_info.email, %{type: :verify})
-        # Email sender module with theme
+
+        if is_nil(RandomLink.get_codes_with_email(user_info.email, :verify)) do
+          RandomLink.save(user_info.email, %{type: :verify})
+          # |> should be send with email
+        end
+
         conn
         |> put_status(200)
         |> json(%{
           action: :verify_email_by_email_link,
           system: @request_error_tag,
-          message: "لینک فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.",
+          message: "لینک فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.لازم به ذکر هست هر 6 دقیقه شما امکان ارسال ایمیل را خواهید داشت.",
           user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
         })
 
@@ -781,8 +796,6 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   def deactive_account_by_email_link({:ok, :get_record_by_id, _user, user_info}, conn, allowed_fields_output) do
     case user_info.status do
       :inactive ->
-        RandomLink.save(user_info.email, %{type: :deactive})
-        # Email sender module with theme
         conn
         |> put_status(401)
         |> json(%{
@@ -793,14 +806,18 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
 
       _ ->
-        RandomLink.save(user_info.email, %{type: :deactive})
-        # Email sender module with theme
+
+        if is_nil(RandomLink.get_codes_with_email(user_info.email, :deactive)) do
+          RandomLink.save(user_info.email, %{type: :deactive})
+          # |> should be send with email
+        end
+
         conn
         |> put_status(200)
         |> json(%{
           action: :deactive_account_by_email_link,
           system: @request_error_tag,
-          message: "ایمیل غیر فعال سازی حساب کاربری برای شما ارسال گردید",
+          message: "ایمیل غیر فعال سازی حساب کاربری برای شما ارسال گردید. لازم به ذکر هست هر 6 دقیقه شما امکان ارسال ایمیل مجدد لینک غیر فعال سازی را خواهید داشت.",
           user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
         })
     end
@@ -816,26 +833,30 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def delete_tokens_by_email_link({:ok, :get_record_by_field, :user, user_info}, conn) do
-    RandomLink.save(user_info.email, %{type: :delete_tokens})
-    # Email sender module with theme
+  def send_delete_tokens_link_by_email({:ok, :get_record_by_field, :user, user_info}, conn) do
+
+    if is_nil(RandomLink.get_codes_with_email(user_info.email, :delete_tokens)) do
+      RandomLink.save(user_info.email, %{type: :delete_tokens})
+      # |> should be send with email
+    end
+
     conn
     |> put_status(200)
     |> json(%{
-      action: :deactive_account_by_email_link,
+      action: :send_delete_tokens_link_by_email,
       system: @request_error_tag,
-      message: "اگر در بانک اطلاعاتی ما حسابی داشته باشید برای شما یک ایمیل حاوی لینک ارسال می گردد."
+      message: "اگر برای شما حساب کاربری از قبل ثبت شده باشد به زودی یک ایمیل حاوی لینک حذف توکن های خود دریافت خواهید کرد. لازم به ذکر است هر 6 دقیقه امکان درخواست مجدد برای یک حساب کاربری ممکن می شود"
     })
   end
 
-  def delete_tokens_by_email_link(_, conn) do
+  def send_delete_tokens_link_by_email(_, conn) do
     conn
     |> put_status(200)
     |> json(%{
-      action: :deactive_account_by_email_link,
+      action: :send_delete_tokens_link_by_email,
       system: @request_error_tag,
-      message: "اگر در بانک اطلاعاتی ما حسابی داشته باشید برای شما یک ایمیل حاوی لینک ارسال می گردد."
-    })
+      message: "اگر برای شما حساب کاربری از قبل ثبت شده باشد به زودی یک ایمیل حاوی لینک حذف توکن های خود دریافت خواهید کرد. لازم به ذکر است هر 6 دقیقه امکان درخواست مجدد برای یک حساب کاربری ممکن می شود"
+      })
   end
 
 end

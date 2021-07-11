@@ -113,7 +113,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
         {:noreply, socket}
 
-      {:error, :delete, :category, repo_error} ->
+      {:error, :delete, :category, _repo_error} ->
 
         socket =
           socket

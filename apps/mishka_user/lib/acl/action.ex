@@ -21,5 +21,21 @@ defmodule MishkaUser.Acl.Action do
     }
   end
 
+  def actions(:api) do
+    %{
+      # client router
+
+
+      # admin router
+      "api/content/v1/create-category/" => "admin:edit",
+      "api/content/v1/edit-category/" => "admin:edit",
+      "api/content/v1/delete-category/" => "admin:edit",
+      "api/content/v1/destroy-category/" => "admin:edit",
+      "api/content/v1/create-post/" => "admin:edit",
+      "api/content/v1/edit-post/" => "admin:edit",
+      "api/content/v1/delete-post/" => "admin:edit",
+      "api/content/v1/destroy-post/" => "admin:edit",
+    }
+  end
 
 end

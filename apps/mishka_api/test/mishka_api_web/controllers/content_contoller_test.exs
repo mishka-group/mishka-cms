@@ -79,9 +79,15 @@ defmodule MishkaApiWeb.ContentControllerTest do
     extra: %{test: "this is a test of notif"},
   }
 
+  alias MishkaUser.Acl.{Role, Permission, UserRole}
+
   setup _context do
     conn = Phoenix.ConnTest.build_conn()
     {:ok, :add, :user, user_info} = MishkaUser.User.create(@right_user_info)
+    {:ok, :add, :role, data} = assert Role.create(%{name: "admin", display_name: "admin"})
+    {:ok, :add, :permission, _permission_data} = assert Permission.create(%{role_id: data.id, value: "*"})
+    {:ok, :add, :user_role, _user_role_data} = assert UserRole.create(%{role_id: data.id, user_id: user_info.id})
+
     login_conn = post(conn, Routes.auth_path(conn, :login), %{email: user_info.email, password: user_info.password})
       assert %{
         "action" => "login",

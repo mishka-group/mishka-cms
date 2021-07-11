@@ -104,7 +104,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
 
         {:noreply, socket}
 
-      {:error, :delete, :subscription, repo_error} ->
+      {:error, :delete, :subscription, _repo_error} ->
 
         socket =
           socket

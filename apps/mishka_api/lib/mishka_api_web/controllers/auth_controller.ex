@@ -19,7 +19,7 @@ defmodule MishkaApiWeb.AuthController do
     :deactive_account_by_email_link
   ]
 
-  # create task evry 24 hours to log all registerd user in a day
+
   # add ip limitter and os info
   # this module will help user to send request with his mobile after creating a dynamic plug for mobile provider
 
@@ -168,10 +168,10 @@ defmodule MishkaApiWeb.AuthController do
   end
 
 
-  def delete_tokens_by_email_link(conn, %{"email" => email}) do
+  def send_delete_tokens_link_by_email(conn, %{"email" => email}) do
     # this function just is a luncher to send email, the function after clicking we need should be written on html api side
     MishkaUser.User.show_by_email(email)
-    |> MishkaApi.AuthProtocol.delete_tokens_by_email_link(conn)
+    |> MishkaApi.AuthProtocol.send_delete_tokens_link_by_email(conn)
   end
 
   def deactive_account_by_email_link(conn, _params) do

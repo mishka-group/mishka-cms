@@ -1,0 +1,86 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_component @socket, MishkaHtmlWeb.Admin.Public.MenuComponent, id: :admin_menu %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+
+                <%= live_redirect "برگشت به اشتراک ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSubscriptionsLive), class: "btn btn-outline-primary" %>
+
+                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-danger" %>
+
+                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+            </div>
+        </div>
+
+
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+        <h2 class="vazir">
+             ساخت نقش جدید
+        </h2>
+        <div class="space20"></div>
+        <hr>
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+
+        <div class="col admin-create-category">
+            <div class="clearfix"></div>
+            <div class="space10"></div>
+            <a phx-click="make_all_basic_menu" class="btn btn-danger admin-create-category-tools" >
+                فیلدهای ضروری
+            </a>
+            <div class="clearfix"></div>
+            <div class="space10"></div>
+
+            <%= f = form_for @changeset, "#",
+                phx_submit: "save",
+                phx_change: "draft",
+                multipart: true,
+                onkeydown: "return event.key != 'Enter';" %>
+                <div class="clearfix"></div>
+                <div class="space30"></div>
+                <div class="row">
+                    <%= for form <- @dynamic_form do %>
+
+                        <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
+                                        id: String.to_atom("admin_form_text_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
+                        %>
+                    <% end %>
+                </div>
+                <%= if @dynamic_form != [] do %>
+                    <div class="space10"></div>
+                    <%= submit "Save", phx_disable_with: "Saving...", class: "btn btn-primary" %>
+                <% else %>
+                    <div class="clearfix"></div>
+                    <div class="space30"></div>
+                    <div class="col-sm-12 admin-there-is-no-field vazir">
+                    <div class="space30"></div>
+                        <span class="admin-there-is-no-field-text">هیچ فیلدی به فرم اضافه نشده است.</span>
+                        <div class="space10"></div>
+                        <span class="text-muted">از کلید های بالا می توانید فرم های مورد نظر خود را اضافه کنید.</span>
+                        <div class="space30"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                <% end %>
+            </form>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+    </div>
+</div>

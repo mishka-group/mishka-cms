@@ -316,10 +316,10 @@ defmodule MishkaApiWeb.AuthControllerTest do
     test "Delete Tokens by Email Link send request", %{conn: conn} do
       post(conn, Routes.auth_path(conn, :register), @user_info)
       conn = conn
-      |> post(Routes.auth_path(conn, :delete_tokens_by_email_link), %{email: @user_info.email})
+      |> post(Routes.auth_path(conn, :send_delete_tokens_link_by_email), %{email: @user_info.email})
 
       assert %{
-        "action" => "deactive_account_by_email_link",
+        "action" => "send_delete_tokens_link_by_email",
         "message" => _msg,
         "system" => "user"
       } = json_response(conn, 200)

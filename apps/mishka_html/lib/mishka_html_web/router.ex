@@ -62,6 +62,8 @@ defmodule MishkaHtmlWeb.Router do
     live "/user", AdminUserLive
     live "/logs", AdminLogsLive
     live "/seo", AdminSeoLive
+    live "/roles", AdminUserRolesLive
+    live "/role", AdminUserRoleLive
   end
 
   # Enables LiveDashboard only for development

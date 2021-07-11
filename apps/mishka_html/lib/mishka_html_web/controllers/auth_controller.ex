@@ -9,7 +9,12 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do
 
-        MishkaUser.Acl.AclManagement.save(%{id: user_info.id, user_permission: MishkaUser.User.permissions(user_info.id), created: System.system_time(:second)}, user_info.id)
+        MishkaUser.Acl.AclManagement.save(%{
+          id: user_info.id,
+          user_permission: MishkaUser.User.permissions(user_info.id),
+          created: System.system_time(:second)},
+          user_info.id
+        )
 
         conn
         |> renew_session()

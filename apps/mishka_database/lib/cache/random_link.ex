@@ -20,8 +20,8 @@ defmodule MishkaDatabase.Cache.RandomLink do
   end
 
 
-  def get_codes_with_email(email) do
-    GenServer.call(__MODULE__, {:get_codes_with_email, email})
+  def get_codes_with_email(email, type) do
+    GenServer.call(__MODULE__, {:get_codes_with_email, email, type})
   end
 
   def delete_code_with_code(code) do
@@ -73,9 +73,9 @@ defmodule MishkaDatabase.Cache.RandomLink do
 
 
   @impl true
-  def handle_call({:get_codes_with_email, email}, _from, state) do
+  def handle_call({:get_codes_with_email, email, type}, _from, state) do
     selected_state = state
-    |> Enum.find(fn x -> x.email == email end)
+    |> Enum.find(fn x -> x.email == email and x.params.type  == type end)
 
     {:reply, selected_state, state}
   end

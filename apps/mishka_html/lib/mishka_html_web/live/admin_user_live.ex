@@ -125,7 +125,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
     {:noreply, socket}
   end
 
-  def handle_event("draft", params, socket) do
+  def handle_event("draft", _params, socket) do
     {:noreply, socket}
   end
 

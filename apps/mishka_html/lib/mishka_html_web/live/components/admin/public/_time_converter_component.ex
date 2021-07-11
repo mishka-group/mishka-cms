@@ -10,14 +10,6 @@ defmodule MishkaHtmlWeb.Admin.Public.TimeConverterComponent do
     """
   end
 
-  def jalali_string_to_miladi_english_number(persian_datetime) do
-    [yy, mm, dd] = String.split(persian_datetime, "/")
-    {:ok, jalaali_date} = Date.new(Numero.normalize_as_number!(yy), Numero.normalize_as_number!(mm), Numero.normalize_as_number!(dd), Jalaali.Calendar)
-    {:ok, iso_date} = Date.convert(jalaali_date, Calendar.ISO)
-    {:ok, datetime, 0} = DateTime.from_iso8601("#{iso_date.year}-#{fix_month_and_day(iso_date.month)}-#{fix_month_and_day(iso_date.day)}T00:00:00Z")
-    datetime
-  end
-
   def fix_month_and_day(string_number) do
     if String.length("#{string_number}") == 1 do
       "0#{string_number}"

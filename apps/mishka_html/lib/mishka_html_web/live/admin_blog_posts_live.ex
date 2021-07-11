@@ -97,7 +97,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
         {:noreply, socket}
 
-      {:error, :delete, :post, repo_error} ->
+      {:error, :delete, :post, _repo_error} ->
 
         socket =
           socket

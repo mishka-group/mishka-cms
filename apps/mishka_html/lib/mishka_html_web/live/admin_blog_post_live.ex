@@ -200,11 +200,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
-  def handle_event("draft", params, socket) do
+  def handle_event("draft", _params, socket) do
     {:noreply, socket}
   end
 
-  def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = params, socket) do
+  def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = _params, socket) do
     {:noreply, cancel_upload(socket, String.to_atom(field), ref)}
   end
 
@@ -347,18 +347,6 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     )
   end
 
-  defp creta_post_state(repo_data) do
-    Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :blog_posts, :id])
-    |> Map.to_list()
-    |> Enum.map(fn {key, value} ->
-      %{
-        class: "#{search_fields(Atom.to_string(key)).class}",
-        type: "#{Atom.to_string(key)}",
-        value: value
-      }
-    end)
-    |> Enum.reject(fn x -> x.value == nil end)
-  end
 
   defp create_post(socket, params: {params, meta_keywords, main_image, header_image, description, alias_link, category_id},
                                uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
@@ -409,7 +397,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   end
 
   defp edit_post(socket, params: {params, meta_keywords, main_image, header_image, description, id, alias_link, category_id},
-                               uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
+                               uploads: {_uploaded_main_image_files, _uploaded_header_image_files}) do
 
     merge_map = %{
       "id" => id,

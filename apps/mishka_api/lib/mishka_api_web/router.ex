@@ -11,10 +11,14 @@ defmodule MishkaApiWeb.Router do
 
   pipeline :access_token do
     plug MishkaApi.Plug.AccessTokenPlug
-   end
+  end
+
+  pipeline :acl_check do
+    plug MishkaApi.Plug.AclCheckPlug
+  end
 
   scope "/api/auth/v1", MishkaApiWeb do
-    pipe_through :api
+    pipe_through [:api, :acl_check]
     post "/register", AuthController, :register
     post "/login", AuthController, :login
     post "/logout", AuthController, :logout
@@ -30,12 +34,12 @@ defmodule MishkaApiWeb.Router do
     post "/deactive-account-by-email-link", AuthController, :deactive_account_by_email_link
     post "/verify-email", AuthController, :verify_email
     post "/verify-email-by-email-link", AuthController, :verify_email_by_email_link
-    post "/delete-tokens-by-email-link", AuthController, :delete_tokens_by_email_link
+    post "/send-delete-tokens-link-by-email", AuthController, :send_delete_tokens_link_by_email
   end
 
 
   scope "/api/content/v1", MishkaApiWeb do
-    pipe_through [:api, :access_token]
+    pipe_through [:api, :access_token, :acl_check]
 
     post "/create-category", ContentController, :create_category
     post "/edit-category", ContentController, :edit_category

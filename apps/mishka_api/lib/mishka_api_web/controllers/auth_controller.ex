@@ -111,6 +111,8 @@ defmodule MishkaApiWeb.AuthController do
   def delete_tokens(conn, _params) do
     MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(conn.assigns.user_id)
     MishkaUser.Token.TokenManagemnt.stop(conn.assigns.user_id)
+    # delete all user's Acl
+    MishkaUser.Acl.AclManagement.stop(conn.assigns.user_id)
     MishkaApi.AuthProtocol.delete_tokens(conn)
   end
 

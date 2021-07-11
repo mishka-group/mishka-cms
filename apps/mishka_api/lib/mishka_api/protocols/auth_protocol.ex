@@ -271,6 +271,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     MishkaUser.Token.TokenManagemnt.stop(info.id)
     # clean all the token on disc
     MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(info.id)
+    # delete all user's Acl
+    MishkaUser.Acl.AclManagement.stop(info.id)
 
     conn
     |> put_status(200)
@@ -456,6 +458,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(user_info.id)
           # delete all randome codes of user
           RandomCode.delete_code(code, email)
+          # delete all user's ACL
+          MishkaUser.Acl.AclManagement.stop(user_info.id)
 
         conn
         |> put_status(200)

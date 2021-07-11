@@ -49,7 +49,7 @@ defmodule MishkaHtmlWeb.Admin.Role.ListComponent do
 
 
                     <div class="col opration-post-blog">
-                    <%= live_redirect "ویرایش",
+                    <%= live_redirect "مدیریت دسترسی ها",
                     to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserRoleLive, id: item.id),
                     class: "btn btn-outline-info vazir"
                     %>

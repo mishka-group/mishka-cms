@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
       body_color: "#a29ac3cf",
       roles: Role.roles(conditions: {1, 20}, filters: %{})
     )
-    {:ok, socket}
+    {:ok, socket, temporary_assigns: [roles: []]}
   end
 
   def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
@@ -137,9 +137,10 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   defp role_filter(_params), do: %{}
 
   defp role_assign(socket, params: params, page_size: count, page_number: page) do
+    IO.inspect(role_filter(params))
     assign(socket,
         [
-          rols: Role.roles(conditions: {page, count}, filters: role_filter(params)),
+          roles: Role.roles(conditions: {page, count}, filters: role_filter(params)),
           page_size: count,
           filters: params,
           page: page

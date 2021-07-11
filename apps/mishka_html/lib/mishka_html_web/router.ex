@@ -8,7 +8,7 @@ defmodule MishkaHtmlWeb.Router do
     plug :put_root_layout, {MishkaHtmlWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug MishkaHtml.Plug.AclCheckPlug
+    # plug MishkaHtml.Plug.AclCheckPlug
   end
 
   pipeline :user_logined do
@@ -64,6 +64,7 @@ defmodule MishkaHtmlWeb.Router do
     live "/seo", AdminSeoLive
     live "/roles", AdminUserRolesLive
     live "/role", AdminUserRoleLive
+    live "/role-permissions", AdminUserRolePermissionsLive
   end
 
   # Enables LiveDashboard only for development

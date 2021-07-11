@@ -4,6 +4,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   alias MishkaUser.Acl.Role
   def mount(_params, _session, socket) do
     ## create a handel info def to see user changed like (role and ACL etc, change password)
+    ## create a otp or task supervisor to delete deleted role on ACL state
     socket =
       assign(socket,
       page_size: 10,
@@ -137,7 +138,6 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   defp role_filter(_params), do: %{}
 
   defp role_assign(socket, params: params, page_size: count, page_number: page) do
-    IO.inspect(role_filter(params))
     assign(socket,
         [
           roles: Role.roles(conditions: {page, count}, filters: role_filter(params)),

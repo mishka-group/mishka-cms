@@ -23,7 +23,7 @@ defmodule MishkaHtmlWeb.Admin.Form.TextSearchComponent do
                   <h4 class="mb-1"><%= get_in(item, [@title_field]) %></h4>
                   <small>
                   <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "inserted-#{item.id}-component",
+                            span_id: "inserted-#{item.id}-component",
                             time: item.inserted_at
                   %>
                   </small>

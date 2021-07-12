@@ -48,7 +48,7 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
 
                     <div class="col">
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "inserted_at-#{item.id}-component",
+                            span_id: "inserted_at-#{item.id}-component",
                             time: item.inserted_at
                         %>
 

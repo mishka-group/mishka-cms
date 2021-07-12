@@ -90,14 +90,14 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
 
                     <div class="col">
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                        id: "inserted-#{item.id}-component",
+                        span_id: "inserted-#{item.id}-component",
                         time: item.inserted_at
                         %>
                     </div>
 
                     <div class="col">
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                        id: "updated_at-#{item.id}-component",
+                        span_id: "updated_at-#{item.id}-component",
                         time: item.updated_at
                         %>
                     </div>
@@ -107,7 +107,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                             ندارد
                         <% else %>
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "unpublish-#{item.id}-component",
+                            span_id: "unpublish-#{item.id}-component",
                             time: item.unpublish
                         %>
                         <% end %>

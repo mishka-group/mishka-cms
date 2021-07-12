@@ -77,14 +77,14 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
 
                     <div class="col" id="<%= "inserted-#{item.id}" %>">
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "inserted-#{item.id}-component",
+                            span_id: "inserted-#{item.id}-component",
                             time: item.inserted_at
                         %>
                     </div>
 
                     <div class="col" id="<%= "updated-#{item.id}" %>">
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "updated-#{item.id}-component",
+                            span_id: "updated-#{item.id}-component",
                             time: item.updated_at
                         %>
                     </div>

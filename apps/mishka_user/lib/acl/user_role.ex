@@ -24,4 +24,8 @@ defmodule MishkaUser.Acl.UserRole do
     crud_get_record(id)
   end
 
+  def show_by_user_id(user_id) do
+    crud_get_by_field("user_id", user_id)
+  end
+
 end

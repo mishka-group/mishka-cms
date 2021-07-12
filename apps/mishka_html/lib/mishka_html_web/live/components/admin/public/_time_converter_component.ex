@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Public.TimeConverterComponent do
 
   def render(assigns) do
     ~L"""
-      <span id="<%= @id %>">
+      <span id="<%= @span_id %>">
         <% time_need = jalali_create(@time) %>
         <%= time_need.day_number %> <%= time_need.month_name %> <%= time_need.year_number %>
       </span>

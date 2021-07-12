@@ -35,8 +35,7 @@
                     <h3 class="admin-dashbord-h3-right-side-title vazir">ایجاد دسترسی</h3>
                     <%= f = form_for @changeset, "#",
                         phx_submit: "save",
-                        multipart: true,
-                        onkeydown: "return event.key != 'Enter';" %>
+                        multipart: true %>
                         <div class="clearfix"></div>
                         <div class="space30"></div>
                         <div class="row vazir">
@@ -75,30 +74,6 @@
                 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             </div>
 
       </div>
@@ -134,7 +109,7 @@
 
                     <%= for {item, color} <- Enum.zip(@permissions, Stream.cycle(["wlist", "glist"])) do %>
                         <div id="<%= item.id %>" phx-update="append" class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
-                            <div class="col" id="<%= item.id %>-value">
+                            <div class="col ltr" id="<%= item.id %>-value">
                                 <span class="badge bg-info"><%= item.value %></span>
                             </div>
 
@@ -170,4 +145,3 @@
     </div>
     <div class="clearfix"></div>
 </div>
-<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

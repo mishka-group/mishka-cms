@@ -9,7 +9,7 @@ defmodule MishkaHtmlWeb.Admin.Public.Notif do
 
   def render(assigns) do
     ~L"""
-      <div class="toast-container">
+      <div class="toast-container" id="admin_notif">
         <%= for notif <- @notifs do %>
           <div class="admin-notif-live p-3 vazir rtl" style="z-index: 5">
             <div id="liveToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true">

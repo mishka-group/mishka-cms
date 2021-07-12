@@ -18,6 +18,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         page_title: "مدیریت کاربران",
         body_color: "#a29ac3cf",
         users: User.users(conditions: {1, 10}, filters: %{}),
+        roles: MishkaUser.Acl.Role.roles(conditions: {1, 10}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [users: []]}
   end
@@ -107,6 +108,19 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
   def handle_event("close_modal", _params, socket) do
     {:noreply, assign(socket, [open_modal: false, component: nil])}
+  end
+
+  def handle_event("user_role", %{"role" => role_id, "user_id" => user_id}, socket) do
+    case MishkaUser.Acl.UserRole.show_by_user_id(user_id) do
+      {:error, _, _} ->
+        MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
+
+      {:ok, _, _, repo_data} ->
+        MishkaUser.Acl.AclManagement.stop(user_id)
+        MishkaUser.Acl.UserRole.edit(%{id: repo_data.id, user_id: user_id, role_id: role_id})
+    end
+
+    {:noreply, socket}
   end
 
   def handle_info({:user, :ok, repo_record}, socket) do

@@ -62,7 +62,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
 
                     <div class="col">
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "inserted-#{item.id}-component",
+                            span_id: "inserted-#{item.id}-component",
                             time: item.inserted_at
                         %>
                     </div>
@@ -72,7 +72,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
                         <span class="badge rounded-pill bg-secondary"> ندارد </span>
                         <% else %>
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "expire_time-#{item.id}-component",
+                            span_id: "expire_time-#{item.id}-component",
                             time: item.expire_time
                         %>
                         <% end %>

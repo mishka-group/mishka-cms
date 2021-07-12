@@ -75,27 +75,39 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                         <%= title %>
                     </div>
 
-                    <div class="col-sm-1" id="<%= "inserted_at-#{item.id}" %>">
+                    <div class="col-sm-1" id="<%= "inserted-#{item.id}" %>">
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "inserted-#{item.id}-component",
+                            span_id: "inserted-at-#{item.id}-component",
                             time: item.inserted_at
                         %>
                     </div>
 
                     <div class="col-sm-3 opration-post-blog" id="<%= "opration-#{item.id}" %>">
-                        <a class="btn btn-outline-primary vazir",
-                                phx-click="delete"
-                                phx-value-id="<%= item.id %>">حذف</a>
 
-                        <%= live_redirect "ویرایش",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.id),
-                            class: "btn btn-outline-danger vazir"
-                        %>
+                            <a class="btn btn-outline-primary vazir",
+                                    phx-click="delete"
+                                    phx-value-id="<%= item.id %>">حذف</a>
 
-                        <%= live_redirect "دسترسی",
-                        to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
-                        class: "btn btn-outline-info vazir"
-                        %>
+                            <%= live_redirect "ویرایش",
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.id),
+                                class: "btn btn-outline-danger vazir"
+                            %>
+                            <% user_role = item.roles %>
+                            <div class="clearfix"></div>
+                            <div class="space20"></div>
+                            <div class="col">
+                                <form  phx-change="user_role">
+                                    <input type="hidden" value="<%= item.id %>" name="user_id">
+                                    <label for="country" class="form-label">انتخاب دسترسی</label>
+                                    <select class="form-select" id="role" name="role">
+                                    <option value="">انتخاب</option>
+                                    <%= for item <- @roles.entries do %>
+                                        <option value="<%= item.id %>" <%= if(!is_nil(user_role) and item.id == user_role.id, do: "selected") %>><%= item.name %></option>
+                                    <% end %>
+                                    </select>
+                                </form>
+                            </div>
+
                     </div>
                 </div>
                 <div class="space20"></div>

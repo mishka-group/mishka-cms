@@ -1,8 +1,6 @@
 defmodule MishkaHtmlWeb.LoginLive do
   use MishkaHtmlWeb, :live_view
 
-  # alias MishkaUser.User
-
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 500)
     user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}

@@ -42,7 +42,7 @@ defmodule MishkaHtmlWeb.Admin.Role.ListComponent do
 
                     <div class="col">
                         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
-                            id: "inserted-#{item.id}-component",
+                            span_id: "inserted-#{item.id}-component",
                             time: item.inserted_at
                         %>
                     </div>

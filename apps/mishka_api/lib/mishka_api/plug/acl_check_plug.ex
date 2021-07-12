@@ -6,8 +6,7 @@ defmodule MishkaApi.Plug.AclCheckPlug do
   def init(default), do: default
 
   def call(conn, _default) do
-    # /check can we to_string with a charecter
-    module = case Enum.map(conn.path_info, fn x -> "#{x}/" end) |> List.to_string do
+    module = case Enum.join(conn.path_info, "/") do
       nil -> "NotFound"
       "" -> "NotFound"
       module -> module

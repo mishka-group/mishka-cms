@@ -4,7 +4,7 @@ defmodule MishkaUser.Acl.Action do
     %{
       # client router
       # admin router
-      "Elixir.MishkaHtmlWeb.AdminDashboardLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminDashboardLive" => "admin:*" ,
       "Elixir.MishkaHtmlWeb.AdminBlogPostsLive" => "admin:edit" ,
       "Elixir.MishkaHtmlWeb.AdminBlogPostLive" => "admin:edit" ,
       "Elixir.MishkaHtmlWeb.AdminBlogCategoriesLive" => "admin:edit" ,

@@ -33,7 +33,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   def handle_event("save", %{"permission" => params}, socket) do
     user_permission = "#{params["section"]}:#{params["permission"]}"
-    case Permission.create(%{value: user_permission, role_id: socket.assigns.id}) do
+    case Permission.create(%{value: if(user_permission == "*:*", do: "*", else: user_permission), role_id: socket.assigns.id}) do
       {:error, :add, :permission, repo_error} ->
         socket =
           socket

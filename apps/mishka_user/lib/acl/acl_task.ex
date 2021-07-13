@@ -41,6 +41,11 @@ defmodule MishkaUser.Acl.AclTask do
     Enum.map(records, fn x ->
       case MishkaUser.Acl.AclDynamicSupervisor.get_user_pid(x.user_id) do
         {:ok, :get_user_pid, _pid} ->
+          # clean all the token otp
+          MishkaUser.Token.TokenManagemnt.stop(x.user_id)
+          # clean all the token on disc
+          MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(x.user_id)
+          # delete all user's Acl
           MishkaUser.Acl.AclManagement.stop(x.user_id)
           x.user_id
         _ -> nil

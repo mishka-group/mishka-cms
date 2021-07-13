@@ -26,13 +26,13 @@ defmodule MishkaHtml.Plug.AclCheckPlug do
 
       {:user_id_check, true, nil} ->
         conn
-        |> put_flash(:error, "شما به این صفحه دسترسی ندارید.")
+        |> put_flash(:error, "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما ویرایش شده باشد. دوباره وارد سایت شوید.")
         |> redirect(to: Routes.live_path(conn, MishkaHtmlWeb.HomeLive))
         |> halt()
 
       {:permittes?, false} ->
         conn
-        |> put_flash(:error, "شما به این صفحه دسترسی ندارید.")
+        |> put_flash(:error, "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما ویرایش شده باشد. دوباره وارد سایت شوید.")
         |> redirect(to: Routes.live_path(conn, MishkaHtmlWeb.HomeLive))
         |> halt()
     end

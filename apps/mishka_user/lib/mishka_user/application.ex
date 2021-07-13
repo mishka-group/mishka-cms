@@ -22,7 +22,8 @@ defmodule MishkaUser.Application do
       {DynamicSupervisor, token_runner_config},
 
       {Registry, keys: :unique, name: MishkaUser.Acl.AclRegistry},
-      {DynamicSupervisor, acl_runner_config}
+      {DynamicSupervisor, acl_runner_config},
+      {MishkaUser.Acl.AclTask, []},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

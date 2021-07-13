@@ -92,27 +92,14 @@ defmodule MishkaUser.Acl.AclManagement do
   end
 
   @impl true
-  def handle_info({:update_user_permissions, _user_id}, state) do
-    # update user permissions on otp state
-    {:noreply, state}
-  end
-
-  @impl true
-  def handle_info({:update_role, _role_id}, state) do
-    # get all online user which has ACL state
-    # check the have this role_id
-    # then send a node to update_user_permissions again
-    {:noreply, state}
-  end
-
-  @impl true
-  def handle_info({:delete_role, _role_id}, state) do
-    # search all the user are online get thire ides (on ACL state)
-    # query to database where role id is same
-    # input thire user ides to a list
-    # then delete the role after this
-    # send a node to update_user_permissions to update again
-    {:noreply, state}
+  def handle_info({:update_user_permissions, user_id}, _state) do
+    new_state =
+      %{
+        id: user_id,
+        user_permission: MishkaUser.User.permissions(user_id),
+        created: System.system_time(:second)
+      }
+    {:noreply, new_state}
   end
 
   @impl true

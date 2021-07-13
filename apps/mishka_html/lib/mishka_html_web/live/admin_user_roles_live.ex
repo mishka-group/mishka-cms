@@ -71,7 +71,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
     case Role.delete(id) do
       {:ok, :delete, :role, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "نقش: #{repo_data.name} حذف شده است."})
-
+        MishkaUser.Acl.AclTask.delete_role(repo_data.id)
         socket = role_assign(
           socket,
           params: socket.assigns.filters,

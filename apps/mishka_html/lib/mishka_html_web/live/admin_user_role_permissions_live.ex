@@ -40,12 +40,18 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
           |> assign([changeset: repo_error])
         {:noreply, socket}
 
-      {:ok, :add, :permission, _repo_data} ->  {:noreply, socket}
+      {:ok, :add, :permission, repo_data} ->
+        MishkaUser.Acl.AclTask.update_role(repo_data.role_id)
+        {:noreply, socket}
     end
   end
 
   def handle_event("delete", %{"id" => id} = _params, socket) do
-    Permission.delete(id)
+    case Permission.delete(id) do
+      {:ok, :delete, :permission, record} -> MishkaUser.Acl.AclTask.delete_role(record.role_id)
+      _ -> nil
+    end
+
     socket =
       socket
       |> assign(permissions: Permission.permissions(socket.assigns.id))

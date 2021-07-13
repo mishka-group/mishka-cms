@@ -7,6 +7,7 @@ defmodule MishkaUser.Acl.UserRole do
           repo: MishkaDatabase.Repo
 
   @behaviour MishkaDatabase.CRUD
+  import Ecto.Query
 
   def create(attrs) do
     crud_add(attrs)
@@ -35,5 +36,16 @@ defmodule MishkaUser.Acl.UserRole do
       {:ok, :get_record_by_field, :user_role, record} -> delete(record.id)
       _ -> {:error, :delete_user_role, :not_found}
     end
+  end
+
+  def roles(role_id) do
+    stream = from(u in UserRole, where: u.role_id == ^role_id, select: %{
+      id: u.id, user_id: u.user_id, role_id: u.role_id
+    })
+    |> MishkaDatabase.Repo.stream()
+
+    MishkaDatabase.Repo.transaction(fn() ->
+      Enum.to_list(stream)
+    end)
   end
 end

@@ -120,13 +120,11 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   end
 
   def handle_event("user_role", %{"role" => role_id, "user_id" => user_id}, socket) do
-    case MishkaUser.Acl.UserRole.show_by_user_id(user_id) do
-      {:error, _, _} ->
-        MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
-
-      {:ok, _, _, repo_data} ->
-        MishkaUser.Acl.AclManagement.stop(user_id)
-        MishkaUser.Acl.UserRole.edit(%{id: repo_data.id, user_id: user_id, role_id: role_id})
+    case role_id do
+      "delete_user_role" ->
+        MishkaUser.Acl.UserRole.delete_user_role(user_id)
+      _record ->
+        create_or_edit_user_role(user_id, role_id)
     end
 
     {:noreply, socket}
@@ -169,5 +167,16 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           page: page
         ]
       )
+  end
+
+  defp create_or_edit_user_role(user_id, role_id) do
+    case MishkaUser.Acl.UserRole.show_by_user_id(user_id) do
+      {:error, _, _} ->
+        MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
+
+      {:ok, _, _, repo_data} ->
+        MishkaUser.Acl.AclManagement.stop(user_id)
+        MishkaUser.Acl.UserRole.edit(%{id: repo_data.id, user_id: user_id, role_id: role_id})
+    end
   end
 end

@@ -28,4 +28,12 @@ defmodule MishkaUser.Acl.UserRole do
     crud_get_by_field("user_id", user_id)
   end
 
+
+  def delete_user_role(user_id) do
+    case show_by_user_id(user_id) do
+      nil -> {:error, :delete_user_role, :not_found}
+      {:ok, :get_record_by_field, :user_role, record} -> delete(record.id)
+      _ -> {:error, :delete_user_role, :not_found}
+    end
+  end
 end

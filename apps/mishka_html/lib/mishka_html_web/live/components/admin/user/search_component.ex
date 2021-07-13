@@ -28,10 +28,10 @@ defmodule MishkaHtmlWeb.Admin.User.SearchComponent do
                 </select>
               </div>
 
-              <div class="col-sm-1">
-                <label for="country" class="form-label">نقش</label>
+              <div class="col-sm-1" id="RoleID">
+                <label for="role" class="form-label">نقش</label>
                 <div class="col space10"> </div>
-                <select class="form-select" id="role" name="role">
+                <select class="form-select" id="role-search-id" name="role">
                   <option value="">انتخاب</option>
                   <%= for role <- MishkaUser.Acl.Role.roles() do %>
                     <option value="<%= role.id %>"><%= role.display_name %></option>

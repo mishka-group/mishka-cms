@@ -45,6 +45,15 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
     {:noreply, socket}
   end
 
+  def handle_event("search_role", params, socket) do
+    socket =
+      assign(socket,
+        roles: MishkaUser.Acl.Role.roles(conditions: {1, 10}, filters: %{name: params["name"]}),
+        users: User.users(conditions: {socket.assigns.page, socket.assigns.page_size}, filters: user_filter(socket.assigns.filters))
+      )
+    {:noreply, socket}
+  end
+
   def handle_event("search", params, socket) do
     socket =
       push_patch(socket,
@@ -142,7 +151,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   end
 
   defp user_filter(params) when is_map(params) do
-    Map.take(params, User.allowed_fields(:string))
+    Map.take(params, User.allowed_fields(:string) ++ ["role"])
     |> Enum.reject(fn {_key, value} -> value == "" end)
     |> Map.new()
     |> MishkaDatabase.convert_string_map_to_atom_map()

@@ -96,10 +96,13 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                             <div class="clearfix"></div>
                             <div class="space20"></div>
                             <div class="col">
+                                <label for="country" class="form-label">انتخاب دسترسی</label>
+                                <form  phx-change="search_role">
+                                    <input class="form-control" type="text" placeholder="جستجو نقش" name="name">
+                                </form>
                                 <form  phx-change="user_role">
                                     <input type="hidden" value="<%= item.id %>" name="user_id">
-                                    <label for="country" class="form-label">انتخاب دسترسی</label>
-                                    <select class="form-select" id="role" name="role">
+                                    <select class="form-select" id="role" name="role" size="2" style="min-height: 150px;">
                                     <option value="">انتخاب</option>
                                     <%= for item <- @roles.entries do %>
                                         <option value="<%= item.id %>" <%= if(!is_nil(user_role) and item.id == user_role.id, do: "selected") %>><%= item.name %></option>

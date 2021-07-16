@@ -2,7 +2,7 @@ defmodule MishkaHtmlWeb.HomeLive do
   use MishkaHtmlWeb, :live_view
 
   def mount(_params, session, socket) do
-    Process.send_after(self(), :menu, 500)
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         page_title: "تگرگ",
@@ -13,7 +13,7 @@ defmodule MishkaHtmlWeb.HomeLive do
   end
 
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "home"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.HomeLive"})
     {:noreply, socket}
   end
 end

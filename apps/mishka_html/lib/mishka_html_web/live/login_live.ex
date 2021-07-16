@@ -2,7 +2,7 @@ defmodule MishkaHtmlWeb.LoginLive do
   use MishkaHtmlWeb, :live_view
 
   def mount(_params, session, socket) do
-    Process.send_after(self(), :menu, 500)
+    Process.send_after(self(), :menu, 10)
     user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}
     |> MishkaDatabase.Schema.MishkaUser.User.login_changeset()
 
@@ -33,7 +33,7 @@ defmodule MishkaHtmlWeb.LoginLive do
   end
 
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "login"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive"})
     {:noreply, socket}
   end
 

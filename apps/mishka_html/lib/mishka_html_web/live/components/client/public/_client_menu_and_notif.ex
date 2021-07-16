@@ -5,7 +5,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   alias MishkaUser.Token.CurrentPhoenixToken
   def mount(_params, session, socket) do
     if connected?(socket), do: subscribe()
-    Process.send_after(self(), :update, 1)
+    Process.send_after(self(), :update, 10)
     socket =
       assign(socket,
         user_id: Map.get(session, "user_id"),
@@ -32,7 +32,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                           <%=
                               live_redirect "خانه",
                               to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
-                              class: "nav-link client-menu-nav-link #{change_menu_name("home", @menu_name)}"
+                              class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.HomeLive", @menu_name)}"
                           %>
                       </li>
 
@@ -40,15 +40,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                           <%=
                               live_redirect "بلاگ",
                               to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
-                              class: "nav-link client-menu-nav-link #{change_menu_name("blog", @menu_name)}"
-                          %>
-                      </li>
-
-                      <li class="nav-item client-menu-nav-item">
-                          <%=
-                              live_redirect "گالری",
-                              to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
-                              class: "nav-link client-menu-nav-link #{change_menu_name("gallery", @menu_name)}"
+                              class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.BlogsLive", @menu_name)}"
                           %>
                       </li>
 
@@ -59,7 +51,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                                 <%=
                                 live_redirect "ورود",
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
-                                class: "nav-link client-menu-nav-link #{change_menu_name("login", @menu_name)}"
+                                class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.LoginLive", @menu_name)}"
                                 %>
                             <% end %>
                       </li>
@@ -92,30 +84,57 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   end
 
   def handle_info(:update, socket) do
-    Process.send_after(self(), :update, 30000)
+    Process.send_after(self(), :update, 10000)
     socket.assigns.current_token
-    |> verify_token(socket)
+    |> verify_token()
+    |> acl_check(socket)
   end
 
-  defp verify_token(nil, socket), do: {:noreply, socket}
+  defp verify_token(nil), do: {:error, :verify_token, :no_token}
 
-  defp verify_token(current_token, socket) do
+  defp verify_token(current_token) do
     case CurrentPhoenixToken.verify_token(current_token, :current) do
-      {:ok, :verify_token, :current, current_token_info} ->
-        socket =
-          socket
-          |> assign(user_id: current_token_info["id"], current_token: current_token)
+      {:ok, :verify_token, :current, current_token_info} -> {:ok, :verify_token, current_token_info["id"], current_token}
 
-        {:noreply, socket}
-
-      _ ->
-
-        socket =
-          socket
-          |> redirect(to: Routes.auth_path(socket, :log_out))
-
-        {:noreply, socket}
+      _ -> {:error, :verify_token}
     end
+  end
+
+  defp acl_check({:error, :verify_token, :no_token}, socket), do: {:noreply, socket}
+
+  defp acl_check({:error, :verify_token}, socket) do
+    socket =
+      socket
+      |> redirect(to: Routes.auth_path(socket, :log_out))
+
+    {:noreply, socket}
+  end
+
+  defp acl_check({:ok, :verify_token, user_id, current_token}, socket) do
+    acl_got = Map.get(MishkaUser.Acl.Action.actions, socket.assigns.menu_name)
+
+    socket =
+      with {:acl_check, false, action} <- {:acl_check, is_nil(acl_got), acl_got},
+         {:permittes?, true} <- {:permittes?, MishkaUser.Acl.Access.permittes?(action, user_id)} do
+
+          socket
+          |> assign(user_id: user_id, current_token: current_token)
+
+      else
+        {:acl_check, true, nil} ->
+
+          socket
+          |> assign(user_id: user_id, current_token: current_token)
+
+        {:permittes?, false} ->
+
+          socket
+          |> put_flash(:warning, "شما به این صفحه دسترسی ندارید.")
+          |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.HomeLive))
+
+      end
+
+    {:noreply, socket}
   end
 
   defp change_menu_name(router_name, menu_name) do

@@ -5,6 +5,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
   @error_atom :comment
 
   def mount(_params, _session, socket) do
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         dynamic_form: [],
@@ -172,6 +173,10 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminCommentLive"})
+    {:noreply, socket}
+  end
 
   defp creata_comment_state(repo_data) do
     Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :users, :id, :comments_likes])

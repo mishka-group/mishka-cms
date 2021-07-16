@@ -4,10 +4,8 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
   alias MishkaContent.General.Comment
 
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      Comment.subscribe()
-    end
-
+    if connected?(socket), do: Comment.subscribe()
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         page_size: 10,
@@ -149,6 +147,11 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
       :deleted -> {:noreply, socket}
        _ ->  {:noreply, socket}
     end
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminCommentsLive"})
+    {:noreply, socket}
   end
 
   defp comment_filter(params) when is_map(params) do

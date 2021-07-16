@@ -4,10 +4,8 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
   alias MishkaContent.General.Subscription
 
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      Subscription.subscribe()
-    end
-
+    if connected?(socket), do: Subscription.subscribe()
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         page_size: 10,
@@ -130,6 +128,11 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
       :deleted -> {:noreply, socket}
        _ ->  {:noreply, socket}
     end
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminSubscriptionsLive"})
+    {:noreply, socket}
   end
 
   defp subscription_filter(params) when is_map(params) do

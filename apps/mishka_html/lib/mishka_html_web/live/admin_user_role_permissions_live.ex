@@ -5,6 +5,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   def mount(_params, _session, socket) do
     if connected?(socket), do:  Permission.subscribe()
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         dynamic_form: [],
@@ -55,6 +56,11 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     socket =
       socket
       |> assign(permissions: Permission.permissions(socket.assigns.id))
+    {:noreply, socket}
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserRolePermissionsLive"})
     {:noreply, socket}
   end
 

@@ -7,6 +7,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
   @error_atom :subscription
 
   def mount(_params, _session, socket) do
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         dynamic_form: [],
@@ -174,6 +175,10 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
     {:noreply, socket}
   end
 
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminSubscriptionLive"})
+    {:noreply, socket}
+  end
 
   defp create_menu_list(menus_list, dynamic_form) do
     Enum.map(menus_list, fn menu ->

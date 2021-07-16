@@ -5,10 +5,8 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      Category.subscribe()
-    end
-
+    if connected?(socket), do: Category.subscribe()
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         page_size: 10,
@@ -140,6 +138,11 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
       :deleted -> {:noreply, socket}
        _ ->  {:noreply, socket}
     end
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogCategoriesLive"})
+    {:noreply, socket}
   end
 
   defp category_filter(params) when is_map(params) do

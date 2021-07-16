@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
 
   alias MishkaUser.Acl.Role
   def mount(_params, _session, socket) do
+    Process.send_after(self(), :menu, 10)
     ## create a handel info def to see user changed like (role and ACL etc, change password)
     ## create a otp or task supervisor to delete deleted role on ACL state
     socket =
@@ -108,6 +109,11 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
 
         {:noreply, socket}
     end
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserRolesLive"})
+    {:noreply, socket}
   end
 
   def handle_info({:role, :ok, repo_record}, socket) do

@@ -5,10 +5,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
 
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      Post.subscribe()
-    end
-
+    if connected?(socket), do: Post.subscribe()
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         page_size: 10,
@@ -130,6 +128,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
       :deleted -> {:noreply, socket}
        _ ->  {:noreply, socket}
     end
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogPostsLive"})
+    {:noreply, socket}
   end
 
   defp post_filter(params) when is_map(params) do

@@ -4,10 +4,8 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   alias MishkaUser.User
 
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      User.subscribe()
-    end
-
+    if connected?(socket), do: User.subscribe()
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         page_size: 10,
@@ -128,6 +126,11 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         create_or_edit_user_role(user_id, role_id)
     end
 
+    {:noreply, socket}
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUsersLive"})
     {:noreply, socket}
   end
 

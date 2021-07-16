@@ -3,7 +3,7 @@
 
         <div class="row">
             <div class="col-sm-5">
-                <%= live_component @socket, MishkaHtmlWeb.Admin.Public.MenuComponent, id: :admin_menu %>
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
             </div>
 
             <div class="col vazir text-start top-post-btn">
@@ -68,7 +68,7 @@
 
                         </div>
 
-                    <div class="space10"></div>
+                        <div class="space10"></div>
                         <%= submit "Save", phx_disable_with: "Saving...", class: "btn btn-primary" %>
                     </form>
                 </div>
@@ -138,10 +138,9 @@
             </div>
         </div>
 
-
-
-      </div>
-
     </div>
     <div class="clearfix"></div>
+</div>
+<div id="notif">
+    <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>
 </div>

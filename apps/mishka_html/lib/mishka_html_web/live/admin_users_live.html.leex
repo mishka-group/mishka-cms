@@ -4,7 +4,7 @@
 
         <div class="row">
             <div class="col-sm-5">
-                <%= live_component @socket, MishkaHtmlWeb.Admin.Public.MenuComponent, id: :admin_menu %>
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
             </div>
 
             <div class="col vazir text-start top-post-btn">

@@ -7,6 +7,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         dynamic_form: [],
@@ -330,6 +331,11 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       socket
       |> assign(:images, if(type == "main_image", do: {nil, header_image} , else: {main_image, nil}))
 
+    {:noreply, socket}
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogCategoryLive"})
     {:noreply, socket}
   end
 

@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
 
   alias MishkaUser.Acl.Role
   def mount(_params, _session, socket) do
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         dynamic_form:  create_menu_list(basic_menu_list(), []),
@@ -79,6 +80,10 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
     end
   end
 
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserRoleLive"})
+    {:noreply, socket}
+  end
 
   defp check_type_in_list(dynamic_form, new_item, type) do
     case Enum.any?(dynamic_form, fn x -> x.type == type end) do

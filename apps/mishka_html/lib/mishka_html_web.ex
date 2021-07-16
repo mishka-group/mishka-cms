@@ -48,6 +48,7 @@ defmodule MishkaHtmlWeb do
         layout: {MishkaHtmlWeb.LayoutView, "live.html"}
       alias MishkaHtmlWeb.Admin.Public.Notif
       alias MishkaHtmlWeb.Client.Public.ClientMenuAndNotif
+      alias MishkaHtmlWeb.Admin.Public.AdminMenu
       unquote(view_helpers())
     end
   end

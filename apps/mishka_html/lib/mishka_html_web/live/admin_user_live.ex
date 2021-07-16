@@ -5,6 +5,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   @error_atom :user
 
   def mount(_params, _session, socket) do
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         dynamic_form: [],
@@ -137,6 +138,11 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   end
 
   def handle_event("save", _params, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserLive"})
     {:noreply, socket}
   end
 

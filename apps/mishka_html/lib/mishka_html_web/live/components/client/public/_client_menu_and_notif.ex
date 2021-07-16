@@ -129,7 +129,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
         {:permittes?, false} ->
 
           socket
-          |> put_flash(:warning, "شما به این صفحه دسترسی ندارید.")
+          |> put_flash(:warning, "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید.")
           |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.HomeLive))
 
       end

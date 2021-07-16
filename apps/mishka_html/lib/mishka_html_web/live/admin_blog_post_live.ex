@@ -5,6 +5,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   @error_atom :post
 
   def mount(_params, _session, socket) do
+    Process.send_after(self(), :menu, 10)
     socket =
       assign(socket,
         dynamic_form: [],
@@ -302,6 +303,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     socket =
       socket
       |> assign([category_search: []])
+    {:noreply, socket}
+  end
+
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogPostLive"})
     {:noreply, socket}
   end
 

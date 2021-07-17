@@ -43,13 +43,13 @@ defmodule MishkaHtmlWeb.Client.Login.LoginFormComponent do
           <div class="space20"></div>
           <%=
             live_redirect "ثبت نام در سایت",
-            to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
+            to: Routes.live_path(@socket, MishkaHtmlWeb.RegisterLive),
             class: "btn btn-outline-info"
           %>
 
           <%=
             live_redirect "فراموشی پسورد",
-            to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
+            to: Routes.live_path(@socket, MishkaHtmlWeb.ResetPasswordLive),
             class: "btn btn-outline-danger"
           %>
         </form>

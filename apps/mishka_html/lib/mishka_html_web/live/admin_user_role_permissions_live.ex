@@ -5,7 +5,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   def mount(_params, _session, socket) do
     if connected?(socket), do:  Permission.subscribe()
-    Process.send_after(self(), :menu, 10)
+    Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
         dynamic_form: [],

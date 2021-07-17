@@ -6,7 +6,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: Post.subscribe()
-    Process.send_after(self(), :menu, 10)
+    Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
         page_size: 10,

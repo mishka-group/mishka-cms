@@ -2,7 +2,7 @@ defmodule MishkaHtmlWeb.AdminMediaManagerLive do
   use MishkaHtmlWeb, :live_view
 
   def mount(_params, _session, socket) do
-    Process.send_after(self(), :menu, 10)
+    Process.send_after(self(), :menu, 100)
     {:ok, assign(socket, page_title: "مدیریت فایل ها", body_color: "#a29ac3cf")}
   end
 

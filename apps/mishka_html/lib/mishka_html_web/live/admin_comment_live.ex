@@ -5,7 +5,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
   @error_atom :comment
 
   def mount(_params, _session, socket) do
-    Process.send_after(self(), :menu, 10)
+    Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
         dynamic_form: [],

@@ -2,7 +2,7 @@ defmodule MishkaHtmlWeb.LoginLive do
   use MishkaHtmlWeb, :live_view
 
   def mount(_params, session, socket) do
-    Process.send_after(self(), :menu, 10)
+    Process.send_after(self(), :menu, 100)
     user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}
     |> MishkaDatabase.Schema.MishkaUser.User.login_changeset()
 

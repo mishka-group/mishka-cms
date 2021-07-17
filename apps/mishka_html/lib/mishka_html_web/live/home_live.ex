@@ -2,7 +2,7 @@ defmodule MishkaHtmlWeb.HomeLive do
   use MishkaHtmlWeb, :live_view
 
   def mount(_params, session, socket) do
-    Process.send_after(self(), :menu, 10)
+    Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
         page_title: "تگرگ",

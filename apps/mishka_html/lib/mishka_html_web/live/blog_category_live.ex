@@ -1,22 +1,23 @@
-defmodule MishkaHtmlWeb.BlogsLive do
+defmodule MishkaHtmlWeb.BlogCategoryLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.Blog.{Category, Post}
 
-  def mount(_params, session, socket) do
+  def mount(%{"alias_link" => _alias_link}, session, socket) do
     if connected?(socket) do
       Category.subscribe()
       Post.subscribe()
     end
-    # we need to input seo tags
+
     Process.send_after(self(), :menu, 100)
+    # we need to input seo tags
     socket =
       assign(socket,
         page_title: "بلاگ",
         body_color: "#40485d",
         user_id: Map.get(session, "user_id"),
         posts: Post.posts(conditions: {1, 20}, filters: %{}),
-        featured_posts: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}),
+        featured_posts: [],
         categories: Category.categories(conditions: {1, 20}, filters: %{})
       )
       {:ok, socket, temporary_assigns: [posts: [], categories: [], featured_posts: []]}
@@ -24,9 +25,11 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   @impl true
   def handle_params(%{"page" => page}, _url, socket) do
-    socket =
-      socket
-      |> assign([posts: Post.posts(conditions: {page, 20}, filters: %{}), page: page])
+      # after categoey exist show category posts featured (Post.posts(conditions: {1, 5}, filters: %{priority: :featured}))
+      # chenge page_title: "بلاگ" to category exists name
+      socket =
+        socket
+        |> assign([posts: Post.posts(conditions: {page, 20}, filters: %{}), page: page])
     {:noreply, socket}
   end
 
@@ -35,11 +38,9 @@ defmodule MishkaHtmlWeb.BlogsLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive"})
-    {:noreply, socket}
-  end
+
+  # it should be noted if category id and post id are same the state, then do refresh or sth
+
 
   # @impl true
   # def handle_info({:category, :ok, repo_record}, socket) do
@@ -77,4 +78,10 @@ defmodule MishkaHtmlWeb.BlogsLive do
   #      _ ->  {:noreply, socket}
   #   end
   # end
+
+  @impl true
+  def handle_info(:menu, socket) do
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive"})
+    {:noreply, socket}
+  end
 end

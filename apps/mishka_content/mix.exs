@@ -18,7 +18,7 @@ defmodule MishkaContent.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :mishka_database, :ecto_sql, :ecto, :phoenix_pubsub],
+      extra_applications: [:logger, :mishka_database, :ecto_sql, :ecto, :phoenix_pubsub, :bamboo, :bamboo_smtp],
       mod: {MishkaContent.Application, []}
     ]
   end
@@ -27,7 +27,9 @@ defmodule MishkaContent.MixProject do
   defp deps do
     [
       {:mishka_database, in_umbrella: true},
-      {:ecto_sql, "~> 3.5"}
+      {:ecto_sql, "~> 3.5"},
+      {:bamboo, "~> 2.1.0"},
+      {:bamboo_smtp, "~> 4.0.1"}
     ]
   end
 end

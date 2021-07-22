@@ -16,8 +16,9 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import topbar from "topbar"
 import {LiveSocket} from "phoenix_live_view"
-import * as Quill from 'quill';
-
+// import ClassicEditor from "@ckeditor/ckeditor5-build-classic"
+import "regenerator-runtime/runtime.js";
+import ClassicEditor from "../static/js/ckeditor"
 
 let Hooks = {}
 Hooks.Calendar = {
@@ -125,24 +126,63 @@ Hooks.TextSearch = {
   }
 }
 
+
+const ckeditorItems = ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 
+  'blockQuote', 'insertTable', 'undo','redo','fontSize','highlight','pageBreak','todoList','alignment','-','code',
+  'codeBlock', 'findAndReplace', 'fontBackgroundColor', 'fontColor', 'horizontalLine', '|', 'imageInsert', 'removeFormat', 
+  'sourceEditing', 'specialCharacters', 'restrictedEditingException', 'strikethrough', 'underline', 'textPartLanguage'
+]
+
+var theEditor = null;
 Hooks.Editor = {
   mounted() {
-    const view = this;
     var container = document.querySelector("#editor");
+    const view = this;
+    var serverHtml;
     if (container != null) {
-      var editor = new Quill(container, {
-        theme: 'snow',
-      });
-  
-      editor.on('editor-change', function(range, oldRange, source) {
-        var data = { html: editor.root.innerHTML};
-        view.pushEvent("save-editor", data);
-      });
-  
-      this.handleEvent("update-editor-html", ({html}) => {
-        editor.root.innerHTML = html
-      });
+      ClassicEditor
+      .create(container, {
+        toolbar: {
+					items: ckeditorItems,
+					shouldNotGroupWhenFull: true
+				},
+				language: 'en',
+				alignment: {
+					options: [
+						{ name: 'left', className: 'my-align-left' },
+						{ name: 'right', className: 'my-align-right' }
+					]
+				},
+				image: {
+					toolbar: ['linkImage', 'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side',
+					]
+				},
+				table: {
+					contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableCellProperties', 'tableProperties']
+				},
+					licenseKey: '',
+				} )
+				.then( new_editor => {
+					window.editor = new_editor;
+          new_editor.setData(serverHtml);
+          theEditor = new_editor; // Save for later use.
+					editor.model.document.on('change:data', (eventInfo, batch ) => {
+						var data = { html: editor.getData()};
+    					view.pushEvent("save-editor", data);
+					});
+					
+				} )
+				.catch( error => {
+					console.error( 'Oops, something went wrong!' );
+					console.error( error );
+				} );
 
+      this.handleEvent("update-editor-html", ({html}) => {
+        serverHtml = html;
+        if (theEditor != null) {
+          theEditor.setData(html);
+        }
+      });
     }
   }
 }
@@ -167,3 +207,8 @@ liveSocket.connect()
 window.liveSocket = liveSocket
 
   
+
+// YourEditor.setData('<p>This is the new Data!</p>');
+// const viewFragment = YourEditor.data.processor.toView( html );
+// const modelFragment = YourEditor.data.toModel( viewFragment );
+// YourEditor.model.insertContent( modelFragment );

@@ -23,6 +23,18 @@
   font-family: Vazir-Regular;
 }
 
+p.my-align-right {
+  text-align: right !important;
+}
+
+
+.editor__editable, main .ck-editor[role='application'] .ck.ck-content, .ck.editor__editable[role='textbox'], .ck.ck-editor__editable[role='textbox'], .ck.editor[role='textbox'],
+#editor,
+.ql-toolbar.ql-snow + .ql-container.ql-snow {
+  font-family: 'Vazir-Regular' !important;
+  direction: rtl !important;
+  text-align: justify;
+}
 
 .client-header {
  background-color: #31394c !important;
@@ -760,7 +772,7 @@ select.form-select {
 
 .client-comment-sent {
   background: #31394c;
-  padding: 30px;
+  padding: 10px 30px;
   font-size: 12px;
   border-radius: 8px;
   color: #ffffff;

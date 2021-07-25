@@ -1,6 +1,8 @@
 defmodule MishkaContent.Blog.Post do
-  # import Ecto.Query
+
   alias MishkaDatabase.Schema.MishkaContent.Blog.Post
+  alias MishkaContent.Blog.Like, as: UserLiked
+  @user_id "27ad720a-4b97-4c7b-a175-396be2c95d1c"
 
   import Ecto.Query
   use MishkaDatabase.CRUD,
@@ -47,15 +49,19 @@ defmodule MishkaContent.Blog.Post do
     crud_get_by_field("alias_link", alias_link)
   end
 
-  def posts(conditions: {page, page_size}, filters: filters) do
+  # from(p in Post, join: s in subquery(set), on: s.id == p.id),
+  def posts(conditions: {page, page_size}, filters: filters, user_id: user_id) do
     from(
       post in Post,
       join: cat in assoc(post, :blog_categories),
-      left_join: like in assoc(post, :blog_likes)
+      left_join: like in assoc(post, :blog_likes),
+      left_join: liked_user in subquery(UserLiked.user_liked),
+      on: liked_user.user_id == ^user_id and liked_user.post_id == post.id
     )
     |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+    |> IO.inspect()
   rescue
     Ecto.Query.CastError ->
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
@@ -66,21 +72,21 @@ defmodule MishkaContent.Blog.Post do
       case key do
         :category_title ->
           like = "%#{value}%"
-          from([post, cat] in query, where: like(cat.title, ^like))
+          from([post, cat, like] in query, where: like(cat.title, ^like))
 
         :title ->
           like = "%#{value}%"
-          from([post, cat] in query, where: like(post.title, ^like))
+          from([post, cat, like] in query, where: like(post.title, ^like))
 
-        _ -> from([post, cat] in query, where: field(post, ^key) == ^value)
+        _ -> from([post, cat, like] in query, where: field(post, ^key) == ^value)
       end
     end)
   end
 
   defp fields(query) do
-    from [post, cat, like] in query,
+    from [post, cat, like, liked_user] in query,
     order_by: [desc: post.inserted_at, desc: post.id],
-    group_by: [post.id, cat.id, like.post_id],
+    group_by: [post.id, cat.id, like.post_id, liked_user.post_id, liked_user.user_id],
     select: %{
       category_id: cat.id,
       category_title: cat.title,
@@ -99,7 +105,8 @@ defmodule MishkaContent.Blog.Post do
       inserted_at: post.inserted_at,
       updated_at: post.updated_at,
       unpublish: post.unpublish,
-      like_count: count(like.id)
+      like_count: count(like.id),
+      liked_user: liked_user
     }
   end
 

@@ -37,11 +37,29 @@ defmodule MishkaContent.Blog.Like do
     crud_get_record(id)
   end
 
+  def show_by_user_and_post_id(user_id, post_id) do
+    from(like in BlogLike, where: like.user_id == ^user_id and like.post_id == ^post_id)
+    |> MishkaDatabase.Repo.one()
+    |> case do
+      nil -> {:error, :show_by_user_and_post_id, :not_found}
+      liked_record -> {:ok, :show_by_user_and_post_id, liked_record}
+    end
+  rescue
+    Ecto.Query.CastError -> {:error, :show_by_user_and_post_id, :cast_error}
+  end
+
   def likes() do
     from(like in BlogLike,
     group_by: like.post_id,
     select: %{count: count(like.id), post_id: like.post_id})
   end
+
+  def user_liked() do
+    from(like in BlogLike,
+    select: %{post_id: like.post_id, user_id: like.user_id})
+  end
+
+
 
   def allowed_fields(:atom), do: BlogLike.__schema__(:fields)
   def allowed_fields(:string), do: BlogLike.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

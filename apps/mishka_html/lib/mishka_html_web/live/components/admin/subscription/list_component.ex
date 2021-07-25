@@ -61,7 +61,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
                     </div>
 
                     <div class="col">
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                             span_id: "inserted-#{item.id}-component",
                             time: item.inserted_at
                         %>
@@ -71,7 +71,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
                         <%= if is_nil(item.expire_time) do %>
                         <span class="badge rounded-pill bg-secondary"> ندارد </span>
                         <% else %>
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                             span_id: "expire_time-#{item.id}-component",
                             time: item.expire_time
                         %>
@@ -96,7 +96,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
 
         <div class="space20"></div>
         <%= if @subscriptions.entries != [] do %>
-            <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent ,
+            <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
                             id: :pagination,
                             pagination_url: @pagination_url,
                             data: @subscriptions,

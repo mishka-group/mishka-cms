@@ -76,7 +76,7 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                     </div>
 
                     <div class="col-sm-1" id="<%= "inserted-#{item.id}" %>">
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                             span_id: "inserted-at-#{item.id}-component",
                             time: item.inserted_at
                         %>
@@ -121,7 +121,7 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
         </div>
 
         <%= if @users.entries != [] do %>
-            <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent ,
+            <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
                             id: :pagination,
                             pagination_url: @pagination_url,
                             data: @users,

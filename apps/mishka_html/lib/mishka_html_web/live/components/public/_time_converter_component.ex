@@ -1,4 +1,4 @@
-defmodule MishkaHtmlWeb.Admin.Public.TimeConverterComponent do
+defmodule MishkaHtmlWeb.Public.TimeConverterComponent do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do

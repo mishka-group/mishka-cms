@@ -89,14 +89,14 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                     </div>
 
                     <div class="col">
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                         span_id: "inserted-#{item.id}-component",
                         time: item.inserted_at
                         %>
                     </div>
 
                     <div class="col">
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                         span_id: "updated_at-#{item.id}-component",
                         time: item.updated_at
                         %>
@@ -106,7 +106,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                         <%= if is_nil(item.unpublish) do %>
                             ندارد
                         <% else %>
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                             span_id: "unpublish-#{item.id}-component",
                             time: item.unpublish
                         %>
@@ -142,7 +142,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
         <div class="space20"></div>
 
         <%= if @posts.entries != [] do %>
-        <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent ,
+        <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
                         id: :pagination,
                         pagination_url: @pagination_url,
                         data: @posts,

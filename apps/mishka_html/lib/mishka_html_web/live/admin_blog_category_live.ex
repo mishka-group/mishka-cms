@@ -426,15 +426,8 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} درست شده است."})
         socket =
           socket
-          |> assign(
-            dynamic_form: [],
-            basic_menu: false,
-            options_menu: false,
-            changeset: category_changeset(),
-            images: {main_image, header_image}
-          )
-          |> update(:uploaded_files, &(&1 ++ uploaded_main_image_files))
-          |> update(:uploaded_files, &(&1 ++ uploaded_header_image_files))
+          |> put_flash(:info, "مجموعه با موفقیت ایجاد شد")
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
 
         {:noreply, socket}
     end

@@ -1,4 +1,4 @@
-defmodule MishkaHtmlWeb.Admin.PaginationComponent do
+defmodule MishkaHtmlWeb.Public.PaginationComponent do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do

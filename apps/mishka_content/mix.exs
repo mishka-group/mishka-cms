@@ -29,7 +29,8 @@ defmodule MishkaContent.MixProject do
       {:mishka_database, in_umbrella: true},
       {:ecto_sql, "~> 3.5"},
       {:bamboo, "~> 2.1.0"},
-      {:bamboo_smtp, "~> 4.0.1"}
+      {:bamboo_smtp, "~> 4.0.1"},
+      {:timex, "~> 3.7"}
     ]
   end
 end

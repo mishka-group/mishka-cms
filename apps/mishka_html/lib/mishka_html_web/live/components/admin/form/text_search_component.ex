@@ -22,7 +22,7 @@ defmodule MishkaHtmlWeb.Admin.Form.TextSearchComponent do
                 <div class="d-flex w-100 justify-content-between">
                   <h4 class="mb-1"><%= get_in(item, [@title_field]) %></h4>
                   <small>
-                  <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                  <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                             span_id: "inserted-#{item.id}-component",
                             time: item.inserted_at
                   %>

@@ -48,7 +48,12 @@ defmodule MishkaContent.Blog.Post do
   end
 
   def posts(conditions: {page, page_size}, filters: filters) do
-    from(post in Post, join: cat in assoc(post, :blog_categories)) |> convert_filters_to_where(filters)
+    from(
+      post in Post,
+      join: cat in assoc(post, :blog_categories),
+      left_join: like in assoc(post, :blog_likes)
+    )
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -73,8 +78,9 @@ defmodule MishkaContent.Blog.Post do
   end
 
   defp fields(query) do
-    from [post, cat] in query,
+    from [post, cat, like] in query,
     order_by: [desc: post.inserted_at, desc: post.id],
+    group_by: [post.id, cat.id, like.post_id],
     select: %{
       category_id: cat.id,
       category_title: cat.title,
@@ -92,7 +98,8 @@ defmodule MishkaContent.Blog.Post do
       priority: post.priority,
       inserted_at: post.inserted_at,
       updated_at: post.updated_at,
-      unpublish: post.unpublish
+      unpublish: post.unpublish,
+      like_count: count(like.id)
     }
   end
 

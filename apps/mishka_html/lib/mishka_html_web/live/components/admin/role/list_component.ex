@@ -41,7 +41,7 @@ defmodule MishkaHtmlWeb.Admin.Role.ListComponent do
                     </div>
 
                     <div class="col">
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                             span_id: "inserted-#{item.id}-component",
                             time: item.inserted_at
                         %>
@@ -66,7 +66,7 @@ defmodule MishkaHtmlWeb.Admin.Role.ListComponent do
 
         <div class="space20"></div>
         <%= if @roles.entries != [] do %>
-            <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent ,
+            <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
                             id: :pagination,
                             pagination_url: @pagination_url,
                             data: @roles,

@@ -87,7 +87,7 @@ defmodule MishkaHtmlWeb.Admin.Log.LastLogComponent do
         </div>
 
         <div class="space20"></div>
-        <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent , id: :pagination %>
+        <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent , id: :pagination %>
       </div>
     """
   end

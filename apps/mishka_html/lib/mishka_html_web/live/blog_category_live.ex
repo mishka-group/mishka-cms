@@ -81,6 +81,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
   @impl true
   def handle_info(:menu, socket) do
+    # it should be shown in Blogs menue
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive"})
     {:noreply, socket}
   end

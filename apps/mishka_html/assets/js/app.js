@@ -16,7 +16,6 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import topbar from "topbar"
 import {LiveSocket} from "phoenix_live_view"
-// import ClassicEditor from "@ckeditor/ckeditor5-build-classic"
 import "regenerator-runtime/runtime.js";
 import ClassicEditor from "../static/js/ckeditor"
 
@@ -138,7 +137,7 @@ Hooks.Editor = {
   mounted() {
     var container = document.querySelector("#editor");
     const view = this;
-    var serverHtml;
+    var serverHtml = "";
     if (container != null) {
       ClassicEditor
       .create(container, {
@@ -178,6 +177,7 @@ Hooks.Editor = {
 				} );
 
       this.handleEvent("update-editor-html", ({html}) => {
+        console.log(html)
         serverHtml = html;
         if (theEditor != null) {
           theEditor.setData(html);

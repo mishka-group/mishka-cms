@@ -16,10 +16,9 @@ defmodule MishkaHtmlWeb.BlogsLive do
         body_color: "#40485d",
         user_id: Map.get(session, "user_id"),
         posts: Post.posts(conditions: {1, 20}, filters: %{}),
-        featured_posts: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}),
-        categories: Category.categories(conditions: {1, 20}, filters: %{})
+        categories: Category.categories(filters: %{})
       )
-      {:ok, socket, temporary_assigns: [posts: [], categories: [], featured_posts: []]}
+      {:ok, socket, temporary_assigns: [posts: [], categories: []]}
   end
 
   @impl true
@@ -77,4 +76,14 @@ defmodule MishkaHtmlWeb.BlogsLive do
   #      _ ->  {:noreply, socket}
   #   end
   # end
+
+  defp priority(priority) do
+    case priority do
+      :none -> "ندارد"
+      :low -> "پایین"
+      :medium -> "متوسط"
+      :high -> "بالا"
+      :featured -> "ویژه"
+    end
+  end
 end

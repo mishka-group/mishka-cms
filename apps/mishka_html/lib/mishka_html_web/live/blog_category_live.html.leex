@@ -9,7 +9,7 @@
 
         <article class="col-sm">
           <div class="row">
-            <%= for item <- [1, 2, 3, 4, 1, 2, 3, 5] do %>
+            <%= for item <- @categories.entries do %>
               <article class="col-sm-4 home-blog-posts-normal-with-body rtl home-image-post">
                 <article class="container-fluid home-image-post  rtl home-image-post">
                   <img class="img-fluid client-home-normal-post-image" src="/images/<%= item %>.jpg" alt="">

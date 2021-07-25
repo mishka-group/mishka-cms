@@ -47,7 +47,7 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
                     </div>
 
                     <div class="col">
-                        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.TimeConverterComponent,
+                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                             span_id: "inserted_at-#{item.id}-component",
                             time: item.inserted_at
                         %>
@@ -78,7 +78,7 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
 
         <div class="space20"></div>
         <%= if @comments.entries != [] do %>
-        <%= live_component @socket, MishkaHtmlWeb.Admin.PaginationComponent,
+        <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent,
                     id: :pagination,
                     pagination_url: @pagination_url,
                     data: @comments,

@@ -27,6 +27,11 @@ p.my-align-right {
   text-align: right !important;
 }
 
+.blog-post-h2-a-link a {
+  color: #fffafa !important;
+  text-decoration: none !important;
+  min-height: 50px;
+}
 
 .editor__editable, main .ck-editor[role='application'] .ck.ck-content, .ck.editor__editable[role='textbox'], .ck.ck-editor__editable[role='textbox'], .ck.editor[role='textbox'],
 #editor,
@@ -34,6 +39,17 @@ p.my-align-right {
   font-family: 'Vazir-Regular' !important;
   direction: rtl !important;
   text-align: justify;
+}
+
+.home-blog-posts-normal-with-body-footer .badge {
+  font-size: 10px;
+}
+
+.body-of-blogs-posts {
+  font-size: 12px;
+  text-align: justify;
+  line-height: 20px;
+  min-height: 120px;
 }
 
 .client-header {

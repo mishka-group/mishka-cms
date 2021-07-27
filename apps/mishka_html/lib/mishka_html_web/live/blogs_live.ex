@@ -57,9 +57,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
          {:error, :show_by_user_and_post_id, :not_found} <- Like.show_by_user_and_post_id(socket.assigns.user_id, post_id),
          {:ok, :add, :post_like, _like_info} <- Like.create(%{"user_id" => socket.assigns.user_id, "post_id" => post_id}) do
 
-          # TODO: if we can limite it to another user
           notify_subscribers({:liked, socket.assigns.page})
-
           update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
     else
       {:error, :get_record_by_id, _error_tag} ->
@@ -124,7 +122,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   defp update_post_temporary_assigns(socket, page, _filters, user_id) do
     update(socket, :posts, fn _posts ->
-      Post.posts(conditions: {page, 20}, filters: %{}, user_id: user_id)
+      Post.posts(conditions: {page, socket.assigns.page_size}, filters: %{}, user_id: user_id)
     end)
   end
 

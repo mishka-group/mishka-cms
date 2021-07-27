@@ -132,6 +132,7 @@
 
       <div class="space40"></div>
       <div class="client-paginate">
+      <%= if @posts.entries != [] do %>
         <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
                         id: :pagination,
                         pagination_url: MishkaHtmlWeb.BlogsLive,
@@ -139,6 +140,7 @@
                         filters: @filters,
                         count: @page_size
         %>
+        <% end %>
         <div class="clearfix"> </div>
       </div>
 

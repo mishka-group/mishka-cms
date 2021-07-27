@@ -52,7 +52,6 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   @impl true
   def handle_event("like_post", %{"post-id" => post_id}, socket) do
-
     socket = with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
          {:ok, :get_record_by_id, _error_tag, _repo_data} <- Post.show_by_id(post_id),
          {:error, :show_by_user_and_post_id, :not_found} <- Like.show_by_user_and_post_id(socket.assigns.user_id, post_id),
@@ -104,7 +103,6 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   @impl true
   def handle_info({:liked, page}, socket) do
-    # TODO: should test in paginate
     socket = if page == socket.assigns.page do
       update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
     else

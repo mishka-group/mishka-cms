@@ -2,7 +2,6 @@ defmodule MishkaContent.Blog.Post do
 
   alias MishkaDatabase.Schema.MishkaContent.Blog.Post
   alias MishkaContent.Blog.Like, as: UserLiked
-  @user_id "27ad720a-4b97-4c7b-a175-396be2c95d1c"
 
   import Ecto.Query
   use MishkaDatabase.CRUD,
@@ -49,8 +48,9 @@ defmodule MishkaContent.Blog.Post do
     crud_get_by_field("alias_link", alias_link)
   end
 
-  # from(p in Post, join: s in subquery(set), on: s.id == p.id),
   def posts(conditions: {page, page_size}, filters: filters, user_id: user_id) do
+    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
+
     from(
       post in Post,
       join: cat in assoc(post, :blog_categories),
@@ -61,7 +61,6 @@ defmodule MishkaContent.Blog.Post do
     |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-    |> IO.inspect()
   rescue
     Ecto.Query.CastError ->
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}

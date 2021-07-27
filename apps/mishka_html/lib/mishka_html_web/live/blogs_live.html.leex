@@ -6,7 +6,10 @@
 
     <section class="col mx-auto client-content vazir">
       <div class="row ltr">
-
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
         <article class="col-sm">
           <div class="row">
             <%= for item <- @posts.entries do %>
@@ -70,7 +73,7 @@
                     </span>
 
                     <span>
-                      <span class="text-left float-left">
+                      <span class="text-left float-left <%= if !is_nil(item.liked_user.post_id), do:  "suit-heart-svg" %>">
                         <%= item.like_count %>
                         <%= if !is_nil(@user_id) do %>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -128,9 +131,16 @@
       </div>
 
       <div class="space40"></div>
-      <p class="text-center">
-          <button type="button" class="btn btn-outline-secondary btn-lg ">نمایش بیشتر مطالب</button>
-      </p>
+      <div class="client-paginate">
+        <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
+                        id: :pagination,
+                        pagination_url: MishkaHtmlWeb.BlogsLive,
+                        data: @posts,
+                        filters: @filters,
+                        count: @page_size
+        %>
+        <div class="clearfix"> </div>
+      </div>
 
     </section>
 </div>

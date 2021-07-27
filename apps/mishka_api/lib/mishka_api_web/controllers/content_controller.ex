@@ -17,7 +17,8 @@ defmodule MishkaApiWeb.ContentController do
     # list of categories
     filters = Map.take(params, Post.allowed_fields(:string))
 
-    Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters))
+    # TODO: nil should be replaced with user_id
+    Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: nil)
     |> MishkaApi.ContentProtocol.posts(conn)
   end
 
@@ -26,7 +27,8 @@ defmodule MishkaApiWeb.ContentController do
     # list of categories
     filters = Map.take(params, Post.allowed_fields(:string))
 
-    Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters))
+    # TODO: nil should be replaced with user_id
+    Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: nil)
     |> MishkaApi.ContentProtocol.posts(conn)
   end
 

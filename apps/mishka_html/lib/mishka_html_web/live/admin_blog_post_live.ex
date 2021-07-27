@@ -177,8 +177,6 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
   def handle_event("draft", %{"_target" => ["post", type], "post" => params}, socket) when type not in ["main_image", "main_image"] do
     # save in genserver
-
-    IO.inspect(type)
     {_key, value} = Map.take(params, [type])
     |> Map.to_list()
     |> List.first()

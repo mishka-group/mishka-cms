@@ -129,7 +129,8 @@ Hooks.TextSearch = {
 const ckeditorItems = ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 
   'blockQuote', 'insertTable', 'undo','redo','fontSize','highlight','pageBreak','todoList','alignment','-','code',
   'codeBlock', 'findAndReplace', 'fontBackgroundColor', 'fontColor', 'horizontalLine', '|', 'imageInsert', 'removeFormat', 
-  'sourceEditing', 'specialCharacters', 'restrictedEditingException', 'strikethrough', 'underline', 'textPartLanguage'
+  'sourceEditing', 'specialCharacters', 'restrictedEditingException', 'strikethrough', 'underline', 'textPartLanguage', 
+  '|', 'htmlEmbed'
 ]
 
 var theEditor = null;
@@ -153,8 +154,7 @@ Hooks.Editor = {
 					]
 				},
 				image: {
-					toolbar: ['linkImage', 'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side',
-					]
+					toolbar: ['linkImage', 'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', 'toggleImageCaption']
 				},
 				table: {
 					contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableCellProperties', 'tableProperties']

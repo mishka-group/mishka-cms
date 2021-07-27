@@ -48,7 +48,7 @@ defmodule MishkaContent.Blog.Post do
     crud_get_by_field("alias_link", alias_link)
   end
 
-  def posts(conditions: {page, page_size}, filters: filters, user_id: user_id) do
+  def posts(conditions: {page, page_size}, filters: filters, user_id: user_id) when is_binary(user_id) or is_nil(user_id) do
     user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
 
     from(

@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   alias MishkaContent.Blog.{Category, Post, Like}
 
+  @impl true
   def mount(_params, session, socket) do
     if connected?(socket) do
       subscribe()
@@ -29,7 +30,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
   end
 
   @impl true
-  def handle_params(%{"page" => page, "count" => _count} = params, _url, socket) do
+  def handle_params(%{"page" => page, "count" => _count}, _url, socket) do
     socket =
       socket
       |> assign([posts: Post.posts(conditions: {page, socket.assigns.page_size}, filters: socket.assigns.filters, user_id: socket.assigns.user_id), page: page])
@@ -49,10 +50,11 @@ defmodule MishkaHtmlWeb.BlogsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("like_post", %{"post-id" => post_id}, socket) do
 
     socket = with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
-         {:ok, :get_record_by_id, _error_tag, repo_data} <- Post.show_by_id(post_id),
+         {:ok, :get_record_by_id, _error_tag, _repo_data} <- Post.show_by_id(post_id),
          {:error, :show_by_user_and_post_id, :not_found} <- Like.show_by_user_and_post_id(socket.assigns.user_id, post_id),
          {:ok, :add, :post_like, _like_info} <- Like.create(%{"user_id" => socket.assigns.user_id, "post_id" => post_id}) do
 
@@ -95,10 +97,12 @@ defmodule MishkaHtmlWeb.BlogsLive do
     {:noreply, update_category_temporary_assigns(socket)}
   end
 
+  @impl true
   def handle_info({:post, :ok, _repo_record}, socket) do
     update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
   end
 
+  @impl true
   def handle_info({:liked, page}, socket) do
     # TODO: should test in paginate
     socket = if page == socket.assigns.page do

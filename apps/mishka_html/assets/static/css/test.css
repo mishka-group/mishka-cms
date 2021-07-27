@@ -49,6 +49,11 @@ p.my-align-right {
   font-size: 10px;
 }
 
+.ck-source-editing-area textarea,
+.ck.ck-editor__main textarea {
+  min-height: 400px !important;
+  overflow-y: scroll !important;
+}
 
 .client-paginate .page-item .page-link {
   background-color: transparent !important;

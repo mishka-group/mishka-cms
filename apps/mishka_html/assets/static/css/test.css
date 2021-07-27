@@ -23,6 +23,10 @@
   font-family: Vazir-Regular;
 }
 
+.suit-heart-svg svg {
+  fill: red !important;
+}
+
 p.my-align-right {
   text-align: right !important;
 }
@@ -43,6 +47,13 @@ p.my-align-right {
 
 .home-blog-posts-normal-with-body-footer .badge {
   font-size: 10px;
+}
+
+
+.client-paginate .page-item .page-link {
+  background-color: transparent !important;
+  border: 1px solid #3e3e3e !important;
+  color: #dadada !important;
 }
 
 .body-of-blogs-posts {

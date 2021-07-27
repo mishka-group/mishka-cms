@@ -92,9 +92,10 @@ defmodule MishkaContentTest.Blog.PostTest do
       {:ok, :add, :post, _post_data} = assert Post.create(
         Map.merge(@post_info, %{"category_id" => category_data.id})
       )
-      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{status: :active}).entries)
-      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{priority: :none, status: :active, category_id: category_data.id}).entries)
-      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{}).entries)
+      # TODO: nil should be replaced with user_id
+      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{status: :active}, user_id: nil).entries)
+      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{priority: :none, status: :active, category_id: category_data.id}, user_id: nil).entries)
+      1 = assert length(Post.posts(conditions: {1, 20}, filters: %{}, user_id: nil).entries)
     end
 
     test "show post with counted like" do

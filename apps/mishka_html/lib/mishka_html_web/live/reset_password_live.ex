@@ -21,11 +21,9 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
     # the message of put flash should be a public info of user
     # serach how to refresh Capcha
     with {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(email) do
-        IO.inspect(repo_data)
       {:noreply, socket}
     else
       {:error, :get_record_by_field, error_tag} ->
-        IO.inspect(error_tag)
         {:noreply, socket}
     end
   end

@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
         page_title: "بلاگ",
         body_color: "#40485d",
         user_id: Map.get(session, "user_id"),
-        posts: Post.posts(conditions: {1, 20}, filters: %{}),
+        posts: Post.posts(conditions: {1, 20}, filters: %{}, user_id: Map.get(session, "user_id")),
         featured_posts: [],
         categories: Category.categories(conditions: {1, 20}, filters: %{})
       )
@@ -29,7 +29,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
       # chenge page_title: "بلاگ" to category exists name
       socket =
         socket
-        |> assign([posts: Post.posts(conditions: {page, 20}, filters: %{}), page: page])
+        |> assign([posts: Post.posts(conditions: {page, 20}, filters: %{}, user_id: socket.assigns.user_id), page: page])
     {:noreply, socket}
   end
 

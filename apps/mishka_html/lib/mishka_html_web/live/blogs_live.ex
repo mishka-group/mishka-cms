@@ -5,28 +5,42 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   def mount(_params, session, socket) do
     if connected?(socket) do
+      subscribe()
       Category.subscribe()
       Post.subscribe()
     end
-    # we need to input seo tags
+
+    # TODO: we need to input seo tags
     Process.send_after(self(), :menu, 100)
     user_id = Map.get(session, "user_id")
     socket =
       assign(socket,
         page_title: "بلاگ",
+        page_size: 12,
+        filters: %{},
         body_color: "#40485d",
+        open_modal: false,
+        page: 1,
         user_id: Map.get(session, "user_id"),
-        posts: Post.posts(conditions: {1, 20}, filters: %{}, user_id: if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)),
+        posts: Post.posts(conditions: {1, 20}, filters: %{}, user_id: user_id),
         categories: Category.categories(filters: %{})
       )
       {:ok, socket, temporary_assigns: [posts: [], categories: []]}
   end
 
   @impl true
+  def handle_params(%{"page" => page, "count" => _count} = params, _url, socket) do
+    socket =
+      socket
+      |> assign([posts: Post.posts(conditions: {page, socket.assigns.page_size}, filters: socket.assigns.filters, user_id: socket.assigns.user_id), page: page])
+      {:noreply, socket}
+  end
+
+  @impl true
   def handle_params(%{"page" => page}, _url, socket) do
     socket =
       socket
-      |> assign([posts: Post.posts(conditions: {page, 20}, filters: %{}), page: page])
+      |> assign([posts: Post.posts(conditions: {page, socket.assigns.page_size}, filters: socket.assigns.filters, user_id: socket.assigns.user_id), page: page])
     {:noreply, socket}
   end
 
@@ -37,27 +51,34 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   def handle_event("like_post", %{"post-id" => post_id}, socket) do
 
-    with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
+    socket = with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
+         {:ok, :get_record_by_id, _error_tag, repo_data} <- Post.show_by_id(post_id),
          {:error, :show_by_user_and_post_id, :not_found} <- Like.show_by_user_and_post_id(socket.assigns.user_id, post_id),
          {:ok, :add, :post_like, _like_info} <- Like.create(%{"user_id" => socket.assigns.user_id, "post_id" => post_id}) do
 
-          IO.inspect("yes did it")
-          # TODO: we need to update list with filters after creating or update just the record we want or let the handle info to do this
-          socket
-    else
-      {:ok, :show_by_user_and_post_id, liked_record} ->
-        # TODO: we need to update list with filters after deleting or let the handle info to do this
+          # TODO: if we can limite it to another user
+          notify_subscribers({:liked, socket.assigns.page})
 
-        Like.delete(liked_record.id)
+          update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
+    else
+      {:error, :get_record_by_id, _error_tag} ->
+
         socket
+        |> put_flash(:warning, "به نظر می رسد مطلب مذکور حذف شده است.")
+
+      {:ok, :show_by_user_and_post_id, liked_record} ->
+        Like.delete(liked_record.id)
+        notify_subscribers({:liked, socket.assigns.page})
+        update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
 
       {:error, :show_by_user_and_post_id, :cast_error}  ->
-        # TODO: we need to add flash error sth wrong and tell the user refresh the page
-        socket
+          socket
+          |> put_flash(:warning, "خطایی در دریافت اطلاعات وجود آماده است.")
+          |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
       {:user_id, false} ->
-        # TODO: I thinks the user want to be a noob atacker then let him try more without any reaction
         socket
+        |> put_flash(:warning, "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید.")
     end
 
     {:noreply, socket}
@@ -69,42 +90,25 @@ defmodule MishkaHtmlWeb.BlogsLive do
     {:noreply, socket}
   end
 
-  # @impl true
-  # def handle_info({:category, :ok, repo_record}, socket) do
-  #   case repo_record.__meta__.state do
-  #     :loaded ->
+  @impl true
+  def handle_info({:category, :ok, _repo_record}, socket) do
+    {:noreply, update_category_temporary_assigns(socket)}
+  end
 
-  #       socket = category_assign(
-  #         socket,
-  #         params: socket.assigns.filters,
-  #         page_size: socket.assigns.page_size,
-  #         page_number: socket.assigns.page,
-  #       )
+  def handle_info({:post, :ok, _repo_record}, socket) do
+    update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
+  end
 
-  #       {:noreply, socket}
+  def handle_info({:liked, page}, socket) do
+    # TODO: should test in paginate
+    socket = if page == socket.assigns.page do
+      update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
+    else
+      socket
+    end
+    {:noreply, socket}
+  end
 
-  #     :deleted -> {:noreply, socket}
-  #      _ ->  {:noreply, socket}
-  #   end
-  # end
-
-  # def handle_info({:post, :ok, repo_record}, socket) do
-  #   case repo_record.__meta__.state do
-  #     :loaded ->
-
-  #       socket = post_assign(
-  #         socket,
-  #         params: socket.assigns.filters,
-  #         page_size: socket.assigns.page_size,
-  #         page_number: socket.assigns.page,
-  #       )
-
-  #       {:noreply, socket}
-
-  #     :deleted -> {:noreply, socket}
-  #      _ ->  {:noreply, socket}
-  #   end
-  # end
 
   defp priority(priority) do
     case priority do
@@ -114,5 +118,25 @@ defmodule MishkaHtmlWeb.BlogsLive do
       :high -> "بالا"
       :featured -> "ویژه"
     end
+  end
+
+  defp update_post_temporary_assigns(socket, page, _filters, user_id) do
+    update(socket, :posts, fn _posts ->
+      Post.posts(conditions: {page, 20}, filters: %{}, user_id: user_id)
+    end)
+  end
+
+  defp update_category_temporary_assigns(socket) do
+    update(socket, :categories, fn _categories ->
+      Category.categories(filters: %{})
+    end)
+  end
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "client_blogs")
+  end
+
+  def notify_subscribers({:liked, user_page}) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blogs", {:liked, user_page})
   end
 end

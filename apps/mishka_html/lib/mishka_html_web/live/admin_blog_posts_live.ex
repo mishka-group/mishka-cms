@@ -4,20 +4,22 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   alias MishkaContent.Blog.Post
 
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Post.subscribe()
     Process.send_after(self(), :menu, 100)
+    user_id = Map.get(session, "user_id")
     socket =
       assign(socket,
         page_size: 10,
+        user_id: Map.get(session, "user_id"),
         filters: %{},
         page: 1,
         open_modal: false,
         component: nil,
         page_title: "مدیریت مطالب",
         body_color: "#a29ac3cf",
-        posts: Post.posts(conditions: {1, 10}, filters: %{}),
-        fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}),
+        posts: Post.posts(conditions: {1, 10}, filters: %{}, user_id: user_id),
+        fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}, user_id: user_id),
       )
     {:ok, socket, temporary_assigns: [posts: []]}
   end
@@ -148,7 +150,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   defp post_assign(socket, params: params, page_size: count, page_number: page) do
     assign(socket,
         [
-          posts: Post.posts(conditions: {page, count}, filters: post_filter(params)),
+          posts: Post.posts(conditions: {page, count}, filters: post_filter(params), user_id: socket.assigns.user_id),
           page_size: count,
           filters: params,
           page: page

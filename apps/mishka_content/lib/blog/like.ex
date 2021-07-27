@@ -10,8 +10,13 @@ defmodule MishkaContent.Blog.Like do
 
   @behaviour MishkaDatabase.CRUD
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_like")
+  end
+
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:like)
   end
 
   def edit(attrs) do
@@ -20,6 +25,7 @@ defmodule MishkaContent.Blog.Like do
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:like)
   end
 
   def delete(user_id, post_id) do
@@ -59,7 +65,16 @@ defmodule MishkaContent.Blog.Like do
     select: %{post_id: like.post_id, user_id: like.user_id})
   end
 
+  def notify_subscribers({:ok, _, :post_like, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "blog_like", {type_send, :ok, repo_data})
+    params
+  end
 
+  def notify_subscribers(params, _) do
+    IO.inspect(params)
+    IO.puts "this is a unformed"
+    params
+  end
 
   def allowed_fields(:atom), do: BlogLike.__schema__(:fields)
   def allowed_fields(:string), do: BlogLike.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

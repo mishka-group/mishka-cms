@@ -254,9 +254,12 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
       {:aborted, {:already_exists, Token}} ->
         check_token_table()
 
-      _ ->
+      {:aborted, {:bad_type, Token, :disc_only_copies, :nonode@nohost}} ->
+        Logger.info("MnesiaToken was recreated")
+        Mnesia.stop()
+        start_token()
+      _n ->
         check_token_table()
-
     end
   end
 

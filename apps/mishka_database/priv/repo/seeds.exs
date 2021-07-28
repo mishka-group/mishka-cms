@@ -1,15 +1,43 @@
 alias MishkaUser.Acl.{Role, Permission, UserRole}
 alias MishkaUser.User
 alias MishkaContent.Blog.{Category, Post}
+alias MishkaContent.Blog.TagMapper
+alias MishkaContent.Blog.Tag
+alias MishkaContent.Blog.Author
 
 right_user_info = %{
-  "full_name" => "admin seeds",
+  "full_name" => "کاربر مدیریت یک",
   "username" => "admin_seeds",
   "email" => "admin-seeds@test.com",
   "password" => "AdminSeedsPassword",
   "status" => 1,
   "unconfirmed_email" => nil
 }
+
+right_user_info2 = %{
+  "full_name" => "کاربر مدیریت دو",
+  "username" => "admin_seeds1",
+  "email" => "admin-seeds1@test.com",
+  "password" => "AdminSeedsPassword",
+  "status" => 1,
+  "unconfirmed_email" => nil
+}
+
+tags = Enum.map(Enum.shuffle(1..10), fn x ->
+  case Tag.create(%{
+    title: "برچسب #{x}",
+    alias_link: "barchasb-#{x}",
+    meta_keywords: "برچسب #{x}",
+    meta_description: "این برچسب در مورد برچسب #{x} هست",
+    custom_title: "برچسب #{x}",
+    robots: :IndexFollow,
+    }) do
+    {:ok, :add, :blog_tag, tag_info} -> tag_info.id
+
+    _ -> nil
+  end
+end) |> Enum.reject(fn x -> is_nil(x) end)
+
 
 sample_post =
   """
@@ -65,8 +93,8 @@ categories  = [
     end
 end) |> Enum.reject(fn x -> is_nil(x) end)
 
-Enum.map(Enum.shuffle(1..60), fn x ->
-  Post.create(%{
+posts = Enum.map(Enum.shuffle(1..60), fn x ->
+  case Post.create(%{
     "title" => "موضوع مورد بحث #{x}",
     "short_description" => "طراحی سایت برای بهبود چطور می تواند برای ما باشدطراحی سایت برای بهبود چطور می تواند برای ما باشدطراحی سایت برای بهبود چطور می تواند برای ما باشد طراحی سایت برای بهبود چطور می تواند برای ما باشدطراحی سایت برای بهبود چطور می تواند برای ما باشد",
     "main_image" => "http://localhost:4000/images/#{Enum.random([1, 2, 3, 4, 5])}.jpg",
@@ -76,16 +104,44 @@ Enum.map(Enum.shuffle(1..60), fn x ->
     "alias_link" => "subject-#{x}",
     "robots" => :IndexFollow,
     "category_id" => Enum.random(categories)
-  })
+  }) do
+    {:ok, :add, :post, post_info} -> post_info.id
+    _ -> nil
+  end
+end) |> Enum.reject(fn x -> is_nil(x) end)
+
+
+Enum.map(posts, fn post_id ->
+  Enum.map(Enum.take_random(tags, 4), fn tag_id ->
+    TagMapper.create(%{
+      post_id: post_id,
+      tag_id: tag_id
+    })
+  end)
 end)
 
+
+
 with  {:ok, :add, :user, user_data} <- User.create(right_user_info),
+      {:ok, :add, :user, user_data2} <- User.create(right_user_info2),
       {:ok, :add, :role, data} <- Role.create(%{name: "admin seeds", display_name: "admin_seeds"}),
       {:ok, :add, :permission, _permission_data} <- Permission.create(%{role_id: data.id, value: "*"}),
-      {:ok, :add, :user_role, _user_role_data} <- UserRole.create(%{role_id: data.id, user_id: user_data.id}) do
+      {:ok, :add, :user_role, _user_role_data} <- UserRole.create(%{role_id: data.id, user_id: user_data.id}),
+      {:ok, :add, :user_role, _user_role_data} <- UserRole.create(%{role_id: data.id, user_id: user_data2.id}) do
 
     IO.inspect("Seeds Admin User was imported: ** user_email: #{right_user_info["email"]} / user_password: #{right_user_info["password"]}")
 else
   _ ->
     IO.inspect("Seeds Admin User was imported before")
 end
+
+users = MishkaUser.User.users(conditions: {1, 2}, filters: %{})
+users = Enum.map(users.entries, fn user ->
+  user.id
+end)
+
+Enum.map(posts, fn post_id ->
+  Enum.map(users, fn user_id ->
+    Author.create(%{"post_id" => post_id, "user_id" => user_id})
+  end)
+end)

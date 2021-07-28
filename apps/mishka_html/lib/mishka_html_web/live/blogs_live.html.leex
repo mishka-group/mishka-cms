@@ -118,7 +118,7 @@
                       to: Routes.live_path(@socket, MishkaHtmlWeb.BlogCategoryLive, cat.category_alias_link)
                   %>
                 </div>
-                <div class="col-sm col-lg-2 cat-badges">2</div>
+                <div class="col-sm col-lg-2 cat-badges"><%= cat.post_count %></div>
               </div>
             <% end %>
 

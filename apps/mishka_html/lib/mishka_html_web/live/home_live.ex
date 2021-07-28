@@ -1,9 +1,13 @@
 defmodule MishkaHtmlWeb.HomeLive do
   use MishkaHtmlWeb, :live_view
 
+  # TODO: we need to input seo tags
+  # TODO: show content
+  # TODO: show f posts
+  # TODO: paginate
+
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
-    # we need to input seo tags
     socket =
       assign(socket,
         page_title: "تگرگ",

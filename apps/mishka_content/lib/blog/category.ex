@@ -69,8 +69,9 @@ defmodule MishkaContent.Blog.Category do
 
   def categories(filters: filters) do
     try do
-      query = from(cat in Category) |> convert_filters_to_where(filters)
-      from([cat] in query,
+      query = from(cat in Category, left_join: post in assoc(cat, :blog_posts)) |> convert_filters_to_where(filters)
+      from([cat, post] in query,
+      group_by: [cat.id, post.category_id],
       select: %{
         category_id: cat.id,
         category_title: cat.title,
@@ -81,6 +82,7 @@ defmodule MishkaContent.Blog.Category do
         category_visibility: cat.category_visibility,
         category_updated_at: cat.updated_at,
         category_inserted_at: cat.inserted_at,
+        post_count: count(post.id)
       })
       |> MishkaDatabase.Repo.all()
     rescue

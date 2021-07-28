@@ -339,7 +339,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :post), %{post_id: post_data.id, status: post_data.status})
+        |> post(Routes.content_path(conn, :post), %{post_id: post_data.alias_link, status: post_data.status})
 
       assert %{
         "action" => "post",
@@ -359,7 +359,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
         |> post(Routes.content_path(conn, :post), %{
-        post_id: post_data.id,
+        post_id: post_data.alias_link,
         status: post_data.status,
         comment: %{
           page: 1,

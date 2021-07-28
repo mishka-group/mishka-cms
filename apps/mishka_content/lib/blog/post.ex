@@ -109,26 +109,28 @@ defmodule MishkaContent.Blog.Post do
     }
   end
 
-  def post(post_id, status) do
+  def post(alias_link, status) do
     # when this project has many records as like, I think like counter should be seprated or create a
     # lazy query instead of this
     # Post comments were seperated because the comment module is going to be used whole the project not only post
     from(post in Post,
-    where: post.id == ^post_id and post.status == ^status,
+    where: post.alias_link == ^alias_link and post.status == ^status,
     join: cat in assoc(post, :blog_categories),
     where: cat.status == ^status,
     order_by: [desc: post.inserted_at, desc: post.id],
     left_join: author in assoc(post, :blog_authors),
     left_join: like in assoc(post, :blog_likes),
     left_join: user in assoc(author, :users),
-    preload: [blog_categories: cat, blog_likes: like, blog_authors: {author, users: user}],
+    left_join: tag_map in assoc(post, :blog_tags_mappers),
+    left_join: tag in assoc(tag_map, :blog_tags),
+    preload: [blog_categories: cat, blog_likes: like, blog_authors: {author, users: user}, blog_tags: tag],
     select: map(post, [
         :id, :title, :short_description, :main_image, :header_image, :description, :status,
         :priority, :location, :unpublish, :alias_link, :meta_keywords,
         :meta_description, :custom_title, :robots, :post_visibility, :allow_commenting,
         :allow_liking, :allow_printing, :allow_reporting, :allow_social_sharing,
         :allow_bookmarking, :show_hits, :show_time, :show_authors, :show_category,
-        :show_links, :show_location, :category_id,
+        :show_links, :show_location, :category_id, :inserted_at, :updated_at,
 
         blog_categories: [:id, :title, :short_description, :main_image, :header_image, :description, :status,
         :sub, :alias_link, :meta_keywords, :meta_description, :custom_title, :robots,
@@ -137,11 +139,15 @@ defmodule MishkaContent.Blog.Post do
         :allow_bookmarking, :allow_notif, :show_hits, :show_time, :show_authors,
         :show_category, :show_links, :show_location],
 
-        blog_likes: [:id],
+        blog_likes: [:id], #add group by and count instead of loadding all ides
 
         blog_authors: [
           :id, :user_id, :post_id,
           users: [:id, :full_name, :username]
+        ],
+
+        blog_tags: [
+          :id, :title, :alias_link, :custom_title
         ]
       ]
     ))

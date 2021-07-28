@@ -32,23 +32,23 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.posts(conn)
   end
 
-  def post(conn, %{"post_id" => post_id, "status" => status, "comment" =>
+  def post(conn, %{"alias_link" => alias_link, "status" => status, "comment" =>
   %{
     "page" => _page,
     "filters" => %{"status" => status}
   } = comment}) when status in [:active, :archive] do
     # action blogs:view
-    Post.post(post_id, status)
+    Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: comment})
   end
 
-  def post(conn, %{"post_id" => post_id, "status" => status, "comment" =>
+  def post(conn, %{"alias_link" => alias_link, "status" => status, "comment" =>
   %{
     "page" => _page,
     "filters" => _filters
   } = comment})do
     # action blogs:edit
-    Post.post(post_id, status)
+    Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: comment})
   end
 

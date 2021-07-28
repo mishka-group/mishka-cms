@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Public.LiveFlashComponent do
 
   def render(assigns) do
     ~L"""
-      <div class="col-sm-12" id="live-flash">
+      <div class="col-sm-12 rtl" id="live-flash">
         <%= if live_flash(@flash, :info) do %>
           <div class="space20"></div>
           <p class="col titile-of-blog-posts alert alert-info" role="alert" phx-click="lv:clear-flash" phx-value-key="info">

@@ -809,9 +809,17 @@ select.form-select {
   border-radius: 8px;
   color: #ffffff;
   margin: 10px;
-  max-width: 600px !important;
+  /* max-width: 600px !important; */
   line-height: 30px;
   text-align: justify;
+}
+
+.tag-live-link {
+  color: #f1f5ff;
+  text-decoration: none;
+}
+.client-comment-sent:hover {
+  background: #3c4149;
 }
 
 .comment-user-profile {
@@ -822,6 +830,10 @@ select.form-select {
 
 .comment-user-name {
   font-size: 18px;
+}
+
+.comment-body-section {
+  padding: 25px;
 }
 
 /* colors */

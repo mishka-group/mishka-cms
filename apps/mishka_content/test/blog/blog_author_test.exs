@@ -125,13 +125,13 @@ defmodule MishkaContentTest.Blog.BlogAuthorTest do
         }
       )
 
-      2 = assert length(Post.post(context.post_info.id, context.post_info.status).blog_authors)
+      2 = assert length(Post.post(context.post_info.alias_link, context.post_info.status).blog_authors)
     end
   end
 
   describe "UnHappy | Author CRUD DB ಠ╭╮ಠ" do
     test "show Authors of a post", context do
-      [] = assert Post.post(context.post_info.id, context.post_info.status).blog_authors
+      [] = assert Post.post(context.post_info.alias_link, context.post_info.status).blog_authors
     end
 
     test "create an author for a post", context do

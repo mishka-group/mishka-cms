@@ -26,8 +26,8 @@ defmodule MishkaHtmlWeb.Router do
     live "/blogs", BlogsLive
     live "/blog/category/:alias_link", BlogCategoryLive
     live "/blog/:alias_link", BlogPostLive
-    live "/blog/tags", BlogPostLive
-    live "/blog/tag", BlogPostLive
+    live "/blog/tags", HomeLive
+    live "/blog/tag", HomeLive
   end
 
   scope "/", MishkaHtmlWeb do

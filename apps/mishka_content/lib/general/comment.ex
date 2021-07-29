@@ -58,8 +58,16 @@ defmodule MishkaContent.General.Comment do
     crud_get_by_field("user_id", user_id)
   end
 
-  def comments(conditions: {page, page_size}, filters: filters) do
-    from(com in Comment, join: user in assoc(com, :users)) |> convert_filters_to_where(filters)
+  def comments(conditions: {page, page_size}, filters: filters, user_id: user_id) when is_binary(user_id) or is_nil(user_id) do
+    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
+
+    from(com in Comment,
+    join: user in assoc(com, :users),
+    left_join: like in assoc(com, :comments_likes),
+    left_join: liked_user in subquery(CommentLike.user_liked()),
+    on: liked_user.user_id == ^user_id and liked_user.comment_id == com.id
+    )
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -82,10 +90,9 @@ defmodule MishkaContent.General.Comment do
   end
 
   defp fields(query) do
-    from [com, user] in query,
+    from [com, user, like, liked_user] in query,
     order_by: [desc: com.inserted_at, desc: com.id],
-    left_join: like in subquery(CommentLike.likes()),
-    on: com.id == like.comment_id,
+    group_by: [com.id, user.id, like.comment_id, liked_user.comment_id, liked_user.user_id],
     select: %{
       id: com.id,
       description: com.description,
@@ -100,7 +107,8 @@ defmodule MishkaContent.General.Comment do
       user_id: user.id,
       user_full_name: user.full_name,
       user_username: user.username,
-      like: like
+      like_count: count(like.id),
+      liked_user: liked_user
     }
   end
 

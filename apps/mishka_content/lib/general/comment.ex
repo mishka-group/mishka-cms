@@ -75,8 +75,16 @@ defmodule MishkaContent.General.Comment do
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
-  def comment(filters: filters) do
-    from(com in Comment, join: user in assoc(com, :users)) |> convert_filters_to_where(filters)
+  def comment(filters: filters, user_id: user_id) do
+    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
+
+    from(com in Comment,
+    join: user in assoc(com, :users),
+    left_join: like in assoc(com, :comments_likes),
+    left_join: liked_user in subquery(CommentLike.user_liked()),
+    on: liked_user.user_id == ^user_id and liked_user.comment_id == com.id
+    )
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.one()
   rescue
@@ -85,7 +93,7 @@ defmodule MishkaContent.General.Comment do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from com in query, where: field(com, ^key) == ^value
+      from [com, user, like, liked_user] in query, where: field(com, ^key) == ^value
     end)
   end
 

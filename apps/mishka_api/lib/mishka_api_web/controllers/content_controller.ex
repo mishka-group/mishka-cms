@@ -153,7 +153,7 @@ defmodule MishkaApiWeb.ContentController do
 
   def comment(conn, %{"filters" => %{"comment_id" => comment_id, "status" => status}}) when status in ["active", "archived"] do
     # action blogs:view
-    Comment.comment(filters: %{id: comment_id, status: status})
+    Comment.comment(filters: %{id: comment_id, status: status}, user_id: nil)
     |> MishkaApi.ContentProtocol.comment(conn, Comment.allowed_fields(:atom))
   end
 
@@ -163,7 +163,7 @@ defmodule MishkaApiWeb.ContentController do
       Map.take(params, Comment.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
 
-    Comment.comment(filters: filters)
+    Comment.comment(filters: filters, user_id: nil)
     |> MishkaApi.ContentProtocol.comment(conn, Comment.allowed_fields(:atom))
   end
 
@@ -173,7 +173,7 @@ defmodule MishkaApiWeb.ContentController do
       Map.take(params, Comment.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
 
-    Comment.comments(conditions: {page, 20}, filters: filters)
+    Comment.comments(conditions: {page, 20}, filters: filters, user_id: nil)
     |> MishkaApi.ContentProtocol.comments(conn, Comment.allowed_fields(:atom))
   end
 
@@ -181,7 +181,7 @@ defmodule MishkaApiWeb.ContentController do
     # action blogs:edit
     filters = Map.take(params, Comment.allowed_fields(:string))
 
-    Comment.comments(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters))
+    Comment.comments(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: nil)
     |> MishkaApi.ContentProtocol.comments(conn, Comment.allowed_fields(:atom))
   end
 

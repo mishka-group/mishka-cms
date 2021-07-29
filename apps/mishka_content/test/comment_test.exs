@@ -92,8 +92,8 @@ defmodule MishkaContentTest.CommentTest do
         Map.merge(@comment_info, %{"section_id" => context.post_info.id, "user_id" => context.user_info.id}
       ))
 
-      1 = assert length(Comment.comments(conditions: {1, 20}, filters: %{priority: :none, status: :active}).entries)
-      1 = assert length(Comment.comments(conditions: {1, 20}, filters: %{id: comment_info.id}).entries)
+      1 = assert length(Comment.comments(conditions: {1, 20}, filters: %{priority: :none, status: :active}, user_id: nil).entries)
+      1 = assert length(Comment.comments(conditions: {1, 20}, filters: %{id: comment_info.id}, user_id: nil).entries)
     end
 
 
@@ -119,14 +119,14 @@ defmodule MishkaContentTest.CommentTest do
       CommentLike.create(%{user_id: user_info_2.id, comment_id: comment_2_info.id})
       CommentLike.create(%{user_id: user_info_2.id, comment_id: comment_info.id})
 
-      2 = assert length Comment.comments(conditions: {1, 20}, filters: %{priority: comment_info.priority, status: :active, section: :blog_post}).entries
+      2 = assert length Comment.comments(conditions: {1, 20}, filters: %{priority: comment_info.priority, status: :active, section: :blog_post}, user_id: nil).entries
 
     end
   end
 
   describe "UnHappy | Comment CRUD DB ಠ╭╮ಠ" do
     test "get comment with condition: {section_id, section, priority, status}", context do
-      0 = assert length(Comment.comments(conditions: {1, 20}, filters: %{user_id: context.user_info.id, section_id: Ecto.UUID.generate, priority: :none, status: :active, section: :blog_post}).entries)
+      0 = assert length(Comment.comments(conditions: {1, 20}, filters: %{user_id: context.user_info.id, section_id: Ecto.UUID.generate, priority: :none, status: :active, section: :blog_post}, user_id: nil).entries)
     end
 
     test "create a commnt", context do

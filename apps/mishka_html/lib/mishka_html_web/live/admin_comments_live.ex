@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
         component: nil,
         page_title: "مدیریت نظرات",
         body_color: "#a29ac3cf",
-        comments: Comment.comments(conditions: {1, 10}, filters: %{})
+        comments: Comment.comments(conditions: {1, 10}, filters: %{}, user_id: nil)
       )
     {:ok, socket, temporary_assigns: [comments: []]}
   end
@@ -166,7 +166,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
   defp comment_assign(socket, params: params, page_size: count, page_number: page) do
     assign(socket,
         [
-          comments: Comment.comments(conditions: {page, count}, filters: comment_filter(params)),
+          comments: Comment.comments(conditions: {page, count}, filters: comment_filter(params), user_id: nil),
           page_size: count,
           filters: params,
           page: page

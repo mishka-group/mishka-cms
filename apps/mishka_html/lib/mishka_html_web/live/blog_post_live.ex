@@ -1,7 +1,7 @@
 defmodule MishkaHtmlWeb.BlogPostLive do
   use MishkaHtmlWeb, :live_view
 
-  alias MishkaContent.Blog.{Category, Post}
+  alias MishkaContent.Blog.Post
   alias MishkaDatabase.Schema.MishkaContent.Comment, as: CommentSchema
   alias MishkaContent.General.Comment
   alias MishkaContent.General.CommentLike
@@ -83,7 +83,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
+  def handle_params(_params, _url, socket) do
     Process.send_after(self(), {:load_comments, socket.assigns.id}, 4000)
     {:noreply, socket}
   end
@@ -93,7 +93,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     socket = case socket.assigns.user_id do
       nil ->
         assign(socket, comment_msg: "برای ارسال نظر باید وارد وب سایت شوید.")
-      record ->
+      _record ->
         assign(socket, send_comment: true)
     end
 
@@ -109,7 +109,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   @impl true
-  def handle_event("draft", %{"_target" => ["comment", type], "comment" => %{"description" => description}}, socket) do
+  def handle_event("draft", %{"_target" => ["comment", _type], "comment" => %{"description" => description}}, socket) do
     socket =
       socket
       |> assign(description: description)
@@ -169,20 +169,17 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   def handle_event("send_comment", %{"comment" => %{"description" => description}}, socket) do
     # TODO: check what comment status dose admin need?
     socket = with {:post, false} <- {:post, is_nil(Post.post(socket.assigns.alias_link, "active"))},
-         {:ok, :add, :comment, repo_data} <- Comment.create(%{description: description, sub: socket.assigns.sub, section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
+         {:ok, :add, :comment, _repo_data} <- Comment.create(%{description: description, sub: socket.assigns.sub, section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
           notify_subscribers({:comment, socket.assigns.page})
-          socket =
             socket
             |> assign(comment_msg: "نظر شما با موفقیت ارسال شد!!! برای ارسال نظر جدید کلیک کنید.", send_comment: false, sub: nil)
     else
       {:post, true} ->
-        socket =
           socket
           |> put_flash(:info, "چنین محتوایی وجود ندارد یا حذف شده است.")
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
 
       {:error, :add, :comment, repo_error} ->
-        socket =
           socket
           |> assign(changeset: repo_error, sub: nil)
     end
@@ -191,7 +188,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   @impl true
-  def handle_info({:load_comments, section_id}, socket) do
+  def handle_info({:load_comments, _section_id}, socket) do
     socket = update(socket, :comments, fn _comments ->
       Comment.comments(
         conditions: {socket.assigns.page, socket.assigns.page_size},

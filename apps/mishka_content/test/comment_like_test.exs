@@ -109,14 +109,14 @@ defmodule MishkaContentTest.CommentLikeTest do
       {:ok, :add, :comment_like, _comment_like_info} = assert CommentLike.create(%{user_id: user_info_2.id, comment_id: context.comment_info.id})
       {:ok, :add, :comment_like, _comment_like_info} = assert CommentLike.create(%{user_id: user_info_2.id, comment_id: comment_2_info.id})
 
-    query = Comment.comments(conditions: {1, 20}, filters: %{id: context.comment_info.id, section_id: context.comment_info.section_id, section: :blog_post, priority: context.comment_info.priority, status: context.comment_info.status}).entries
-    true = assert Enum.any?(query, fn x -> x.like.count == 2 end)
+    query = Comment.comments(conditions: {1, 20}, filters: %{id: context.comment_info.id, section_id: context.comment_info.section_id, section: :blog_post, priority: context.comment_info.priority, status: context.comment_info.status}, user_id: nil).entries
+    true = assert Enum.any?(query, fn x -> x.like_count == 2 end)
     end
   end
 
   describe "UnHappy | CommentLike CRUD DB ಠ╭╮ಠ" do
     test "likes", _context do
-      [] = assert Comment.comments(conditions: {1, 20}, filters: %{section_id: Ecto.UUID.generate, section: :blog_post, priority: :none,}).entries
+      [] = assert Comment.comments(conditions: {1, 20}, filters: %{section_id: Ecto.UUID.generate, section: :blog_post, priority: :none,}, user_id: nil).entries
     end
 
     test "create a comment like", context do

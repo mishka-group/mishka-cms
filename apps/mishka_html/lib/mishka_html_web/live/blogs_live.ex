@@ -34,7 +34,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
   def handle_params(%{"page" => page, "count" => _count}, _url, socket) do
     socket =
       socket
-      |> assign([posts: Post.posts(conditions: {page, socket.assigns.page_size}, filters: socket.assigns.filters, user_id: socket.assigns.user_id), page: page])
+      |> assign(posts: Post.posts(conditions: {page, socket.assigns.page_size}, filters: socket.assigns.filters, user_id: socket.assigns.user_id), page: page)
       {:noreply, socket}
   end
 
@@ -42,7 +42,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
   def handle_params(%{"page" => page}, _url, socket) do
     socket =
       socket
-      |> assign([posts: Post.posts(conditions: {page, socket.assigns.page_size}, filters: socket.assigns.filters, user_id: socket.assigns.user_id), page: page])
+      |> assign(posts: Post.posts(conditions: {page, socket.assigns.page_size}, filters: socket.assigns.filters, user_id: socket.assigns.user_id), page: page)
     {:noreply, socket}
   end
 

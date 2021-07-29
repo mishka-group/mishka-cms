@@ -125,6 +125,17 @@ Hooks.TextSearch = {
   }
 }
 
+Hooks.ReplyComment = {
+  mounted() {
+    this.handleEvent("jump_to_comment_form", (value) => {
+      var element = document.getElementById("client-blog-post-comment-sending-box");
+      element.scrollIntoView();
+      if (value.description != null) {
+        document.getElementById("client-blog-post-description").value = value.description;
+      }
+    });
+  }
+}
 
 const ckeditorItems = ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 
   'blockQuote', 'insertTable', 'undo','redo','fontSize','highlight','pageBreak','todoList','alignment','-','code',

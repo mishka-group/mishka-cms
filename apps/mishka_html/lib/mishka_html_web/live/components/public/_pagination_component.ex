@@ -28,18 +28,32 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
   end
 
   def handle_event("select-per-page", %{"page" => page}, socket) do
+    socket = case Map.get(socket.assigns, :alias_link) do
+      nil ->
+        push_patch(socket,
+          to:
+            Routes.live_path(
+              socket,
+              socket.assigns.pagination_url,
+              page: page,
+              params: socket.assigns.filters,
+              count: socket.assigns.count
+            )
+        )
+      alias_link ->
+        push_patch(socket,
+          to:
+            Routes.live_path(
+              socket,
+              socket.assigns.pagination_url,
+              alias_link,
+              page: page,
+              params: socket.assigns.filters,
+              count: socket.assigns.count
+            )
+        )
+    end
 
-    socket =
-      push_patch(socket,
-        to:
-          Routes.live_path(
-            socket,
-            socket.assigns.pagination_url,
-            page: page,
-            params: socket.assigns.filters,
-            count: socket.assigns.count
-          )
-      )
 
 
     {:noreply, socket}

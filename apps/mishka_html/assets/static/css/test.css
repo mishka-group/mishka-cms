@@ -27,6 +27,10 @@
   fill: red !important;
 }
 
+.suit-heart-svg {
+  color: red;
+}
+
 p.my-align-right {
   text-align: right !important;
 }
@@ -58,7 +62,7 @@ p.my-align-right {
 .client-paginate .page-item .page-link {
   background-color: transparent !important;
   border: 1px solid #3e3e3e !important;
-  color: #dadada !important;
+  color: #dadada;
 }
 
 .body-of-blogs-posts {
@@ -102,6 +106,12 @@ header {
   padding: 0 !important;
 }
 
+.comment-form-client-post {
+  height: 150px;
+  background: transparent !important;
+  color: #fff !important;
+  border: 1px solid #dadada !important;
+}
 .client-menu-header {
   padding: 10px;
 }
@@ -826,10 +836,16 @@ select.form-select {
   width: 80px;
   height: 80px;
   border-radius: 50%;
+  overflow: hidden !important;
 }
 
+.page-item.active a {
+  color: red !important;
+}
 .comment-user-name {
-  font-size: 18px;
+  font-size: 14px;
+  padding: 0;
+  margin: 0;
 }
 
 .comment-body-section {

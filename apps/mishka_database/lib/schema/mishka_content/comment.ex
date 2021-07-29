@@ -9,9 +9,9 @@ defmodule MishkaDatabase.Schema.MishkaContent.Comment do
   schema "comments" do
 
     field(:description, :string, null: false)
-    field(:status, ContentStatusEnum, null: false)
-    field(:priority, ContentPriorityEnum, null: false)
-    field(:section, CommentSection, null: false)
+    field(:status, ContentStatusEnum, null: false, default: :active)
+    field(:priority, ContentPriorityEnum, null: false, default: :none)
+    field(:section, CommentSection, null: false, default: :blog_post)
     field(:section_id, :binary_id, null: false)
     field(:sub, :binary_id, null: true)
 
@@ -34,7 +34,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Comment do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@all_required, message: "can't be blank")
-    |> validate_length(:description, max: 2000, message: "maximum 2000 characters")
+    |> validate_length(:description, min: 5, max: 2000, message: "حداکثر مجاز ارسال نظر 2000 کاراکتر می باشد و حداقل نیز ۵ کاراکتر")
     |> MishkaDatabase.validate_binary_id(:section_id)
     |> MishkaDatabase.validate_binary_id(:sub)
     |> foreign_key_constraint(:users, message: "this comment has already been taken or you can't delete it because there is a dependency")

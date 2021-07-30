@@ -6,10 +6,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   alias MishkaDatabase.Schema.MishkaContent.Comment, as: CommentSchema
   alias MishkaContent.General.Comment
   alias MishkaContent.General.CommentLike
-  # TODO: like post
-  # TODO: count post likes
-  # TODO: show user if like this post or not
-
   # TODO: go to main post replayed
 
   # TODO: sharing to social media sites

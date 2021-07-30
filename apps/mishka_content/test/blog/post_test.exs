@@ -116,7 +116,8 @@ defmodule MishkaContentTest.Blog.PostTest do
           "user_id" => user_info.id
         }
       )
-      1 = assert length(Post.post(post_data.alias_link, post_data.status).blog_likes)
+
+      1 = assert Like.count_post_likes(post_data.id, user_info.id).count
     end
   end
 

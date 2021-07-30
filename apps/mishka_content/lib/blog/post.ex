@@ -122,7 +122,7 @@ defmodule MishkaContent.Blog.Post do
     left_join: user in assoc(author, :users),
     left_join: tag_map in assoc(post, :blog_tags_mappers),
     left_join: tag in assoc(tag_map, :blog_tags),
-    preload: [blog_categories: cat, blog_likes: like, blog_authors: {author, users: user}, blog_tags: tag],
+    preload: [blog_categories: cat, blog_authors: {author, users: user}, blog_tags: tag],
     order_by: [desc: post.inserted_at, desc: post.id],
     select: map(post, [
         :id, :title, :short_description, :main_image, :header_image, :description, :status,
@@ -138,8 +138,6 @@ defmodule MishkaContent.Blog.Post do
         :allow_reporting, :allow_social_sharing, :allow_subscription,
         :allow_bookmarking, :allow_notif, :show_hits, :show_time, :show_authors,
         :show_category, :show_links, :show_location],
-
-        blog_likes: [:id],
 
         blog_authors: [
           :id, :user_id, :post_id,

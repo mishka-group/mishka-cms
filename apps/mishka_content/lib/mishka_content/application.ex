@@ -7,9 +7,14 @@ defmodule MishkaContent.Application do
 
   @impl true
   def start(_type, _args) do
+    bookmark_runner_config = [
+      strategy: :one_for_one,
+      name: MishkaContent.Cache.BookmarkOtpRunner
+    ]
+
     children = [
-      # Starts a worker by calling: MishkaContent.Worker.start_link(arg)
-      # {MishkaContent.Worker, arg}
+      {Registry, keys: :unique, name: MishkaContent.Cache.BookmarkRegistry},
+      {DynamicSupervisor, bookmark_runner_config},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

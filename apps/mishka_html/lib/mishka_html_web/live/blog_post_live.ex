@@ -2,9 +2,16 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.Blog.Post
+  alias MishkaContent.Blog.Like
   alias MishkaDatabase.Schema.MishkaContent.Comment, as: CommentSchema
   alias MishkaContent.General.Comment
   alias MishkaContent.General.CommentLike
+  # TODO: like post
+  # TODO: count post likes
+  # TODO: show user if like this post or not
+
+  # TODO: go to main post replayed
+
   # TODO: sharing to social media sites
   # TODO: we need to input seo tags
   # TODO: show Options of a post on page
@@ -36,7 +43,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
           Post.subscribe()
           subscribe()
         end
-
         Process.send_after(self(), :menu, 100)
 
         socket =
@@ -55,7 +61,8 @@ defmodule MishkaHtmlWeb.BlogPostLive do
             changeset: CommentSchema.changeset(%CommentSchema{}, %{}),
             comments: [],
             page_size: 12,
-            description: nil
+            description: nil,
+            like: Like.count_post_likes(post.id, Map.get(session, "user_id"))
           )
 
         {:ok, socket, temporary_assigns: [posts: [], comments: []]}
@@ -118,12 +125,46 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   @impl true
+  def handle_event("like_post", _params, socket) do
+    socket = with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
+          {:ok, :get_record_by_id, _error_tag, _repo_data} <- Post.show_by_id(socket.assigns.id),
+          {:error, :show_by_user_and_post_id, :not_found} <- Like.show_by_user_and_post_id(socket.assigns.user_id, socket.assigns.id),
+          {:ok, :add, :post_like, _like_info} <- Like.create(%{"user_id" => socket.assigns.user_id, "post_id" => socket.assigns.id}) do
+
+
+            notify_subscribers({:liked_post, socket.assigns.page})
+            socket
+    else
+      {:error, :get_record_by_id, _error_tag} ->
+        socket
+        |> put_flash(:warning, "به نظر می رسد مطلب مذکور حذف شده است.")
+
+      {:ok, :show_by_user_and_post_id, liked_record} ->
+        Like.delete(liked_record.id)
+        notify_subscribers({:liked_post, socket.assigns.page})
+
+        socket
+
+      {:error, :show_by_user_and_post_id, :cast_error}  ->
+          socket
+          |> put_flash(:warning, "خطایی در دریافت اطلاعات وجود آماده است.")
+          |> push_redirect(to: Routes.live_path(socket, __MODULE__))
+
+      {:user_id, false} ->
+        socket
+        |> put_flash(:warning, "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید.")
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("like_comment", %{"id" => comment_id}, socket) do
     socket = with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
          {:ok, :get_record_by_id, _error_tag, _repo_data} <- Comment.show_by_id(comment_id),
          {:error, :show_by_user_and_comment_id, :not_found} <- CommentLike.show_by_user_and_comment_id(socket.assigns.user_id, comment_id),
          {:ok, :add, :comment_like, _like_info} <- CommentLike.create(%{"user_id" => socket.assigns.user_id, "comment_id" => comment_id}) do
-          notify_subscribers({:liked, socket.assigns.page})
+          notify_subscribers({:liked_comment, socket.assigns.page})
           socket
     else
       {:error, :get_record_by_id, _error_tag} ->
@@ -133,7 +174,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
       {:ok, :show_by_user_and_comment_id, liked_record} ->
         IO.inspect CommentLike.delete(liked_record.id)
-        notify_subscribers({:liked, socket.assigns.page})
+        notify_subscribers({:liked_comment, socket.assigns.page})
         socket
       _n ->
         socket
@@ -225,7 +266,22 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   @impl true
-  def handle_info({:liked, page}, socket) do
+  def handle_info({:liked_post, _page}, socket) do
+    socket = case Post.post(socket.assigns.alias_link, "active") do
+      nil ->
+        socket
+        |> put_flash(:info, "چنین محتوایی وجود ندارد یا حذف شده است.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
+
+      post ->
+        socket
+        |> assign(like: Like.count_post_likes(post.id, socket.assigns.user_id))
+    end
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:liked_comment, page}, socket) do
     socket = if page == socket.assigns.page do
       update(socket, :comments, fn _comments ->
 
@@ -260,7 +316,11 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post_comment", {:comment, user_page})
   end
 
-  def notify_subscribers({:liked, user_page}) do
-    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post_comment", {:liked, user_page})
+  def notify_subscribers({:liked_comment, user_page}) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post_comment", {:liked_comment, user_page})
+  end
+
+  def notify_subscribers({:liked_post, user_page}) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post_comment", {:liked_post, user_page})
   end
 end

@@ -1,9 +1,9 @@
 defmodule MishkaApiWeb.ContentController do
   use MishkaApiWeb, :controller
 
-  # add ip limitter and os info
-  # handel cache of contents
-
+  # TODO: add ip limitter and os info
+  # TODO: handel cache of contents
+  # TODO: change nil user with user_id
 
   alias MishkaContent.Blog.{Category, Post, Like, Tag, TagMapper, BlogLink, Author}
   alias MishkaContent.General.{Comment, CommentLike, Bookmark, Notif, Subscription}
@@ -17,7 +17,6 @@ defmodule MishkaApiWeb.ContentController do
     # list of categories
     filters = Map.take(params, Post.allowed_fields(:string))
 
-    # TODO: nil should be replaced with user_id
     Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: nil)
     |> MishkaApi.ContentProtocol.posts(conn)
   end
@@ -27,7 +26,6 @@ defmodule MishkaApiWeb.ContentController do
     # list of categories
     filters = Map.take(params, Post.allowed_fields(:string))
 
-    # TODO: nil should be replaced with user_id
     Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: nil)
     |> MishkaApi.ContentProtocol.posts(conn)
   end

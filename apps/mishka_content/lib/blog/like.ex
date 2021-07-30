@@ -54,6 +54,22 @@ defmodule MishkaContent.Blog.Like do
     Ecto.Query.CastError -> {:error, :show_by_user_and_post_id, :cast_error}
   end
 
+  def count_post_likes(post_id, user_id) do
+    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
+
+    from(like in BlogLike,
+    where: like.post_id == ^post_id,
+    left_join: liked_user in subquery(user_liked()),
+    on: liked_user.user_id == ^user_id and liked_user.post_id == ^post_id,
+    group_by: [like.post_id, liked_user.post_id, liked_user.user_id],
+    select: %{count: count(like.id), liked_user: liked_user})
+    |> MishkaDatabase.Repo.one()
+    |> case do
+      nil -> %{count: 0, liked_user: %{post_id: nil, user_id: nil}}
+      record -> record
+    end
+  end
+
   def likes() do
     from(like in BlogLike,
     group_by: like.post_id,

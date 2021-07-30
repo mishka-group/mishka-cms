@@ -2046,6 +2046,31 @@ select.form-select {
   text-align: justify;
 }
 
+.client-sub-card-modal .modal-content {
+  background-color: #424141;
+  color: white;
+}
+
+.client-sub-card-modal  {
+  margin: 0 auto;
+  font-size: 14px;
+  text-align: justify;
+}
+
+.client-sub-card-modal .modal-body {
+  padding: 20px 10px;
+  line-height: 30px;
+  text-align: justify;
+}
+
+.client-sub-card-modal .modal-header .modal-title {
+  font-size: 20px;
+}
+
+.client-sub-card-modal .modal-header,
+.client-sub-card-modal .modal-footer {
+  border: 0 !important;
+}
 .svg-div-error-modal {
   text-align: center;
   margin: 0 auto;

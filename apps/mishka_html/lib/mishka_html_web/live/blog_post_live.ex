@@ -6,7 +6,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   alias MishkaDatabase.Schema.MishkaContent.Comment, as: CommentSchema
   alias MishkaContent.General.Comment
   alias MishkaContent.General.CommentLike
-  # TODO: go to main post replayed
 
   # TODO: sharing to social media sites
   # TODO: we need to input seo tags
@@ -58,7 +57,10 @@ defmodule MishkaHtmlWeb.BlogPostLive do
             comments: [],
             page_size: 12,
             description: nil,
-            like: Like.count_post_likes(post.id, Map.get(session, "user_id"))
+            open_modal: false,
+            component: nil,
+            like: Like.count_post_likes(post.id, Map.get(session, "user_id")),
+            sub_comment: %{}
           )
 
         {:ok, socket, temporary_assigns: [posts: [], comments: []]}
@@ -118,6 +120,31 @@ defmodule MishkaHtmlWeb.BlogPostLive do
       |> assign(description: description)
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("sub_comment", %{"sub-id" => sub_id}, socket) do
+    IO.inspect(sub_id)
+    socket = case Comment.comment(filters: %{id: sub_id, section: "blog_post", status: "active"}, user_id: socket.assigns.user_id) do
+      nil ->
+        socket
+        |> put_flash(:warning, "به نظر می رسد نظر مذکور حذف شده باشد.")
+
+      record ->
+        IO.inspect(record)
+        socket
+        |> assign(component: MishkaHtmlWeb.Client.BlogPostLive.SubComment, open_modal: true, sub_comment: %{
+          full_name: record.user_full_name,
+          description: record.description
+        })
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("close_modal", _params, socket) do
+    {:noreply, assign(socket, [open_modal: false, component: nil, sub_comment: %{}])}
   end
 
   @impl true

@@ -45,6 +45,23 @@ defmodule MishkaContent.General.Bookmark do
     crud_get_record(id)
   end
 
+  def user_all_bookmarks(user_id) do
+    from(bk in Bookmark,
+    where: bk.user_id == ^user_id,
+    order_by: [desc: bk.inserted_at, desc: bk.id],
+    select: %{
+      id: bk.id,
+      status: bk.status,
+      section: bk.section,
+      section_id: bk.section_id,
+      extra: bk.extra,
+      user_id: bk.user_id
+    })
+    |> MishkaDatabase.Repo.all()
+  rescue
+    Ecto.Query.CastError -> []
+  end
+
   def bookmarks(conditions: {page, page_size}, filters: filters) do
     from(bk in Bookmark) |> convert_filters_to_where(filters)
     |> fields()

@@ -9,10 +9,6 @@ defmodule MishkaHtmlWeb.Client.BlogPostLive.SubComment do
          phx-capture-click="close_modal">
       <div class="phx-modal-content col-sm-4">
 
-
-
-      <% IO.inspect(@sub_comment) %>
-
       <div class="client-sub-card-modal col vazir rtl">
 
           <div class="modal-content">
@@ -29,13 +25,6 @@ defmodule MishkaHtmlWeb.Client.BlogPostLive.SubComment do
           </div>
         </div>
       </div>
-
-
-
-
-
-
-
 
       </div>
     </div>

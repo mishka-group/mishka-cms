@@ -131,7 +131,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
         |> put_flash(:warning, "به نظر می رسد نظر مذکور حذف شده باشد.")
 
       record ->
-        IO.inspect(record)
         socket
         |> assign(component: MishkaHtmlWeb.Client.BlogPostLive.SubComment, open_modal: true, sub_comment: %{
           full_name: record.user_full_name,

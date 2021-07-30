@@ -2063,6 +2063,9 @@ select.form-select {
   text-align: justify;
 }
 
+.post-h1 span.float-start .bi.bi-bookmark-check {
+  width: 30px !important;
+}
 .client-sub-card-modal .modal-header .modal-title {
   font-size: 20px;
 }

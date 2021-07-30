@@ -39,7 +39,12 @@ defmodule MishkaHtmlWeb.AuthController do
 
   def log_out(conn, _params) do
     if live_socket_id = get_session(conn, :live_socket_id) do
-      MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
+
+      Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
+        :timer.sleep(1000)
+        MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
+      end)
+
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end
 

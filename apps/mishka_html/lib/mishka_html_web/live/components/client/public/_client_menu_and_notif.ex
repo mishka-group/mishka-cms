@@ -46,7 +46,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
                       <li class="nav-item client-menu-nav-item">
                             <%= if !is_nil(@user_id) do %>
-                                <%= link("خروج", to: Routes.auth_path(@socket, :log_out), class: "nav-link client-menu-nav-link") %>
+                                <%= link("خروج", to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
                             <% else %>
                                 <%=
                                 live_redirect "ورود",
@@ -77,6 +77,15 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
       </nav>
       <hr class="menu-space-hr">
     """
+  end
+
+  @impl true
+  def handle_event("log_out", _params, socket) do
+    socket =
+      socket
+      |> redirect(to: Routes.auth_path(socket, :log_out))
+
+    {:noreply, socket}
   end
 
   def handle_info({:menu, name}, socket) do

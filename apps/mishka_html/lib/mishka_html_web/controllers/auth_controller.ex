@@ -16,6 +16,12 @@ defmodule MishkaHtmlWeb.AuthController do
           user_info.id
         )
 
+        Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
+          MishkaContent.Cache.BookmarkDynamicSupervisor.start_job([id: user_info.id, type: "user_bookmarks"])
+        end)
+
+
+
         conn
         |> renew_session()
         |> put_session(:current_token, token)
@@ -43,6 +49,10 @@ defmodule MishkaHtmlWeb.AuthController do
       Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
         :timer.sleep(1000)
         MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
+      end)
+
+      Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
+        MishkaContent.Cache.BookmarkManagement.stop(get_session(conn, :user_id))
       end)
 
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})

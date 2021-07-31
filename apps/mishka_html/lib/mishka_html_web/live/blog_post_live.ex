@@ -4,8 +4,8 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   alias MishkaContent.Blog.Post
   alias MishkaContent.Blog.Like
   alias MishkaDatabase.Schema.MishkaContent.Comment, as: CommentSchema
-  alias MishkaContent.General.Comment
-  alias MishkaContent.General.CommentLike
+  alias MishkaContent.General.{Comment, CommentLike, Bookmark}
+
 
   # TODO: sharing to social media sites
   # TODO: we need to input seo tags
@@ -38,6 +38,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
           Post.subscribe()
           subscribe()
         end
+
         Process.send_after(self(), :menu, 100)
 
         socket =
@@ -60,7 +61,8 @@ defmodule MishkaHtmlWeb.BlogPostLive do
             open_modal: false,
             component: nil,
             like: Like.count_post_likes(post.id, Map.get(session, "user_id")),
-            sub_comment: %{}
+            sub_comment: %{},
+            bookmark: !is_nil(MishkaContent.Cache.BookmarkManagement.get_record(Map.get(session, "user_id"), post.id))
           )
 
         {:ok, socket, temporary_assigns: [posts: [], comments: []]}
@@ -124,7 +126,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
   @impl true
   def handle_event("sub_comment", %{"sub-id" => sub_id}, socket) do
-    IO.inspect(sub_id)
     socket = case Comment.comment(filters: %{id: sub_id, section: "blog_post", status: "active"}, user_id: socket.assigns.user_id) do
       nil ->
         socket
@@ -144,6 +145,48 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   @impl true
   def handle_event("close_modal", _params, socket) do
     {:noreply, assign(socket, [open_modal: false, component: nil, sub_comment: %{}])}
+  end
+
+  @impl true
+  def handle_event("bookmark_post", _params, socket) do
+    socket = with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
+         {:ok, :get_record_by_id, _error_tag, _repo_data} <- Post.show_by_id(socket.assigns.id),
+         {:ok, :add, :bookmark, bookmark_info}  <- Bookmark.create(%{section: "blog_post", section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
+
+          user_bookmark_info = %{
+            extra: bookmark_info.extra,
+            id: bookmark_info.id,
+            section: :blog_post,
+            section_id: bookmark_info.section_id,
+            status: :active,
+            user_id: bookmark_info.user_id
+          }
+
+          MishkaContent.Cache.BookmarkManagement.save(user_bookmark_info, socket.assigns.user_id, socket.assigns.id)
+
+          notify_subscribers({:bookmark_post, socket.assigns.page})
+          socket
+    else
+
+      {:error, :get_record_by_id, _error_tag} ->
+        socket
+        |> put_flash(:warning, "به نظر می رسد مطلب مذکور حذف شده است.")
+
+
+      {:user_id, true} ->
+        socket
+        |> put_flash(:warning, "لطفا برای بوکمارک کردن این مطلب وارد وب سایت شوید")
+
+      {:error, :add, :bookmark, _changeset} ->
+        Bookmark.delete(socket.assigns.user_id, socket.assigns.id)
+        MishkaContent.Cache.BookmarkManagement.delete(socket.assigns.user_id, socket.assigns.id)
+        notify_subscribers({:bookmark_post, socket.assigns.page})
+        socket
+
+      _n ->
+        socket
+    end
+    {:noreply, socket}
   end
 
   @impl true
@@ -195,7 +238,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
         |> put_flash(:warning, "به نظر می رسد نظر مذکور حذف شده است.")
 
       {:ok, :show_by_user_and_comment_id, liked_record} ->
-        IO.inspect CommentLike.delete(liked_record.id)
+        CommentLike.delete(liked_record.id)
         notify_subscribers({:liked_comment, socket.assigns.page})
         socket
       _n ->
@@ -288,6 +331,21 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   @impl true
+  def handle_info({:bookmark_post, _page}, socket) do
+    socket = case Post.post(socket.assigns.alias_link, "active") do
+      nil ->
+        socket
+        |> put_flash(:info, "چنین محتوایی وجود ندارد یا حذف شده است.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
+
+      _post ->
+        socket
+        |> assign(bookmark: !socket.assigns.bookmark)
+    end
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:liked_post, _page}, socket) do
     socket = case Post.post(socket.assigns.alias_link, "active") do
       nil ->
@@ -331,18 +389,10 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   def subscribe do
-    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "client_blog_post_comment")
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "client_blog_post")
   end
 
-  def notify_subscribers({:comment, user_page}) do
-    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post_comment", {:comment, user_page})
-  end
-
-  def notify_subscribers({:liked_comment, user_page}) do
-    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post_comment", {:liked_comment, user_page})
-  end
-
-  def notify_subscribers({:liked_post, user_page}) do
-    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post_comment", {:liked_post, user_page})
+  def notify_subscribers({type, user_page}) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post", {type, user_page})
   end
 end

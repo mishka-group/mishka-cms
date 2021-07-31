@@ -8,7 +8,7 @@ defmodule MishkaContent.Cache.BookmarkDynamicSupervisor do
 
   def running_imports() do
     match_all = {:"$1", :"$2", :"$3"}
-    guards = [{:"==", :"$3", "user_permission"}]
+    guards = [{:"==", :"$3", "user_bookmarks"}]
     map_result = [%{id: :"$1", pid: :"$2", type: :"$3"}]
     Registry.select(MishkaContent.Cache.BookmarkRegistry, [{match_all, guards, map_result}])
   end

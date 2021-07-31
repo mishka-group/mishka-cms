@@ -212,14 +212,7 @@ window.addEventListener("phx:page-loading-stop", info => topbar.hide())
 liveSocket.connect()
 
 // expose liveSocket on window for web console debug logs and latency simulation:
-// >> liveSocket.enableDebug()
+>> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
-
-  
-
-// YourEditor.setData('<p>This is the new Data!</p>');
-// const viewFragment = YourEditor.data.processor.toView( html );
-// const modelFragment = YourEditor.data.toModel( viewFragment );
-// YourEditor.model.insertContent( modelFragment );

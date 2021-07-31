@@ -215,7 +215,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
           |> put_flash(:warning, "خطایی در دریافت اطلاعات وجود آماده است.")
           |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
-      {:user_id, false} ->
+      {:user_id, true} ->
         socket
         |> put_flash(:warning, "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید.")
     end

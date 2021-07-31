@@ -334,6 +334,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogCategoryLive"})
     {:noreply, socket}
@@ -395,7 +396,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   defp create_category(socket, params: {params, meta_keywords, main_image, header_image, description, alias_link, sub},
-                               uploads: {uploaded_main_image_files, uploaded_header_image_files}) do
+                               uploads: {_uploaded_main_image_files, _uploaded_header_image_files}) do
 
       {state_main_image, state_header_image} = socket.assigns.images
 

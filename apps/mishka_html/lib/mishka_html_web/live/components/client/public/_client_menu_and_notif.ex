@@ -3,6 +3,8 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaUser.Token.CurrentPhoenixToken
+
+  @impl true
   def mount(_params, session, socket) do
     if connected?(socket), do: subscribe()
     Process.send_after(self(), :update, 10)
@@ -18,6 +20,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
     {:ok, socket}
    end
 
+  @impl true
   def render(assigns) do
     ~L"""
       <hr class="menu-space-hr">
@@ -88,10 +91,12 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:menu, name}, socket) do
      {:noreply, assign(socket, :menu_name, name)}
   end
 
+  @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 10000)
     socket.assigns.current_token

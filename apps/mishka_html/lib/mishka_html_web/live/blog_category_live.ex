@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
   alias MishkaContent.Blog.{Category, Post}
 
+  @impl true
   def mount(%{"alias_link" => _alias_link}, session, socket) do
     if connected?(socket) do
       Category.subscribe()

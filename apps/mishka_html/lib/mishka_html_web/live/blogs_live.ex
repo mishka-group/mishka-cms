@@ -51,15 +51,16 @@ defmodule MishkaHtmlWeb.BlogsLive do
     {:noreply, socket}
   end
 
+  # @impl true
+  # def handle_event("image_go_to_post", %{"alias-link" => alias_link}, socket) do
+  #   socket =
+  #     socket
+  #     |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogPostLive, alias_link))
+
+  #   {:noreply, socket}
+  # end
+
   @impl true
-  def handle_event("image_go_to_post", %{"alias-link" => alias_link}, socket) do
-    socket =
-      socket
-      |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogPostLive, alias_link))
-
-    {:noreply, socket}
-  end
-
   def handle_event("like_post", %{"post-id" => post_id}, socket) do
     socket = with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
          {:ok, :get_record_by_id, _error_tag, _repo_data} <- Post.show_by_id(post_id),
@@ -84,7 +85,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
           |> put_flash(:warning, "خطایی در دریافت اطلاعات وجود آماده است.")
           |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
-      {:user_id, false} ->
+      {:user_id, true} ->
         socket
         |> put_flash(:warning, "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید.")
     end

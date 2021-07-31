@@ -8,7 +8,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Bookmark do
 
   schema "bookmarks" do
 
-    field(:status, ContentStatusEnum, null: false)
+    field(:status, ContentStatusEnum, null: false, default: :active)
     field(:section, BookmarkSection, null: false, null: false)
     field(:section_id, :binary_id, primary_key: false, null: false)
     field(:extra, :map, null: true)

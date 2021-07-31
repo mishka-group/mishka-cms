@@ -238,7 +238,12 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
     new_state = Enum.map(state, fn item ->
       MnesiaToken.delete_expierd_token(item.id)
-      if(new_token == [], do: MishkaUser.Acl.AclManagement.stop(item.id))
+
+      if new_token == [] do
+        MishkaUser.Acl.AclManagement.stop(item.id)
+        MishkaContent.Cache.BookmarkManagement.stop(item.id)
+      end
+
       Map.merge(
         item,
         %{

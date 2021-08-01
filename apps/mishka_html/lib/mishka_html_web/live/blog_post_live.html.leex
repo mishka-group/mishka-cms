@@ -69,6 +69,8 @@
                         time: @post.inserted_at
                 %>
                </span>
+
+               <div class="space10"></div>
                <span class="badge bg-info">به روز شده:
                <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                         span_id: "updated-#{@post.id}-component",
@@ -77,6 +79,12 @@
                </span>
                <span class="badge bg-success">اولویت:
                 <%= priority(@post.priority) %>
+               </span>
+               <span class="badge bg-primary vazir">مجموعه:
+                <%=
+                  live_redirect "#{@post.blog_categories.title}",
+                  to: Routes.live_path(@socket, MishkaHtmlWeb.BlogCategoryLive, @post.blog_categories.alias_link)
+                %>
                </span>
             </span>
           </section>

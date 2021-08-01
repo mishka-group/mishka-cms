@@ -3,7 +3,6 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
   alias MishkaContent.Blog.{Category, Post, Like}
 
-  # TODO: done// fix category counter for client blogs live for showing to user
   @impl true
   def mount(%{"alias_link" => alias_link}, session, socket) do
     case Category.show_by_alias_link(alias_link) do

@@ -3,7 +3,6 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   alias MishkaContent.Blog.{Category, Post, Like}
 
-  # TODO: done// fix category counter for client blogs live for showing to user
   @impl true
   def mount(_params, session, socket) do
     if connected?(socket) do
@@ -49,15 +48,6 @@ defmodule MishkaHtmlWeb.BlogsLive do
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
-
-  # @impl true
-  # def handle_event("image_go_to_post", %{"alias-link" => alias_link}, socket) do
-  #   socket =
-  #     socket
-  #     |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogPostLive, alias_link))
-
-  #   {:noreply, socket}
-  # end
 
   @impl true
   def handle_event("like_post", %{"post-id" => post_id}, socket) do

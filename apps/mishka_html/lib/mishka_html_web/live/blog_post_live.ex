@@ -20,7 +20,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   # TODO: show hits and update it
   # TODO: show post links with a html box
   # TODO: show short link to share, this should be event base if exist load on db and copy on clipboard if not create
-  # TODO: make bookmarks for users who are logined
   # TODO: Create user profile picture after creating media manager
 
   @impl true

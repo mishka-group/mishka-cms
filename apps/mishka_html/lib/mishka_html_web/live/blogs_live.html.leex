@@ -20,8 +20,8 @@
                     <img class="img-fluid client-home-normal-post-image" src="<%= item.main_image %>" alt="<%= item.title %>" id="<%= item.id %>">
                   <% end %>
 
-                  <section class="home-post-like-bookmarks">
-                    <div class="col-sm-1">
+                  <section class="col-sm-1 home-post-like-bookmarks">
+                    <div class="col-sm">
                       <%= if !is_nil(MishkaContent.Cache.BookmarkManagement.get_record(@user_id, item.id)) do %>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-bookmark-check-fill"

@@ -4,7 +4,6 @@ defmodule MishkaHtmlWeb.BlogsLive do
   alias MishkaContent.Blog.{Category, Post, Like}
 
   # TODO: done// fix category counter for client blogs live for showing to user
-  # TODO: make bookmarks for users who are logined
   @impl true
   def mount(_params, session, socket) do
     if connected?(socket) do

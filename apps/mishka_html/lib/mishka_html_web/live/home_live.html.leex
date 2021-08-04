@@ -174,7 +174,11 @@
 
         <div class="space40"></div>
         <p class="text-center">
-            <button type="button" class="btn btn-outline-secondary btn-lg ">نمایش بیشتر مطالب</button>
+            <%=
+                live_redirect "نمایش بیشتر مطالب",
+                to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
+                class: "btn btn-outline-secondary btn-lg"
+            %>
         </p>
 
 

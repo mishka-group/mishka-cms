@@ -12,247 +12,165 @@
         <div class="space40"></div>
 
         <article class="container ltr">
-            <div class="row">
+            <%= if(@featured_posts.entries != []) do %>
+            <% [frist_post | all_post] =  @featured_posts.entries %>
+                <div class="row">
 
-                <article class="col-sm-6">
-                    <article class="container-fluid home-image-post rtl client-home-featured-post-article">
-                        <img class="img-fluid client-home-featured-post-image" src="/images/4.jpg" alt="">
-                        <section class="home-post-like-bookmarks-header-type">
-                                <div class="col-sm-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                                    </svg>
-                                </div>
-                                <div class="space10"></div>
-                                <header class="home-blog-posts-normal-with-body-header">
-                                    <h2>طراحی سازمانی یک اصل مهم در بهینه سازی</h2>
-                                    <div class="space10"></div>
-                                    <p>این یک بازی دو سر سود می باشد که در بینهایت دیدن دیده می شود و ما باید ببنیمش</p>
-                                </header>
-                                <footer class="home-blog-posts-normal-with-body-footer">
-                                    <div class="row">
-                                        <span class="col-sm">نویسندگان: شهریار توکلی - مجتبی ناصری</span>
-                                        <span class="col-sm-2 text-left">
-                                            22k
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
-                                                <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                </footer>
-                            </section>
-                    </article>
-                </article>
-
-                <article class="col-sm-6">
-                    <div class="row">
-
-                        <article class="col-sm-6  rtl client-home-normal-post-article">
-                            <img class="img-fluid client-home-normal-post-image" src="/images/2.jpg" alt="">
-                            <section class="home-post-like-bookmarks-header-type">
-                                <div class="col-sm-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                                    </svg>
-                                </div>
-                                <div class="space10"></div>
-                                <header class="home-blog-posts-normal-with-body-header">
-                                    <h2>طراحی سازمانی یک اصل مهم در بهینه سازی</h2>
-                                </header>
-                                <footer class="home-blog-posts-normal-with-body-footer text-left">
-                                    <span class="col-sm-2 text-left float-left">
-                                        22k
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
-                                            <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
+                    <article class="col-sm-6">
+                        <article class="container-fluid home-image-post rtl client-home-featured-post-article">
+                            <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, frist_post.alias_link), replace: false do %>
+                                <img class="img-fluid client-home-featured-post-image" src="<%= frist_post.main_image %>" alt="<%= frist_post.title %>" id="<%= frist_post.id %>">
+                            <% end %>
+                            <section class="home-post-like-bookmarks-header-type-banner">
+                                <div class="col-sm-2 client-home-like-bookmark">
+                                    <%= if !is_nil(MishkaContent.Cache.BookmarkManagement.get_record(@user_id, frist_post.id)) do %>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-bookmark-check-fill"
+                                        viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"></path>
                                         </svg>
-                                    </span>
-                                </footer>
-                            </section>
-
-                        </article>
-
-                        <article class="col-sm-6  rtl client-home-header-post-article">
-                            <img class="img-fluid client-home-normal-post-image" src="/images/3.jpg" alt="">
-                            <section class="home-post-like-bookmarks-header-type">
-                                <div class="col-sm-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                                    </svg>
-                                </div>
-                                <div class="space10"></div>
-                                <header class="home-blog-posts-normal-with-body-header">
-                                    <h2>طراحی سازمانی یک اصل مهم در بهینه سازی</h2>
-                                </header>
-                                <footer class="home-blog-posts-normal-with-body-footer text-left">
-                                    <span class="col-sm-2 text-left float-left">
-                                        22k
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
-                                            <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
+                                        <% else %>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-bookmark-check"
+                                        viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" /><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z" />
                                         </svg>
-                                    </span>
-                                </footer>
-                            </section>
-                        </article>
-
-                    </div>
-
-                    <div class="space10"></div>
-
-                    <div class="row">
-
-                        <article class="col-sm-6 rtl client-home-header-post-article">
-                            <img class="img-fluid client-home-normal-post-image" src="/images/1.jpg" alt="">
-                            <section class="home-post-like-bookmarks-header-type">
-                                <div class="col-sm-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                                    </svg>
-                                </div>
-                                <div class="space10"></div>
-                                <header class="home-blog-posts-normal-with-body-header">
-                                    <h2>طراحی سازمانی یک اصل مهم در بهینه سازی</h2>
-                                </header>
-                                <footer class="home-blog-posts-normal-with-body-footer text-left">
-                                    <span class="col-sm-2 text-left float-left">
-                                        22k
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
-                                            <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
-                                        </svg>
-                                    </span>
-                                </footer>
-                            </section>
-                        </article>
-
-                        <article class="col-sm-6 rtl client-home-header-post-article">
-                            <img class="img-fluid client-home-normal-post-image" src="/images/5.jpg" alt="">
-                            <section class="home-post-like-bookmarks-header-type">
-                                <div class="col-sm-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                                    </svg>
-                                </div>
-                                <div class="space10"></div>
-                                <header class="home-blog-posts-normal-with-body-header">
-                                    <h2>طراحی سازمانی یک اصل مهم در بهینه سازی</h2>
-                                </header>
-                                <footer class="home-blog-posts-normal-with-body-footer text-left">
-                                    <span class="col-sm-2 text-left float-left">
-                                        22k
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
-                                            <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
-                                        </svg>
-                                    </span>
-                                </footer>
-                            </section>
-                        </article>
-                    </div>
-
-
-                </article>
-            </div>
-
-            <div class="row">
-                <%= for item <- [1, 2, 3, 4] do %>
-                <article class="col-sm-6 rtl  client-home-header-post-article">
-                    <article class="container-fluid home-image-post">
-                        <img class="img-fluid client-home-header-post-image" src="/images/<%= item %>.jpg" alt="">
-                        <section class="home-post-like-bookmarks-header-type">
-                                <div class="col-sm-1">
-                                    <%= if item in [1, 4, 7] do %>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                                    </svg>
-                                    <% else %>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
-                                    </svg>
                                     <% end %>
-                                </div>
-                                <div class="space10"></div>
-                                <header class="home-blog-posts-normal-with-body-header">
-                                    <h2>طراحی سازمانی یک اصل مهم در بهینه سازی</h2>
-                                    <div class="space10"></div>
-                                    <p>این یک بازی دو سر سود می باشد که در بینهایت دیدن دیده می شود و ما باید ببنیمش</p>
-                                </header>
-                                <footer class="home-blog-posts-normal-with-body-footer">
-                                <div class="row">
-                                    <span class="col-sm">نویسندگان: شهریار توکلی - مجتبی ناصری</span>
-                                    <span class="col-sm-2 text-left">
-                                        22k
+                                    <span class="text-left float-left  <%= if !is_nil(frist_post.liked_user.post_id), do:  "suit-heart-svg" %>">
+                                        <%= frist_post.like_count%>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
                                             <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
                                         </svg>
                                     </span>
                                 </div>
-                            </footer>
-                        </section>
+                                <div class="space10"></div>
+                                <header class="home-blog-posts-normal-with-body-header">
+                                    <h2 class="featured-posts-link">
+                                    <%=
+                                        live_redirect "#{frist_post.title }",
+                                        to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, frist_post.alias_link)
+                                    %>
+                                    </h2>
+                                    <div class="space10"></div>
+                                    <%= frist_post.short_description%>
+                                </header>
+                            </section>
+                        </article>
                     </article>
-                </article>
-                <% end %>
-            </div>
 
-
-            <div class="row">
-                <%= for item <- [1, 2, 3, 4, 1, 2, 3, 5] do %>
-                <article class="col-sm-3 home-blog-posts-normal-with-body rtl home-image-post">
-                    <article class="container-fluid home-image-post  rtl home-image-post">
-                        <img class="img-fluid client-home-normal-post-image" src="/images/<%= item %>.jpg" alt="">
-                        <section class="home-post-like-bookmarks">
-                                <div class="col-sm-1">
-                                    <%= if item in [1, 4, 7] do %>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-                                    </svg>
-                                    <% else %>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
-                                    </svg>
+                    <article class="col-sm-6">
+                        <div class="row">
+                            <%= for item <- Enum.take(all_post, 2) do %>
+                                <article class="col-sm-6  rtl client-home-normal-post-article">
+                                    <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, item.alias_link), replace: false do %>
+                                        <img class="img-fluid client-home-normal-post-image" src="<%= item.main_image %>" alt="<%= item.title %>" id="<%= item.id %>">
                                     <% end %>
-                                </div>
-                         </section>
+                                    <section class="home-post-like-bookmarks-header-type">
+                                        <div class="col-sm-3 client-home-like-bookmark">
+                                            <%= if !is_nil(MishkaContent.Cache.BookmarkManagement.get_record(@user_id, item.id)) do %>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                class="bi bi-bookmark-check-fill"
+                                                viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"></path>
+                                                </svg>
+                                                <% else %>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                class="bi bi-bookmark-check"
+                                                viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" /><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z" />
+                                                </svg>
+                                            <% end %>
+                                            <span class="text-left float-left  <%= if !is_nil(item.liked_user.post_id), do:  "suit-heart-svg" %>">
+                                                <%= item.like_count%>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
+                                                    <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div class="space10"></div>
+                                        <header class="home-blog-posts-normal-with-body-header">
+                                            <h2 class="featured-posts-link">
+                                                <%=
+                                                    live_redirect "#{item.title }",
+                                                    to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, item.alias_link)
+                                                %>
+                                            </h2>
+                                        </header>
+                                    </section>
+                                </article>
+                            <% end %>
+                        </div>
 
-                        <div class="space10"></div>
-                        <header class="home-blog-posts-normal-with-body-header">
-                            <h2>طراحی سازمانی یک اصل مهم در بهینه سازی</h2>
-                            <div class="space20"></div>
-                            <p>این یک بازی دو سر سود می باشد که در بینهایت دیدن دیده می شود و ما باید ببنیمش</p>
-                        </header>
-                        <div class="space20"></div>
-                        <footer class="home-blog-posts-normal-with-body-footer">
-                            نویسندگان: شهریار توکلی - مجتبی ناصری
+                        <div class="space30"></div>
 
-                            <div class="space10"></div>
+                        <div class="row">
 
-                            <span class="text-left float-left">
-                            22k
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
-                                <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
-                            </svg>
+                            <%= for item <- Enum.take(all_post, -2) do %>
+                                <article class="col-sm-6  rtl client-home-normal-post-article">
+                                    <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, item.alias_link), replace: false do %>
+                                        <img class="img-fluid client-home-normal-post-image" src="<%= item.main_image %>" alt="<%= item.title %>" id="<%= item.id %>">
+                                    <% end %>
+                                    <section class="home-post-like-bookmarks-header-type">
+                                        <div class="col-sm-3 client-home-like-bookmark">
+                                            <%= if !is_nil(MishkaContent.Cache.BookmarkManagement.get_record(@user_id, item.id)) do %>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                class="bi bi-bookmark-check-fill"
+                                                viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"></path>
+                                                </svg>
+                                                <% else %>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                class="bi bi-bookmark-check"
+                                                viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" /><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z" />
+                                                </svg>
+                                            <% end %>
+                                            <span class="text-left float-left  <%= if !is_nil(item.liked_user.post_id), do:  "suit-heart-svg" %>">
+                                                <%= item.like_count%>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
+                                                    <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div class="space10"></div>
+                                        <header class="home-blog-posts-normal-with-body-header">
+                                            <h2 class="featured-posts-link">
+                                                <%=
+                                                    live_redirect "#{item.title }",
+                                                    to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, item.alias_link)
+                                                %>
+                                            </h2>
+                                        </header>
+                                    </section>
+                                </article>
+                            <% end %>
 
-                            </span>
-                        </footer>
+
+                        </div>
                     </article>
-                    <div class="space30"></div>
-                </article>
+                </div>
+            <% end %>
+
+            <div class="space20"></div>
+            <div class="row">
+                <%= for {number, item} <- Enum.zip(Stream.iterate(1, & &1 + 1), @posts.entries) do %>
+                    <%= if number < 5 do %>
+                        <%= live_component @socket, MishkaHtmlWeb.Client.Home.BannerBlockComponent,
+                            id: "banner-block-home-posts-#{item.id}",
+                            post: item,
+                            user_id: @user_id
+                        %>
+                    <% else %>
+                        <%= live_component @socket, MishkaHtmlWeb.Client.Home.NormalBlockComponent,
+                            id: "normal-block-home-posts-#{item.id}",
+                            post: item,
+                            user_id: @user_id
+                        %>
+                    <% end %>
                 <% end %>
 
-
-
             </div>
-
         </article>
-
-
-
-
-
 
         <div class="space40"></div>
         <p class="text-center">

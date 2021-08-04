@@ -132,7 +132,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
       record ->
         socket
-        |> assign(component: MishkaHtmlWeb.Client.BlogPostLive.SubComment, open_modal: true, sub_comment: %{
+        |> assign(component: MishkaHtmlWeb.Client.BlogPost.SubComment, open_modal: true, sub_comment: %{
           full_name: record.user_full_name,
           description: record.description
         })
@@ -278,6 +278,8 @@ defmodule MishkaHtmlWeb.BlogPostLive do
           notify_subscribers({:comment, socket.assigns.page})
             socket
             |> assign(comment_msg: "نظر شما با موفقیت ارسال شد!!! برای ارسال نظر جدید کلیک کنید.", send_comment: false, sub: nil)
+            |> assign(description: nil)
+            |> push_event("jump_to_comment_form", %{description: nil})
     else
       {:post, true} ->
           socket

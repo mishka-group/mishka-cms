@@ -2,8 +2,6 @@ defmodule MishkaHtmlWeb.HomeLive do
   use MishkaHtmlWeb, :live_view
 
   # TODO: we need to input seo tags
-  # TODO: show content
-  # TODO: show f posts
   # TODO: paginate
 
   alias MishkaContent.Blog.Post

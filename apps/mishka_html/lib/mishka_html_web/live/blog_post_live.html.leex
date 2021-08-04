@@ -230,7 +230,7 @@
     </article>
 </div>
 <%= if @open_modal do %>
-    <%= live_component @socket, MishkaHtmlWeb.Client.BlogPostLive.SubComment,
+    <%= live_component @socket, MishkaHtmlWeb.Client.BlogPost.SubComment,
                             id: :modal_live,
                             component: @component,
                             sub_comment: @sub_comment

@@ -1,4 +1,4 @@
-defmodule MishkaHtmlWeb.Client.BlogPostLive.SubComment do
+defmodule MishkaHtmlWeb.Client.BlogPost.SubComment do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do

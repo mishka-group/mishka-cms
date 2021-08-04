@@ -289,9 +289,22 @@ header {
   background-color: #5d597c;
   border-radius: 15px;
 }
-/* .cms-block-menu-right {
-  
-} */
+
+.badge.bg-dark.vazir.client-blog-badge-category a {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 10px;
+}
+
+.badge.bg-dark.vazir.client-blog-badge-category {
+  padding: 5px 6px;
+
+}
+
+#client-blog-post-header-info span.badge.bg-primary.vazir a {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
 
 .home-admin-users,
 .statics-menu,
@@ -731,10 +744,22 @@ select.form-select {
   background-color: #31394c !important;
   margin: 0 10px 20px 10px;
   max-width: 297px !important;
+  text-align: justify;
 }
 
 .home-blog-posts-normal-with-body-header {
   padding: 5px 15px;
+  line-height: 25px;
+}
+
+.normal-home-post-like {
+  padding-top: 10px;
+}
+
+.banner-home-posts-link a,
+.normal-home-posts-link a {
+  color: #ffffff;
+  text-decoration: none;
 }
 
 .home-blog-posts-normal-with-body-footer {
@@ -752,10 +777,20 @@ select.form-select {
 
 .home-post-like-bookmarks-header-type {
   position: relative;
-  top: -120px;
+  top: -100px;
   right: 10px;
 }
 
+.home-post-like-bookmarks-header-type-banner {
+  position: relative;
+  top: -150px;
+  right: 10px;
+}
+
+.client-home-like-bookmark {
+  background-color: #8886866b;
+  padding: 10px;
+}
 
 .client-blog-posts-image {
   max-height: 330px !important;
@@ -850,6 +885,11 @@ select.form-select {
 
 .comment-body-section {
   padding: 25px;
+}
+
+.featured-posts-link a {
+  color: #ffffff !important;
+  text-decoration: none !important;
 }
 
 /* colors */

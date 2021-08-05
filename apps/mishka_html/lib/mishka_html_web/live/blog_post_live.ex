@@ -8,9 +8,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
 
   # TODO: sharing to social media sites
-  # TODO: we need to input seo tags
   # TODO: show Options of a post on page
-  # TODO: show map and implement map's SEO tag and header tag
   # TODO: create AMP page
   # TODO: create Print page
   # TODO: add subscription for user

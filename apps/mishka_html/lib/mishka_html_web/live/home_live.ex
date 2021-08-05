@@ -1,8 +1,6 @@
 defmodule MishkaHtmlWeb.HomeLive do
   use MishkaHtmlWeb, :live_view
 
-  # TODO: we need to input seo tags
-
   alias MishkaContent.Blog.Post
 
   def mount(_params, session, socket) do

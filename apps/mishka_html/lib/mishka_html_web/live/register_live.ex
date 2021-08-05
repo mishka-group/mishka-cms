@@ -3,8 +3,6 @@ defmodule MishkaHtmlWeb.RegisterLive do
 
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
-    # we need to input seo tags
-
     changeset = %MishkaDatabase.Schema.MishkaUser.User{}
     |> MishkaDatabase.Schema.MishkaUser.User.changeset()
 

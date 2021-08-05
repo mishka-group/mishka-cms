@@ -16,6 +16,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
     socket =
       assign(socket,
         page_title: "بلاگ",
+        seo_tags: seo_tags(socket),
         page_size: 12,
         filters: %{},
         body_color: "#40485d",
@@ -137,5 +138,18 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   def notify_subscribers({:liked, user_page}) do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blogs", {:liked, user_page})
+  end
+
+  defp seo_tags(socket) do
+    # TODO: should change with site address
+    site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+    %{
+      image: "#{site_link}/images/mylogo.png",
+      title: "وبلاگ شخصی تگرگ",
+      description: "در وبلاگ شخصی من می توانید آخرین مطالب من در مورد همه چیز از جمله طبعیت گردی و موسیقی و عکاسی را پیگیری کنید",
+      type: "website",
+      keywords: "تگرگ, عکاسی, وبلاگ, بلاگر, ویدیو طبعیت گردی, موسیقی",
+      link: site_link <> Routes.live_path(socket, __MODULE__)
+    }
   end
 end

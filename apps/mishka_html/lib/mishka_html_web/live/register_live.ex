@@ -11,6 +11,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
     socket =
       assign(socket,
         page_title: "ثبت نام کاربر",
+        seo_tags: seo_tags(socket),
         body_color: "#40485d",
         changeset: changeset,
         user_id: Map.get(session, "user_id")
@@ -50,4 +51,16 @@ defmodule MishkaHtmlWeb.RegisterLive do
     |> Map.put(:action, :insert)
   end
 
+  defp seo_tags(socket) do
+    # TODO: should change with site address
+    site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+    %{
+      image: "#{site_link}/images/mylogo.png",
+      title: "ثبت نام کاربر",
+      description: "ثبت نام کاربر در سایت تگرگ",
+      type: "website",
+      keywords: "ثبت نام کاربر",
+      link: site_link <> Routes.live_path(socket, __MODULE__)
+    }
+  end
 end

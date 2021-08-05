@@ -47,6 +47,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
             page: 1,
             alias_link: post.alias_link,
             page_title: "#{post.title}",
+            seo_tags: seo_tags(socket, post),
             body_color: "#40485d",
             user_id: Map.get(session, "user_id"),
             post: post,
@@ -395,5 +396,18 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
   def notify_subscribers({type, user_page}) do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blog_post", {type, user_page})
+  end
+
+  defp seo_tags(socket, post) do
+    # TODO: should change with site address
+    site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+    %{
+      image: "#{site_link}/#{post.main_image}",
+      title: "#{post.title}",
+      description: if(!is_nil(post.meta_description), do: "#{post.meta_description}", else: "#{post.short_description}"),
+      type: "website",
+      keywords: "#{post.meta_keywords}",
+      link: site_link <> Routes.live_path(socket, __MODULE__, post.alias_link)
+    }
   end
 end

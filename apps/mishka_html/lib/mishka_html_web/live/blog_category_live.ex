@@ -20,6 +20,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
             category_id: record.id,
             alias_link: record.alias_link,
             page_title: "مطالب مجموعه #{record.title}",
+            seo_tags: seo_tags(socket, record),
             page_size: 12,
             filters: %{category_id: record.id},
             body_color: "#40485d",
@@ -151,5 +152,18 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
   def notify_subscribers({:liked, user_page}) do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_blogs", {:liked, user_page})
+  end
+
+  defp seo_tags(socket, category) do
+    # TODO: should change with site address
+    site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+    %{
+      image: "#{site_link}/#{category.main_image}",
+      title: "#{category.title}",
+      description: if(!is_nil(category.meta_description), do: "#{category.meta_description}", else: "#{category.short_description}"),
+      type: "website",
+      keywords: "#{category.meta_keywords}",
+      link: site_link <> Routes.live_path(socket, __MODULE__, category.alias_link)
+    }
   end
 end

@@ -8,6 +8,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
     socket =
       assign(socket,
         page_title: "فراموشی پسورد",
+        seo_tags: seo_tags(socket),
         body_color: "#40485d",
         user_id: Map.get(session, "user_id")
       )
@@ -34,5 +35,18 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
   def handle_info(:menu, socket) do
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.ResetPasswordLive"})
     {:noreply, socket}
+  end
+
+  defp seo_tags(socket) do
+    # TODO: should change with site address
+    site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+    %{
+      image: "#{site_link}/images/mylogo.png",
+      title: "فراموشی پسورد",
+      description: "فراموشی پسورد در سایت تگرگ",
+      type: "website",
+      keywords: "فراموشی پسورد",
+      link: site_link <> Routes.live_path(socket, __MODULE__)
+    }
   end
 end

@@ -11,6 +11,9 @@ defmodule MishkaHtmlWeb.LoginLive do
     socket =
       assign(socket,
         page_title: "ورود کاربران",
+        seo_tags: seo_tags(socket),
+        ogtags: "ogtags",
+        metatags: "metatags",
         body_color: "#40485d",
         trigger_submit: false,
         changeset: user_changeset,
@@ -43,5 +46,18 @@ defmodule MishkaHtmlWeb.LoginLive do
     %MishkaDatabase.Schema.MishkaUser.User{}
     |> MishkaDatabase.Schema.MishkaUser.User.login_changeset(params)
     |> Map.put(:action, :validation)
+  end
+
+  defp seo_tags(socket) do
+    # TODO: should change with site address
+    site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+    %{
+      image: "#{site_link}/images/mylogo.png",
+      title: "ورود کاربران",
+      description: "ورود به سایت تگرگ",
+      type: "website",
+      keywords: "ورد به سایت",
+      link: site_link <> Routes.live_path(socket, __MODULE__)
+    }
   end
 end

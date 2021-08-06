@@ -53,6 +53,15 @@ p.my-align-right {
   font-size: 10px;
 }
 
+.user-bookmarks-list .list-group-item.list-group-item-action.d-flex.gap-3.py-3 {
+  background-color: #000 !important;
+  color: #ffffff;
+}
+
+.user-bookmarks-list .list-group-item.list-group-item-action.d-flex.gap-3.py-3:hover {
+  background-color: rgb(94, 93, 93) !important;
+}
+
 .ck-source-editing-area textarea,
 .ck.ck-editor__main textarea {
   min-height: 400px !important;

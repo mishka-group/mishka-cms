@@ -148,8 +148,8 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   @impl true
   def handle_event("bookmark_post", _params, socket) do
     socket = with {:user_id, false} <- {:user_id, is_nil(socket.assigns.user_id)},
-         {:ok, :get_record_by_id, _error_tag, _repo_data} <- Post.show_by_id(socket.assigns.id),
-         {:ok, :add, :bookmark, bookmark_info}  <- Bookmark.create(%{section: "blog_post", section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
+         {:ok, :get_record_by_id, _error_tag, repo_data} <- Post.show_by_id(socket.assigns.id),
+         {:ok, :add, :bookmark, bookmark_info}  <- Bookmark.create(%{section: "blog_post", section_id: socket.assigns.id, user_id: socket.assigns.user_id, extra: %{title: repo_data.title, alias_link: repo_data.alias_link, description: repo_data.short_description, create_time: System.system_time(:second)}}) do
 
           user_bookmark_info = %{
             extra: bookmark_info.extra,

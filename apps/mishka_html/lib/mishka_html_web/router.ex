@@ -47,6 +47,12 @@ defmodule MishkaHtmlWeb.Router do
     live "/auth/notifications", NotificationsLive
   end
 
+  scope "/user", MishkaHtmlWeb do
+    pipe_through [:browser, :user_logined]
+
+    live "/bookmarks", BookmarksLive
+  end
+
 
   scope "/admin", MishkaHtmlWeb do
     pipe_through [:browser, :user_logined]

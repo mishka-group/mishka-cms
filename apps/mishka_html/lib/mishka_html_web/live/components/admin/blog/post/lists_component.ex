@@ -118,8 +118,8 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                                     phx-click="delete"
                                     phx-value-id="<%= item.id %>">حذف</a>
 
-                        <%= live_redirect "ویرایش",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
+                        <%= live_redirect "نویسندگان",
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostAuthorsLive, item.id),
                             class: "btn btn-outline-secondary vazir"
                         %>
 

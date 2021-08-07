@@ -49,6 +49,8 @@ defmodule MishkaContent.Blog.Author do
     select: %{
       id: author.id,
       post_id: author.post_id,
+      inserted_at: author.inserted_at,
+      updated_at: author.updated_at,
       user_id: user.id,
       user_full_name: user.full_name
     })

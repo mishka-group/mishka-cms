@@ -21,6 +21,7 @@ defmodule MishkaUser.Acl.Action do
       "Elixir.MishkaHtmlWeb.AdminUserLive" => "*" ,
       "Elixir.MishkaHtmlWeb.AdminLogsLive" => "*" ,
       "Elixir.MishkaHtmlWeb.AdminSeoLive" => "*" ,
+      "Elixir.MishkaHtmlWeb.AdminBlogPostAuthorsLive" => "admin:edit"
     }
   end
 

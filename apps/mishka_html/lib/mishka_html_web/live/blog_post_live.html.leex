@@ -56,6 +56,7 @@
           <div class="clearfix"> </div>
           <section class="rtl vazir client-post-info" id="client-blog-post-header-info">
             <span>
+              <%= if @post.blog_authors != [] do %>
               <span class="badge bg-danger">
               نویسندگان:
                <%= for auther <- @post.blog_authors do %>
@@ -63,6 +64,7 @@
                 <%# TODO: create user profile picture %>
                <% end %>
               </span>
+              <% end %>
               <span class="badge bg-secondary">ارسال شده:
                <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                         span_id: "inserted-#{@post.id}-component",

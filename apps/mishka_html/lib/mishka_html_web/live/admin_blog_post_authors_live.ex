@@ -5,19 +5,24 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
 
   @impl true
   def mount(%{"post_id" => post_id}, _session, socket) do
-    Process.send_after(self(), :menu, 100)
-    socket =
-      assign(socket,
-        page_title: "مدیریت نویسندگان",
-        body_color: "#a29ac3cf",
-        authors: Author.authors(post_id),
-        changeset: MishkaDatabase.Schema.MishkaContent.BlogAuthor.changeset(
-          %MishkaDatabase.Schema.MishkaContent.BlogAuthor{}, %{}
-        ),
-        search_author: [],
-        post_id: post_id
-      )
-      {:ok, socket}
+    socket = case MishkaContent.Blog.Post.show_by_id(post_id) do
+      {:ok, :get_record_by_id, _error_tag, _record} ->
+        Process.send_after(self(), :menu, 100)
+        assign(socket,
+          page_title: "مدیریت نویسندگان",
+          body_color: "#a29ac3cf",
+          authors: Author.authors(post_id),
+          search_author: [],
+          post_id: post_id
+        )
+
+      _ ->
+        socket
+        |> put_flash(:error, "چنین مطلبی وجود ندارد یا از قبل حذف شده است.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
+    end
+
+    {:ok, socket}
   end
 
   @impl true

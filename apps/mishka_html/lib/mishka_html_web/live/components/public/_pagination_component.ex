@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
 
   def render(assigns) do
     ~L"""
-      <nav aria-label="Page navigation example">
+      <nav aria-label="Page navigation example" phx-hook="Paginate">
         <ul class="pagination justify-content-center pagination-lg">
             <li class="page-item">
                 <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="1" phx-target="<%= @myself %>">اولین</a>
@@ -40,6 +40,8 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
               count: socket.assigns.count
             )
         )
+        |> push_event("jump_to_top_page", %{})
+
       alias_link ->
         push_patch(socket,
           to:
@@ -52,6 +54,7 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
               count: socket.assigns.count
             )
         )
+        |> push_event("jump_to_top_page", %{})
     end
 
 

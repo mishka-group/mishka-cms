@@ -137,6 +137,14 @@ Hooks.ReplyComment = {
   }
 }
 
+Hooks.Paginate = {
+  mounted() {
+    this.handleEvent("jump_to_top_page", (value) => {
+      window.scroll({top: 0, left: 0, behavior: 'smooth'});
+    });
+  }
+}
+
 const ckeditorItems = ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 
   'blockQuote', 'insertTable', 'undo','redo','fontSize','highlight','pageBreak','todoList','alignment','-','code',
   'codeBlock', 'findAndReplace', 'fontBackgroundColor', 'fontColor', 'horizontalLine', '|', 'imageInsert', 'removeFormat', 

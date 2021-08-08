@@ -1,6 +1,10 @@
 defmodule MishkaHtmlWeb.ResetPasswordLive do
   use MishkaHtmlWeb, :live_view
 
+  alias MishkaDatabase.Cache.RandomCode
+  # TODO: should be on config file or ram
+  @hard_secret_random_link "Test refresh"
+
   @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
@@ -16,18 +20,41 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
   @impl true
   def handle_event("save", %{"email" => email}, socket) do
-    # if Capcha code is true
-    # if email address exist
-    # put flash and reset the ResetPassword form with live redirect
-    # send random link to user email
-    # the message of put flash should be a public info of user
-    # serach how to refresh Capcha
-    with {:ok, :get_record_by_field, :user, _repo_data} <- MishkaUser.User.show_by_email(email) do
-      {:noreply, socket}
+    # TODO: if Capcha code is true
+    with {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(email),
+         {:random_code, true} <- {:random_code, is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(email))} do
+
+          random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: repo_data.id, type: "access"}, [key_digest: :sha256])
+          RandomCode.save(repo_data.email, random_link)
+
+          site_link =
+            """
+              <p style="color:#BDBDBD; line-height: 9px">
+                <a href="#{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}" style="color: #3498DB;">
+                  #{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}
+                </a>
+              </p>
+              <hr>
+              <p style="color:#BDBDBD; line-height: 9px">
+                copy: #{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}
+              </p>
+            """
+
+
+          MishkaContent.Email.EmailHelper.send(:forget_password, {repo_data.email, site_link})
+
     else
-      {:error, :get_record_by_field, _error_tag} ->
-        {:noreply, socket}
+      # TODO: should save ip and email on state ro rate limit
+      {:error, :get_record_by_field, _error_tag} -> {:error, :get_record_by_field}
+      {:random_code, false} -> {:random_code, false}
     end
+
+    socket =
+      socket
+      |> put_flash(:info, "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید.")
+      |> push_redirect(to: Routes.live_path(socket, __MODULE__))
+
+    {:noreply, socket}
   end
 
   @impl true

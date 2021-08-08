@@ -10,6 +10,7 @@ defmodule MishkaUser.Token.PhoenixToken do
   @type clime() :: map() | tuple() | struct()
 
 
+  # TODO: should be on config file or ram
   @hard_secret_refresh "Test refresh"
   @hard_secret_access "Test access"
   # ["access", "refresh", "current"]

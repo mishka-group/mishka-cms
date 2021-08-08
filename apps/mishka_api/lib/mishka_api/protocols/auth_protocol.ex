@@ -414,7 +414,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     if is_nil(RandomCode.get_code_with_email(user_info.email)) do
       random_code = Enum.random(100000..999999)
       RandomCode.save(user_info.email, random_code)
-      # |> send to user email
+      MishkaContent.Email.EmailHelper.send(:forget_password, {user_info.email, random_code})
     end
 
     conn

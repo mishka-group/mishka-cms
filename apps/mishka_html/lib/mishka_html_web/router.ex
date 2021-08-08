@@ -36,6 +36,7 @@ defmodule MishkaHtmlWeb.Router do
     # without login and pass Capcha
     live "/auth/login", LoginLive
     post "/auth/login", AuthController, :login
+    live "/auth/reset/:random_link", ResetPasswordLive
     live "/auth/reset", ResetPasswordLive
     live "/auth/register", RegisterLive
   end
@@ -75,6 +76,11 @@ defmodule MishkaHtmlWeb.Router do
     live "/role", AdminUserRoleLive
     live "/role-permissions", AdminUserRolePermissionsLive
     live "/blog-authors/:post_id", AdminBlogPostAuthorsLive
+  end
+
+  if Mix.env == :dev do
+    # If using Phoenix
+    forward "/sent_emails", Bamboo.SentEmailViewerPlug
   end
 
   # Enables LiveDashboard only for development

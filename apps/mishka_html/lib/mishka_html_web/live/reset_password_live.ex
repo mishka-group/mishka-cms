@@ -19,6 +19,35 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
   end
 
   @impl true
+  def handle_params(%{"random_link" => random_link}, _url, socket) do
+    random_code = RandomCode.get_code_with_code(random_link)
+    socket = with {:random_code, false, random_code_info} <- {:random_code, is_nil(random_code), random_code},
+         {:ok, :get_record_by_field, :user, _repo_data} <- MishkaUser.User.show_by_email(random_code_info.email) do
+
+          socket
+          |> put_flash(:success, "کد ارسالی از طرف شما صحیح می باشد. لطفا پسورد جدید خود را وارد کنید.")
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.ResetChangePasswordLive, random_link))
+    else
+      {:random_code, true, _random_code_info} ->
+        socket
+        |> put_flash(:error, "کد ارسالی شما اشتباه می باشد. لطفا دوباره تلاش کنید")
+        |> push_redirect(to: Routes.live_path(socket, __MODULE__))
+
+      {:error, :get_record_by_field, _error_tag} ->
+        socket
+        |> put_flash(:error, "چنین کاربری وجود ندارد یا حذف شده است.")
+        |> push_redirect(to: Routes.live_path(socket, __MODULE__))
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("save", %{"email" => email}, socket) do
     # TODO: if Capcha code is true
     with {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(email),
@@ -29,13 +58,13 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
           site_link =
             """
-              <p style="color:#BDBDBD; line-height: 9px">
+              <p style="color:#BDBDBD; line-height: 30px">
                 <a href="#{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}" style="color: #3498DB;">
                   #{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}
                 </a>
               </p>
               <hr>
-              <p style="color:#BDBDBD; line-height: 9px">
+              <p style="color:#BDBDBD; line-height: 30px">
                 copy: #{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}
               </p>
             """
@@ -59,7 +88,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.ResetPasswordLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive"})
     {:noreply, socket}
   end
 

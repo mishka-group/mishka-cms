@@ -2,7 +2,7 @@ defmodule MishkaContent.Email.EmailHelper do
   alias MishkaContent.Email.{Email, Mailer}
   # TODO: shluod be in config file or agent on ram
   # TODO: create type space for this file
-
+  # TODO: create task supervisor to send email on another task
   def send(type, params) do
     type
     |> create_email_info(params)

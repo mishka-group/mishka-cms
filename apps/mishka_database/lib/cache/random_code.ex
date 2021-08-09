@@ -28,6 +28,11 @@ defmodule MishkaDatabase.Cache.RandomCode do
     GenServer.call(__MODULE__, {:get_code_with_email, email})
   end
 
+  def get_code_with_code(code) do
+    start_expired_task()
+    GenServer.call(__MODULE__, {:get_code_with_code, code})
+  end
+
   def stop() do
     GenServer.cast(__MODULE__, :stop)
   end
@@ -68,6 +73,13 @@ defmodule MishkaDatabase.Cache.RandomCode do
     {:reply, selected_state, state}
   end
 
+  @impl true
+  def handle_call({:get_code_with_code, code}, _from, state) do
+    selected_state = state
+    |> Enum.find(fn x -> x.code == code end)
+
+    {:reply, selected_state, state}
+  end
 
   @impl true
   def handle_cast({:push, email, code}, state) do

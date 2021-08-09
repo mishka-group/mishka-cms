@@ -39,6 +39,7 @@ defmodule MishkaHtmlWeb.Router do
     live "/auth/reset/:random_link", ResetPasswordLive
     live "/auth/reset", ResetPasswordLive
     live "/auth/register", RegisterLive
+    live "/auth/reset-change-password/:random_link", ResetChangePasswordLive
   end
 
   scope "/", MishkaHtmlWeb do

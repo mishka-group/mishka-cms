@@ -10,7 +10,6 @@ defmodule MishkaDatabase.Application do
     children = [
       {MishkaDatabase.Cache.MnesiaToken, []},
       {MishkaDatabase.Cache.RandomCode, []},
-      {MishkaDatabase.Cache.RandomLink, []},
       MishkaDatabase.Repo
     ]
 

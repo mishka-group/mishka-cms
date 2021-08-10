@@ -56,19 +56,10 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
           random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: repo_data.id, type: "access"}, [key_digest: :sha256])
           RandomCode.save(repo_data.email, random_link)
 
-          site_link =
-            """
-              <p style="color:#BDBDBD; line-height: 30px">
-                <a href="#{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}" style="color: #3498DB;">
-                  #{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}
-                </a>
-              </p>
-              <hr>
-              <p style="color:#BDBDBD; line-height: 30px">
-                copy: #{MishkaHtmlWeb.Router.Helpers.url(socket) <> Routes.live_path(socket, __MODULE__, random_link)}
-              </p>
-            """
-
+          site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
+              MishkaHtmlWeb.Router.Helpers.url(socket),
+              Routes.live_path(socket, __MODULE__, random_link)
+            )
 
           MishkaContent.Email.EmailHelper.send(:forget_password, {repo_data.email, site_link})
 

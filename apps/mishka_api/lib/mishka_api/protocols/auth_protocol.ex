@@ -41,7 +41,7 @@ end
 defimpl MishkaApi.AuthProtocol, for: Any do
   use MishkaApiWeb, :controller
   alias MishkaUser.Token.Token
-  alias MishkaDatabase.Cache.{RandomCode, RandomLink}
+  alias MishkaDatabase.Cache.{RandomCode}
 
   @request_error_tag :user
   @hard_secret_random_link "Test refresh"

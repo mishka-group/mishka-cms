@@ -13,6 +13,7 @@ defmodule MishkaContent.Application do
     ]
 
     children = [
+      {Task.Supervisor, name: MishkaContent.Email.EmailHelperTaskSupervisor},
       {Registry, keys: :unique, name: MishkaContent.Cache.BookmarkRegistry},
       {DynamicSupervisor, bookmark_runner_config},
     ]

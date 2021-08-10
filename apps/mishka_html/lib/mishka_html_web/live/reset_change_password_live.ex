@@ -38,9 +38,18 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
     socket = with {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(socket.assigns.user_email),
                   {:random_link, false} <- {:random_link, is_nil(RandomCode.get_code_with_code(socket.assigns.random_link))},
                   {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, socket.assigns.random_link, [max_age: random_link_expire_time().age])},
-                  {:ok, :edit, :user, _user_info} <- MishkaUser.User.edit(%{id: repo_data.id, password: new_password}) do
+                  {:ok, :edit, :user, user_info} <- MishkaUser.User.edit(%{id: repo_data.id, password: new_password}) do
 
+
+
+        # clean all the token OTP
+        MishkaUser.Token.TokenManagemnt.stop(user_info.id)
+        # clean all the token on disc
+        MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(user_info.id)
+        # delete all randome codes of user
         RandomCode.delete_code(socket.assigns.random_link, repo_data.email)
+        # delete all user's ACL
+        MishkaUser.Acl.AclManagement.stop(user_info.id)
 
         socket
         |> put_flash(:success, "پسورد شما با موفقیت به روز رسانی شد.")
@@ -109,7 +118,7 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
     }
   end
 
-  defp random_link_expire_time() do
+  def random_link_expire_time() do
     %{
       unix_time: DateTime.utc_now() |> DateTime.add(600, :second) |> DateTime.to_unix(),
       age: 600

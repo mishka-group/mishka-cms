@@ -24,7 +24,7 @@ defmodule MishkaApi.MixProject do
   def application do
     [
       mod: {MishkaApi.Application, []},
-      extra_applications: [:logger, :runtime_tools, :mishka_user, :plug, :mishka_content]
+      extra_applications: [:logger, :runtime_tools, :mishka_user, :plug, :mishka_content, :mishka_html]
     ]
   end
 
@@ -46,6 +46,7 @@ defmodule MishkaApi.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:mishka_user, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
+      {:mishka_html, in_umbrella: true},
       {:plug, "~> 1.11"}
     ]
   end

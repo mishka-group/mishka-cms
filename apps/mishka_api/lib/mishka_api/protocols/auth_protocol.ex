@@ -44,6 +44,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   alias MishkaDatabase.Cache.{RandomCode, RandomLink}
 
   @request_error_tag :user
+  @hard_secret_random_link "Test refresh"
 
   def register({:error, _action, _error_tag, repo_error}, conn, _allowed_fields) do
     conn
@@ -566,7 +567,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         if is_nil(RandomCode.get_code_with_email(user_info.email)) do
           random_code = Enum.random(100000..999999)
           RandomCode.save(user_info.email, random_code)
-          # |> send to user email
+          MishkaContent.Email.EmailHelper.send(:deactive_account, {user_info.email, random_code})
         end
 
         conn
@@ -743,7 +744,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         if is_nil(RandomCode.get_code_with_email(user_info.email)) do
           random_code = Enum.random(100000..999999)
           RandomCode.save(user_info.email, random_code)
-          # |> send to user email
+          MishkaContent.Email.EmailHelper.send(:verify_email, {user_info.email, random_code})
         end
 
         conn
@@ -770,9 +771,16 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
       _ ->
 
-        if is_nil(RandomLink.get_codes_with_email(user_info.email, :verify)) do
-          RandomLink.save(user_info.email, %{type: :verify})
-          # |> should be send with email
+        if is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(user_info.email)) do
+          random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: user_info.id, type: "access"}, [key_digest: :sha256])
+          RandomCode.save(user_info.email, random_link)
+
+          site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
+                MishkaHtmlWeb.Router.Helpers.url(MishkaHtmlWeb.Endpoint),
+                MishkaHtmlWeb.Router.Helpers.live_path(MishkaHtmlWeb.Endpoint, MishkaHtmlWeb.ResetPasswordLive, random_link)
+              )
+
+          MishkaContent.Email.EmailHelper.send(:verify_email, {user_info.email, site_link})
         end
 
         conn
@@ -811,9 +819,16 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
       _ ->
 
-        if is_nil(RandomLink.get_codes_with_email(user_info.email, :deactive)) do
-          RandomLink.save(user_info.email, %{type: :deactive})
-          # |> should be send with email
+        if is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(user_info.email)) do
+          random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: user_info.id, type: "access"}, [key_digest: :sha256])
+          RandomCode.save(user_info.email, random_link)
+
+          site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
+                MishkaHtmlWeb.Router.Helpers.url(MishkaHtmlWeb.Endpoint),
+                MishkaHtmlWeb.Router.Helpers.live_path(MishkaHtmlWeb.Endpoint, MishkaHtmlWeb.ResetPasswordLive, random_link)
+              )
+
+          MishkaContent.Email.EmailHelper.send(:deactive_account, {user_info.email, site_link})
         end
 
         conn
@@ -839,9 +854,16 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
   def send_delete_tokens_link_by_email({:ok, :get_record_by_field, :user, user_info}, conn) do
 
-    if is_nil(RandomLink.get_codes_with_email(user_info.email, :delete_tokens)) do
-      RandomLink.save(user_info.email, %{type: :delete_tokens})
-      # |> should be send with email
+    if is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(user_info.email)) do
+      random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: user_info.id, type: "access"}, [key_digest: :sha256])
+      RandomCode.save(user_info.email, random_link)
+
+      site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
+            MishkaHtmlWeb.Router.Helpers.url(MishkaHtmlWeb.Endpoint),
+            MishkaHtmlWeb.Router.Helpers.live_path(MishkaHtmlWeb.Endpoint, MishkaHtmlWeb.ResetPasswordLive, random_link)
+          )
+
+      MishkaContent.Email.EmailHelper.send(:delete_tokens, {user_info.email, site_link})
     end
 
     conn

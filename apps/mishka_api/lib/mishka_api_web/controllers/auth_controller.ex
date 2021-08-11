@@ -6,20 +6,6 @@ defmodule MishkaApiWeb.AuthController do
 
   alias MishkaUser.Token.Token
 
-  plug MishkaApi.Plug.AccessTokenPlug when action in [
-    :change_password,
-    :user_tokens,
-    :get_token_expire_time,
-    :delete_token,
-    :delete_tokens,
-    :edit_profile,
-    :deactive_account,
-    :verify_email,
-    :verify_email_by_email_link,
-    :deactive_account_by_email_link
-  ]
-
-
   # add ip limitter and os info
   # this module will help user to send request with his mobile after creating a dynamic plug for mobile provider
 
@@ -72,7 +58,7 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def change_password(conn, %{"curent_password" => password, "new_password" => new_password}) do
-    with {:ok, :get_record_by_id, :user, user_info} <-MishkaUser.User.show_by_id(conn.assigns.user_id),
+    with {:ok, :get_record_by_id, :user, user_info} <- MishkaUser.User.show_by_id(conn.assigns.user_id),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:ok, :edit, :user, info} <- MishkaUser.User.edit(%{id: user_info.id, password: new_password}) do
 

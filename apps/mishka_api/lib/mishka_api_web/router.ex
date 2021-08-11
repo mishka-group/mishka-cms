@@ -19,24 +19,33 @@ defmodule MishkaApiWeb.Router do
 
   scope "/api/auth/v1", MishkaApiWeb do
     pipe_through [:api, :acl_check]
-    post "/register", AuthController, :register
-    post "/login", AuthController, :login
+
+    # these action need to refresh token
     post "/logout", AuthController, :logout
     post "/refresh-token", AuthController, :refresh_token
-    post "/change-password", AuthController, :change_password
-    post "/user-tokens", AuthController, :user_tokens
-    post "/get-token-expire-time", AuthController, :get_token_expire_time
+
+
+    # these action do not need to token check
+    post "/register", AuthController, :register
+    post "/login", AuthController, :login
     post "/reset-password", AuthController, :reset_password
-    post "/delete-token", AuthController, :delete_token
-    post "/delete-tokens", AuthController, :delete_tokens
-    post "/edit-profile", AuthController, :edit_profile
-    post "/deactive-account", AuthController, :deactive_account
-    post "/deactive-account-by-email-link", AuthController, :deactive_account_by_email_link
-    post "/verify-email", AuthController, :verify_email
-    post "/verify-email-by-email-link", AuthController, :verify_email_by_email_link
     post "/send-delete-tokens-link-by-email", AuthController, :send_delete_tokens_link_by_email
   end
 
+  scope "/api/auth/v1", MishkaApiWeb do
+    pipe_through [:api, :access_token, :acl_check]
+
+    post "/delete-tokens", AuthController, :delete_tokens
+    post "/delete-token", AuthController, :delete_token
+    post "/get-token-expire-time", AuthController, :get_token_expire_time
+    post "/user-tokens", AuthController, :user_tokens
+    post "/change-password", AuthController, :change_password
+    post "/deactive-account", AuthController, :deactive_account
+    post "/deactive-account-by-email-link", AuthController, :deactive_account_by_email_link
+    post "/edit-profile", AuthController, :edit_profile
+    post "/verify-email", AuthController, :verify_email
+    post "/verify-email-by-email-link", AuthController, :verify_email_by_email_link
+  end
 
   scope "/api/content/v1", MishkaApiWeb do
     pipe_through [:api, :access_token, :acl_check]

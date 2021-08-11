@@ -31,6 +31,14 @@ defmodule MishkaHtmlWeb.Router do
   end
 
   scope "/", MishkaHtmlWeb do
+    pipe_through :browser
+
+    get "/auth/verify-email/:code", AuthController, :verify_email
+    get "/auth/deactive-account/:code", AuthController, :deactive_account
+    get "/auth/delete-tokens/:code", AuthController, :delete_tokens
+  end
+
+  scope "/", MishkaHtmlWeb do
     pipe_through [:browser, :not_login]
 
     # without login and pass Capcha
@@ -40,10 +48,6 @@ defmodule MishkaHtmlWeb.Router do
     live "/auth/reset", ResetPasswordLive
     live "/auth/register", RegisterLive
     live "/auth/reset-change-password/:random_link", ResetChangePasswordLive
-
-    get "/auth/verify-email/:code", AuthController, :verify_email
-    get "/auth/deactive-account/:code", AuthController, :deactive_account
-    get "/auth/delete-tokens/:code", AuthController, :delete_tokens
   end
 
   scope "/", MishkaHtmlWeb do

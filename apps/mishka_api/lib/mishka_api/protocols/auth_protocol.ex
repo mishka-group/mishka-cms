@@ -59,12 +59,19 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
   def register({:ok, _action, _error_tag, repo_data}, conn, allowed_fields) do
     MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
+
+
+    random_code = Enum.random(100000..999999)
+    RandomCode.save(repo_data.email, random_code)
+    MishkaContent.Email.EmailHelper.send(:verify_email, {repo_data.email, random_code})
+
+
     conn
     |> put_status(200)
     |> json(%{
       action: :register,
       system: @request_error_tag,
-      message: "داده شما با موفقیت ذخیره شد.",
+      message: "ثبت نام شما موفقیت آمیز بود. لطفا به ایمیل خود مراجعه کنید و کد فعال سازی ایمیل را برای تایید حساب کاربری ارسال فرمایید. لازم به ذکر هست کد فعال سازی فقط 5 دقیقه اعتبار دارد.",
       user_info: Map.take(repo_data, allowed_fields |> Enum.map(&String.to_existing_atom/1))
     })
   end
@@ -771,13 +778,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
       _ ->
 
+
         if is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(user_info.email)) do
           random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: user_info.id, type: "access"}, [key_digest: :sha256])
           RandomCode.save(user_info.email, random_link)
 
           site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
                 MishkaHtmlWeb.Router.Helpers.url(MishkaHtmlWeb.Endpoint),
-                MishkaHtmlWeb.Router.Helpers.live_path(MishkaHtmlWeb.Endpoint, MishkaHtmlWeb.ResetPasswordLive, random_link)
+                MishkaHtmlWeb.Router.Helpers.auth_path(MishkaHtmlWeb.Endpoint, :verify_email, random_link)
               )
 
           MishkaContent.Email.EmailHelper.send(:verify_email, {user_info.email, site_link})
@@ -825,7 +833,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
           site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
                 MishkaHtmlWeb.Router.Helpers.url(MishkaHtmlWeb.Endpoint),
-                MishkaHtmlWeb.Router.Helpers.live_path(MishkaHtmlWeb.Endpoint, MishkaHtmlWeb.ResetPasswordLive, random_link)
+                MishkaHtmlWeb.Router.Helpers.auth_path(MishkaHtmlWeb.Endpoint, :deactive_account, random_link)
               )
 
           MishkaContent.Email.EmailHelper.send(:deactive_account, {user_info.email, site_link})
@@ -860,7 +868,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
       site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
             MishkaHtmlWeb.Router.Helpers.url(MishkaHtmlWeb.Endpoint),
-            MishkaHtmlWeb.Router.Helpers.live_path(MishkaHtmlWeb.Endpoint, MishkaHtmlWeb.ResetPasswordLive, random_link)
+            MishkaHtmlWeb.Router.Helpers.auth_path(MishkaHtmlWeb.Endpoint, :delete_tokens, random_link)
           )
 
       MishkaContent.Email.EmailHelper.send(:delete_tokens, {user_info.email, site_link})

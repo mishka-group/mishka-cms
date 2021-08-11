@@ -75,7 +75,7 @@ defmodule MishkaHtmlWeb.AuthController do
   def verify_email(conn, %{"code" => code}) do
     random_link = RandomCode.get_code_with_code(code)
     with {:random_link, false, random_link_user_info} <- {:random_link, is_nil(random_link), random_link},
-         {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, random_link, [max_age: MishkaHtmlWeb.ResetChangePasswordLive.random_link_expire_time().age])},
+         {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, "#{random_link.code}", [max_age: MishkaHtmlWeb.ResetChangePasswordLive.random_link_expire_time().age])},
          {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(random_link_user_info.email),
          {:user_is_not_deactive, true} <- {:user_is_not_deactive, repo_data.status == :registered},
          {:ok, :edit, :user, user_info} <- MishkaUser.User.edit(%{id: repo_data.id, status: "active"}) do
@@ -113,7 +113,7 @@ defmodule MishkaHtmlWeb.AuthController do
   def deactive_account(conn, %{"code" => code}) do
     random_link = RandomCode.get_code_with_code(code)
     with {:random_link, false, random_link_user_info} <- {:random_link, is_nil(random_link), random_link},
-         {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, random_link, [max_age: MishkaHtmlWeb.ResetChangePasswordLive.random_link_expire_time().age])},
+         {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, "#{random_link.code}", [max_age: MishkaHtmlWeb.ResetChangePasswordLive.random_link_expire_time().age])},
          {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(random_link_user_info.email),
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, repo_data.status == :inactive},
          {:ok, :edit, :user, user_info} <- MishkaUser.User.edit(%{id: repo_data.id, status: "inactive"}) do
@@ -172,7 +172,7 @@ defmodule MishkaHtmlWeb.AuthController do
   def delete_tokens(conn, %{"code" => code}) do
     random_link = RandomCode.get_code_with_code(code)
     with {:random_link, false, random_link_user_info} <- {:random_link, is_nil(random_link), random_link},
-         {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, random_link, [max_age: MishkaHtmlWeb.ResetChangePasswordLive.random_link_expire_time().age])},
+         {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, "#{random_link.code}", [max_age: MishkaHtmlWeb.ResetChangePasswordLive.random_link_expire_time().age])},
          {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(random_link_user_info.email) do
 
         # clean all the token OTP
@@ -199,8 +199,8 @@ defmodule MishkaHtmlWeb.AuthController do
         end
 
         conn
-        |> configure_session(drop: true)
         |> put_flash(:info, "تمامی توکن های شما و همینطور دستگاه های آنلاین به حساب کاربری شما با موفقیت پاکسازی و خارج شدند")
+        |> configure_session(drop: true)
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
 
 

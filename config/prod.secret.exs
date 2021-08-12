@@ -11,12 +11,20 @@ secret_key_base =
     You can generate one by calling: mix phx.gen.secret
     """
 
-config :mishka_cms_web, MishkaCmsWeb.Endpoint,
-  http: [
-    port: String.to_integer(System.get_env("PORT") || "4000"),
-    transport_options: [socket_opts: [:inet6]]
-  ],
-  secret_key_base: secret_key_base
+config :mishka_html, MishkaHtmlWeb.Endpoint,
+    http: [
+      port: String.to_integer(System.get_env("PORT") || "4000"),
+      transport_options: [socket_opts: [:inet6]]
+    ],
+    secret_key_base: secret_key_base
+
+
+config :mishka_api, MishkaApiWeb.Endpoint,
+    http: [
+      port: String.to_integer(System.get_env("PORT") || "4001"),
+      transport_options: [socket_opts: [:inet6]]
+    ],
+    secret_key_base: secret_key_base
 
 # ## Using releases (Elixir v1.9+)
 #

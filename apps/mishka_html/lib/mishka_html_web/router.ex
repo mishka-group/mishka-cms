@@ -4,25 +4,93 @@ defmodule MishkaHtmlWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
+    plug :fetch_live_flash
+    plug :put_root_layout, {MishkaHtmlWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug MishkaHtml.Plug.AclCheckPlug
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
+  pipeline :user_logined do
+    plug MishkaHtml.Plug.CurrentTokenPlug
+  end
+
+  pipeline :not_login do
+    plug MishkaHtml.Plug.NotLoginPlug
   end
 
   scope "/", MishkaHtmlWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", HomeLive
+    live "/blogs", BlogsLive
+    live "/blog/category/:alias_link", BlogCategoryLive
+    live "/blog/:alias_link", BlogPostLive
+    live "/blog/tags", HomeLive
+    live "/blog/tag", HomeLive
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", MishkaHtmlWeb do
-  #   pipe_through :api
-  # end
+  scope "/", MishkaHtmlWeb do
+    pipe_through :browser
+
+    get "/auth/verify-email/:code", AuthController, :verify_email
+    get "/auth/deactive-account/:code", AuthController, :deactive_account
+    get "/auth/delete-tokens/:code", AuthController, :delete_tokens
+  end
+
+  scope "/", MishkaHtmlWeb do
+    pipe_through [:browser, :not_login]
+
+    # without login and pass Capcha
+    live "/auth/login", LoginLive
+    post "/auth/login", AuthController, :login
+    live "/auth/reset/:random_link", ResetPasswordLive
+    live "/auth/reset", ResetPasswordLive
+    live "/auth/register", RegisterLive
+    live "/auth/reset-change-password/:random_link", ResetChangePasswordLive
+  end
+
+  scope "/", MishkaHtmlWeb do
+    pipe_through [:browser, :user_logined]
+
+    get "/auth/log-out", AuthController, :log_out
+    live "/auth/notifications", NotificationsLive
+  end
+
+  scope "/user", MishkaHtmlWeb do
+    pipe_through [:browser, :user_logined]
+
+    live "/bookmarks", BookmarksLive
+  end
+
+
+  scope "/admin", MishkaHtmlWeb do
+    pipe_through [:browser, :user_logined]
+
+    live "/", AdminDashboardLive
+    live "/blog-posts", AdminBlogPostsLive
+    live "/blog-post", AdminBlogPostLive
+    live "/blog-categories", AdminBlogCategoriesLive
+    live "/blog-category", AdminBlogCategoryLive
+    live "/bookmarks", AdminBookmarksLive
+    live "/subscriptions", AdminSubscriptionsLive
+    live "/subscription", AdminSubscriptionLive
+    live "/comments", AdminCommentsLive
+    live "/comment", AdminCommentLive
+    live "/users", AdminUsersLive
+    live "/user", AdminUserLive
+    live "/logs", AdminLogsLive
+    live "/seo", AdminSeoLive
+    live "/roles", AdminUserRolesLive
+    live "/role", AdminUserRoleLive
+    live "/role-permissions", AdminUserRolePermissionsLive
+    live "/blog-authors/:post_id", AdminBlogPostAuthorsLive
+  end
+
+  if Mix.env == :dev do
+    # If using Phoenix
+    forward "/sent_emails", Bamboo.SentEmailViewerPlug
+  end
 
   # Enables LiveDashboard only for development
   #
@@ -35,7 +103,7 @@ defmodule MishkaHtmlWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through [:browser, :user_logined]
       live_dashboard "/dashboard", metrics: MishkaHtmlWeb.Telemetry
     end
   end

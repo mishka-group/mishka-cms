@@ -1,0 +1,77 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+
+                <%= live_redirect "ساخت کاربر", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive), class: "btn btn-outline-primary" %>
+
+                <%= live_redirect "دسترسی ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserRolesLive), class: "btn btn-outline-info" %>
+
+                <%= live_redirect "آمار و گزارش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+
+                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+            </div>
+        </div>
+
+
+
+        <div class="space20"></div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col">
+              <h3 class="admin-dashbord-h3-right-side-title vazir">کاربران</h3>
+              <span class="admin-dashbord-right-side-text vazir">
+              شما در این بخش می توانید کاربران سایت را مدیریت نمایید.
+              </span>
+              <div class="space20"></div>
+            </div>
+
+            <%= live_component @socket, MishkaHtmlWeb.Admin.User.ActivitiesComponent, id: :last_activities %>
+        </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.User.SearchComponent,
+                           id: :admin_category_search,
+                           filters: @filters
+        %>
+
+
+
+        <div class="clearfix"></div>
+        <div class="col space30"> </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.User.ListComponent,
+                           id: :admin_last_users,
+                           users: @users,
+                           filters: @filters,
+                           count: @page_size,
+                           pagination_url: MishkaHtmlWeb.AdminUsersLive,
+                           roles: @roles
+        %>
+
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div class="clearfix"></div>
+
+<%= if @open_modal do %>
+    <%= live_component @socket, MishkaHtmlWeb.Admin.Public.ModalComponent,
+                            msg: "test",
+                            id: :modal_live,
+                            component: @component
+    %>
+<% end %>
+
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

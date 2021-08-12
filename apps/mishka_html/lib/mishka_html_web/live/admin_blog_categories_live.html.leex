@@ -1,0 +1,79 @@
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+
+                <%= live_redirect "مجموعه جدید", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive), class: "btn btn-outline-primary" %>
+
+                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
+
+                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+
+                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+            </div>
+        </div>
+
+
+
+            <div class="space20"></div>
+            <div class="clearfix"></div>
+            <div class="row">
+              <div class="col">
+              <h3 class="admin-dashbord-h3-right-side-title vazir">مدیریت مجموعه ها</h3>
+              <span class="admin-dashbord-right-side-text vazir">
+              در این بخش می توانید مجموعه های مربوط به بخش مطالب را مدیریت کنید.
+              </span>
+              <div class="space20"></div>
+
+            </div>
+
+
+          <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.ActivitiesComponent , id: :admin_last_activities %>
+
+      </div>
+
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.Category.SearchComponent,
+                           id: :admin_category_search,
+                           filters: @filters
+        %>
+
+
+
+        <div class="clearfix"></div>
+        <div class="col space30"> </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.Category.ListComponent,
+                           id: :admin_last_categories,
+                           categories: @categories,
+                           filters: @filters,
+                           count: @page_size,
+                           pagination_url: MishkaHtmlWeb.AdminBlogCategoriesLive
+        %>
+
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div class="clearfix"></div>
+
+<%= if @open_modal do %>
+    <%= live_component @socket, MishkaHtmlWeb.Admin.Public.ModalComponent,
+                            msg: "test",
+                            id: :modal_live,
+                            component: @component
+    %>
+<% end %>
+
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

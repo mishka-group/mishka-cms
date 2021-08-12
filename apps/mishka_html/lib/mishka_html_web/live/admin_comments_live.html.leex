@@ -1,0 +1,59 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+                <button type="button" class="btn btn-outline-danger">
+                    آمار و اطلاعات
+                </button>
+            </div>
+        </div>
+
+
+
+            <div class="space20"></div>
+            <div class="clearfix"></div>
+            <div class="row">
+              <div class="col">
+              <h3 class="admin-dashbord-h3-right-side-title vazir">نظرات</h3>
+              <span class="admin-dashbord-right-side-text vazir">
+              شما در این بخش می توانید نظرات ارسالی از طرف کاربران را مدیریت نمایید.
+              </span>
+              <div class="space20"></div>
+
+            </div>
+
+      </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Comment.SearchComponent,
+                id: :admin_comment_search,
+                filters: @filters
+        %>
+
+
+
+        <div class="clearfix"></div>
+        <div class="col space30"> </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Comment.ListComponent,
+                        id: :admin_last_comment,
+                        comments: @comments,
+                        filters: @filters,
+                        count: @page_size,
+                        pagination_url: MishkaHtmlWeb.AdminCommentsLive
+        %>
+
+    </div>
+    <div class="clearfix"></div>
+</div>

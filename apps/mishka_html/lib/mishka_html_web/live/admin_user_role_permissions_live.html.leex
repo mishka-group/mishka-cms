@@ -1,0 +1,146 @@
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+                <%= live_redirect "برگشت به نقش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserRolesLive), class: "btn btn-outline-primary" %>
+
+                <%= live_redirect "برگشت به کاربران", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUsersLive), class: "btn btn-outline-info" %>
+
+                <%= live_redirect "آمار و گزارش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+            </div>
+        </div>
+
+
+
+            <div class="space20"></div>
+            <div class="clearfix"></div>
+            <div class="row">
+              <div class="col">
+              <h3 class="admin-dashbord-h3-right-side-title vazir">دسترسی ها</h3>
+              <span class="admin-dashbord-right-side-text vazir">
+              در این بخش شما امکان اضافه کردن نقش های مورد نیاز خود برای هر نقش را خواهید داشت. بعد از تخصیص هر دسترسی می توانید نقش را به یک کاربر متصل کنید
+              </span>
+              <div class="space20"></div>
+
+                <div class="col-sm-12">
+                    <div class="clearfix"></div>
+                    <div class="space40"></div>
+                    <hr>
+                    <div class="space40"></div>
+                    <h3 class="admin-dashbord-h3-right-side-title vazir">ایجاد دسترسی</h3>
+                    <%= f = form_for @changeset, "#",
+                        phx_submit: "save",
+                        multipart: true %>
+                        <div class="clearfix"></div>
+                        <div class="space30"></div>
+                        <div class="row vazir">
+
+                            <div class="col-md-3">
+                                <%= label f , "دسترسی" %>
+                                <%= select f, :permission,
+                                    [
+                                        {"ویرایش", :edit},
+                                        {"نمایش", :view},
+                                        {"تمام دسترسی ها", :*},
+                                    ],
+                                    class: "form-select"
+                                %>
+                            </div>
+
+                            <div class="col-md-3">
+                                <%= label f , "انتخاب بخش" %>
+                                <%= select f, :section,
+                                    [
+                                        {"مطالب", :blog},
+                                        {"نظرات", :comment},
+                                        {"داشبورد مدیریت", :admin},
+                                        {"تمام بخش ها", :*}
+                                    ],
+                                    class: "form-select"
+                                %>
+                            </div>
+
+
+                        </div>
+
+                        <div class="space10"></div>
+                        <%= submit "Save", phx_disable_with: "Saving...", class: "btn btn-primary" %>
+                    </form>
+                </div>
+
+
+            </div>
+
+      </div>
+
+
+        <div class="clearfix"></div>
+        <div class="col space30"> </div>
+
+        <div class="col bw admin-blog-post-list">
+            <div class="row vazir">
+                <div class="row vazir">
+                    <div class="col titile-of-blog-posts alert alert-primary">
+                        دسترسی
+                    </div>
+
+                    <div class="col titile-of-blog-posts alert alert-danger">
+                        نام نقش
+                    </div>
+
+                    <div class="col titile-of-blog-posts alert alert-info">
+                        نمایش نقش
+                    </div>
+
+                    <div class="col titile-of-blog-posts alert alert-warning">
+                        عملیات
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="space40"></div>
+                <div class="clearfix"></div>
+
+
+                    <%= for {item, color} <- Enum.zip(@permissions, Stream.cycle(["wlist", "glist"])) do %>
+                        <div id="<%= item.id %>" phx-update="append" class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
+                            <div class="col ltr" id="<%= item.id %>-value">
+                                <span class="badge bg-info"><%= item.value %></span>
+                            </div>
+
+                            <div class="col" id="<%= item.id %>-role_name">
+                                <span class="badge bg-info vazir">
+                                    <%= item.role_name %>
+                                </span>
+                            </div>
+
+                            <div class="col" id="<%= item.id %>-role_display_name">
+                                <span class="badge bg-primary vazir">
+                                    <%= item.role_display_name %>
+                                </span>
+                            </div>
+
+                            <div class="col opration-post-blog" id="<%= item.id %>-opration">
+                                <a class="btn btn-outline-danger vazir",
+                                            phx-click="delete"
+                                            phx-value-id="<%= item.id %>">حذف</a>
+                            </div>
+                        </div>
+                        <div class="space20" id="<%= item.id %>-space20"></div>
+                        <div class="clearfix" id="<%= item.id %>-clearfix"></div>
+                    <% end %>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div id="notif">
+    <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>
+</div>

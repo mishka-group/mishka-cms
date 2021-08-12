@@ -51,7 +51,9 @@ defmodule MishkaCms.Umbrella.MixProject do
   defp aliases do
     [
       # run `mix setup` in all child apps
-      setup: ["cmd mix setup"]
+      setup: ["cmd mix setup"],
+      "ecto.setup": ["ecto.drop", "ecto.create", "ecto.migrate"],
+      # MIX_ENV=test mix ecto.drop; MIX_ENV=test mix ecto.create; MIX_ENV=test mix ecto.migrate
     ]
   end
 end

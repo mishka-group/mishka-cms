@@ -11,6 +11,7 @@ defmodule MishkaHtml.Application do
       MishkaHtmlWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: MishkaHtml.PubSub},
+      {Task.Supervisor, name: MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor},
       # Start the Endpoint (http/https)
       MishkaHtmlWeb.Endpoint
       # Start a worker by calling: MishkaHtml.Worker.start_link(arg)

@@ -6,7 +6,7 @@ use Mix.Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :mishka_cms_web, MishkaCmsWeb.Endpoint,
+config :mishka_html, MishkaHtmlWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -16,10 +16,18 @@ config :mishka_cms_web, MishkaCmsWeb.Endpoint,
       "node_modules/webpack/bin/webpack.js",
       "--mode",
       "development",
-      "--watch-stdin",
-      cd: Path.expand("../apps/mishka_cms_web/assets", __DIR__)
+      "--watch",
+      "--watch-options-stdin",
+      cd: Path.expand("../apps/mishka_html/assets", __DIR__)
     ]
   ]
+
+config :mishka_api, MishkaApiWeb.Endpoint,
+  http: [port: 4001],
+  debug_errors: true,
+  code_reloader: true,
+  check_origin: false,
+  watchers: []
 
 # ## SSL Support
 #
@@ -46,13 +54,13 @@ config :mishka_cms_web, MishkaCmsWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :mishka_cms_web, MishkaCmsWeb.Endpoint,
+config :mishka_html, MishkaHtmlWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/static/(?!uploads).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/mishka_cms_web/(live|views)/.*(ex)$",
-      ~r"lib/mishka_cms_web/templates/.*(eex)$"
+      ~r"lib/mishka_html_web/(live|views)/.*(ex)$",
+      ~r"lib/mishka_html_web/templates/.*(eex)$"
     ]
   ]
 

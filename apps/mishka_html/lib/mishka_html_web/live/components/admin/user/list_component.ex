@@ -52,19 +52,19 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                     </div>
 
                     <div class="col-sm-2" id="<%= "full_name-#{item.id}" %>">
-                        <%= live_redirect "#{item.full_name}",
+                        <%= live_redirect "#{MishkaHtml.full_name_sanitize(item.full_name)}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.id)
                         %>
                     </div>
 
                     <div class="col-sm-1" id="<%= "username-#{item.id}" %>">
-                        <%= live_redirect "#{item.username}",
+                        <%= live_redirect "#{MishkaHtml.username_sanitize(item.username)}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.id)
                         %>
                     </div>
 
                     <div class="col" id="<%= "email-#{item.id}" %>">
-                        <%= item.email %>
+                        <%= MishkaHtml.email_sanitize(item.email) %>
                     </div>
 
                     <div class="col-sm-1" id="<%= "status-#{item.id}" %>">

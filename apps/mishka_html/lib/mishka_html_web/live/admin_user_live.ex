@@ -161,7 +161,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         {:noreply, socket}
 
       {:ok, :add, :user, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{repo_data.full_name} درست شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} درست شده است."})
         MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
         socket =
           socket
@@ -185,7 +185,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         {:noreply, socket}
 
       {:ok, :edit, :user, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{repo_data.full_name} به روز شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} به روز شده است."})
 
         socket =
           socket

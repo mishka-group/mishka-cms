@@ -19,7 +19,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
           assign(socket,
             category_id: record.id,
             alias_link: record.alias_link,
-            page_title: "مطالب مجموعه #{record.title}",
+            page_title: "مطالب مجموعه #{MishkaHtml.title_sanitize(record.title)}",
             seo_tags: seo_tags(socket, record),
             page_size: 12,
             filters: %{category_id: record.id},
@@ -159,10 +159,10 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{
       image: "#{site_link}/#{category.main_image}",
-      title: "#{category.title}",
-      description: if(!is_nil(category.meta_description), do: "#{category.meta_description}", else: "#{category.short_description}"),
+      title: "#{MishkaHtml.title_sanitize(category.title)}",
+      description: if(!is_nil(category.meta_description), do: "#{HtmlSanitizeEx.strip_tags(category.meta_description)}", else: "#{HtmlSanitizeEx.strip_tags(category.short_description)}"),
       type: "website",
-      keywords: "#{category.meta_keywords}",
+      keywords: "#{HtmlSanitizeEx.strip_tags(category.meta_keywords)}",
       link: site_link <> Routes.live_path(socket, __MODULE__, category.alias_link)
     }
   end

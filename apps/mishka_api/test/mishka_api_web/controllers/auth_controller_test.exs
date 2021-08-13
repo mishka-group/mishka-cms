@@ -366,7 +366,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
 
       assert %{
         "action" => "register",
-        "errors" => %{"full_name" => ["is invalid"], "username" => ["is invalid"]},
+        "errors" => %{"full_name" => _full_name, "username" => _username},
         "message" => _msg,
         "system" => "user"
       } =  json_response(conn, 400)

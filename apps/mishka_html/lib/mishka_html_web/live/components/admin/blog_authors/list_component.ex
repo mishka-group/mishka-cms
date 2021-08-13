@@ -41,7 +41,7 @@ defmodule MishkaHtmlWeb.Admin.BlogAuthors.ListComponent do
                     </div>
 
                     <div class="col-sm-2" id="<%= "user-full-name-#{item.id}" %>">
-                        <%= live_redirect "#{item.user_full_name}",
+                        <%= live_redirect "#{MishkaHtml.full_name_sanitize(item.user_full_name)}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.user_id)
                         %>
                     </div>

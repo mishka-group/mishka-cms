@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.DeleteErrorComponent do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do
+    # TODO: it should be changeable
     ~L"""
       <div class="error-card-modal col">
         <div class="alert alert-danger vazir rtl" role="alert">

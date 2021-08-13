@@ -57,4 +57,14 @@ Node v14.17.0
 
 Postgres v13
 
+---
+
+### تصویر از پنل ادمین
+
+![mishka-cms-admin](https://user-images.githubusercontent.com/8413604/129250846-35abcf82-bb65-432b-98be-e7a025607415.png)
+
+### تصویر از قالب نمونه سایت
+
+![mishka-cms-home-page](https://user-images.githubusercontent.com/8413604/129250980-ce45c35e-389a-435a-bf95-2829c7323862.png)
+
 </div>

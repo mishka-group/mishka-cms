@@ -314,7 +314,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   end
 
   def create_link(value) do
-    Slug.slugify("#{value}", ignore: ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "چ", "ش", "س", "ی", "ب", "ل", "ا", "ت", "ن", "م", "ک", "گ", "پ", "‍‍‍ظ", "ط", "ز", "ر", "ذ", "ژ", "د", "و", "آ", "ي"])
+    Slug.slugify("#{value}", ignore: ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "چ", "ش", "س", "ی", "ب", "ل", "ا", "ت", "ن", "م", "ک", "گ", "پ", "‍‍‍ظ", "ط", "ز", "ر", "ذ", "ژ", "د", "و", "آ", "ي", "ء", "ئ"])
   end
 
   defp create_menu_list(menus_list, dynamic_form) do
@@ -381,7 +381,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         {:noreply, socket}
 
       {:ok, :add, :post, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{repo_data.title} درست شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
         socket =
           socket
           |> assign(
@@ -436,7 +436,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         {:noreply, socket}
 
       {:ok, :edit, :post, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{repo_data.title} به روز شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})
 
         socket =
           socket

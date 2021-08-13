@@ -19,7 +19,8 @@ defmodule MishkaHtmlWeb.LoginLive do
   end
 
   def handle_event("save", %{"user" => params}, socket) do
-    changeset = user_changeset(params)
+    filtered_params = Map.merge(params, %{"email" => MishkaHtml.email_sanitize(params["email"])})
+    changeset = user_changeset(filtered_params)
     {:noreply,
      assign(
        socket,
@@ -29,7 +30,8 @@ defmodule MishkaHtmlWeb.LoginLive do
   end
 
   def handle_event("validate", %{"user" => params}, socket) do
-    changeset = user_changeset(params)
+    filtered_params = Map.merge(params, %{"email" => MishkaHtml.email_sanitize(params["email"])})
+    changeset = user_changeset(filtered_params)
     {:noreply, assign(socket, changeset: changeset)}
   end
 

@@ -4,8 +4,6 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   alias MishkaUser.Acl.Role
   def mount(_params, _session, socket) do
     Process.send_after(self(), :menu, 100)
-    ## create a handel info def to see user changed like (role and ACL etc, change password)
-    ## create a otp or task supervisor to delete deleted role on ACL state
     socket =
       assign(socket,
       page_size: 10,
@@ -72,7 +70,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
     MishkaUser.Acl.AclTask.delete_role(id)
     case Role.delete(id) do
       {:ok, :delete, :role, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "نقش: #{repo_data.name} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "نقش: #{MishkaHtml.full_name_sanitize(repo_data.name)} حذف شده است."})
         socket = role_assign(
           socket,
           params: socket.assigns.filters,

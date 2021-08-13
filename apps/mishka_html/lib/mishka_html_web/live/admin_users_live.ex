@@ -73,7 +73,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     case User.delete(id) do
       {:ok, :delete, :user, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{repo_data.full_name} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} حذف شده است."})
 
         socket = user_assign(
           socket,

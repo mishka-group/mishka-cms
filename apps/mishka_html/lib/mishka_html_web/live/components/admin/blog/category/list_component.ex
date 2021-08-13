@@ -52,7 +52,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                     </div>
 
                     <div class="col-sm-2" id="<%= "title-#{item.id}" %>">
-                        <%= live_redirect "#{item.title}",
+                        <%= live_redirect "#{MishkaHtml.title_sanitize(item.title)}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id)
                         %>
                     </div>

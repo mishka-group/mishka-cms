@@ -31,12 +31,12 @@ defmodule MishkaHtmlWeb.Client.Home.NormalBlockComponent do
           <header class="home-blog-posts-normal-with-body-header">
               <h2 class="normal-home-posts-link">
                 <%=
-                  live_redirect "#{@post.title}",
+                  live_redirect "#{MishkaHtml.title_sanitize(@post.title)}",
                   to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, @post.alias_link)
                 %>
               </h2>
               <div class="space20"></div>
-              <%= @post.short_description %>
+              <%= HtmlSanitizeEx.basic_html(@post.short_description) %>
           </header>
           <div class="space20"></div>
           <footer class="home-blog-posts-normal-with-body-footer">

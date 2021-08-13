@@ -4,7 +4,7 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
   def render(assigns) do
     ~L"""
       <main class="form-signin vazir">
-        <%= f = form_for @changeset, Routes.auth_path(@socket, :login),
+        <%= f = form_for @changeset, "#",
             phx_submit: "save",
             phx_change: "validate",
             onkeydown: "return event.key != 'Enter';" %>

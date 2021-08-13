@@ -192,7 +192,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         basic_menu: false,
         options_menu: false,
         dynamic_form: new_dynamic_form,
-        alias_link: if(type == "title", do: create_link(params["title"]), else: socket.assigns.alias_link),
+        alias_link: if(type == "title", do: MishkaHtml.create_alias_link(params["title"]), else: socket.assigns.alias_link),
         category_search: Category.search_category_title(params["category_id"], 5)
       ])
 
@@ -228,7 +228,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   end
 
   def handle_event("set_link", %{"key" => "Enter", "value" => value}, socket) do
-    alias_link = create_link(value)
+    alias_link = MishkaHtml.create_alias_link(value)
     socket =
       socket
       |> assign(:alias_link, alias_link)
@@ -311,10 +311,6 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
   def search_fields(type) do
     Enum.find(basic_menu_list() ++ more_options_menu_list(), fn x -> x.type == type end)
-  end
-
-  def create_link(value) do
-    Slug.slugify("#{value}", ignore: ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "چ", "ش", "س", "ی", "ب", "ل", "ا", "ت", "ن", "م", "ک", "گ", "پ", "‍‍‍ظ", "ط", "ز", "ر", "ذ", "ژ", "د", "و", "آ", "ي", "ء", "ئ"])
   end
 
   defp create_menu_list(menus_list, dynamic_form) do

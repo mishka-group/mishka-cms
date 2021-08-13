@@ -35,6 +35,10 @@ defmodule MishkaHtml do
     |> String.trim()
   end
 
+  def create_alias_link(value) do
+    Slug.slugify("#{value}", ignore: @persian_characters)
+  end
+
   defp slugify_none_nil(input, allow_characters) do
     case Slug.slugify(input, ignore: allow_characters) do
       nil -> ""

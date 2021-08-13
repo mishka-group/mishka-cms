@@ -60,13 +60,13 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                     </div>
 
                     <div class="col" id="<%= "title-#{item.id}" %>">
-                        <%= live_redirect "#{item.title}",
+                        <%= live_redirect "#{MishkaHtml.title_sanitize(item.title)}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive, id: item.id)
                         %>
                     </div>
 
                     <div class="col-sm-1">
-                        <%= live_redirect "#{item.category_title}",
+                        <%= live_redirect "#{MishkaHtml.title_sanitize(item.category_title)}",
                         to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.category_id)
                         %>
                     </div>

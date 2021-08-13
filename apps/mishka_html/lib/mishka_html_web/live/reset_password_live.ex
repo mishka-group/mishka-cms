@@ -50,8 +50,8 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
   @impl true
   def handle_event("save", %{"email" => email}, socket) do
     # TODO: if Capcha code is true
-    with {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(email),
-         {:random_code, true} <- {:random_code, is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(email))} do
+    with {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
+         {:random_code, true} <- {:random_code, is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(MishkaHtml.email_sanitize(email)))} do
 
           random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: repo_data.id, type: "access"}, [key_digest: :sha256])
           RandomCode.save(repo_data.email, random_link)

@@ -8,7 +8,7 @@ defmodule MishkaHtmlWeb.AuthController do
 
   def login(conn, %{"user" => %{"email" => email, "password" => password}} = _params) do
     # to_string(:inet_parse.ntoa(conn.remote_ip))
-    with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(email),
+    with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, user_info.status == :inactive},
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do

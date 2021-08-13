@@ -401,10 +401,10 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{
       image: "#{site_link}/#{post.main_image}",
-      title: "#{post.title}",
-      description: if(!is_nil(post.meta_description), do: "#{post.meta_description}", else: "#{post.short_description}"),
+      title: "#{MishkaHtml.title_sanitize(post.title)}",
+      description: if(!is_nil(post.meta_description), do: "#{post.meta_description}", else: "#{HtmlSanitizeEx.strip_tags(post.short_description)}"),
       type: "website",
-      keywords: "#{post.meta_keywords}",
+      keywords: "#{HtmlSanitizeEx.strip_tags(post.meta_keywords)}",
       link: site_link <> Routes.live_path(socket, __MODULE__, post.alias_link)
     }
   end

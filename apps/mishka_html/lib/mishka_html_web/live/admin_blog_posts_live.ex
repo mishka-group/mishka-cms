@@ -67,7 +67,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     case Post.delete(id) do
       {:ok, :delete, :post, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{repo_data.title} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} حذف شده است."})
 
         socket = post_assign(
           socket,

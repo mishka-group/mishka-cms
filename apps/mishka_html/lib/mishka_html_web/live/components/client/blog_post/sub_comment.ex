@@ -14,11 +14,11 @@ defmodule MishkaHtmlWeb.Client.BlogPost.SubComment do
           <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">پاسخ به نظر:
-            <%= @sub_comment.full_name %>
+            <%= MishkaHtml.full_name_sanitize(@sub_comment.full_name) %>
             </h5>
           </div>
           <div class="modal-body">
-            <%= @sub_comment.description %>
+            <%= HtmlSanitizeEx.basic_html(@sub_comment.description) %>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" phx-click="close_modal">بستن</button>

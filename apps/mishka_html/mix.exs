@@ -52,7 +52,8 @@ defmodule MishkaHtml.MixProject do
       {:mishka_user, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
       {:jalaali, "~> 0.3.0"},
-      {:slugify, "~> 1.3"}
+      {:slugify, "~> 1.3"},
+      {:html_sanitize_ex, "~> 1.4"}
     ]
   end
 

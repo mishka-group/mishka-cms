@@ -10,18 +10,33 @@ defmodule MishkaApiWeb.AuthController do
   # this module will help user to send request with his mobile after creating a dynamic plug for mobile provider
 
   def register(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email , "password" => _password} = params) do
-    MishkaUser.User.create(params, @allowed_fields)
+
+    filtered_params = Map.merge(params, %{
+      "email" => MishkaHtml.email_sanitize(params["email"]),
+      "full_name" => MishkaHtml.full_name_sanitize(params["full_name"]),
+      "username" => MishkaHtml.username_sanitize(params["username"]),
+      "unconfirmed_email" => MishkaHtml.email_sanitize(params["unconfirmed_email"])
+    })
+
+    MishkaUser.User.create(filtered_params, @allowed_fields)
     |> MishkaApi.AuthProtocol.register(conn, @allowed_fields_output)
   end
 
   def register(conn, %{"full_name" => _full_name, "username" => _username, "email" => _email} = params) do
-    MishkaUser.User.create(params, @allowed_fields)
+    filtered_params = Map.merge(params, %{
+      "email" => MishkaHtml.email_sanitize(params["email"]),
+      "full_name" => MishkaHtml.full_name_sanitize(params["full_name"]),
+      "username" => MishkaHtml.username_sanitize(params["username"]),
+      "unconfirmed_email" => MishkaHtml.email_sanitize(params["unconfirmed_email"])
+    })
+
+    MishkaUser.User.create(filtered_params, @allowed_fields)
     |> MishkaApi.AuthProtocol.register(conn, @allowed_fields_output)
   end
 
   def login(conn, %{"username" => username, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
-    with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_username(username),
+    with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_username(MishkaHtml.username_sanitize(username)),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
         MishkaApi.AuthProtocol.login({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
@@ -33,7 +48,7 @@ defmodule MishkaApiWeb.AuthController do
 
   def login(conn, %{"email" => email, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
-    with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(email),
+    with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
         MishkaApi.AuthProtocol.login({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
@@ -73,14 +88,14 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def reset_password(conn, %{"code" => code, "email" => email, "new_password" => password}) do
-    MishkaDatabase.Cache.RandomCode.get_user(email, code)
+    MishkaDatabase.Cache.RandomCode.get_user(MishkaHtml.email_sanitize(email), code)
     |> MishkaApi.AuthProtocol.reset_password(conn, password)
   end
 
   def reset_password(conn, %{"email" => email}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
 
-    MishkaUser.User.show_by_email(email)
+    MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email))
     |> MishkaApi.AuthProtocol.reset_password(conn)
   end
 
@@ -122,7 +137,7 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def edit_profile(conn, %{"full_name" => full_name}) do
-    MishkaUser.User.edit(%{id: conn.assigns.user_id, full_name: full_name})
+    MishkaUser.User.edit(%{id: conn.assigns.user_id, full_name: MishkaHtml.full_name_sanitize(full_name)})
     |> MishkaApi.AuthProtocol.edit_profile(conn, @allowed_fields_output)
   end
 

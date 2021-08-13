@@ -81,7 +81,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     case Category.delete(id) do
       {:ok, :delete, :category, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{repo_data.title} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{MishkaHtml.title_sanitize(repo_data.title)} حذف شده است."})
 
         socket = category_assign(
           socket,

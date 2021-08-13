@@ -17,7 +17,7 @@
                 <article class="container-fluid home-image-post  rtl home-image-post">
 
                   <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, item.alias_link), replace: false do %>
-                    <img class="img-fluid client-home-normal-post-image" src="<%= item.main_image %>" alt="<%= item.title %>" id="<%= item.id %>">
+                    <img class="img-fluid client-home-normal-post-image" src="<%= item.main_image %>" alt="<%= MishkaHtml.title_sanitize(item.title) %>" id="<%= item.id %>">
                   <% end %>
 
                   <section class="col-sm-4 home-post-like-bookmarks">
@@ -40,7 +40,7 @@
                       <div class="col-sm">
                         <span class="badge bg-dark vazir client-blog-badge-category">
                           <%=
-                            live_redirect "#{item.category_title}",
+                            live_redirect "#{MishkaHtml.title_sanitize(item.category_title)}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.BlogCategoryLive, item.category_alias_link)
                           %>
                         </span>
@@ -52,12 +52,12 @@
                   <header class="home-blog-posts-normal-with-body-header">
                     <h2 class="blog-post-h2-a-link">
                     <%=
-                      live_redirect "#{item.title}",
+                      live_redirect "#{MishkaHtml.title_sanitize(item.title)}",
                       to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, item.alias_link)
                     %>
                     </h2>
                     <div class="space20"></div>
-                    <p class="body-of-blogs-posts"><%= item.short_description %></p>
+                    <p class="body-of-blogs-posts"><%= HtmlSanitizeEx.basic_html("#{item.short_description}") %></p>
                   </header>
                   <div class="space20"></div>
                   <footer class="home-blog-posts-normal-with-body-footer">
@@ -129,7 +129,7 @@
               <div class="row category-li-bt">
                 <div class="col-sm">
                   <%=
-                      live_redirect "#{cat.category_title}",
+                      live_redirect "#{MishkaHtml.title_sanitize(cat.category_title)}",
                       to: Routes.live_path(@socket, MishkaHtmlWeb.BlogCategoryLive, cat.category_alias_link)
                   %>
                 </div>

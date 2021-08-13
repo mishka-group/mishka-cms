@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do
+    # MishkaHtml.full_name_sanitize(user_full_name)
     ~L"""
       <div class="col admin-home-toos-right vazir">
         <h3>

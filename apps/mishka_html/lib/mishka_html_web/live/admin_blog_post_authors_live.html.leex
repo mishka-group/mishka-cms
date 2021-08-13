@@ -77,7 +77,7 @@
         <%= for {user, color} <- Enum.zip(@search_author, Stream.cycle(["warning", "info", "danger", "success", "primary"])) do %>
             <a class="col-sm-6 vazir list-group-item list-group-item-<%= color %>" aria-current="true" id="<%= user.id %>" phx-click="add_author" phx-value-user-id="<%= user.id %>">
                 <div class="d-flex w-100 justify-content-between">
-                    <h4 class="mb-1"><%= user.full_name %></h4>
+                    <h4 class="mb-1"><%= MishkaHtml.full_name_sanitize(user.full_name) %></h4>
                     <small>
                     <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                             span_id: "inserted-#{user.id}-component",

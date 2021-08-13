@@ -43,7 +43,7 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
                     </div>
 
                     <div class="col">
-                        <span class="badge rounded-pill bg-dark"><%= item.user_full_name %></span>
+                        <span class="badge rounded-pill bg-dark"><%= MishkaHtml.full_name_sanitize(item.user_full_name) %></span>
                     </div>
 
                     <div class="col">

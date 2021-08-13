@@ -18,7 +18,13 @@ defmodule MishkaHtmlWeb.RegisterLive do
   end
 
   def handle_event("save", %{"user" => params}, socket) do
-    case MishkaUser.User.create(params, ["full_name", "email", "password", "username", "unconfirmed_email"]) do
+    filtered_params = Map.merge(params, %{
+      "email" => MishkaHtml.email_sanitize(params["email"]),
+      "full_name" => MishkaHtml.full_name_sanitize(params["full_name"]),
+      "username" => MishkaHtml.username_sanitize(params["username"]),
+      "unconfirmed_email" => MishkaHtml.email_sanitize(params["unconfirmed_email"])
+    })
+    case MishkaUser.User.create(filtered_params, ["full_name", "email", "password", "username", "unconfirmed_email"]) do
       {:ok, :add, _error_tag, repo_data} ->
         MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
         socket =
@@ -34,7 +40,15 @@ defmodule MishkaHtmlWeb.RegisterLive do
   end
 
   def handle_event("validate", %{"user" => params}, socket) do
-    changeset = user_changeset(params)
+
+    filtered_params = Map.merge(params, %{
+      "email" => MishkaHtml.email_sanitize(params["email"]),
+      "full_name" => MishkaHtml.full_name_sanitize(params["full_name"]),
+      "username" => MishkaHtml.username_sanitize(params["username"]),
+      "unconfirmed_email" => MishkaHtml.email_sanitize(params["unconfirmed_email"])
+    })
+
+    changeset = user_changeset(filtered_params)
     {:noreply, assign(socket, changeset: changeset)}
   end
 

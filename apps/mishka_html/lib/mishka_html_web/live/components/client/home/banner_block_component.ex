@@ -35,7 +35,7 @@ defmodule MishkaHtmlWeb.Client.Home.BannerBlockComponent do
                     <header class="home-blog-posts-normal-with-body-header">
                         <h2 class="banner-home-posts-link">
                           <%=
-                            live_redirect "#{@post.title}",
+                            live_redirect "#{MishkaHtml.title_sanitize(@post.title)}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, @post.alias_link)
                           %>
                         </h2>

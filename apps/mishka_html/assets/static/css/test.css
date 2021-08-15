@@ -571,6 +571,7 @@ select.form-select {
   padding: 10px 10px !important;
   line-height: 25px;
   text-align: justify;
+  color: #000;
 }
 
 .toast-container {

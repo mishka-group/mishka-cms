@@ -16,22 +16,27 @@ defmodule MishkaContent.Blog.Tag do
 
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:tag)
   end
 
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
+    |> notify_subscribers(:tag)
   end
 
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:tag)
   end
 
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
+    |> notify_subscribers(:tag)
   end
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:tag)
   end
 
   def show_by_id(id) do
@@ -39,8 +44,8 @@ defmodule MishkaContent.Blog.Tag do
   end
 
   def tags(conditions: {page, page_size}, filters: filters) do
-    query = from(tag in BlogTag, order_by: [desc: tag.inserted_at, desc: tag.id],) |> convert_filters_to_where(filters)
-    from(tag in query,
+    query = from(tag in BlogTag) |> convert_filters_to_where(filters)
+    from([tag] in query,
     select: %{
       id: tag.id,
       title: tag.title,
@@ -50,7 +55,7 @@ defmodule MishkaContent.Blog.Tag do
       custom_title: tag.custom_title,
       robots: tag.robots,
       updated_at: tag.updated_at,
-      inserted_at: tag.inserted_at
+      inserted_at: tag.inserted_at,
     })
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -63,6 +68,7 @@ defmodule MishkaContent.Blog.Tag do
       where: post.id == ^post_id,
       join: mapper in assoc(post, :blog_tags_mappers),
       join: tag in assoc(mapper, :blog_tags),
+      order_by: [desc: post.inserted_at, desc: post.id],
       select: %{
         id: tag.id,
         title: tag.title,
@@ -71,6 +77,7 @@ defmodule MishkaContent.Blog.Tag do
         meta_description: tag.meta_description,
         custom_title: tag.custom_title,
         robots: tag.robots,
+        tag_inserted_at: mapper.inserted_at,
       }
     MishkaDatabase.Repo.all(query)
   rescue
@@ -83,6 +90,7 @@ defmodule MishkaContent.Blog.Tag do
     left_join: mapper in assoc(tag, :blog_tags_mappers),
     join: post in assoc(mapper, :blog_posts),
     join: cat in assoc(post, :blog_categories),
+    order_by: [desc: tag.inserted_at, desc: tag.id],
     where: post.status == ^status and cat.status == ^status)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
@@ -122,6 +130,7 @@ defmodule MishkaContent.Blog.Tag do
 
   def fields(query) do
     from [tag, mapper, post, cat] in query,
+    order_by: [desc: tag.inserted_at, desc: tag.id],
     select: %{
       id: tag.id,
       title: tag.title,
@@ -149,13 +158,14 @@ defmodule MishkaContent.Blog.Tag do
     }
   end
 
-  def notify_subscribers({:ok, _, :post, repo_data} = params, type_send) do
+  def notify_subscribers({:ok, _, :tag, repo_data} = params, type_send) do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "blog_tag", {type_send, :ok, repo_data})
     params
   end
 
   def notify_subscribers(params, _) do
-    IO.puts "this is a unformed"
+    IO.inspect(params)
+    IO.puts "this is a unformed :tag"
     params
   end
 

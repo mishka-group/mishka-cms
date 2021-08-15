@@ -9,16 +9,12 @@
 
             <div class="col vazir text-start top-post-btn">
 
-                <%= live_redirect "برگشت به مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-primary" %>
+                <%= live_redirect "برگشت به برچسب ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagsLive), class: "btn btn-outline-primary" %>
 
-                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
-
-                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
 
             </div>
         </div>
-
-
 
 
 
@@ -32,9 +28,9 @@
         <div class="space50"></div>
         <h2 class="vazir">
             <%= if is_nil(@id) do %>
-                ساخت مطلب جدید
+                ساخت برچسب جدید
             <% else %>
-                ویرایش مطلب
+                ویرایش اطلاعات برچسب
             <% end %>
         </h2>
         <div class="space20"></div>
@@ -48,16 +44,8 @@
                 فیلد های پایه
             </a>
 
-            <a phx-click="options_menu" class="btn btn-primary admin-create-category-tools" >
-                تنظیمات بیشتر
-            </a>
-
             <a phx-click="make_all_basic_menu" class="btn btn-danger admin-create-category-tools" >
                 فیلدهای ضروری
-            </a>
-
-            <a phx-click="make_all_menu" class="btn btn-success admin-create-category-tools" >
-                تمامی فیلد ها
             </a>
 
             <a phx-click="clear_all_field" class="btn btn-secondary admin-create-category-tools" >
@@ -90,33 +78,6 @@
                 <% end %>
             </div>
 
-
-
-            <div class="col-sm-3 create-category-tools-items" id="nonMainCategoryTools" >
-
-                <%= if @options_menu do %>
-                    <%= for {item, color} <- Enum.zip(more_options_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
-                        <div class="d-flex text-muted pt-3" phx-click="options_menu" phx-value-type="<%= item.type %>" phx-value-class="<%= item.class %>">
-                            <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false">
-                                <title>Placeholder</title>
-                                <rect width="100%" height="100%" fill="<%= color %>"></rect>
-                                <text x="50%" y="50%" fill="#007bff" dy=".3em"></text>
-                            </svg>
-                            <p class="pb-3 mb-0 small lh-sm border-bottom">
-                                <strong class="d-block text-gray-dark">
-                                    <%= item.title %>
-                                    <%= for x <- item.status do %>
-                                        <span class="<%= x.class  %>"><%= x.title  %></span>
-                                    <% end %>
-                                </strong>
-                                <%= item.description %>
-                            </p>
-                        </div>
-                    <% end %>
-                <% end %>
-            </div>
-
-
             <%= f = form_for @changeset, "#",
                 phx_submit: "save",
                 phx_change: "draft",
@@ -129,40 +90,22 @@
                     <%= for form <- @dynamic_form do %>
                         <%= case search_fields(form.type).form do %>
 
-                            <% "upload" -> %>
-                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.UploadComponent,
-                                    id: String.to_atom("admin_form_#{form.type}"),
-                                    max_entries: if(form.type == "main_image", do: @uploads.main_image_upload.max_entries, else: @uploads.header_image_upload.max_entries),
-                                    max_file_size: if(form.type == "main_image", do: trunc(@uploads.main_image_upload.max_file_size / 1_000_000), else: trunc(@uploads.header_image_upload.max_file_size / 1_000_000)),
-                                    live_file_input: if(form.type == "main_image", do: @uploads.main_image_upload, else: @uploads.header_image_upload),
-                                    errors: if(form.type == "main_image", do: @uploads.main_image_upload.errors, else: @uploads.header_image_upload.errors),
-                                    entries: if(form.type == "main_image", do: @uploads.main_image_upload.entries, else: @uploads.header_image_upload.entries),
-                                    upload_errors: if(form.type == "main_image", do: @uploads.main_image_upload, else:  @uploads.header_image_upload),
-                                    ref: if(form.type == "main_image", do: @uploads.main_image_upload.ref, else: @uploads.header_image_upload.ref),
-                                    upload_field: if(form.type == "main_image", do: :main_image_upload, else: :header_image_upload),
-                                    form_type: form.type,
-                                    form: form,
-                                    f: f,
-                                    images: @images,
-                                    search_fields: search_fields(form.type)
-                             %>
-
-                           <% "add_tag" -> %>
+                             <% "add_tag" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddTagComponent,
-                                    id: String.to_atom("admin_form_#{form.type}"),
-                                    form: form,
-                                    f: f,
-                                    tags: @tags,
-                                    search_fields: search_fields(form.type)
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        tags: @tags,
+                                        search_fields: search_fields(form.type)
                                 %>
 
 
                             <% "select" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.SelectComponent,
-                                    id: String.to_atom("admin_form_#{form.type}"),
-                                    form: form,
-                                    f: f,
-                                    search_fields: search_fields(form.type)
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
+                                        search_fields: search_fields(form.type)
                                 %>
 
                             <% "editor" -> %>
@@ -210,6 +153,7 @@
                                         f: f,
                                         search_fields: search_fields(form.type)
                                 %>
+
                         <% end %>
                     <% end %>
 

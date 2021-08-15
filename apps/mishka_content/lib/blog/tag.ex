@@ -10,6 +10,9 @@ defmodule MishkaContent.Blog.Tag do
 
   @behaviour MishkaDatabase.CRUD
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_tag")
+  end
 
   def create(attrs) do
     crud_add(attrs)
@@ -36,7 +39,7 @@ defmodule MishkaContent.Blog.Tag do
   end
 
   def tags(conditions: {page, page_size}, filters: filters) do
-    query = from(tag in BlogTag) |> convert_filters_to_where(filters)
+    query = from(tag in BlogTag, order_by: [desc: tag.inserted_at, desc: tag.id],) |> convert_filters_to_where(filters)
     from(tag in query,
     select: %{
       id: tag.id,
@@ -46,6 +49,8 @@ defmodule MishkaContent.Blog.Tag do
       meta_description: tag.meta_description,
       custom_title: tag.custom_title,
       robots: tag.robots,
+      updated_at: tag.updated_at,
+      inserted_at: tag.inserted_at
     })
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -101,7 +106,17 @@ defmodule MishkaContent.Blog.Tag do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from tag in query, where: field(tag, ^key) == ^value
+      case key do
+        :title ->
+          like = "%#{value}%"
+          from([tag] in query, where: like(tag.title, ^like))
+
+        :custom_title ->
+          like = "%#{value}%"
+          from([tag] in query, where: like(tag.custom_title, ^like))
+
+        _ -> from([tag] in query, where: field(tag, ^key) == ^value)
+      end
     end)
   end
 
@@ -133,6 +148,17 @@ defmodule MishkaContent.Blog.Tag do
       post_priority: post.priority,
     }
   end
+
+  def notify_subscribers({:ok, _, :post, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "blog_tag", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _) do
+    IO.puts "this is a unformed"
+    params
+  end
+
   def allowed_fields(:atom), do: BlogTag.__schema__(:fields)
   def allowed_fields(:string), do: BlogTag.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

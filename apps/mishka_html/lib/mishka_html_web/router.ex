@@ -72,6 +72,8 @@ defmodule MishkaHtmlWeb.Router do
     live "/blog-post", AdminBlogPostLive
     live "/blog-categories", AdminBlogCategoriesLive
     live "/blog-category", AdminBlogCategoryLive
+    live "/blog-tags", AdminBlogTagsLive
+    live "/blog-tag", AdminBlogTagLive
     live "/bookmarks", AdminBookmarksLive
     live "/subscriptions", AdminSubscriptionsLive
     live "/subscription", AdminSubscriptionLive

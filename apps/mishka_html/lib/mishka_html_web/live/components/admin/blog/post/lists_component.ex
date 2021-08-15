@@ -118,10 +118,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                                     phx-click="delete"
                                     phx-value-id="<%= item.id %>">حذف</a>
 
-                        <%= live_redirect "نویسندگان",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostAuthorsLive, item.id),
-                            class: "btn btn-outline-secondary vazir"
-                        %>
 
                         <%= live_redirect "نظرات",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive, section_id: item.id),
@@ -131,6 +127,18 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                         <%= live_redirect "حذف کامل",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
                             class: "btn btn-outline-danger vazir"
+                        %>
+
+                        <div class="space10"></div>
+                        <div class="clearfix"></div>
+                        <%= live_redirect "نویسندگان",
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostAuthorsLive, item.id),
+                            class: "btn btn-outline-secondary vazir"
+                        %>
+
+                        <%= live_redirect "برچسب ها",
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostTagsLive, item.id),
+                            class: "btn btn-outline-warning vazir"
                         %>
                     </div>
                 </div>

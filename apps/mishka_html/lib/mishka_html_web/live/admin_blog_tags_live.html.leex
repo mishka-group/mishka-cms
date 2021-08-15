@@ -1,0 +1,61 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row">
+            <div class="col-sm-5">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+                <%= live_redirect "برچسب جدید", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagLive), class: "btn btn-outline-primary" %>
+
+                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+
+                <%= live_redirect "مجموعه ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive), class: "btn btn-outline-info" %>
+
+                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+            </div>
+        </div>
+
+
+
+            <div class="space20"></div>
+            <div class="clearfix"></div>
+            <div class="row">
+              <div class="col">
+              <h3 class="admin-dashbord-h3-right-side-title vazir">مدیریت برچسب ها</h3>
+              <span class="admin-dashbord-right-side-text vazir">
+              شما در این بخش می توانید برچسب های مطالب را مدیریت نمایید.
+              </span>
+              <div class="space20"></div>
+
+            </div>
+
+      </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Tag.SearchComponent,
+            id: :admin_tag_search,
+            filters: @filters
+        %>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+        <div class="clearfix"></div>
+        <div class="col space30"> </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Tag.ListComponent,
+            id: :admin_last_tags,
+            tags: @tags,
+            filters: @filters,
+            count: @page_size,
+            pagination_url: MishkaHtmlWeb.AdminBlogTagsLive
+        %>
+
+    </div>
+    <div class="clearfix"></div>
+</div>
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

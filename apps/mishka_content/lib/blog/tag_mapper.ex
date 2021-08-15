@@ -10,16 +10,23 @@ defmodule MishkaContent.Blog.TagMapper  do
   @behaviour MishkaDatabase.CRUD
 
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_tag_mapper")
+  end
+
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:blog_tag_mapper)
   end
 
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:blog_tag_mapper)
   end
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:blog_tag_mapper)
   end
 
   def delete(post_id, tag_id) do
@@ -64,6 +71,17 @@ defmodule MishkaContent.Blog.TagMapper  do
       tag_id: tag.id,
       tag_title: tag.title,
     })
+  end
+
+
+  def notify_subscribers({:ok, _, :blog_tag_mapper, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "blog_tag_mapper", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _) do
+    IO.puts "this is a unformed :tag_mapper"
+    params
   end
 
   def allowed_fields(:atom), do: BlogTagMapper.__schema__(:fields)

@@ -15,10 +15,9 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent do
         </h3>
         <div class="space20"></div>
           <ul class="admin-home-ul-of-lists vazir">
-            <li>شهریار توکلی</li>
-            <li>آرین علیجانی</li>
-            <li>مجتبی ناصری</li>
-            <li>شقایق توکلی</li>
+            <%= for user <- @users.entries do %>
+              <li><%= MishkaHtml.full_name_sanitize(user.full_name) %></li>
+            <% end %>
           </ul>
 
 

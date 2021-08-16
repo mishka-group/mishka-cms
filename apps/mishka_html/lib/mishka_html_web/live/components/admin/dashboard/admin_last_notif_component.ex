@@ -11,10 +11,10 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent do
             <span class="col admin-home-last-notif-title rtl">آخرین خبررسانی های عمومی</span>
             <div class="space20"></div>
             <ul class="admin-home-ul-of-lists vazir">
-              <li>اطلاع رسانی: سیستمی خرداد ۱۴۰۰</li>
-              <li>اطلاع رسانی: بهبود کاربری</li>
-              <li>اطلاع رسانی: به روز رسانی خرداد ۱۴۰۰</li>
-              <li>اطلاع رسانی: اضافه شدن سیستم پشتیبانی</li>
+              <li>اطلاع رسانی: به زودی ...</li>
+              <li>اطلاع رسانی: به زودی ...</li>
+              <li>اطلاع رسانی: به زودی ...</li>
+              <li>اطلاع رسانی: به زودی ...</li>
             </ul>
           </div>
 

@@ -5,7 +5,7 @@
         <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent, id: :admin_quickmenu %>
       <div class="container admin-home-main-cms-block-tools-bottom">
         <div class="row">
-            <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent, id: :admin_last_users %>
+            <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent, id: :admin_last_users, users: @users %>
             <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent, id: :admin_notif %>
         </div>
       </div>
@@ -20,7 +20,7 @@
 
 
       <div class="clearfix"></div>
-      <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastBlogPostsComponent, id: :admin_last_blog_posts %>
+      <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastBlogPostsComponent, id: :admin_last_blog_posts, posts: @posts %>
     </div>
 
   </div>

@@ -6,7 +6,7 @@ defmodule MishkaHtmlWeb.Client.Home.NormalBlockComponent do
     <article class="col-sm-3 home-blog-posts-normal-with-body rtl home-image-post">
       <article class="container-fluid home-image-post  rtl home-image-post">
           <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, @post.alias_link), replace: false do %>
-            <img class="img-fluid client-home-normal-post-image" src="<%= @post.main_image %>" alt="">
+            <img class="img-fluid client-home-normal-post-image" src="<%= @post.main_image %>" alt="<%= @post.title %>">
           <% end %>
 
           <section class="home-post-like-bookmarks">

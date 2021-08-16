@@ -1,6 +1,10 @@
 defmodule MishkaHtmlWeb.RegisterLive do
   use MishkaHtmlWeb, :live_view
 
+  # TODO: should be on config file or ram
+  @hard_secret_random_link "Test refresh"
+  alias MishkaDatabase.Cache.RandomCode
+
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     changeset = %MishkaDatabase.Schema.MishkaUser.User{}
@@ -27,6 +31,17 @@ defmodule MishkaHtmlWeb.RegisterLive do
     case MishkaUser.User.create(filtered_params, ["full_name", "email", "password", "username", "unconfirmed_email"]) do
       {:ok, :add, _error_tag, repo_data} ->
         MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
+
+        random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: repo_data.id, type: "access"}, [key_digest: :sha256])
+        RandomCode.save(repo_data.email, random_link)
+
+        site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
+          MishkaHtmlWeb.Router.Helpers.url(socket),
+          MishkaHtmlWeb.Router.Helpers.auth_path(socket, :verify_email, random_link)
+        )
+
+          MishkaContent.Email.EmailHelper.send(:verify_email, {repo_data.email, site_link})
+
         socket =
           socket
           |> put_flash(:info, "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید.")

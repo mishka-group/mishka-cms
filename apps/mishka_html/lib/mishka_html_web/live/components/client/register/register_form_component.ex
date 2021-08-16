@@ -67,7 +67,7 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
 
           <div class="space20"></div>
 
-          <%= submit "ورود به سایت", phx_disable_with: "Login..." , class: "w-100 btn btn-lg btn-primary", disabled: !@changeset.valid? %>
+          <%= submit "ثبت نام", phx_disable_with: "Login..." , class: "w-100 btn btn-lg btn-primary", disabled: !@changeset.valid? %>
 
           <div class="space20"></div>
           <%=

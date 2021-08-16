@@ -6,7 +6,7 @@ defmodule MishkaHtmlWeb.Client.Home.BannerBlockComponent do
       <article class="col-sm-6 rtl  client-home-header-post-article">
         <article class="container-fluid home-image-post">
             <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, @post.alias_link), replace: false do %>
-              <img class="img-fluid client-home-header-post-image" src="<%= @post.main_image %>" alt="">
+              <img class="img-fluid client-home-header-post-image" src="<%= @post.main_image %>" alt="<%= @post.title %>">
             <% end %>
 
             <section class="home-post-like-bookmarks-header-type">

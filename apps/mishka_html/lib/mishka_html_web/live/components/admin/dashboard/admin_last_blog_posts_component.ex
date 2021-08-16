@@ -5,14 +5,16 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastBlogPostsComponent do
     ~L"""
       <div class="container rtl">
         <div class="clearfix"></div>
-        <h3 class="admin-home-calendar-h3-title-last-post">آخرین به روز رسانی:</h3>
+        <h3 class="admin-home-calendar-h3-title-last-post">آخرین مطالب منتشر شده:</h3>
 
         <div class="row">
-          <div class="col ttt test1"></div>
-          <div class="col-sm-1"></div>
-          <div class="col ttt test2"></div>
-          <div class="col-sm-1"></div>
-          <div class="col ttt test3"></div>
+          <%= for post <- @posts do %>
+            <div class="col last-admin-home-posts">
+              <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive, id: post.id), replace: false do %>
+              <img class="img-fluid admin-home-blog-post-img" src="<%= post.main_image %>" alt="<%= post.title %>">
+              <% end %>
+            </div>
+          <% end %>
         </div>
 
         <div class="clearfix"></div>

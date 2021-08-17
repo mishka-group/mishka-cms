@@ -78,21 +78,20 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
          ")
     end
 
-    case Role.create(params) do
+    socket = case Role.create(params) do
       {:error, :add, :role, repo_error} ->
-        socket =
-          socket
-          |> assign([changeset: repo_error])
-        {:noreply, socket}
+        socket
+        |> assign([changeset: repo_error])
 
       {:ok, :add, :role, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "نقش: #{repo_data.name} درست شده است."})
-        socket =
-          socket
-          |> put_flash(:info, "نقش مورد نظر ساخته شد.")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))
-        {:noreply, socket}
+        socket
+        |> put_flash(:info, "نقش مورد نظر ساخته شد.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))
+
     end
+
+    {:noreply, socket}
   end
 
   def handle_event("save", _params, socket) do

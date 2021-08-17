@@ -65,46 +65,33 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   end
 
   def handle_event("delete", %{"id" => id} = _params, socket) do
-    case Post.delete(id) do
+    socket = case Post.delete(id) do
       {:ok, :delete, :post, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} حذف شده است."})
-
-        socket = post_assign(
+        post_assign(
           socket,
           params: socket.assigns.filters,
           page_size: socket.assigns.page_size,
           page_number: socket.assigns.page,
         )
 
-        {:noreply, socket}
-
       {:error, :delete, :forced_to_delete, :post} ->
-
-        socket =
           socket
           |> assign([
             open_modal: true,
             component: MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent
           ])
 
-        {:noreply, socket}
-
       {:error, :delete, type, :post} when type in [:uuid, :get_record_by_id] ->
-
-        socket =
-          socket
-          |> put_flash(:warning, "چنین مطلبی ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:warning, "چنین مطلبی ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
 
       {:error, :delete, :post, _repo_error} ->
-
-        socket =
-          socket
-          |> put_flash(:error, "خطا در حذف مطلب اتفاق افتاده است.")
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:error, "خطا در حذف مطلب اتفاق افتاده است.")
     end
+
+    {:noreply, socket}
   end
 
   def handle_event("featured_post", %{"id" => id} = _params, socket) do
@@ -115,21 +102,19 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   end
 
   def handle_info({:post, :ok, repo_record}, socket) do
-    case repo_record.__meta__.state do
+    socket = case repo_record.__meta__.state do
       :loaded ->
-
-        socket = post_assign(
+        post_assign(
           socket,
           params: socket.assigns.filters,
           page_size: socket.assigns.page_size,
           page_number: socket.assigns.page,
         )
 
-        {:noreply, socket}
-
-      :deleted -> {:noreply, socket}
-       _ ->  {:noreply, socket}
+       _ ->  socket
     end
+
+    {:noreply, socket}
   end
 
   def handle_info(:menu, socket) do

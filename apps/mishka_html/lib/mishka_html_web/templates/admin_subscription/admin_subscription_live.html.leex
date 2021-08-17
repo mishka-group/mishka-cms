@@ -9,10 +9,11 @@
 
             <div class="col vazir text-start top-post-btn">
 
-                <%= live_redirect "برگشت به نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-primary" %>
-                <%= live_redirect "آمار و اطلاعات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-danger" %>
+                <%= live_redirect "برگشت به اشتراک ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSubscriptionsLive), class: "btn btn-outline-primary" %>
 
+                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-danger" %>
 
+                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
             </div>
         </div>
 
@@ -27,7 +28,11 @@
         <div class="clearfix"></div>
         <div class="space50"></div>
         <h2 class="vazir">
-            ویرایش نظر
+            <%= if is_nil(@id) do %>
+                ساخت کاربر جدید
+            <% else %>
+                ویرایش اطلاعات کاربر
+            <% end %>
         </h2>
         <div class="space20"></div>
         <hr>
@@ -53,7 +58,7 @@
 
             <div class="col-sm-3 create-category-tools-items" id="MainCategoryTools">
                 <%= if @basic_menu do %>
-                    <%= for {item, color} <- Enum.zip(basic_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
+                    <%= for {item, color} <- Enum.zip(MishkaHtmlWeb.AdminSubscriptionLive.basic_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
                         <div class="d-flex text-muted pt-3" phx-click="basic_menu" phx-value-type="<%= item.type %>" phx-value-class="<%= item.class %>">
                             <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false">
                                 <title>Placeholder</title>
@@ -84,49 +89,42 @@
                 <div class="row">
 
                     <%= for form <- @dynamic_form do %>
-                        <%= case search_fields(form.type).form do %>
+
+                        <%= case MishkaHtmlWeb.AdminSubscriptionLive.search_fields(form.type).form do %>
 
                             <% "select" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.SelectComponent,
                                     id: String.to_atom("admin_form_#{form.type}"),
                                     form: form,
                                     f: f,
-                                    search_fields: search_fields(form.type)
+                                    search_fields: MishkaHtmlWeb.AdminSubscriptionLive.search_fields(form.type)
                                 %>
 
+                            <div class="clearfix"></div>
 
 
-
-                           <% "text_search" -> %>
+                            <% "text_search" -> %>
 
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextSearchComponent,
                                         id: String.to_atom("admin_form_text_#{form.type}"),
                                         form: form,
                                         f: f,
-                                        search: @category_search,
-                                        search_fields: search_fields(form.type)
+                                        search: @user_search,
+                                        search_fields: MishkaHtmlWeb.AdminSubscriptionLive.search_fields(form.type),
+                                        title_field: :full_name
                                 %>
 
-
-                            <% "textarea" -> %>
-                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextAreaComponent,
-                                        id: String.to_atom("admin_form_#{form.type}"),
-                                        form: form,
-                                        f: f,
-                                        search_fields: search_fields(form.type)
-                            %>
-
-
+                            <div class="clearfix"></div>
 
                            <% _ -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
                                         id: String.to_atom("admin_form_text_#{form.type}"),
                                         form: form,
                                         f: f,
-                                        search_fields: search_fields(form.type)
+                                        search_fields: MishkaHtmlWeb.AdminSubscriptionLive.search_fields(form.type)
                                 %>
 
-
+                            <div class="clearfix"></div>
 
                         <% end %>
                     <% end %>

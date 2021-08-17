@@ -4,6 +4,12 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   alias MishkaContent.Blog.Post
 
 
+  @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_posts_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, session, socket) do
     if connected?(socket), do: Post.subscribe()
     Process.send_after(self(), :menu, 100)
@@ -24,28 +30,33 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:ok, socket, temporary_assigns: [posts: []]}
   end
 
+  @impl true
   def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
     {:noreply,
       post_assign(socket, params: params["params"], page_size: count, page_number: page)
     }
   end
 
+  @impl true
   def handle_params(%{"page" => page}, _url, socket) do
     {:noreply,
       post_assign(socket, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: page)
     }
   end
 
+  @impl true
   def handle_params(%{"count" => count} = params, _url, socket) do
     {:noreply,
       post_assign(socket, params: params["params"], page_size: count, page_number: 1)
     }
   end
 
+  @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("search", params, socket) do
     socket =
       push_patch(socket,
@@ -60,10 +71,12 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("reset", _params, socket) do
     {:noreply, push_redirect(socket, to: Routes.live_path(socket, __MODULE__))}
   end
 
+  @impl true
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case Post.delete(id) do
       {:ok, :delete, :post, repo_data} ->
@@ -94,6 +107,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("featured_post", %{"id" => id} = _params, socket) do
     socket =
       socket
@@ -101,6 +115,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:post, :ok, repo_record}, socket) do
     socket = case repo_record.__meta__.state do
       :loaded ->
@@ -117,6 +132,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogPostsLive"})
     {:noreply, socket}

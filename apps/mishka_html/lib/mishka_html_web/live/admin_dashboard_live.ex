@@ -4,6 +4,11 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
   alias MishkaContent.Blog.Post
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminDashboardView, "admin_dashboard_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     if connected?(socket), do: MishkaUser.User.subscribe(); Post.subscribe()

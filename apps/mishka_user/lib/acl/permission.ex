@@ -58,8 +58,5 @@ defmodule MishkaUser.Acl.Permission do
     params
   end
 
-  def notify_subscribers(params, _) do
-    IO.puts "this is a unformed"
-    params
-  end
+  def notify_subscribers(params, _), do: params
 end

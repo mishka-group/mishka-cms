@@ -86,10 +86,7 @@ defmodule MishkaContent.Blog.Like do
     params
   end
 
-  def notify_subscribers(params, _) do
-    IO.puts "this is a unformed"
-    params
-  end
+  def notify_subscribers(params, _), do: params
 
   def allowed_fields(:atom), do: BlogLike.__schema__(:fields)
   def allowed_fields(:string), do: BlogLike.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

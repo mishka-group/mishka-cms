@@ -331,7 +331,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       } = json_response(conn, 200)
     end
 
-    test "post without comment", %{user_info: _user_info, conn: conn, auth: auth} do
+    test "post without comment - alias link", %{user_info: _user_info, conn: conn, auth: auth} do
       {:ok, :add, :category, category_data} = assert Category.create(@category_info)
       post_info = Map.merge(@post_info, %{category_id: category_data.id})
       {:ok, :add, :post, post_data} = assert Post.create(post_info)
@@ -339,7 +339,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :post), %{post_id: post_data.alias_link, status: post_data.status})
+        |> post(Routes.content_path(conn, :post), %{alias_link: post_data.alias_link, status: "#{post_data.status}"})
 
       assert %{
         "action" => "post",
@@ -358,14 +358,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :post), %{
-        post_id: post_data.alias_link,
-        status: post_data.status,
-        comment: %{
-          page: 1,
-          filters: %{status: post_data.status}
-        }
-      })
+        |> post(Routes.content_path(conn, :post), %{alias_link: post_data.alias_link, status: "#{post_data.status}", comment: %{page: 1, filters: %{status: "#{post_data.status}"}}})
 
       assert %{
         "action" => "post",
@@ -384,7 +377,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :posts), %{"page" => 1, "filters" => %{"status" => post_data.status}})
+        |> post(Routes.content_path(conn, :posts), %{"page" => 1, "filters" => %{"status" => "#{post_data.status}"}})
       assert %{
         "action" => "posts",
         "system" => "content",
@@ -809,7 +802,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :tag_posts), %{"page" => 1, "filters" => %{"tag_id" => tag_info.id}})
+        |> post(Routes.content_path(conn, :tag_posts), %{"page" => 1, "filters" => %{"tag_id" => tag_info.id, post_status: "active"}})
 
       assert %{
         "action" => "tag_posts",
@@ -1046,7 +1039,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :links), %{"page" => 1, "filters" => %{}})
+        |> post(Routes.content_path(conn, :editor_links), %{"page" => 1, "filters" => %{}})
 
         assert %{
           "action" => "links",
@@ -1082,7 +1075,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :notifs), %{"page" => 1, "filters" => %{}})
+        |> post(Routes.content_path(conn, :editor_notifs), %{"page" => 1, "filters" => %{}})
 
         assert %{
           "action" => "notifs",
@@ -1400,7 +1393,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :post), %{post_id: Ecto.UUID.generate, status: :active})
+        |> post(Routes.content_path(conn, :post), %{alias_link: Ecto.UUID.generate, status: "active"})
 
       assert %{
         "action" => "post",
@@ -1417,11 +1410,11 @@ defmodule MishkaApiWeb.ContentControllerTest do
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
         |> post(Routes.content_path(conn, :post), %{
-          post_id: Ecto.UUID.generate,
-          status: :active,
+          alias_link: Ecto.UUID.generate,
+          status: "active",
           comment: %{
             page: 1,
-            filters: %{status: :active}
+            filters: %{status: "active"}
           }
         })
 
@@ -1439,7 +1432,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :posts), %{"page" => 1, "filters" => %{"status" => :active}})
+        |> post(Routes.content_path(conn, :posts), %{"page" => 1, "filters" => %{"status" => "active"}})
 
       assert %{
         "action" => "posts",
@@ -1512,7 +1505,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn1 =
         new_conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :comment), %{
+        |> post(Routes.content_path(conn, :editor_comment), %{
           "filters" => %{"comment_id" => comment_info.id, "status" => "inactive", "section" => "blog_post"}})
 
       assert %{
@@ -1527,8 +1520,8 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :comments), %{"page" => 1, "filters" =>
-        %{"some_none" => 12, "section" => :blog_post, "status" => :inactive}})
+        |> post(Routes.content_path(conn, :editor_comments), %{"page" => 1, "filters" =>
+        %{"some_none" => 12, "section" => :blog_post, "status" => "inactive"}})
 
         assert %{
           "action" => "comments",
@@ -1734,7 +1727,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :tag_posts), %{"page" => 1, "filters" => %{"tag_id" => "bad_id_test"}})
+        |> post(Routes.content_path(conn, :editor_tag_posts), %{"page" => 1, "filters" => %{"tag_id" => "bad_id_test"}})
 
       assert %{
         "action" => "tag_posts",
@@ -1880,7 +1873,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :links), %{"page" => 1, "filters" => %{}})
+        |> post(Routes.content_path(conn, :editor_links), %{"page" => 1, "filters" => %{}})
 
         assert %{
           "action" => "links",
@@ -1900,7 +1893,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :notifs), %{"page" => 1, "filters" => %{}})
+        |> post(Routes.content_path(conn, :editor_notifs), %{"page" => 1, "filters" => %{}})
 
         assert %{
           "action" => "notifs",

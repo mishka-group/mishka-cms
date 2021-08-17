@@ -220,7 +220,7 @@ defmodule MishkaHtmlWeb.AuthController do
     end
   end
 
-  defp renew_session(conn) do
+  def renew_session(conn) do
     conn
     |> configure_session(renew: true)
     |> clear_session()

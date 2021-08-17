@@ -84,27 +84,14 @@ defmodule MishkaContent.Blog.Tag do
     Ecto.Query.CastError -> []
   end
 
-  def tag_posts(conditions: {page, page_size}, filters: %{"status" => status} = filters) when status in ["active", "archive"] do
-    query = from(tag in BlogTag) |> convert_filters_to_where(filters)
+  def tag_posts(conditions: {page, page_size}, filters: filters) do
+    query = from(tag in BlogTag)
     from(tag in query,
     left_join: mapper in assoc(tag, :blog_tags_mappers),
     join: post in assoc(mapper, :blog_posts),
     join: cat in assoc(post, :blog_categories),
-    order_by: [desc: tag.inserted_at, desc: tag.id],
-    where: post.status == ^status and cat.status == ^status)
-    |> fields()
-    |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-  rescue
-    Ecto.Query.CastError ->
-      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
-  end
-
-  def tag_posts(conditions: {page, page_size}, filters: filters) do
-    query = from(tag in BlogTag) |> convert_filters_to_where(filters)
-    from(tag in query,
-    left_join: mapper in assoc(tag, :blog_tags_mappers),
-    join: post in assoc(mapper, :blog_posts),
-    join: cat in assoc(post, :blog_categories))
+    order_by: [desc: tag.inserted_at, desc: tag.id])
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -115,15 +102,21 @@ defmodule MishkaContent.Blog.Tag do
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
       case key do
+        :status ->
+          from([tag, mapper, post, cat] in query, where: field(post, ^key) == ^value and field(cat, ^key) == ^value)
+
+        :post_status ->
+          from([tag, mapper, post, cat] in query, where: field(post, :status) == ^value and field(cat, :status) == ^value)
+
         :title ->
           like = "%#{value}%"
-          from([tag] in query, where: like(tag.title, ^like))
+          from([tag, mapper, post, cat] in query, where: like(tag.title, ^like))
 
         :custom_title ->
           like = "%#{value}%"
-          from([tag] in query, where: like(tag.custom_title, ^like))
+          from([tag, mapper, post, cat] in query, where: like(tag.custom_title, ^like))
 
-        _ -> from([tag] in query, where: field(tag, ^key) == ^value)
+        _ -> from([tag, mapper, post, cat] in query, where: field(tag, ^key) == ^value)
       end
     end)
   end
@@ -163,10 +156,7 @@ defmodule MishkaContent.Blog.Tag do
     params
   end
 
-  def notify_subscribers(params, _) do
-    IO.puts "this is a unformed :tag"
-    params
-  end
+  def notify_subscribers(params, _), do: params
 
   def allowed_fields(:atom), do: BlogTag.__schema__(:fields)
   def allowed_fields(:string), do: BlogTag.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

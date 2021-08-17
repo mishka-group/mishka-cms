@@ -68,7 +68,6 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
 
   @impl true
   def handle_event("search", params, socket) do
-    IO.inspect(params)
     socket =
       push_patch(socket,
         to:
@@ -84,63 +83,46 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
 
   @impl true
   def handle_event("delete", %{"id" => id} = _params, socket) do
-    case Tag.delete(id) do
+    socket = case Tag.delete(id) do
       {:ok, :delete, :blog_tag, repo_data} ->
-
         Notif.notify_subscribers(%{id: repo_data.id, msg: "برچسب: #{MishkaHtml.title_sanitize(repo_data.title)} حذف شده است."})
-
-        socket =
-          socket
-          |> tag_assign(params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
-
-        {:noreply, socket}
+        socket
+        |> tag_assign(params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
 
       {:error, :delete, :forced_to_delete, :blog_tag} ->
-
-        socket =
-          socket
-          |> assign([
-            open_modal: true,
-            component: MishkaHtmlWeb.Admin.Tag.DeleteErrorComponent
-          ])
-
-        {:noreply, socket}
+        socket
+        |> assign([
+          open_modal: true,
+          component: MishkaHtmlWeb.Admin.Tag.DeleteErrorComponent
+        ])
 
       {:error, :delete, type, :blog_tag} when type in [:uuid, :get_record_by_id] ->
-
-        socket =
-          socket
-          |> put_flash(:warning, "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:warning, "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
 
       {:error, :delete, :blog_tag, _repo_error} ->
-
-        socket =
-          socket
-          |> put_flash(:error, "خطا در حذف برچسب اتفاق افتاده است.")
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:error, "خطا در حذف برچسب اتفاق افتاده است.")
     end
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_info({:blog_tag, :ok, repo_record}, socket) do
-    case repo_record.__meta__.state do
+    socket = case repo_record.__meta__.state do
       :loaded ->
-
-        socket = tag_assign(
+        tag_assign(
           socket,
           params: socket.assigns.filters,
           page_size: socket.assigns.page_size,
           page_number: socket.assigns.page,
         )
 
-        {:noreply, socket}
-
-      :deleted -> {:noreply, socket}
-       _ ->  {:noreply, socket}
+       _ ->  socket
     end
+
+    {:noreply, socket}
   end
 
   @impl true

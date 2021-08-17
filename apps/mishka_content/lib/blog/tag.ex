@@ -164,7 +164,6 @@ defmodule MishkaContent.Blog.Tag do
   end
 
   def notify_subscribers(params, _) do
-    IO.inspect(params)
     IO.puts "this is a unformed :tag"
     params
   end

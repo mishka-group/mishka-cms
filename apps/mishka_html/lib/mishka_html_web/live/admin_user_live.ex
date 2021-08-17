@@ -131,6 +131,21 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   end
 
   def handle_event("save", %{"user" => params}, socket) do
+    # TODO: put flash msg should be imported to gettext
+    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
+      [] -> socket
+      fields_list ->
+
+        socket
+        |> put_flash(:info, "
+        متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
+         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         برای اضافه کردن تمامی نیازمندی ها روی دکمه
+         \"فیلد های ضروری\"
+          کلیک کنید
+         ")
+    end
+
     case socket.assigns.id do
       nil -> create_user(socket, params: {params})
       id ->  edit_user(socket, params: {params, id})
@@ -138,6 +153,20 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   end
 
   def handle_event("save", _params, socket) do
+    # TODO: put flash msg should be imported to gettext
+    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
+      [] -> socket
+      fields_list ->
+
+        socket
+        |> put_flash(:info, "
+        متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
+         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         برای اضافه کردن تمامی نیازمندی ها روی دکمه
+         \"فیلد های ضروری\"
+          کلیک کنید
+         ")
+    end
     {:noreply, socket}
   end
 
@@ -153,56 +182,45 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   end
 
   defp create_user(socket, params: {params}) do
-    case User.create(params) do
+    socket = case User.create(params) do
       {:error, :add, :user, repo_error} ->
-        socket =
-          socket
-          |> assign([changeset: repo_error])
-        {:noreply, socket}
+        socket
+        |> assign([changeset: repo_error])
 
       {:ok, :add, :user, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} درست شده است."})
         MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
-        socket =
-          socket
-          |> put_flash(:info, "کاربر مورد نظر ساخته شد.")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
-        {:noreply, socket}
+        socket
+        |> put_flash(:info, "کاربر مورد نظر ساخته شد.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
+
     end
+
+    {:noreply, socket}
   end
 
   defp edit_user(socket, params: {params, id}) do
-
-    case User.edit(Map.merge(params, %{"id" => id})) do
+    socket = case User.edit(Map.merge(params, %{"id" => id})) do
       {:error, :edit, :user, repo_error} ->
-
-        socket =
-          socket
-          |> assign([
-            changeset: repo_error,
-          ])
-
-        {:noreply, socket}
+        socket
+        |> assign([
+          changeset: repo_error,
+        ])
 
       {:ok, :edit, :user, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} به روز شده است."})
-
-        socket =
-          socket
-          |> put_flash(:info, "کاربر به روز رسانی شد")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
-
-        {:noreply, socket}
-
+        socket
+        |> put_flash(:info, "کاربر به روز رسانی شد")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
       {:error, :edit, :uuid, _error_tag} ->
-        socket =
-          socket
-          |> put_flash(:warning, "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
+        socket
+        |> put_flash(:warning, "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
-        {:noreply, socket}
     end
+
+    {:noreply, socket}
   end
 
   defp creata_user_state(repo_data) do

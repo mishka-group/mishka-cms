@@ -45,4 +45,15 @@ defmodule MishkaHtml do
       value -> value
     end
   end
+
+  def html_form_required_fields(needed_field, []) do
+    Enum.map(needed_field, fn menu -> menu.title end)
+  end
+
+  def html_form_required_fields(needed_field, user_inputs) do
+    Enum.map(needed_field, fn menu ->
+      if !Enum.member?(Map.keys(user_inputs), menu.type), do: menu.title
+    end)
+    |> Enum.filter(& !is_nil(&1))
+  end
 end

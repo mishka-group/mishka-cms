@@ -4,6 +4,11 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
   alias MishkaContent.Blog.Tag
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_tags_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Tag.subscribe()
     Process.send_after(self(), :menu, 100)

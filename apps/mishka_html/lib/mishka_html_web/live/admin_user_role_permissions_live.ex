@@ -3,6 +3,12 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   alias MishkaUser.Acl.Permission
 
+  @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminUserView, "admin_user_role_permissions_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do:  Permission.subscribe()
     Process.send_after(self(), :menu, 100)
@@ -19,6 +25,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
       {:ok, socket}
   end
 
+  @impl true
   def handle_params(%{"id" => id}, _url, socket) do
     socket =
       socket
@@ -28,10 +35,12 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))}
   end
 
+  @impl true
   def handle_event("save", %{"permission" => params}, socket) do
     user_permission = "#{params["section"]}:#{params["permission"]}"
     socket = case Permission.create(%{value: if(user_permission == "*:*", do: "*", else: user_permission), role_id: socket.assigns.id}) do
@@ -46,6 +55,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("delete", %{"id" => id} = _params, socket) do
     case Permission.delete(id) do
       {:ok, :delete, :permission, record} -> MishkaUser.Acl.AclTask.delete_role(record.role_id)
@@ -58,11 +68,13 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserRolePermissionsLive"})
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:permission, :ok, repo_record}, socket) do
     socket = case repo_record.__meta__.state do
       :loaded ->

@@ -4,6 +4,11 @@ defmodule MishkaHtmlWeb.BookmarksLive do
   alias MishkaContent.General.Bookmark
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.ClientBlogView, "bookmarks_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, session, socket) do
     user_id = Map.get(session, "user_id")
       bookmarks = case bookmars_paginate(user_id, 1, 2, socket) do

@@ -5,6 +5,12 @@ defmodule MishkaHtmlWeb.RegisterLive do
   @hard_secret_random_link "Test refresh"
   alias MishkaDatabase.Cache.RandomCode
 
+  @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.ClientAuthView, "register_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     changeset = %MishkaDatabase.Schema.MishkaUser.User{}
@@ -21,6 +27,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_event("save", %{"user" => params}, socket) do
     filtered_params = Map.merge(params, %{
       "email" => MishkaHtml.email_sanitize(params["email"]),
@@ -54,6 +61,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
     end
   end
 
+  @impl true
   def handle_event("validate", %{"user" => params}, socket) do
 
     filtered_params = Map.merge(params, %{
@@ -67,6 +75,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.RegisterLive"})
     {:noreply, socket}

@@ -4,6 +4,12 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   alias MishkaContent.Blog.{Post, Category}
   @error_atom :post
 
+  @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_post_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
@@ -27,6 +33,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_params(%{"id" => id}, _url, socket) do
     all_field = create_menu_list(basic_menu_list() ++ more_options_menu_list(), [])
 
@@ -65,10 +72,12 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
     new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
       {:ok, :add_new_item_to_list, _new_item} ->
@@ -89,10 +98,12 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, new_socket}
   end
 
+  @impl true
   def handle_event("basic_menu", _params, socket) do
     {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu, options_menu: false])}
   end
 
+  @impl true
   def handle_event("options_menu", %{"type" => type, "class" => class}, socket) do
     new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
       {:ok, :add_new_item_to_list, _new_item} ->
@@ -113,10 +124,12 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, new_socket}
   end
 
+  @impl true
   def handle_event("options_menu", _params, socket) do
     {:noreply, assign(socket, [basic_menu: false, options_menu: !socket.assigns.options_menu])}
   end
 
+  @impl true
   def handle_event("delete_form", %{"type" => type}, socket) do
     socket =
       socket
@@ -129,6 +142,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("make_all_basic_menu", _, socket) do
     socket =
       socket
@@ -141,6 +155,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("clear_all_field", _, socket) do
     socket =
       socket
@@ -154,6 +169,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("make_all_menu", _, socket) do
     fields = create_menu_list(basic_menu_list() ++ more_options_menu_list(), socket.assigns.dynamic_form)
 
@@ -168,6 +184,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("save-editor", %{"html" => params}, socket) do
     socket =
       socket
@@ -175,6 +192,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("draft", %{"_target" => ["post", type], "post" => params}, socket) when type not in ["main_image", "main_image"] do
     # save in genserver
     {_key, value} = Map.take(params, [type])
@@ -199,14 +217,17 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("draft", _params, socket) do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = _params, socket) do
     {:noreply, cancel_upload(socket, String.to_atom(field), ref)}
   end
 
+  @impl true
   def handle_event("set_tag", %{"key" => "Enter", "value" => value}, socket) do
     new_socket = case Enum.any?(socket.assigns.tags, fn tag -> tag == value end) do
       true -> socket
@@ -220,6 +241,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, new_socket}
   end
 
+  @impl true
   def handle_event("delete_tag", %{"tag" => value}, socket) do
     socket =
       socket
@@ -227,6 +249,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("set_link", %{"key" => "Enter", "value" => value}, socket) do
     alias_link = MishkaHtml.create_alias_link(value)
     socket =
@@ -235,6 +258,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("delete_image", %{"type" => type}, socket) do
     {main_image, header_image} = socket.assigns.images
 
@@ -250,6 +274,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("save", %{"post" => params}, socket) do
     # TODO: put flash msg should be imported to gettext
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
@@ -300,6 +325,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     end
   end
 
+  @impl true
   def handle_event("save", _params, socket) do
     # TODO: put flash msg should be imported to gettext
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
@@ -318,6 +344,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("text_search_click", %{"id" => id}, socket) do
     socket =
       socket
@@ -330,6 +357,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("close_text_search", _, socket) do
     socket =
       socket
@@ -337,6 +365,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogPostLive"})
     {:noreply, socket}

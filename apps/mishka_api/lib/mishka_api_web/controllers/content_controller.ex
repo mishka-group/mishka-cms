@@ -3,13 +3,9 @@ defmodule MishkaApiWeb.ContentController do
 
   # TODO: add ip limitter and os info
   # TODO: handel cache of contents
-  # TODO: change nil user with user_id
 
   alias MishkaContent.Blog.{Category, Post, Like, Tag, TagMapper, BlogLink, Author}
   alias MishkaContent.General.{Comment, CommentLike, Bookmark, Notif, Subscription}
-
-  # Activity module needs a good way to store data
-  # all the Strong paramiters which is loaded here should be chacked and test ID in create
 
   def posts(conn, %{"page" => page, "filters" => %{"status" => status} = params})  when status in ["active", "archived"] do
     filters = Map.take(params, Post.allowed_fields(:string))
@@ -24,15 +20,11 @@ defmodule MishkaApiWeb.ContentController do
   end
 
   def post(conn, %{"alias_link" => alias_link, "status" => status, "comment" => %{"page" => _page, "filters" => %{"status" => status}} = comment}) when status in ["active", "archive"] do
-    # TODO: I think this is a unsafe normal acl, because user can get links of posts which be able for blog:edit action
-    # TODO: it should be fixed in query
     Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: comment})
   end
 
   def post(conn, %{"alias_link" => alias_link, "status" => status}) when status in ["active", "archived"] do
-    # TODO: I think this is a unsafe normal acl, because user can get links of posts which be able for blog:edit action
-    # TODO: it should be fixed in query
     Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :none_comment})
   end
@@ -117,15 +109,11 @@ defmodule MishkaApiWeb.ContentController do
   end
 
   def comment(conn, %{"filters" => %{"comment_id" => comment_id, "status" => status}}) when status in ["active", "archived"] do
-    # TODO: I think this is a unsafe normal acl, because user can get links of posts which be able for blog:edit action
-    # TODO: it should be fixed in query
     Comment.comment(filters: %{id: comment_id, status: status}, user_id: Map.get(conn.assigns, :user_id))
     |> MishkaApi.ContentProtocol.comment(conn, Comment.allowed_fields(:atom))
   end
 
   def comments(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in ["active", "archived"] do
-    # TODO: I think this is a unsafe normal acl, because user can get links of posts which be able for blog:edit action
-    # TODO: it should be fixed in query
     filters =
       Map.take(params, Comment.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
@@ -272,8 +260,6 @@ defmodule MishkaApiWeb.ContentController do
   end
 
   def links(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in ["active", "archived"] do
-    # TODO: I think this is a unsafe normal acl, because user can get links of posts which be able for blog:edit action
-    # TODO: it should be fixed in query
     filters = Map.take(params, BlogLink.allowed_fields(:string))
     BlogLink.links(conditions: {page, 30}, filters: Map.merge(filters, %{"status" => status}))
     |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))

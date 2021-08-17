@@ -7,7 +7,6 @@ defmodule MishkaApi.Plug.AclCheckPlug do
 
   def call(conn, _default) do
     module = case Enum.join(conn.path_info, "/") do
-      nil -> "NotFound"
       "" -> "NotFound"
       module -> module
     end

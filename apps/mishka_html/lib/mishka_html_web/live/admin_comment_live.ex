@@ -4,6 +4,12 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
   alias MishkaContent.General.Comment
   @error_atom :comment
 
+  @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminCommentView, "admin_comment_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
@@ -18,6 +24,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_params(%{"id" => id}, _url, socket) do
     all_field = create_menu_list(basic_menu_list(), [])
 
@@ -49,6 +56,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_params(_params, _url, socket) do
     socket
     |> put_flash(:warning, "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
@@ -56,6 +64,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
     new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
       {:ok, :add_new_item_to_list, _new_item} ->
@@ -75,10 +84,12 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, new_socket}
   end
 
+  @impl true
   def handle_event("basic_menu", _params, socket) do
     {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu, options_menu: false])}
   end
 
+  @impl true
   def handle_event("make_all_basic_menu", _, socket) do
     socket =
       socket
@@ -90,6 +101,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("delete_form", %{"type" => type}, socket) do
     socket =
       socket
@@ -101,6 +113,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("clear_all_field", _, socket) do
     socket =
       socket
@@ -113,6 +126,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("draft", %{"_target" => ["user", type], "user" => params}, socket) do
     # save in genserver
 
@@ -135,10 +149,12 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("draft", _params, socket) do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("save", %{"comment" => params}, socket) do
     # TODO: put flash msg should be imported to gettext
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
@@ -202,6 +218,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminCommentLive"})
     {:noreply, socket}

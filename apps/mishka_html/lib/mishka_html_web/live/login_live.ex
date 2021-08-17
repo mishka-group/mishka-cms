@@ -1,6 +1,12 @@
 defmodule MishkaHtmlWeb.LoginLive do
   use MishkaHtmlWeb, :live_view
 
+  @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.ClientAuthView, "login_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}
@@ -18,6 +24,7 @@ defmodule MishkaHtmlWeb.LoginLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_event("save", %{"user" => params}, socket) do
     filtered_params = Map.merge(params, %{"email" => MishkaHtml.email_sanitize(params["email"])})
     changeset = user_changeset(filtered_params)
@@ -29,12 +36,14 @@ defmodule MishkaHtmlWeb.LoginLive do
      )}
   end
 
+  @impl true
   def handle_event("validate", %{"user" => params}, socket) do
     filtered_params = Map.merge(params, %{"email" => MishkaHtml.email_sanitize(params["email"])})
     changeset = user_changeset(filtered_params)
     {:noreply, assign(socket, changeset: changeset)}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive"})
     {:noreply, socket}

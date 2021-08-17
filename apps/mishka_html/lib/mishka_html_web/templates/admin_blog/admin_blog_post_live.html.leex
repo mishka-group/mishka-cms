@@ -9,13 +9,12 @@
 
             <div class="col vazir text-start top-post-btn">
 
-                <%= live_redirect "برگشت به مجموعه", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive), class: "btn btn-outline-primary" %>
+                <%= live_redirect "برگشت به مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-primary" %>
 
                 <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
 
                 <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
 
-                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
             </div>
         </div>
 
@@ -33,9 +32,9 @@
         <div class="space50"></div>
         <h2 class="vazir">
             <%= if is_nil(@id) do %>
-                ساخت مجموعه جدید
+                ساخت مطلب جدید
             <% else %>
-                ویرایش مجموعه
+                ویرایش مطلب
             <% end %>
         </h2>
         <div class="space20"></div>
@@ -70,7 +69,7 @@
 
             <div class="col-sm-3 create-category-tools-items" id="MainCategoryTools">
                 <%= if @basic_menu do %>
-                    <%= for {item, color} <- Enum.zip(basic_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
+                    <%= for {item, color} <- Enum.zip(MishkaHtmlWeb.AdminBlogPostLive.basic_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
                         <div class="d-flex text-muted pt-3" phx-click="basic_menu" phx-value-type="<%= item.type %>" phx-value-class="<%= item.class %>">
                             <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false">
                                 <title>Placeholder</title>
@@ -96,7 +95,7 @@
             <div class="col-sm-3 create-category-tools-items" id="nonMainCategoryTools" >
 
                 <%= if @options_menu do %>
-                    <%= for {item, color} <- Enum.zip(more_options_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
+                    <%= for {item, color} <- Enum.zip(MishkaHtmlWeb.AdminBlogPostLive.more_options_menu_list(), Stream.cycle(["#e83e8c", "#007bff"])) do %>
                         <div class="d-flex text-muted pt-3" phx-click="options_menu" phx-value-type="<%= item.type %>" phx-value-class="<%= item.class %>">
                             <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false">
                                 <title>Placeholder</title>
@@ -126,8 +125,9 @@
                 <div class="clearfix"></div>
                 <div class="space30"></div>
                 <div class="row">
+
                     <%= for form <- @dynamic_form do %>
-                        <%= case search_fields(form.type).form do %>
+                        <%= case MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type).form do %>
 
                             <% "upload" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.UploadComponent,
@@ -144,25 +144,25 @@
                                     form: form,
                                     f: f,
                                     images: @images,
-                                    search_fields: search_fields(form.type)
-                                %>
+                                    search_fields: MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type)
+                             %>
 
                            <% "add_tag" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddTagComponent,
-                                        id: String.to_atom("admin_form_#{form.type}"),
-                                        form: form,
-                                        f: f,
-                                        tags: @tags,
-                                        search_fields: search_fields(form.type)
+                                    id: String.to_atom("admin_form_#{form.type}"),
+                                    form: form,
+                                    f: f,
+                                    tags: @tags,
+                                    search_fields: MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type)
                                 %>
 
 
                             <% "select" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.SelectComponent,
-                                        id: String.to_atom("admin_form_#{form.type}"),
-                                        form: form,
-                                        f: f,
-                                        search_fields: search_fields(form.type)
+                                    id: String.to_atom("admin_form_#{form.type}"),
+                                    form: form,
+                                    f: f,
+                                    search_fields: MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type)
                                 %>
 
                             <% "editor" -> %>
@@ -170,7 +170,7 @@
                                         id: String.to_atom("admin_form_#{form.type}"),
                                         form: form,
                                         f: f,
-                                        search_fields: search_fields(form.type)
+                                        search_fields: MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type)
                                 %>
 
                             <% "convert_title_to_link" -> %>
@@ -180,7 +180,7 @@
                                         form: form,
                                         f: f,
                                         alias_link: @alias_link,
-                                        search_fields: search_fields(form.type)
+                                        search_fields: MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type)
                                 %>
 ‍‍‍‍‍
                            <% "text_search" -> %>
@@ -190,7 +190,7 @@
                                         form: form,
                                         f: f,
                                         search: @category_search,
-                                        search_fields: search_fields(form.type),
+                                        search_fields: MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type),
                                         title_field: :title
                                 %>
 
@@ -200,7 +200,7 @@
                                         id: String.to_atom("admin_form_#{form.type}"),
                                         form: form,
                                         f: f,
-                                        search_fields: search_fields(form.type)
+                                        search_fields: MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type)
                                 %>
 
                            <% _ -> %>
@@ -208,7 +208,7 @@
                                         id: String.to_atom("admin_form_text_#{form.type}"),
                                         form: form,
                                         f: f,
-                                        search_fields: search_fields(form.type)
+                                        search_fields: MishkaHtmlWeb.AdminBlogPostLive.search_fields(form.type)
                                 %>
                         <% end %>
                     <% end %>

@@ -57,7 +57,7 @@
                     %>
                     </h2>
                     <div class="space20"></div>
-                    <p class="body-of-blogs-posts"><%= HtmlSanitizeEx.basic_html("#{item.short_description}") %></p>
+                    <p class="body-of-blogs-posts"><%= HtmlSanitizeEx.basic_html(item.short_description) %></p>
                   </header>
                   <div class="space20"></div>
                   <footer class="home-blog-posts-normal-with-body-footer">
@@ -84,7 +84,7 @@
                       </svg>
                       &nbsp;
                       اولویت:
-                      <%= priority(item.priority) %>
+                      <%= MishkaHtmlWeb.BlogCategoryLive.priority(item.priority) %>
                     </span>
 
                     <span>
@@ -150,10 +150,11 @@
       <%= if @posts.entries != [] do %>
         <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
                         id: :pagination,
-                        pagination_url: MishkaHtmlWeb.BlogsLive,
+                        pagination_url: MishkaHtmlWeb.BlogCategoryLive,
                         data: @posts,
                         filters: @filters,
-                        count: @page_size
+                        count: @page_size,
+                        alias_link: @alias_link
         %>
         <% end %>
         <div class="clearfix"> </div>

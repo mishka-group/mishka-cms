@@ -6,6 +6,11 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
   @hard_secret_random_link "Test refresh"
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.ClientAuthView, "reset_change_password_live.html", assigns)
+  end
+
+  @impl true
   def mount(%{"random_link" => random_link}, session, socket) do
     state_random_link = RandomCode.get_code_with_code(random_link)
 

@@ -4,6 +4,11 @@ defmodule MishkaHtmlWeb.BlogsLive do
   alias MishkaContent.Blog.{Category, Post, Like}
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.ClientBlogView, "blogs_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, session, socket) do
     if connected?(socket) do
       subscribe()
@@ -110,7 +115,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
   end
 
 
-  defp priority(priority) do
+  def priority(priority) do
     case priority do
       :none -> "ندارد"
       :low -> "پایین"

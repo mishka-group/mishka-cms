@@ -3,6 +3,12 @@ defmodule MishkaHtmlWeb.HomeLive do
 
   alias MishkaContent.Blog.Post
 
+  @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.ClientHomeView, "home_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
@@ -21,6 +27,7 @@ defmodule MishkaHtmlWeb.HomeLive do
     {:ok, socket, temporary_assigns: [posts: [], featured_posts: []]}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.HomeLive"})
     {:noreply, socket}

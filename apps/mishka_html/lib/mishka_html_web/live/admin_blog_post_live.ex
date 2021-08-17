@@ -389,7 +389,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
       main_image = if is_nil(main_image), do: state_main_image, else: main_image
       header_image = if is_nil(header_image), do: state_header_image, else: header_image
 
-    case Post.create(
+    socket = case Post.create(
       Map.merge(params, %{
         "meta_keywords" => meta_keywords,
         "main_image" => main_image,
@@ -400,33 +400,30 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
       })) do
 
       {:error, :add, :post, repo_error} ->
+        socket
+        |> assign([
+          changeset: repo_error,
+          images: {main_image, header_image}
+        ])
 
-        socket =
-          socket
-          |> assign([
-            changeset: repo_error,
-            images: {main_image, header_image}
-          ])
-        {:noreply, socket}
 
       {:ok, :add, :post, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
-        socket =
-          socket
-          |> assign(
-            dynamic_form: [],
-            basic_menu: false,
-            options_menu: false,
-            changeset: post_changeset(),
-            images: {main_image, header_image}
-          )
-          |> update(:uploaded_files, &(&1 ++ uploaded_main_image_files))
-          |> update(:uploaded_files, &(&1 ++ uploaded_header_image_files))
-          |> put_flash(:info, "مطلب مورد نظر به لیست اضافه شد")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
-
-        {:noreply, socket}
+        socket
+        |> assign(
+          dynamic_form: [],
+          basic_menu: false,
+          options_menu: false,
+          changeset: post_changeset(),
+          images: {main_image, header_image}
+        )
+        |> update(:uploaded_files, &(&1 ++ uploaded_main_image_files))
+        |> update(:uploaded_files, &(&1 ++ uploaded_header_image_files))
+        |> put_flash(:info, "مطلب مورد نظر به لیست اضافه شد")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
     end
+
+    {:noreply, socket}
   end
 
   defp edit_post(socket, params: {params, meta_keywords, main_image, header_image, description, id, alias_link, category_id},
@@ -452,37 +449,27 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
     exist_images = Map.merge(main_image_exist_file, header_image_exist_file)
 
-    case Post.edit(Map.merge(merged, exist_images)) do
+    socket = case Post.edit(Map.merge(merged, exist_images)) do
       {:error, :edit, :post, repo_error} ->
-
-        socket =
-          socket
-          |> assign([
-            changeset: repo_error,
-            images: {main_image, header_image}
-          ])
-
-        {:noreply, socket}
+        socket
+        |> assign([
+          changeset: repo_error,
+          images: {main_image, header_image}
+        ])
 
       {:ok, :edit, :post, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})
-
-        socket =
-          socket
-          |> put_flash(:info, "مطلب به روز رسانی شد")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
-
-        {:noreply, socket}
-
+        socket
+        |> put_flash(:info, "مطلب به روز رسانی شد")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
 
       {:error, :edit, :uuid, _error_tag} ->
-        socket =
-          socket
-          |> put_flash(:warning, "چنین مطلبی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
+        socket
+        |> put_flash(:warning, "چنین مطلبی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
 
-        {:noreply, socket}
     end
+    {:noreply, socket}
   end
 
   defp creata_post_state(repo_data) do

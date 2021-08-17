@@ -262,56 +262,42 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
   end
 
   defp create_subscription(socket, params: {params}) do
-    case Subscription.create(params) do
+    socket = case Subscription.create(params) do
       {:error, :add, :subscription, repo_error} ->
-        socket =
-          socket
-          |> assign([changeset: repo_error])
-        {:noreply, socket}
+        socket
+        |> assign([changeset: repo_error])
 
       {:ok, :add, :subscription, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "یک اشتراک برای بخش: #{repo_data.section} درست شده است."})
-
-        socket =
-          socket
-          |> put_flash(:info, "اشتراک مورد نظر ساخته شد.")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
-        {:noreply, socket}
+        socket
+        |> put_flash(:info, "اشتراک مورد نظر ساخته شد.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
     end
+
+    {:noreply, socket}
   end
 
   defp edit_subscription(socket, params: {params, id}) do
-
-    case Subscription.edit(Map.merge(params, %{"id" => id})) do
+    socket = case Subscription.edit(Map.merge(params, %{"id" => id})) do
       {:error, :edit, :subscription, repo_error} ->
-
-        socket =
-          socket
-          |> assign([
-            changeset: repo_error,
-          ])
-
-        {:noreply, socket}
+        socket
+        |> assign([
+          changeset: repo_error,
+        ])
 
       {:ok, :edit, :subscription, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "یک اشتراک از بهش: #{repo_data.section} به روز شده است."})
-
-        socket =
-          socket
-          |> put_flash(:info, "اشتراک کاربر مورد نظر به روز رسانی شد")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
-
-        {:noreply, socket}
-
+        socket
+        |> put_flash(:info, "اشتراک کاربر مورد نظر به روز رسانی شد")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
 
       {:error, :edit, :uuid, _error_tag} ->
-        socket =
-          socket
-          |> put_flash(:warning, "چنین اشتراکی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:warning, "چنین اشتراکی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
     end
+
+    {:noreply, socket}
   end
 
   def basic_menu_list() do

@@ -71,46 +71,33 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   end
 
   def handle_event("delete", %{"id" => id} = _params, socket) do
-    case User.delete(id) do
+    socket = case User.delete(id) do
       {:ok, :delete, :user, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} حذف شده است."})
-
-        socket = user_assign(
+        user_assign(
           socket,
           params: socket.assigns.filters,
           page_size: socket.assigns.page_size,
           page_number: socket.assigns.page,
         )
 
-        {:noreply, socket}
-
       {:error, :delete, :forced_to_delete, :user} ->
-
-        socket =
-          socket
-          |> assign([
-            open_modal: true,
-            component: MishkaHtmlWeb.Admin.User.DeleteErrorComponent
-          ])
-
-        {:noreply, socket}
+        socket
+        |> assign([
+          open_modal: true,
+          component: MishkaHtmlWeb.Admin.User.DeleteErrorComponent
+        ])
 
       {:error, :delete, type, :user} when type in [:uuid, :get_record_by_id] ->
-
-        socket =
-          socket
-          |> put_flash(:warning, "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:warning, "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
 
       {:error, :delete, :user, _repo_error} ->
-
-        socket =
-          socket
-          |> put_flash(:error, "خطایی در حذف کاربر اتفاق افتاده است.")
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:error, "خطایی در حذف کاربر اتفاق افتاده است.")
     end
+
+    {:noreply, socket}
   end
 
   def handle_event("close_modal", _params, socket) do
@@ -135,21 +122,18 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   end
 
   def handle_info({:user, :ok, repo_record}, socket) do
-    case repo_record.__meta__.state do
+    socket = case repo_record.__meta__.state do
       :loaded ->
-
-        socket = user_assign(
+        user_assign(
           socket,
           params: socket.assigns.filters,
           page_size: socket.assigns.page_size,
           page_number: socket.assigns.page,
         )
-
-        {:noreply, socket}
-
-      :deleted -> {:noreply, socket}
-       _ ->  {:noreply, socket}
+       _ ->  socket
     end
+
+    {:noreply, socket}
   end
 
   defp user_filter(params) when is_map(params) do

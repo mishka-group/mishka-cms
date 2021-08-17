@@ -429,7 +429,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       main_image = if is_nil(main_image), do: state_main_image, else: main_image
       header_image = if is_nil(header_image), do: state_header_image, else: header_image
 
-    case Category.create(
+    socket = case Category.create(
       Map.merge(params, %{
         "meta_keywords" => meta_keywords,
         "main_image" => main_image,
@@ -440,24 +440,20 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       })) do
 
       {:error, :add, :category, repo_error} ->
-
-        socket =
-          socket
-          |> assign([
-            changeset: repo_error,
-            images: {main_image, header_image}
-          ])
-        {:noreply, socket}
+        socket
+        |> assign([
+          changeset: repo_error,
+          images: {main_image, header_image}
+        ])
 
       {:ok, :add, :category, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
-        socket =
-          socket
-          |> put_flash(:info, "مجموعه با موفقیت ایجاد شد")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:info, "مجموعه با موفقیت ایجاد شد")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
     end
+
+    {:noreply, socket}
   end
 
   defp edit_category(socket, params: {params, meta_keywords, main_image, header_image, description, id, alias_link, sub},
@@ -483,37 +479,27 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
     exist_images = Map.merge(main_image_exist_file, header_image_exist_file)
 
-    case Category.edit(Map.merge(merged, exist_images)) do
+    socket = case Category.edit(Map.merge(merged, exist_images)) do
       {:error, :edit, :category, repo_error} ->
-
-        socket =
-          socket
-          |> assign([
-            changeset: repo_error,
-            images: {main_image, header_image}
-          ])
-
-        {:noreply, socket}
+        socket
+        |> assign([
+          changeset: repo_error,
+          images: {main_image, header_image}
+        ])
 
       {:ok, :edit, :category, repo_data} ->
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})
-
-        socket =
-          socket
-          |> put_flash(:info, "مجموعه به روز رسانی شد")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
-
-        {:noreply, socket}
-
+        socket
+        |> put_flash(:info, "مجموعه به روز رسانی شد")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
 
       {:error, :edit, :uuid, _error_tag} ->
-        socket =
-          socket
-          |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
-
-        {:noreply, socket}
+        socket
+        |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
     end
+
+    {:noreply, socket}
   end
 
   defp creata_category_state(repo_data) do

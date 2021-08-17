@@ -73,7 +73,7 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def change_password(conn, %{"curent_password" => password, "new_password" => new_password}) do
-    with {:ok, :get_record_by_id, :user, user_info} <- MishkaUser.User.show_by_id(conn.assigns.user_id),
+    with {:ok, :get_record_by_id, :user, user_info} <- MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id)),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:ok, :edit, :user, info} <- MishkaUser.User.edit(%{id: user_info.id, password: new_password}) do
 
@@ -100,25 +100,25 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def user_tokens(conn, _params) do
-    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id))
     |> MishkaApi.AuthProtocol.user_tokens(conn, @allowed_fields_output)
   end
 
   def delete_token(conn, %{"token" => token}) do
-    MishkaUser.Token.TokenManagemnt.get_token(conn.assigns.user_id, token)
-    |> MishkaApi.AuthProtocol.delete_token(conn.assigns.user_id, conn)
+    MishkaUser.Token.TokenManagemnt.get_token(Map.get(conn.assigns, :user_id), token)
+    |> MishkaApi.AuthProtocol.delete_token(Map.get(conn.assigns, :user_id), conn)
   end
 
   def delete_tokens(conn, _params) do
-    MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(conn.assigns.user_id)
-    MishkaUser.Token.TokenManagemnt.stop(conn.assigns.user_id)
+    MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(Map.get(conn.assigns, :user_id))
+    MishkaUser.Token.TokenManagemnt.stop(Map.get(conn.assigns, :user_id))
     # delete all user's Acl
-    MishkaUser.Acl.AclManagement.stop(conn.assigns.user_id)
+    MishkaUser.Acl.AclManagement.stop(Map.get(conn.assigns, :user_id))
     MishkaApi.AuthProtocol.delete_tokens(conn)
   end
 
   def get_token_expire_time(conn, %{"token" => token}) do
-    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id))
     |> MishkaApi.AuthProtocol.get_token_expire_time(conn, token, @allowed_fields_output)
   end
 
@@ -137,36 +137,36 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def edit_profile(conn, %{"full_name" => full_name}) do
-    MishkaUser.User.edit(%{id: conn.assigns.user_id, full_name: MishkaHtml.full_name_sanitize(full_name)})
+    MishkaUser.User.edit(%{id: Map.get(conn.assigns, :user_id), full_name: MishkaHtml.full_name_sanitize(full_name)})
     |> MishkaApi.AuthProtocol.edit_profile(conn, @allowed_fields_output)
   end
 
 
   def deactive_account(conn, %{"code" => code}) do
-    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id))
     |> MishkaApi.AuthProtocol.deactive_account(:sent, {conn, code}, @allowed_fields_output)
   end
 
 
   def deactive_account(conn, _params) do
-    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id))
     |> MishkaApi.AuthProtocol.deactive_account(:send, conn, @allowed_fields_output)
   end
 
   def verify_email(conn, %{"code" => code}) do
-    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id))
     |> MishkaApi.AuthProtocol.verify_email(:sent, {conn, code}, @allowed_fields_output)
   end
 
   def verify_email(conn, _params) do
-    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id))
     |> MishkaApi.AuthProtocol.verify_email(:send, conn, @allowed_fields_output)
   end
 
 
   def verify_email_by_email_link(conn, _params) do
     # this function just is a luncher to send email, the function after clicking we need should be written on html api side
-    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id))
     |> MishkaApi.AuthProtocol.verify_email_by_email_link(conn, @allowed_fields_output)
   end
 
@@ -179,7 +179,7 @@ defmodule MishkaApiWeb.AuthController do
 
   def deactive_account_by_email_link(conn, _params) do
     # this function just is a luncher to send email, the function after clicking we need should be written on html api side
-    MishkaUser.User.show_by_id(conn.assigns.user_id)
+    MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id))
     |> MishkaApi.AuthProtocol.deactive_account_by_email_link(conn, @allowed_fields_output)
   end
 end

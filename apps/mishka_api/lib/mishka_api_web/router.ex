@@ -55,6 +55,7 @@ defmodule MishkaApiWeb.Router do
     post "/delete-category", ContentController, :delete_category
     post "/destroy-category", ContentController, :destroy_category
     post "/categories", ContentController, :categories
+    post "/editor-categories", ContentController, :editor_categories
     post "/category", ContentController, :category
 
 
@@ -63,7 +64,9 @@ defmodule MishkaApiWeb.Router do
     post "/delete-post", ContentController, :delete_post
     post "/destroy-post", ContentController, :destroy_post
     post "/posts", ContentController, :posts
+    post "/editor-posts", ContentController, :editor_posts
     post "/post", ContentController, :post
+    post "/editor-post", ContentController, :editor_post
 
 
     post "/like-post", ContentController, :like_post
@@ -71,7 +74,9 @@ defmodule MishkaApiWeb.Router do
 
 
     post "/comment", ContentController, :comment
+    post "/editor-comment", ContentController, :editor_comment
     post "/comments", ContentController, :comments
+    post "/editor-comments", ContentController, :editor_comments
     post "/create-comment", ContentController, :create_comment
     post "/edit-comment", ContentController, :edit_comment
     post "/delete-comment", ContentController, :delete_comment
@@ -89,6 +94,7 @@ defmodule MishkaApiWeb.Router do
     post "/remove-post-tag", ContentController, :remove_post_tag
     post "/tags", ContentController, :tags
     post "/tag-posts", ContentController, :tag_posts
+    post "/editor-tag-posts", ContentController, :editor_tag_posts
     post "/post-tags", ContentController, :post_tags
 
 
@@ -103,9 +109,11 @@ defmodule MishkaApiWeb.Router do
     post "/edit-blog-link", ContentController, :edit_blog_link
     post "/delete-blog-link", ContentController, :delete_blog_link
     post "/links", ContentController, :links
+    post "/editor-links", ContentController, :editor_links
 
 
     post "/notifs", ContentController, :notifs
+    post "/editor-notifs", ContentController, :editor_notifs
     post "/send-notif", ContentController, :send_notif
 
 

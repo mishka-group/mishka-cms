@@ -79,10 +79,7 @@ defmodule MishkaContent.Blog.TagMapper  do
     params
   end
 
-  def notify_subscribers(params, _) do
-    IO.puts "this is a unformed :tag_mapper"
-    params
-  end
+  def notify_subscribers(params, _), do: params
 
   def allowed_fields(:atom), do: BlogTagMapper.__schema__(:fields)
   def allowed_fields(:string), do: BlogTagMapper.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

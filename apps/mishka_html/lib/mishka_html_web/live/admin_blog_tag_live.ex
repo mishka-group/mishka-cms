@@ -62,7 +62,21 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
 
   @impl true
   def handle_event("save", %{"blog_tag" => params}, socket) do
-    IO.inspect(params)
+    # TODO: put flash msg should be imported to gettext
+    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
+      [] -> socket
+      fields_list ->
+
+        socket
+        |> put_flash(:info, "
+        متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
+         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         برای اضافه کردن تمامی نیازمندی ها روی دکمه
+         \"فیلد های ضروری\"
+          کلیک کنید
+         ")
+    end
+
     case socket.assigns.id do
       nil -> create_tag(socket, params: {params})
       id ->  edit_tag(socket, params: {params, id})
@@ -71,6 +85,20 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
 
   @impl true
   def handle_event("save", _params, socket) do
+    # TODO: put flash msg should be imported to gettext
+    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
+      [] -> socket
+      fields_list ->
+
+        socket
+        |> put_flash(:info, "
+        متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
+         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         برای اضافه کردن تمامی نیازمندی ها روی دکمه
+         \"فیلد های ضروری\"
+          کلیک کنید
+         ")
+    end
     {:noreply, socket}
   end
 

@@ -251,6 +251,21 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   end
 
   def handle_event("save", %{"post" => params}, socket) do
+    # TODO: put flash msg should be imported to gettext
+    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
+      [] -> socket
+      fields_list ->
+
+        socket
+        |> put_flash(:info, "
+        متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
+         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         برای اضافه کردن تمامی نیازمندی ها روی دکمه
+         \"فیلد های ضروری\"
+          کلیک کنید
+         ")
+    end
+
     uploaded_main_image_files = upload(socket, :main_image_upload)
     uploaded_header_image_files = upload(socket, :header_image_upload)
 
@@ -283,6 +298,24 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         uploads: {uploaded_main_image_files, uploaded_header_image_files})
 
     end
+  end
+
+  def handle_event("save", _params, socket) do
+    # TODO: put flash msg should be imported to gettext
+    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
+      [] -> socket
+      fields_list ->
+
+        socket
+        |> put_flash(:info, "
+        متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
+         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         برای اضافه کردن تمامی نیازمندی ها روی دکمه
+         \"فیلد های ضروری\"
+          کلیک کنید
+         ")
+    end
+    {:noreply, socket}
   end
 
   def handle_event("text_search_click", %{"id" => id}, socket) do

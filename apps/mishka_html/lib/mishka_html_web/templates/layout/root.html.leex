@@ -7,25 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <%= csrf_meta_tag() %>
     <%= live_title_tag assigns[:page_title] || "MishkaCMS"%>
-
     <%= seo_tags(assigns[:seo_tags]) %>
-
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
-
-    <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/test.css") %>"/>
-
-
+    <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/default-template.css") %>"/>
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/bootstrap.min.css") %>"/>
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/bootstrap.min.js") %>"></script>
-
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/main.min.css") %>"/>
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/main.min.js") %>"></script>
-
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/ckeditor-styles.css") %>"/>
-
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
-
-
   </head>
   <body id="liveBody">
     <%= @inner_content %>

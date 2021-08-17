@@ -4,6 +4,11 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
   alias MishkaContent.Blog.{Category, Post, Like}
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.ClientBlogView, "blog_category_live.html", assigns)
+  end
+
+  @impl true
   def mount(%{"alias_link" => alias_link}, session, socket) do
     case Category.show_by_alias_link(alias_link) do
       {:ok, :get_record_by_field, :category, record} ->
@@ -124,7 +129,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
   end
 
 
-  defp priority(priority) do
+  def priority(priority) do
     case priority do
       :none -> "ندارد"
       :low -> "پایین"

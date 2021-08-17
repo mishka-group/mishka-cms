@@ -5,6 +5,11 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
   @error_atom :blog_tag
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_tag_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =

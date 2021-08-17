@@ -4,6 +4,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
   alias MishkaContent.Blog.Author
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_post_authors_live.html", assigns)
+  end
+
+  @impl true
   def mount(%{"post_id" => post_id}, _session, socket) do
     socket = case MishkaContent.Blog.Post.show_by_id(post_id) do
       {:ok, :get_record_by_id, _error_tag, _record} ->

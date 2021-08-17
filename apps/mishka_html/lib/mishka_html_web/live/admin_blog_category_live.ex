@@ -6,6 +6,11 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   @error_atom :category
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_category_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =

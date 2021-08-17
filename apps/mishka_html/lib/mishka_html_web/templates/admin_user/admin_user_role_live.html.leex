@@ -58,7 +58,7 @@
                                         id: String.to_atom("admin_form_text_#{form.type}"),
                                         form: form,
                                         f: f,
-                                        search_fields: search_fields(form.type)
+                                        search_fields: MishkaHtmlWeb.AdminUserRoleLive.search_fields(form.type)
                         %>
                     <% end %>
                 </div>

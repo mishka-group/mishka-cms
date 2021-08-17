@@ -6,6 +6,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   alias MishkaContent.Blog.Post
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_post_tags_live.html", assigns)
+  end
+
+  @impl true
   def mount(%{"id" => post_id}, _session, socket) do
 
     if connected?(socket) do

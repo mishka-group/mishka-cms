@@ -3,6 +3,12 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
 
   alias MishkaContent.General.Comment
 
+  @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.AdminCommentView, "admin_comments_live.html", assigns)
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Comment.subscribe()
     Process.send_after(self(), :menu, 100)
@@ -20,34 +26,40 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
     {:ok, socket, temporary_assigns: [comments: []]}
   end
 
+  @impl true
   def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
     {:noreply,
       comment_assign(socket, params: params["params"], page_size: count, page_number: page)
     }
   end
 
+  @impl true
   def handle_params(%{"page" => page}, _url, socket) do
     {:noreply,
       comment_assign(socket, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: page)
     }
   end
 
+  @impl true
   def handle_params(%{"count" => count} = params, _url, socket) do
     {:noreply,
       comment_assign(socket, params: params["params"], page_size: count, page_number: 1)
     }
   end
 
+  @impl true
   def handle_params(%{"section_id" => _section_id} = params, _url, socket) do
     {:noreply,
       comment_assign(socket, params: params, page_size: socket.assigns.page_size, page_number: 1)
     }
   end
 
+  @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("search", params, socket) do
     socket =
       push_patch(socket,
@@ -62,6 +74,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("dependency", %{"id" => id}, socket) do
     socket =
       push_patch(socket,
@@ -76,18 +89,22 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("reset", _params, socket) do
     {:noreply, push_redirect(socket, to: Routes.live_path(socket, __MODULE__))}
   end
 
+  @impl true
   def handle_event("open_modal", _params, socket) do
     {:noreply, assign(socket, [open_modal: true])}
   end
 
+  @impl true
   def handle_event("close_modal", _params, socket) do
     {:noreply, assign(socket, [open_modal: false, component: nil])}
   end
 
+  @impl true
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case Comment.delete(id) do
       {:ok, :delete, :comment, repo_data} ->
@@ -118,6 +135,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:comment, :ok, repo_record}, socket) do
     socket = case repo_record.__meta__.state do
       :loaded ->
@@ -133,6 +151,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info(:menu, socket) do
     AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminCommentsLive"})
     {:noreply, socket}

@@ -21,6 +21,11 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   # TODO: Create user profile picture after creating media manager
 
   @impl true
+  def render(assigns) do
+    Phoenix.View.render(MishkaHtmlWeb.ClientBlogView, "blog_post_live.html", assigns)
+  end
+
+  @impl true
   def mount(%{"alias_link" => alias_link}, session, socket) do
     socket = case Post.post(alias_link, "active") do
       nil ->
@@ -378,7 +383,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     {:noreply, socket}
   end
 
-  defp priority(priority) do
+  def priority(priority) do
     case priority do
       :none -> "ندارد"
       :low -> "پایین"

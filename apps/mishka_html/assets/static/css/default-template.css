@@ -2141,6 +2141,9 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   margin-bottom: 15px;
 }
 
+.container-fluid.mobile-menu{
+  justify-content: flex-start !important;
+}
 @media (min-width: 1400px) {
   article.col-sm-3.home-blog-posts-normal-with-body {
     margin: 0 6px 20px 6px;
@@ -2266,6 +2269,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 
   .bot-home-page-body {
     padding: 10px;
+  }
+
+  .desc-menu {
+    display: none;
   }
 }
 

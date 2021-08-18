@@ -118,8 +118,8 @@
           <div class="container category rtl vazir">
             <div class="speacer40"> </div>
             <div class="clearfix"> </div>
-            <span class="float-right"><i class="fa fa-bars" aria-hidden="true"></i> مجموعه ها</span>
-            <span class="float-left text-right">مطالب</span>
+            <span class="float-end"><i class="fa fa-bars" aria-hidden="true"></i> مجموعه ها</span>
+            <span class="float-left text-start">مطالب</span>
             <div class="clearfix"> </div>
             <hr>
             <div class="speacer10"> </div>
@@ -127,13 +127,13 @@
 
             <%= for cat <- @categories do %>
               <div class="row category-li-bt">
-                <div class="col-sm">
+                <div class="col-sm text-end">
                   <%=
                       live_redirect "#{MishkaHtml.title_sanitize(cat.category_title)}",
                       to: Routes.live_path(@socket, MishkaHtmlWeb.BlogCategoryLive, cat.category_alias_link)
                   %>
                 </div>
-                <div class="col-sm col-lg-2 cat-badges"><%= cat.post_count %></div>
+                <div class="col-sm cat-badges text-start"><%= cat.post_count %></div>
               </div>
             <% end %>
 

@@ -16,7 +16,7 @@
             <% [frist_post | all_post] =  @featured_posts.entries %>
                 <div class="row">
 
-                    <article class="col-sm-6">
+                    <article class="col-sm-6 top-home-page-normal-post-article">
                         <article class="container-fluid home-image-post rtl client-home-featured-post-article">
                             <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, frist_post.alias_link), replace: false do %>
                                 <img class="img-fluid client-home-featured-post-image" src="<%= frist_post.main_image %>" alt="<%= frist_post.title %>" id="<%= frist_post.id %>">
@@ -58,7 +58,7 @@
                         </article>
                     </article>
 
-                    <article class="col-sm-6">
+                    <article class="col-sm-6 top-home-page-normal-post-article">
                         <div class="row">
                             <%= for item <- Enum.take(all_post, 2) do %>
                                 <article class="col-sm-6  rtl client-home-normal-post-article">
@@ -87,7 +87,7 @@
                                                 </svg>
                                             </span>
                                         </div>
-                                        <div class="space10"></div>
+                                        <div class="space10 title-spacer-top-home-articels"></div>
                                         <header class="home-blog-posts-normal-with-body-header">
                                             <h2 class="featured-posts-link">
                                                 <%=
@@ -101,7 +101,7 @@
                             <% end %>
                         </div>
 
-                        <div class="space30"></div>
+                        <div class="space30 home-spacer-top-page"></div>
 
                         <div class="row">
 
@@ -132,7 +132,7 @@
                                                 </svg>
                                             </span>
                                         </div>
-                                        <div class="space10"></div>
+                                        <div class="space10 title-spacer-top-home-articels"></div>
                                         <header class="home-blog-posts-normal-with-body-header">
                                             <h2 class="featured-posts-link">
                                                 <%=
@@ -152,7 +152,7 @@
             <% end %>
 
             <div class="space20"></div>
-            <div class="row">
+            <div class="row client-home-header-post-article-row">
                 <%= for {number, item} <- Enum.zip(Stream.iterate(1, & &1 + 1), @posts.entries) do %>
                     <%= if number < 5 do %>
                         <%= live_component @socket, MishkaHtmlWeb.Client.Home.BannerBlockComponent,

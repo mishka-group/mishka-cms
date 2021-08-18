@@ -2160,6 +2160,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
     margin: 0 16px 20px 16px;
     max-width: none;
   }
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post {
+    width: 32%;
+    margin: 0 10px 10px 0;
+  }
 }
 
 @media (min-width: 1201px) and (max-width: 1920px){
@@ -2183,6 +2187,15 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 
 
 @media (min-width: 991.98px) and (max-width: 1199.98px) {
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post header.home-blog-posts-normal-with-body-header {
+    padding: 5px 5px;
+  }
+
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post {
+    width: 31%;
+    margin: 0 10px 10px 0;
+  }
+
   article.col-sm-3.home-blog-posts-normal-with-body {
     width: 30%;
     margin: 0 15px 20px 15px;
@@ -2224,6 +2237,15 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (max-width: 991.98px) {
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post header.home-blog-posts-normal-with-body-header {
+    padding: 5px 5px;
+  }
+
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post {
+    width: 48%;
+    margin: 0 10px 10px 0;
+  }
+
   article.col-sm-3.home-blog-posts-normal-with-body {
     width: 45%;
     max-width: none;
@@ -2277,6 +2299,19 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (max-width: 767.98px) {
+  .col-sm-3.blog-menues {
+    width: 100%;
+  }
+
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post header.home-blog-posts-normal-with-body-header {
+    padding: 5px 5px;
+  }
+  
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post {
+    width: 100%;
+    margin: 0 10px 10px 0;
+  }
+
   article.col-sm-3.home-blog-posts-normal-with-body {
     width: 100%;
     max-width: none;
@@ -2293,6 +2328,16 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 
 /* `sm` applies to x-small devices (portrait phones, less than 576px) */
 @media (max-width: 575.98px) {
+
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post header.home-blog-posts-normal-with-body-header {
+    padding: 5px 5px;
+  }
+  
+  .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post {
+    width: 100%;
+    margin: 10px 0;
+  }
+
   article.col-sm-3.home-blog-posts-normal-with-body {
     width: 100%;
     max-width: none;
@@ -2326,6 +2371,7 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (min-width: 576px) and (max-width: 639px) {
+  
   .col-sm-6.top-home-page-normal-post-article {
     margin: 5px 0;
     padding: 0;

@@ -313,7 +313,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogPostLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive"})
     {:noreply, socket}
   end
 

@@ -23,6 +23,83 @@
   font-family: Vazir-Regular;
 }
 
+#div-image {
+  color: #084298;
+  background-color: #cfe2ff;
+  border-color: #b6d4fe;
+  position: relative;
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+#div-title {
+  color: #664d03;
+  background-color: #fff3cd;
+  border-color: #ffecb5;
+  position: relative;
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+#div-category {
+  color: #0f5132;
+  background-color: #d1e7dd;
+  border-color: #badbcc;
+  position: relative;
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+#div-status {
+  color: #842029;
+  background-color: #f8d7da;
+  border-color: #f5c2c7;
+  position: relative;
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+#div-priority {
+  color: #055160;
+  background-color: #cff4fc;
+  border-color: #b6effb;
+  position: relative;
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+#div-opration {
+  color: #141619;
+  background-color: #d3d3d4;
+  border-color: #bcbebf;
+  position: relative;
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+#div-update {
+  color: #0f5132;
+  background-color: #d1e7dd;
+  border-color: #badbcc;
+  position: relative;
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
 .suit-heart-svg svg {
   fill: red !important;
 }
@@ -51,6 +128,15 @@ p.my-align-right {
 
 .home-blog-posts-normal-with-body-footer .badge {
   font-size: 10px;
+}
+
+.admin-list-img img {
+  max-height: 100px;
+  width: 100%;
+  box-shadow: 1px 1px 8px #dadada;background-size: cover;background-position: center center;
+  border-radius: 10px;
+  overflow: hidden;
+  object-fit: cover;
 }
 
 .user-bookmarks-list .list-group-item.list-group-item-action.d-flex.gap-3.py-3 {
@@ -2227,6 +2313,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 
 
 @media (min-width: 991.98px) and (max-width: 1199.98px) {
+  .admin-list-search-form div.col-md-1 {
+    min-width: 120px;
+  }
+
   .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post header.home-blog-posts-normal-with-body-header {
     padding: 5px 5px;
   }
@@ -2308,6 +2398,17 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (max-width: 991.98px) {
+  .admin-list-search-form div.col-md-1 {
+    min-width: 120px;
+  }
+
+  .admin-list-search-form label.form-label {
+    min-width: 100px;
+  }
+
+  .vazir.col-sm-8.btn.btn-primary.reset-admin-search-btn {
+    min-width: 100px;
+  }
 
   .mobile-menu {
     margin-bottom: 20px;

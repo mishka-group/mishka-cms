@@ -29,7 +29,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
     |> validate_required(@all_required, message: "can't be blank")
     |> MishkaDatabase.validate_binary_id(:section_id)
     |> MishkaDatabase.validate_binary_id(:user_id)
-    |> foreign_key_constraint(:users, message: "you can't delete it because there is a dependency")
+    |> foreign_key_constraint(:user_id, message: "you can't delete it because there is a dependency")
   end
 
 end

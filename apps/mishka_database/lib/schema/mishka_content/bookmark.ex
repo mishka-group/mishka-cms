@@ -27,7 +27,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Bookmark do
     |> validate_required(@all_required, message: "can't be blank")
     |> MishkaDatabase.validate_binary_id(:user_id)
     |> MishkaDatabase.validate_binary_id(:section_id)
-    |> foreign_key_constraint(:users, message: "you can't delete it because there is a dependency")
+    |> foreign_key_constraint(:user_id, message: "you can't delete it because there is a dependency")
     |> unique_constraint(:section, name: :index_bookmarks_on_section_and_section_id_and_user_id, message: "this requested already been bookmarked.")
   end
 

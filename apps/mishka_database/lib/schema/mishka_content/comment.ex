@@ -37,6 +37,6 @@ defmodule MishkaDatabase.Schema.MishkaContent.Comment do
     |> validate_length(:description, min: 5, max: 2000, message: "حداکثر مجاز ارسال نظر 2000 کاراکتر می باشد و حداقل نیز ۵ کاراکتر")
     |> MishkaDatabase.validate_binary_id(:section_id)
     |> MishkaDatabase.validate_binary_id(:sub)
-    |> foreign_key_constraint(:users, message: "this comment has already been taken or you can't delete it because there is a dependency")
+    |> foreign_key_constraint(:user_id, message: "this comment has already been taken or you can't delete it because there is a dependency")
   end
 end

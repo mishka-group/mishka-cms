@@ -75,6 +75,8 @@ mix ecto.create # اول باید در فایل کانفیگ اطلاعات دی
 mix ecto.migrate
 mix deps.get
 mix deps.compile
+cd /app/apps/mishka_html/assets/ && npm install
+mix test
 mix run apps/mishka_database/priv/repo/seeds.exs # در صورتی که می خواهید مطالب و کاربر آزمایشی درست شود. فقط یک بار اجرا شود
 iex -S mix phx.server # هر سری که می خواهید سرور را اجرا کنید
 ```

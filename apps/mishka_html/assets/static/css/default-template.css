@@ -2149,6 +2149,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
     margin: 0 6px 20px 6px;
     max-width: 23%;
   }
+
+  .col-sm-3.navbar.navbar-dark.text-right.mobile-admin-top-menu {
+    display: none;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -2164,6 +2168,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
     width: 32%;
     margin: 0 10px 10px 0;
   }
+
+  .col-sm-3.navbar.navbar-dark.text-right.mobile-admin-top-menu {
+    display: none;
+  }
 }
 
 @media (min-width: 1201px) and (max-width: 1920px){
@@ -2172,6 +2180,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
     width: 23%;
     margin: 0 12px 20px 12px;
     max-width: none;
+  }
+
+  .col-sm-3.navbar.navbar-dark.text-right.mobile-admin-top-menu {
+    display: none;
   }
 }
 
@@ -2206,6 +2218,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 
   .col-sm-6.admin-home-tab {
     width: 100%;
+  }
+
+  .col-sm-3.navbar.navbar-dark.text-right.mobile-admin-top-menu {
+    display: none;
   }
 }
 
@@ -2281,9 +2297,42 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   .col-sm-6.admin-home-tab {
     width: 100%;
   }
+
+  .col-sm-5.vazir.list-activity-blog-post-and-category {
+    width: 41%;
+  }
+
+  .col-sm-3.navbar.navbar-dark.text-right.mobile-admin-top-menu {
+    display: none;
+  }
 }
 
 @media (max-width: 991.98px) {
+
+  .mobile-menu {
+    margin-bottom: 20px;
+  }
+
+  .col-sm-5.top-back-admin-menue {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .admin-top-page-navigate {
+    margin-bottom: 40px;
+  }
+
+  .col.vazir.text-start.top-post-btn {
+    width: 100%;
+    margin: 0 auto !important;
+    clear: both;
+    text-align: center !important;
+  }
+
+  .navbar.admin-main-menu-top-block {
+    display: none;
+  }
+
   .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post header.home-blog-posts-normal-with-body-header {
     padding: 5px 5px;
   }
@@ -2371,6 +2420,11 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 
   .col-sm-6.admin-home-tab {
     width: 100%;
+  }
+
+  .col-sm-5.vazir.list-activity-blog-post-and-category {
+    width: 100%;
+    margin-top: 30px;
   }
 }
 
@@ -2488,10 +2542,16 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   .col-sm-5.statics-menu.float-left {
     width: 100%;
   }
+
+  .top-post-btn .btn {
+    margin: 10px;
+  }
 }
 
 @media (min-width: 576px) and (max-width: 639px) {
-  
+  .col-sm-2.admin-featured-post-item {
+    width: 100%;
+  }
   .col-sm-6.top-home-page-normal-post-article {
     margin: 5px 0;
     padding: 0;

@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
 
   def render(assigns) do
     ~L"""
-      <div class="col bw admin-blog-post-list">
+      <div class="col bw admin-blog-post-list table-responsive">
         <div class="row vazir">
             <div class="row vazir">
                 <div class="col-sm-1 titile-of-blog-posts alert alert-dark" id="div-image">

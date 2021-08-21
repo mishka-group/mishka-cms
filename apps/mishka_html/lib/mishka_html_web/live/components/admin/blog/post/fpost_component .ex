@@ -21,7 +21,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.FpostComponent do
               <div class="space30"></div>
               <div class="row">
                 <%= for post <- @fpost do %>
-                  <div phx-value-id="<%= post.id %>" phx-click="featured_post" class="col-sm-2" style="
+                  <div phx-value-id="<%= post.id %>" phx-click="featured_post" class="col-sm-2 admin-featured-post-item" style="
                     background-image: url(<%= post.main_image %>);
                     background-repeat: no-repeat;
                     box-shadow: 1px 1px 8px #dadada;

@@ -1,8 +1,8 @@
 <div class="container main-admin rtl">
     <div class="col admin-main-block-dashboard">
 
-        <div class="row">
-            <div class="col-sm-5">
+        <div class="row admin-top-page-navigate">
+            <div class="col-sm-5 top-back-admin-menue">
                 <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
             </div>
 
@@ -83,59 +83,38 @@
         <div class="col space30"> </div>
 
         <div class="col bw admin-blog-post-list">
-            <div class="row vazir">
-                <div class="row vazir">
-                    <div class="col titile-of-blog-posts alert alert-primary">
-                        دسترسی
-                    </div>
 
-                    <div class="col titile-of-blog-posts alert alert-danger">
-                        نام نقش
-                    </div>
-
-                    <div class="col titile-of-blog-posts alert alert-info">
-                        نمایش نقش
-                    </div>
-
-                    <div class="col titile-of-blog-posts alert alert-warning">
-                        عملیات
-                    </div>
-                </div>
-
-                <div class="clearfix"></div>
-                <div class="space40"></div>
-                <div class="clearfix"></div>
-
-
+            <table class="table vazir">
+                <thead>
+                    <tr>
+                        <th scope="col" id="div-title">دسترسی</th>
+                        <th scope="col" id="div-category">نام نقش</th>
+                        <th scope="col" id="div-status">نمایش نقش</th>
+                        <th scope="col" id="div-opration">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
                     <%= for {item, color} <- Enum.zip(@permissions, Stream.cycle(["wlist", "glist"])) do %>
-                        <div id="<%= item.id %>" phx-update="append" class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
-                            <div class="col ltr" id="<%= item.id %>-value">
-                                <span class="badge bg-info"><%= item.value %></span>
-                            </div>
-
-                            <div class="col" id="<%= item.id %>-role_name">
-                                <span class="badge bg-info vazir">
-                                    <%= item.role_name %>
-                                </span>
-                            </div>
-
-                            <div class="col" id="<%= item.id %>-role_display_name">
-                                <span class="badge bg-primary vazir">
-                                    <%= item.role_display_name %>
-                                </span>
-                            </div>
-
-                            <div class="col opration-post-blog" id="<%= item.id %>-opration">
-                                <a class="btn btn-outline-danger vazir",
-                                            phx-click="delete"
-                                            phx-value-id="<%= item.id %>">حذف</a>
-                            </div>
-                        </div>
-                        <div class="space20" id="<%= item.id %>-space20"></div>
-                        <div class="clearfix" id="<%= item.id %>-clearfix"></div>
+                    <tr class="blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
+                        <td class="align-middle text-center">
+                            <span class="badge bg-info"><%= item.value %></span>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%= item.role_name %>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%= item.role_display_name %>
+                        </td>
+                        <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
+                            <a class="btn btn-outline-danger vazir" phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
+                        </td>
+                    </tr>
                     <% end %>
+                </tbody>
+            </table>
 
-            </div>
+
+
         </div>
 
     </div>

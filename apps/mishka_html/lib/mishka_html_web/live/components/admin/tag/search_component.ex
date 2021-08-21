@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.Admin.Tag.SearchComponent do
       <div class="col space10"> </div>
 
       <form  phx-change="search">
-        <div class="row vazir">
+        <div class="row vazir admin-list-search-form">
 
               <div class="col-md-3">
                 <label for="country" class="form-label">تیتر برچسب</label>

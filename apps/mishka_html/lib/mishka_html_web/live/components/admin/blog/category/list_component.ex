@@ -77,7 +77,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
             </div>
             <% end %>
         </div>
-
       </div>
     """
   end

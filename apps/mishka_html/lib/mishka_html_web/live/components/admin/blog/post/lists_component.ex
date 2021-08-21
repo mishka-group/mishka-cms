@@ -3,162 +3,94 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
 
   def render(assigns) do
     ~L"""
-      <div class="col bw admin-blog-post-list">
-        <div class="row vazir">
-            <div class="row vazir">
-                <div class="col-sm-1 titile-of-blog-posts alert alert-dark" id="div-image">
-                    تصویر
-                </div>
-
-                <div class="col titile-of-blog-posts alert alert-info" id="div-title">
-                    تیتر
-                </div>
-
-                <div class="col-sm-1 titile-of-blog-posts alert alert-warning" id="div-category">
-                    مجموعه
-                </div>
-
-                <div class="col titile-of-blog-posts alert alert-danger" id="div-status">
-                    وضعیت
-                </div>
-
-                <div class="col titile-of-blog-posts alert alert-success" id="div-priority">
-                    اولویت
-                </div>
-
-                <div class="col titile-of-blog-posts alert alert-secondary" id="div-insert">
-                    ثبت
-                </div>
-
-                <div class="col titile-of-blog-posts alert alert-primary" id="div-update">
-                    به روز رسانی
-                </div>
-
-                <div class="col titile-of-blog-posts alert alert-danger" id="div-exp">
-                    انقضا
-                </div>
-
-                <div class="col-sm-3 titile-of-blog-posts alert alert-info" id="div-opration">
-                    عملیات
-                </div>
-            </div>
-
-            <div class="clearfix"></div>
-            <div class="space40"></div>
-            <div class="clearfix"></div>
-
-            <%= for {item, color} <- Enum.zip(@posts, Stream.cycle(["wlist", "glist"])) do %>
-                <div class="row blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
-                    <div class="col-sm-1">
-                        <div class="col"
-                            style="min-height: 100px;
-                            background-image: url(&quot;<%= item.main_image %>&quot;);
-                            background-repeat: no-repeat;
-                            box-shadow: 1px 1px 8px #dadada;background-size: cover;background-position: center center;
-                            border-radius: 10px;">
-                        </div>
-                    </div>
-
-                    <div class="col" id="<%= "title-#{item.id}" %>">
-                        <%= live_redirect "#{MishkaHtml.title_sanitize(item.title)}",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive, id: item.id)
-                        %>
-                    </div>
-
-                    <div class="col-sm-1">
-                        <%= live_redirect "#{MishkaHtml.title_sanitize(item.category_title)}",
-                        to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.category_id)
-                        %>
-                    </div>
-
-                    <div class="col">
-                        <%
-                        field = Enum.find(MishkaHtmlWeb.AdminBlogPostLive.basic_menu_list, fn x -> x.type == "status" end)
-                        {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.status end)
-                        %>
-                        <span class="badge bg-info"><%= title %></span>
-                    </div>
-
-                    <div class="col">
-
-                        <%
-                        field = Enum.find(MishkaHtmlWeb.AdminBlogPostLive.basic_menu_list, fn x -> x.type == "priority" end)
-                        {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.priority end)
-                        %>
-                        <span class="badge bg-success"><%= title %></span>
-                    </div>
-
-                    <div class="col">
-                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
-                        span_id: "inserted-#{item.id}-component",
-                        time: item.inserted_at
-                        %>
-                    </div>
-
-                    <div class="col">
+      <div class="col bw admin-blog-post-list table-responsive">
+        <div class="table-responsive">
+            <table class="table vazir">
+                <thead>
+                    <tr>
+                        <th scope="col td-allert warning" id="div-image">تصویر</th>
+                        <th scope="col" id="div-title">تیتر</th>
+                        <th scope="col" id="div-category">مجموعه</th>
+                        <th scope="col" id="div-status">وضعیت</th>
+                        <th scope="col" id="div-priority">اولویت</th>
+                        <th scope="col" id="div-update">به روز رسانی</th>
+                        <th scope="col" id="div-opration">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%= for {item, color} <- Enum.zip(@posts, Stream.cycle(["wlist", "glist"])) do %>
+                    <tr class="blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
+                        <td class="col-sm-2 admin-list-img">
+                            <img src="<%= item.main_image %>" alt="<%= item.title %>">
+                        </td>
+                        <td class="align-middle text-center" id="<%= "title-#{item.id}" %>">
+                            <%= live_redirect "#{MishkaHtml.title_sanitize(item.title)}",
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive, id: item.id)
+                            %>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%= live_redirect "#{MishkaHtml.title_sanitize(item.category_title)}",
+                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.category_id)
+                            %>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%
+                            field = Enum.find(MishkaHtmlWeb.AdminBlogPostLive.basic_menu_list, fn x -> x.type == "status" end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.status end)
+                            %>
+                            <span class="badge bg-info"><%= title %></span>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%
+                            field = Enum.find(MishkaHtmlWeb.AdminBlogPostLive.basic_menu_list, fn x -> x.type == "priority" end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.priority end)
+                            %>
+                            <span class="badge bg-success"><%= title %></span>
+                        </td>
+                        <td class="align-middle text-center">
                         <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                         span_id: "updated_at-#{item.id}-component",
                         time: item.updated_at
                         %>
-                    </div>
-
-                    <div class="col">
-                        <%= if is_nil(item.unpublish) do %>
-                            ندارد
-                        <% else %>
-                        <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
-                            span_id: "unpublish-#{item.id}-component",
-                            time: item.unpublish
-                        %>
-                        <% end %>
-                    </div>
-
-                    <div class="col-sm-3 opration-post-blog" id="<%= "opration-#{item.id}" %>">
-                        <a class="btn btn-outline-primary vazir",
-                                    phx-click="delete"
-                                    phx-value-id="<%= item.id %>">حذف</a>
-
-
-                        <%= live_redirect "نظرات",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive, section_id: item.id),
-                            class: "btn btn-outline-success vazir"
-                        %>
-
-                        <%= live_redirect "حذف کامل",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
-                            class: "btn btn-outline-danger vazir"
-                        %>
-
-                        <div class="space10"></div>
-                        <div class="clearfix"></div>
-                        <%= live_redirect "نویسندگان",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostAuthorsLive, item.id),
-                            class: "btn btn-outline-secondary vazir"
-                        %>
-
-                        <%= live_redirect "برچسب ها",
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostTagsLive, item.id),
-                            class: "btn btn-outline-warning vazir"
-                        %>
-                    </div>
-                </div>
-                <div class="space20"></div>
-                <div class="clearfix"></div>
+                        </td>
+                        <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
+                            <a class="btn btn-outline-primary vazir", phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
+                            <%= live_redirect "نظرات",
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive, section_id: item.id),
+                                class: "btn btn-outline-success vazir"
+                            %>
+                            <%= live_redirect "حذف کامل",
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
+                                class: "btn btn-outline-danger vazir"
+                            %>
+                            <div class="space10"></div>
+                            <div class="clearfix"></div>
+                            <%= live_redirect "نویسندگان",
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostAuthorsLive, item.id),
+                                class: "btn btn-outline-secondary vazir"
+                            %>
+                            <%= live_redirect "برچسب ها",
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostTagsLive, item.id),
+                                class: "btn btn-outline-warning vazir"
+                            %>
+                        </td>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <div class="space20"></div>
+            <div class="col-sm-10">
+                <%= if @posts.entries != [] do %>
+                <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
+                                id: :pagination,
+                                pagination_url: @pagination_url,
+                                data: @posts,
+                                filters: @filters,
+                                count: @count
+                %>
+            </div>
             <% end %>
         </div>
-
-        <div class="space20"></div>
-
-        <%= if @posts.entries != [] do %>
-        <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
-                        id: :pagination,
-                        pagination_url: @pagination_url,
-                        data: @posts,
-                        filters: @filters,
-                        count: @count
-        %>
-        <% end %>
-
       </div>
     """
   end

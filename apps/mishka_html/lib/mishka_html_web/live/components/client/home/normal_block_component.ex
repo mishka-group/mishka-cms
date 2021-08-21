@@ -28,7 +28,7 @@ defmodule MishkaHtmlWeb.Client.Home.NormalBlockComponent do
           </section>
 
           <div class="space10"></div>
-          <header class="home-blog-posts-normal-with-body-header">
+          <header class="home-blog-posts-normal-with-body-header bot-home-page-body">
               <h2 class="normal-home-posts-link">
                 <%=
                   live_redirect "#{MishkaHtml.title_sanitize(@post.title)}",

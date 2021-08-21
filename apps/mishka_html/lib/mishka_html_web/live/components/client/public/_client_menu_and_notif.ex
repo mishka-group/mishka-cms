@@ -28,7 +28,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
       <div class="container">
 
           <div class="row">
-              <div class="col navbarNav">
+              <div class="col navbarNav desc-menu">
                   <ul class="navbar-nav client-menu-navbar-nav">
 
                       <li class="nav-item client-menu-nav-item">
@@ -60,6 +60,54 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                       </li>
                   </ul>
               </div>
+
+
+              <div class="collapse" id="navbarToggleExternalContent">
+              <div class="p-4">
+                <div class="col navbarNav">
+                  <ul class="navbar-nav client-menu-navbar-nav">
+
+                      <li class="nav-item client-menu-nav-item">
+                          <%=
+                              live_redirect "خانه",
+                              to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
+                              class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.HomeLive", @menu_name)}"
+                          %>
+                      </li>
+
+                      <li class="nav-item client-menu-nav-item">
+                          <%=
+                              live_redirect "بلاگ",
+                              to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
+                              class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.BlogsLive", @menu_name)}"
+                          %>
+                      </li>
+
+                      <li class="nav-item client-menu-nav-item">
+                            <%= if !is_nil(@user_id) do %>
+                                <%= link("خروج", to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
+                            <% else %>
+                                <%=
+                                live_redirect "ورود",
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
+                                class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.LoginLive", @menu_name)}"
+                                %>
+                            <% end %>
+                      </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+              <nav class="col-sm-3 navbar navbar-dark text-left">
+                <div class="container-fluid mobile-menu">
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                </div>
+              </nav>
+
+
 
               <%= if !is_nil(@notifs) do %>
                 <div class="col-sm-3 client-notif">

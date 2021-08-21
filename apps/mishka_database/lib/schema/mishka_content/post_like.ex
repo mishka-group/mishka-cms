@@ -25,8 +25,8 @@ defmodule MishkaDatabase.Schema.MishkaContent.PostLike do
     |> validate_required(@all_fields, message: "can't be blank")
     |> MishkaDatabase.validate_binary_id(:user_id)
     |> MishkaDatabase.validate_binary_id(:post_id)
-    |> foreign_key_constraint(:users, message: "you can't delete it because there is a dependency")
-    |> foreign_key_constraint(:blog_posts, message: "you can't delete it because there is a dependency")
+    |> foreign_key_constraint(:user_id, message: "you can't delete it because there is a dependency")
+    |> foreign_key_constraint(:post_id, message: "you can't delete it because there is a dependency")
     |> unique_constraint(:post_id, name: :index_blog_likes_on_post_id_and_user_id, message: "this post has already been liked.")
   end
 

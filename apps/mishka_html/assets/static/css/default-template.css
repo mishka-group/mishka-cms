@@ -2317,6 +2317,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
     min-width: 120px;
   }
 
+  .admin-list-search-form div.col-sm-1 {
+    min-width: 120px;
+  }
+  
   .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post header.home-blog-posts-normal-with-body-header {
     padding: 5px 5px;
   }
@@ -2404,6 +2408,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 
   .admin-list-search-form label.form-label {
     min-width: 100px;
+  }
+
+  .admin-list-search-form div.col-sm-1 {
+    min-width: 120px;
   }
 
   .vazir.col-sm-8.btn.btn-primary.reset-admin-search-btn {

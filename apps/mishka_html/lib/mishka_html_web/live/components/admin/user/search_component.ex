@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.Admin.User.SearchComponent do
       <div class="col space30"> </div>
       <div class="col space10"> </div>
       <form  phx-change="search">
-        <div class="row vazir">
+        <div class="row vazir admin-list-search-form">
               <div class="col-sm-1">
                 <label for="country" class="form-label">وضعیت</label>
                 <div class="col space10"> </div>

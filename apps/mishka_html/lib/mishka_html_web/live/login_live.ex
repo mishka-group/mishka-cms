@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.LoginLive do
   use MishkaHtmlWeb, :live_view
 
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.ClientAuthView, "login_live.html", assigns)
@@ -14,7 +15,7 @@ defmodule MishkaHtmlWeb.LoginLive do
 
     socket =
       assign(socket,
-        page_title: "ورود کاربران",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "ورود کاربران"),
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
         trigger_submit: false,

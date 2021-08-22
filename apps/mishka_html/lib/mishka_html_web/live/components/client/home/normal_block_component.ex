@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Client.Home.NormalBlockComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
     <article class="col-sm-3 home-blog-posts-normal-with-body rtl home-image-post">
@@ -44,7 +45,7 @@ defmodule MishkaHtmlWeb.Client.Home.NormalBlockComponent do
               <div class="row">
                   <span class="col-sm text-end float-right">
                   <%=
-                    live_redirect "ادامه مطلب",
+                    live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ادامه مطلب"),
                     to: Routes.live_path(@socket, MishkaHtmlWeb.BlogPostLive, @post.alias_link),
                     class: "btn btn-outline-secondary btn-lg"
                   %>

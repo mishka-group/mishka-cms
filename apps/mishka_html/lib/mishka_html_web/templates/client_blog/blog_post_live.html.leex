@@ -73,7 +73,7 @@
                </span>
 
                <div class="space10"></div>
-               <span class="badge bg-info">به روز شده:
+               <span class="badge bg-info"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "به روز شده:") %>
                <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                         span_id: "updated-#{@post.id}-component",
                         time: @post.updated_at
@@ -82,7 +82,7 @@
                <span class="badge bg-success">اولویت:
                 <%= MishkaHtmlWeb.BlogPostLive.priority(@post.priority) %>
                </span>
-               <span class="badge bg-primary vazir">مجموعه:
+               <span class="badge bg-primary vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مجموعه:") %>
                 <%=
                   live_redirect "#{MishkaHtml.title_sanitize(@post.blog_categories.title)}",
                   to: Routes.live_path(@socket, MishkaHtmlWeb.BlogCategoryLive, @post.blog_categories.alias_link)
@@ -120,7 +120,7 @@
                 phx_change: "draft",
                 multipart: true,
                 onkeydown: "return event.key != 'Enter';" %>
-                  <p>نظر خود را در فیلد زیر قرار بدهید:</p>
+                  <p><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "نظر خود را در فیلد زیر قرار بدهید:") %></p>
                   <div class="space10"></div>
                   <%= textarea form, :description, class: "form-control comment-form-client-post", id: "client-blog-post-description" %>
                   <div class="form-error-tag">
@@ -129,11 +129,11 @@
                   <div class="clearfix"></div>
                   <div class="space30"></div>
                   <%= if(!is_nil(@sub)) do %>
-                    <p id="blog-post-sup-comment-added">شناسه نظری که می خواهید به آن پاسخ بدهید اضافه گردید</p>
+                    <p id="blog-post-sup-comment-added"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شناسه نظری که می خواهید به آن پاسخ بدهید اضافه گردید") %></p>
                   <% end %>
                   <p class="text-start vazir" id="form-btn">
-                    <button type="button" class="btn btn-outline-secondary btn-lg" phx-click="cancel_sending_comment">منصرف شدن</button>
-                    <%= submit "ارسال نظر", phx_disable_with: "Saving...", class: "btn btn-outline-secondary btn-lg" %>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" phx-click="cancel_sending_comment"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "منصرف شدن") %></button>
+                    <%= submit MishkaTranslator.Gettext.dgettext("html_live_templates", "ارسال نظر"), phx_disable_with: "Saving...", class: "btn btn-outline-secondary btn-lg" %>
                   </p>
                   <div class="clearfix"></div>
             </form>

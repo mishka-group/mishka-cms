@@ -1,6 +1,6 @@
 defmodule MishkaDatabase.Schema.MishkaContent.BlogAuthor do
   use Ecto.Schema
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -17,11 +17,11 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogAuthor do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:post_id, :user_id])
-    |> validate_required([:user_id, :post_id], message: "can't be blank")
+    |> validate_required([:user_id, :post_id], message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
     |> MishkaDatabase.validate_binary_id(:post_id)
     |> MishkaDatabase.validate_binary_id(:user_id)
-    |> foreign_key_constraint(:post_id, message: "you can't delete it because there is a dependency")
-    |> foreign_key_constraint(:user_id, message: "you can't delete it because there is a dependency")
-    |> unique_constraint(:post_id, name: :index_blog_authors_on_post_id_and_user_id, message: "this author has already been created.")
+    |> foreign_key_constraint(:post_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
+    |> foreign_key_constraint(:user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
+    |> unique_constraint(:post_id, name: :index_blog_authors_on_post_id_and_user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این نویسنده از قبل اضافه شده است."))
   end
 end

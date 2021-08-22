@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.BlogAuthors.ListComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="col bw admin-blog-post-list">
@@ -8,11 +9,11 @@ defmodule MishkaHtmlWeb.Admin.BlogAuthors.ListComponent do
             <table class="table vazir">
                 <thead>
                     <tr>
-                        <th scope="col td-allert warning" id="div-image">تصویر</th>
-                        <th scope="col" id="div-title">نام کامل</th>
-                        <th scope="col" id="div-priority">ثبت</th>
-                        <th scope="col" id="div-status">به روز رسانی</th>
-                        <th scope="col" id="div-opration">عملیات</th>
+                        <th scope="col td-allert warning" id="div-image"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تصویر") %></th>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نام کامل") %></th>
+                        <th scope="col" id="div-priority"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ثبت") %></th>
+                        <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "به روز رسانی") %></th>
+                        <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "عملیات") %></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,7 +42,7 @@ defmodule MishkaHtmlWeb.Admin.BlogAuthors.ListComponent do
                             %>
                         </td>
                         <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
-                            <a class="btn btn-outline-primary vazir", phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
+                            <a class="btn btn-outline-primary vazir", phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
                         </td>
                     </tr>
                     <% end %>

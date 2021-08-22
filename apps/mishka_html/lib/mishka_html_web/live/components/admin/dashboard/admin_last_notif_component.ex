@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="col admin-home-toos-left vazir">
@@ -8,7 +9,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent do
           <div class="row">
             <span class="col-sm-1 iconly-bulkDanger"><span class="path1"></span><span class="path2"></span></span>
 
-            <span class="col admin-home-last-notif-title rtl">آخرین خبررسانی های عمومی</span>
+            <span class="col admin-home-last-notif-title rtl"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "آخرین خبررسانی های عمومی") %></span>
             <div class="space20"></div>
             <ul class="admin-home-ul-of-lists vazir">
               <li>اطلاع رسانی: به زودی ...</li>

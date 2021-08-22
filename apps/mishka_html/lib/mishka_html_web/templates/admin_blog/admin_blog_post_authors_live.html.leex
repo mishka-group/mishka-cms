@@ -8,11 +8,11 @@
 
             <div class="col vazir text-start top-post-btn">
 
-                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "نظرات"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
 
-                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "تنظیمات سئو"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
 
-                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "مطالب"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
             </div>
         </div>
 
@@ -22,9 +22,9 @@
             <div class="clearfix"></div>
             <div class="row">
               <div class="col">
-              <h3 class="admin-dashbord-h3-right-side-title vazir">مدیریت نویسندگان</h3>
+              <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مدیریت نویسندگان") %></h3>
               <span class="admin-dashbord-right-side-text vazir">
-              در این بخش می توانید به تعداد نویسندگان یک مطلب اضافه یا کم کنید.
+              <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "در این بخش می توانید به تعداد نویسندگان یک مطلب اضافه یا کم کنید.") %>
               </span>
               <div class="space20"></div>
 
@@ -49,7 +49,7 @@
                 <div class="row vazir">
 
                 <div class="col-sm-3" id="UserFullNameSearch">
-                    <label for="country" class="form-label">نام کامل</label>
+                    <label for="country" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "نام کامل") %></label>
                     <div class="space10"> </div>
                     <input type="text" class="title-input-text form-control" id="full_name" name="full_name">
                     <div class="col space10"> </div>
@@ -57,10 +57,10 @@
 
 
                 <div class="col-sm-3" id="RoleID">
-                <label for="role" class="form-label">نقش</label>
+                <label for="role" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "نقش") %></label>
                 <div class="col space10"> </div>
                 <select class="form-select" id="role-search" name="role">
-                  <option value="" selected>انتخاب</option>
+                  <option value="" selected><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "انتخاب") %></option>
                   <%= for role <- MishkaUser.Acl.Role.roles() do %>
                     <option value="<%= role.id %>"><%= role.display_name %></option>
                   <% end %>

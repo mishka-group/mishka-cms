@@ -68,7 +68,7 @@
                       <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                     </svg>
                     &nbsp;
-                    به روز شده:
+                    <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "به روز شده:") %>
                       <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                         span_id: "updated-#{item.id}-component",
                         time: item.updated_at
@@ -83,7 +83,7 @@
                         <path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
                       </svg>
                       &nbsp;
-                      اولویت:
+                      <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "اولویت:") %>
                       <%= MishkaHtmlWeb.BlogsLive.priority(item.priority) %>
                     </span>
 
@@ -118,7 +118,7 @@
           <div class="container category rtl vazir">
             <div class="speacer40"> </div>
             <div class="clearfix"> </div>
-            <span class="float-end"><i class="fa fa-bars" aria-hidden="true"></i> مجموعه ها</span>
+            <span class="float-end"><i class="fa fa-bars" aria-hidden="true"></i><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مجموعه ها") %> </span>
             <span class="float-left text-start">مطالب</span>
             <div class="clearfix"> </div>
             <hr>

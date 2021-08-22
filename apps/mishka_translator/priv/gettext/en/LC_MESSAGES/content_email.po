@@ -1,0 +1,94 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/email/email_helper.ex:68
+msgid "\n        از طرف حساب کاربری شما درخواست غیرفعال سازی حساب ارسال گردید است که به شرح زیر می باشد.\n       در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید.\n        "
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:84
+msgid "\n        باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید\n      برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را\n      انتخاب کنید.\n        "
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:156
+msgid "از طرف حساب کاربری شما درخواست فراموشی پسورد ارسال گردید است که به شرح زیر می باشد.\n        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:26
+msgid "از طرف حساب کاربری شما درخواست فعال سازی ایمیل ارسال گردید است که به شرح زیر می باشد.\n        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:113
+msgid "از طرف حساب کاربری شما درخواست پاک سازی توکن ها ارسال گردید است که به شرح زیر می باشد.\n        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:39 lib/email/email_helper.ex:128
+#: lib/email/email_helper.ex:171
+msgid "باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید\n        برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را\n        انتخاب کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:64 lib/email/email_helper.ex:98
+msgid "درخواست غیر فعال سازی حساب کاربری"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:187
+msgid "درخواست فراموشی پسورد"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:53
+msgid "درخواست فعال سازی ایمیل حساب کاربری"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:109 lib/email/email_helper.ex:140
+msgid "درخواست پاک سازی توکن ها و سیستم های وارد شده"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:152
+msgid "فراموشی پسورد"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:22
+msgid "فعال سازی ایمیل حساب کاربری"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:163
+msgid "لینک یا کد تازه سازی پسورد به شرح زیر می باشد:"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:120
+msgid "لینک یا کد تازه پاک سازی توکن به شرح زیر می باشد:"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:77
+msgid "لینک یا کد غیرفعال سازی حساب کاربری به شرح زیر می باشد:"
+msgstr ""
+
+#, elixir-format
+#: lib/email/email_helper.ex:48 lib/email/email_helper.ex:94
+#: lib/email/email_helper.ex:136 lib/email/email_helper.ex:180
+msgid "کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد."
+msgstr ""

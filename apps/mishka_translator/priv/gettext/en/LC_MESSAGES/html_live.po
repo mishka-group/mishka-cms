@@ -1,0 +1,1306 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:76
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:99 lib/mishka_html_web/live/admin_comment_live.ex:165
+#: lib/mishka_html_web/live/admin_comment_live.ex:210 lib/mishka_html_web/live/admin_subscription_live.ex:161
+#: lib/mishka_html_web/live/admin_subscription_live.ex:184 lib/mishka_html_web/live/admin_user_live.ex:156
+#: lib/mishka_html_web/live/admin_user_live.ex:179 lib/mishka_html_web/live/admin_user_role_live.ex:84
+#: lib/mishka_html_web/live/admin_user_role_live.ex:117
+msgid "\n        متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:\n         (%{list_tag})\n         برای اضافه کردن تمامی نیازمندی ها روی دکمه\n         \"فیلد های ضروری\"\n          کلیک کنید\n         "
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:142
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:194 lib/mishka_html_web/live/admin_blog_post_live.ex:285
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:336
+msgid "\n        متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:\n         (%{tag_list})\n         برای اضافه کردن تمامی نیازمندی ها روی دکمه\n         \"فیلد های ضروری\"\n          کلیک کنید\n         "
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:402
+msgid " انتخاب دسترسی رباط ها برای ثبت محتوای داخل. لطفا در صورت نداشتن اطلاعات این فیلد را پر نکنید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:648
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:679
+msgid " انتخاب دسترسی رباط ها برای ثبت محتوای مجموعه. لطفا در صورت نداشتن اطلاعات این فیلد را پر نکنید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:539
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:581 lib/mishka_html_web/live/admin_comment_live.ex:286
+#: lib/mishka_html_web/live/admin_subscription_live.ex:331 lib/mishka_html_web/live/admin_user_live.ex:325
+msgid "آرشیو شده"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:762
+msgid "اجازه ارسال ناتیفیکیشن به کاربران"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:674
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:705
+msgid "اجازه ارسال نظر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:675
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:706
+msgid "اجازه ارسال نظر از طرف کاربر در پست های تخصیص یافته به این مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:750
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:781
+msgid "اجازه بوک مارک کردن محتوا به وسیله کاربران."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:726
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:757
+msgid "اجازه فعال سازی دکمه اشتراک گذاری در شبکه های اجتماعی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:738
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:769
+msgid "اجازه مشترک شدن کاربران در محتوا های تخصیص یافته به این مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:774
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:793
+msgid "اجازه نمایش تعداد بازدید پست های مربوط به این مجموعه."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:810
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:829
+msgid "اجازه نمایش مجموعه در محتوا های تخصیص یافته به این مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:834
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:853
+msgid "اجازه نمایش نقشه در هر محتوا مربوط به این مجموعه."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:798
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:817
+msgid "اجازه نمایش نویسندگان در محتوا های تخصیص یافته به این مجموعه."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:822
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:841
+msgid "اجازه نمایش یا عدم نمایش لینک های پیوستی محتوا های تخصیص یافته  به این مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:700
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:731
+msgid "اجازه پرینت گرفتن"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:701
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:732
+msgid "اجازه پرینت گرفتن در صفحه اختصاصی مربوط به پرینت در محتوا"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:688
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:719
+msgid "اجازه پسند کردن"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:713
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:744
+msgid "اجازه گزارش دادن کاربران در محتوا های تخصیص یافته در این مجموعه."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comments_live.ex:111
+msgid "از لیست یک نظر حذف شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:737
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:768
+msgid "اشتراک"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:293
+msgid "اشتراک مورد نظر ساخته شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:311
+msgid "اشتراک کاربر مورد نظر به روز رسانی شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:689
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:720
+msgid "امکان یا اجازه پسند کردن پست های مربوط به این مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:554
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:377
+msgid "انتخاب لینک مجموعه برای ثبت و نمایش به کاربر. این فیلد یکتا می باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:548
+msgid "انتخاب لینک مطلب برای ثبت و نمایش به کاربر. این فیلد یکتا می باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:545
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:573 lib/mishka_html_web/live/admin_blog_post_live.ex:587
+msgid "انتخاب نوع وضعیت می توانید بر اساس دسترسی های کاربران باشد یا نمایش یا عدم نمایش مجموعه به کاربران."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:563
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:630 lib/mishka_html_web/live/admin_blog_tag_live.ex:386
+msgid "انتخاب چندین کلمه کلیدی برای ثبت بهتر مجموعه در موتور های جستجو."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:364
+msgid "انقضا"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:572
+#: lib/mishka_html_web/live/admin_comment_live.ex:307
+msgid "اولویت"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:308
+msgid "اولیت نظر ارسالی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:345
+msgid "ایمیل فعال سازی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:346
+msgid "ایمیل فعال سازی فیلدی می باشد که در صورت خالی بود یعنی حساب کاربر یک بار به وسیله ایمیل فعال سازی گردیده است. لطفا با وضعیت کاربر به صورت همزمان بررسی گردد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:315
+msgid "ایمیل کاربر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:316
+msgid "ایمیل کاربر پایه و اساس شناسایی کاربر در سیستم می باشد و همینطور ایمیل برای هر حساب کاربری یکتا می باشد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:613
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:644
+msgid "این تصویر در برخی از قالب ها بالای هدر مجموعه نمایش داده می شود"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_role_live.ex:186
+msgid "این فیلد نیز همانند نام هر نقش برای دسترسی ایجاد می شود و بیشتر برای شناسایی به کد شورت کد استفاده می گردد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:365
+msgid "با تعریف کردن انقضا شما می توانید اشتراک را برای مدت محدودی فعال نمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:567
+#: lib/mishka_html_web/live/admin_comment_live.ex:302 lib/mishka_html_web/live/blog_category_live.ex:137
+#: lib/mishka_html_web/live/blog_post_live.ex:391 lib/mishka_html_web/live/blogs_live.ex:123
+msgid "بالا"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:318
+#: lib/mishka_html_web/live/admin_subscription_live.ex:347
+msgid "بخش"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:319
+msgid "بخش تخصیص یافته به نظر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:348
+msgid "بخش مورد نظر اشتراک ثبت شده"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:564
+#: lib/mishka_html_web/live/admin_comment_live.ex:299
+msgid "بدون اولویت"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:105
+#: lib/mishka_html_web/live/blog_post_live.ex:266
+msgid "برای ارسال نظر باید وارد وب سایت شوید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:58
+msgid "برای ارسال نظر کلیک کنید ...."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_role_live.ex:177
+msgid "برای ایجاد هر دسترسی نیاز به معرفی نقش می باشد که هر نقش داری یک نام است"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:632
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:663
+msgid "برای نمایش بهتر در برخی از قالب ها استفاده می گردد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:291
+msgid "برچسب به روز رسانی شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:261
+msgid "برچسب مورد نظر ساخته شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tags_live.ex:93
+msgid "برچسب: %{title} حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:258
+msgid "برچسب: %{title} درست شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blogs_live.ex:23
+msgid "بلاگ"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:669
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:683 lib/mishka_html_web/live/admin_blog_category_live.ex:695
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:707 lib/mishka_html_web/live/admin_blog_category_live.ex:720
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:732 lib/mishka_html_web/live/admin_blog_category_live.ex:744
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:756 lib/mishka_html_web/live/admin_blog_category_live.ex:768
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:780 lib/mishka_html_web/live/admin_blog_category_live.ex:792
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:804 lib/mishka_html_web/live/admin_blog_category_live.ex:816
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:828 lib/mishka_html_web/live/admin_blog_post_live.ex:700
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:714 lib/mishka_html_web/live/admin_blog_post_live.ex:726
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:738 lib/mishka_html_web/live/admin_blog_post_live.ex:751
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:763 lib/mishka_html_web/live/admin_blog_post_live.ex:775
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:787 lib/mishka_html_web/live/admin_blog_post_live.ex:799
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:811 lib/mishka_html_web/live/admin_blog_post_live.ex:823
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:835 lib/mishka_html_web/live/admin_blog_post_live.ex:847
+msgid "بله"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_category_live.ex:99
+#: lib/mishka_html_web/live/blog_post_live.ex:223 lib/mishka_html_web/live/blog_post_live.ex:249
+#: lib/mishka_html_web/live/blogs_live.ex:85
+msgid "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/bookmarks_live.ex:40
+#: lib/mishka_html_web/live/bookmarks_live.ex:55
+msgid "به نظر می رسد بوکمارک مذکور حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_category_live.ex:85
+#: lib/mishka_html_web/live/blog_post_live.ex:176 lib/mishka_html_web/live/blog_post_live.ex:208
+#: lib/mishka_html_web/live/blogs_live.ex:71
+msgid "به نظر می رسد مطلب مذکور حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:241
+msgid "به نظر می رسد نظر مذکور حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:135
+msgid "به نظر می رسد نظر مذکور حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:558
+msgid "به واسطه این فیلد می توانید مطلب مورد نظر خود را به یک مجموعه تخصیص بدهید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:749
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:780
+msgid "بوکمارک"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/bookmarks_live.ex:104
+msgid "بوکمارک های شما به همین تعداد می باشد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:785
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:804
+msgid "تاریخ ارسال مطلب"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:653
+msgid "تاریخ انقضا"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:588
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:603
+msgid "تصویر اصلی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:589
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:604
+msgid "تصویر نمایه مجموعه. این فیلد به صورت تک تصویر می باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:612
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:643
+msgid "تصویر هدر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_change_password_live.ex:22
+msgid "تغییر پسورد کاربر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_seo_live.ex:13
+msgid "تنظیمات سئو"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:571
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:611 lib/mishka_html_web/live/admin_comment_live.ex:350
+msgid "توضیحات"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:572
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:612
+msgid "توضیحات اصلی مربوط به مجموعه. این فیلد شامل یک ادیتور نیز می باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:599
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:621 lib/mishka_html_web/live/admin_blog_tag_live.ex:411
+msgid "توضیحات خلاصه در مورد محتوا که حدود 200 کاراکتر می باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:598
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:620 lib/mishka_html_web/live/admin_blog_tag_live.ex:410
+msgid "توضیحات متا"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:580
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:595
+msgid "توضیحات کوتاه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:530
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:537 lib/mishka_html_web/live/admin_blog_tag_live.ex:359
+msgid "تیتر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:631
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:662 lib/mishka_html_web/live/admin_blog_tag_live.ex:367
+msgid "تیتر سفارشی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:322
+msgid "ثب نام شده"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/register_live.ex:54
+msgid "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/register_live.ex:21
+msgid "ثبت نام کاربر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:540
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:582 lib/mishka_html_web/live/admin_comment_live.ex:287
+#: lib/mishka_html_web/live/admin_subscription_live.ex:332
+msgid "حذف با پرچم"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tags_live.ex:110
+msgid "خطا در حذف برچسب اتفاق افتاده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_categories_live.ex:115
+#: lib/mishka_html_web/live/admin_subscriptions_live.ex:111
+msgid "خطا در حذف مجموعه اتفاق افتاده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_posts_live.ex:104
+msgid "خطا در حذف مطلب اتفاق افتاده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_roles_live.ex:110
+msgid "خطا در حذف نقش برای دسترسی اتفاق افتاده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_change_password_live.ex:94
+msgid "خطایی در به روز رسانی حساب پیش آمده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_authors_live.ex:60
+msgid "خطایی در حذف نویسنده پیش آمده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_users_live.ex:111
+msgid "خطایی در حذف کاربر اتفاق افتاده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_category_live.ex:94
+#: lib/mishka_html_web/live/blog_post_live.ex:218 lib/mishka_html_web/live/blogs_live.ex:80
+msgid "خطایی در دریافت اطلاعات وجود آماده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:670
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:684 lib/mishka_html_web/live/admin_blog_category_live.ex:696
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:708 lib/mishka_html_web/live/admin_blog_category_live.ex:721
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:733 lib/mishka_html_web/live/admin_blog_category_live.ex:745
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:757 lib/mishka_html_web/live/admin_blog_category_live.ex:769
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:781 lib/mishka_html_web/live/admin_blog_category_live.ex:793
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:805 lib/mishka_html_web/live/admin_blog_category_live.ex:817
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:829 lib/mishka_html_web/live/admin_blog_post_live.ex:701
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:715 lib/mishka_html_web/live/admin_blog_post_live.ex:727
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:739 lib/mishka_html_web/live/admin_blog_post_live.ex:752
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:764 lib/mishka_html_web/live/admin_blog_post_live.ex:776
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:788 lib/mishka_html_web/live/admin_blog_post_live.ex:800
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:812 lib/mishka_html_web/live/admin_blog_post_live.ex:824
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:836 lib/mishka_html_web/live/admin_blog_post_live.ex:848
+msgid "خیر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_dashboard_live.ex:19
+msgid "داشبورد مدیریت"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_password_live.ex:79
+msgid "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:622
+msgid "زیر مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:581
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:596
+msgid "ساخت بلاک توضیحات کوتاه برای مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:368
+msgid "ساخت تیتر سفارشی مناسب برای برچسب مورد نظر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:360
+msgid "ساخت تیتر مناسب برای برچسب مورد نظر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:531
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:538
+msgid "ساخت تیتر مناسب برای مجموعه مورد نظر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:307
+msgid "ساخت نام کاربری کاربر که باید در سیستم یکتا باشد و پیرو قوانین ساخت سایت باشد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:297
+msgid "ساخت نام کامل کاربر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_role_live.ex:17
+msgid "ساخت نقش"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:20
+msgid "ساخت یا ویرایش اشتراک"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:18
+msgid "ساخت یا ویرایش کاربر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:725
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:756
+msgid "شبکه های اجتماعی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:654
+msgid "شما به واسطه این فیلد می توانید تاریخ انقضا برای یک محتوا را مشخص کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:623
+msgid "شما می توانید به واسطه این فیلد مجموعه جدید را زیر مجموعه دیگری بکنید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:326
+#: lib/mishka_html_web/live/admin_subscription_live.ex:355
+msgid "شناسه بخش"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:327
+#: lib/mishka_html_web/live/admin_comment_live.ex:335
+msgid "شناسه بخش تخصیص یافته به نظر ارسالی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:356
+msgid "شناسه بخش مورد نظر که باید اشتراک کاربر در آن ثبت گردد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:334
+msgid "شناسه نظر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:342
+#: lib/mishka_html_web/live/admin_subscription_live.ex:372
+msgid "شناسه کاربر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/home_live.ex:16
+msgid "صفحه اصلی وب سایت تگرگ"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:526
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:534 lib/mishka_html_web/live/admin_blog_category_live.ex:548
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:567 lib/mishka_html_web/live/admin_blog_category_live.ex:576
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:584 lib/mishka_html_web/live/admin_blog_post_live.ex:533
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:542 lib/mishka_html_web/live/admin_blog_post_live.ex:561
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:576 lib/mishka_html_web/live/admin_blog_post_live.ex:591
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:599 lib/mishka_html_web/live/admin_blog_post_live.ex:607
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:355 lib/mishka_html_web/live/admin_blog_tag_live.ex:363
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:371 lib/mishka_html_web/live/admin_comment_live.ex:281
+#: lib/mishka_html_web/live/admin_comment_live.ex:296 lib/mishka_html_web/live/admin_comment_live.ex:311
+#: lib/mishka_html_web/live/admin_comment_live.ex:322 lib/mishka_html_web/live/admin_comment_live.ex:330
+#: lib/mishka_html_web/live/admin_comment_live.ex:338 lib/mishka_html_web/live/admin_comment_live.ex:346
+#: lib/mishka_html_web/live/admin_subscription_live.ex:326 lib/mishka_html_web/live/admin_subscription_live.ex:340
+#: lib/mishka_html_web/live/admin_subscription_live.ex:351 lib/mishka_html_web/live/admin_subscription_live.ex:368
+#: lib/mishka_html_web/live/admin_user_live.ex:292 lib/mishka_html_web/live/admin_user_live.ex:301
+#: lib/mishka_html_web/live/admin_user_live.ex:310 lib/mishka_html_web/live/admin_user_live.ex:319
+#: lib/mishka_html_web/live/admin_user_role_live.ex:171 lib/mishka_html_web/live/admin_user_role_live.ex:180
+msgid "ضروری"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:557
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:593 lib/mishka_html_web/live/admin_blog_category_live.ex:607
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:617 lib/mishka_html_web/live/admin_blog_category_live.ex:626
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:635 lib/mishka_html_web/live/admin_blog_category_live.ex:651
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:665 lib/mishka_html_web/live/admin_blog_category_live.ex:679
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:692 lib/mishka_html_web/live/admin_blog_category_live.ex:704
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:716 lib/mishka_html_web/live/admin_blog_category_live.ex:729
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:741 lib/mishka_html_web/live/admin_blog_category_live.ex:753
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:765 lib/mishka_html_web/live/admin_blog_category_live.ex:777
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:789 lib/mishka_html_web/live/admin_blog_category_live.ex:801
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:813 lib/mishka_html_web/live/admin_blog_category_live.ex:825
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:552 lib/mishka_html_web/live/admin_blog_post_live.ex:615
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:624 lib/mishka_html_web/live/admin_blog_post_live.ex:638
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:648 lib/mishka_html_web/live/admin_blog_post_live.ex:657
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:666 lib/mishka_html_web/live/admin_blog_post_live.ex:682
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:696 lib/mishka_html_web/live/admin_blog_post_live.ex:710
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:723 lib/mishka_html_web/live/admin_blog_post_live.ex:735
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:747 lib/mishka_html_web/live/admin_blog_post_live.ex:760
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:772 lib/mishka_html_web/live/admin_blog_post_live.ex:784
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:796 lib/mishka_html_web/live/admin_blog_post_live.ex:808
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:820 lib/mishka_html_web/live/admin_blog_post_live.ex:832
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:844 lib/mishka_html_web/live/admin_blog_post_live.ex:856
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:380 lib/mishka_html_web/live/admin_blog_tag_live.ex:389
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:405 lib/mishka_html_web/live/admin_subscription_live.ex:359
+#: lib/mishka_html_web/live/admin_user_live.ex:333 lib/mishka_html_web/live/admin_user_live.ex:341
+msgid "غیر ضروری"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:537
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:579 lib/mishka_html_web/live/admin_comment_live.ex:284
+#: lib/mishka_html_web/live/admin_subscription_live.ex:329 lib/mishka_html_web/live/admin_user_live.ex:324
+msgid "غیر فعال"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:618
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:627 lib/mishka_html_web/live/admin_blog_category_live.ex:636
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:666 lib/mishka_html_web/live/admin_blog_category_live.ex:680
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:553 lib/mishka_html_web/live/admin_blog_post_live.ex:649
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:658 lib/mishka_html_web/live/admin_blog_post_live.ex:667
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:697 lib/mishka_html_web/live/admin_blog_post_live.ex:711
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:390 lib/mishka_html_web/live/admin_subscription_live.ex:360
+msgid "غیر پیشنهادی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_password_live.ex:18
+msgid "فراموشی پسورد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:538
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:580 lib/mishka_html_web/live/admin_comment_live.ex:285
+#: lib/mishka_html_web/live/admin_subscription_live.ex:330 lib/mishka_html_web/live/admin_user_live.ex:323
+msgid "فعال"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:181
+msgid "لطفا برای بوکمارک کردن این مطلب وارد وب سایت شوید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:861
+msgid "لوکیشن"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:376
+msgid "لینک برچسب"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:553
+msgid "لینک مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:547
+msgid "لینک مطلب"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:821
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:840
+msgid "لینک ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:566
+#: lib/mishka_html_web/live/admin_comment_live.ex:301 lib/mishka_html_web/live/blog_category_live.ex:136
+#: lib/mishka_html_web/live/blog_post_live.ex:390 lib/mishka_html_web/live/blogs_live.ex:122
+msgid "متوسط"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:809
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:557 lib/mishka_html_web/live/admin_blog_post_live.ex:828
+msgid "مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:457
+msgid "مجموعه با موفقیت ایجاد شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:498
+msgid "مجموعه به روز رسانی شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:496
+msgid "مجموعه: %{title} به روز شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_categories_live.ex:91
+msgid "مجموعه: %{title} حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:455
+msgid "مجموعه: %{title} درست شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:655
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:686
+msgid "مخفی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:657
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:688
+msgid "مخفی تست"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscriptions_live.ex:22
+msgid "مدیریت اشتراک ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tags_live.ex:17
+msgid "مدیریت برچسب ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/bookmarks_live.ex:21
+msgid "مدیریت بوکمارک کاربران"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_role_permissions_live.ex:18
+msgid "مدیریت دسترسی ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:19
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:18
+msgid "مدیریت ساخت مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:18
+msgid "مدیریت ساخت مطلب"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_media_manager_live.ex:13
+msgid "مدیریت فایل ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_logs_live.ex:13
+msgid "مدیریت لاگ ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_categories_live.ex:23
+msgid "مدیریت مجموعه ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_posts_live.ex:25
+msgid "مدیریت مطالب"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comments_live.ex:22
+msgid "مدیریت نظرات"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_authors_live.ex:17
+msgid "مدیریت نویسندگان"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:18
+msgid "مدیریت ویرایش نظر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_users_live.ex:22
+msgid "مدیریت کاربران"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:862
+msgid "مشخص کردن لوکیشن مطلب برای سئو محلی سایت"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:314
+#: lib/mishka_html_web/live/admin_subscription_live.ex:343
+msgid "مطالب"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_category_live.ex:27
+msgid "مطالب مجموعه %{title}"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:492
+msgid "مطلب به روز رسانی شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_posts_live.ex:83
+msgid "مطلب: %{title} حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:761
+msgid "ناتیفکیشن"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_role_live.ex:176
+msgid "نام نقش"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_role_live.ex:185
+msgid "نام نمایشی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:306
+msgid "نام کاربری"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:296
+msgid "نام کامل"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:662
+msgid "نحوه نمایش مجموعه برای مدیریت بهتر دسترسی های کاربران."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:693
+msgid "نحوه نمایش مطلب برای مدیریت بهتر دسترسی های کاربران."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_category_live.ex:134
+#: lib/mishka_html_web/live/blog_post_live.ex:388 lib/mishka_html_web/live/blogs_live.ex:120
+msgid "ندارد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:351
+msgid "نظر ارسالی از طرف کاربر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:187
+msgid "نظر به روز رسانی شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:284
+msgid "نظر شما با موفقیت ارسال شد!!! برای ارسال نظر جدید کلیک کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_role_live.ex:101
+msgid "نقش مورد نظر ساخته شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_roles_live.ex:21
+msgid "نقش های کاربری"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_roles_live.ex:89
+msgid "نقش: %{title} حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_role_live.ex:99
+msgid "نقش: %{title} درست شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:654
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:685
+msgid "نمایش"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:656
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:687
+msgid "نمایش تست"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:773
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:792
+msgid "نمایش تعداد بازدید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:661
+msgid "نمایش مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:692
+msgid "نمایش مطلب"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:833
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:852
+msgid "نمایش نقشه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:797
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:816
+msgid "نمایش نویسندگان"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:786
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:805
+msgid "نمایش یا عدم نمایش تاریخ ارسال در پست های تخصیص یافته در این مجموعه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_authors_live.ex:38
+msgid "نویسنده با موفقت ثبت شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_authors_live.ex:54
+msgid "نویسنده با موفقت حذف شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:373
+msgid "هر اشتراکی باید به یک کاربر تخصیص یابد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:343
+msgid "هر نظر باید به یک کاربر تخصیص پیدا کند."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:637
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:668 lib/mishka_html_web/live/admin_blog_tag_live.ex:391
+msgid "هشدار"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/login_live.ex:18
+msgid "ورود کاربران"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:544
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:586 lib/mishka_html_web/live/admin_comment_live.ex:291
+#: lib/mishka_html_web/live/admin_subscription_live.ex:336 lib/mishka_html_web/live/admin_user_live.ex:329
+msgid "وضعیت"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:337
+msgid "وضعیت اشتراک کاربر نسبت به بخش انتخابی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:330
+msgid "وضعیت حساب کاربری"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:647
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:678 lib/mishka_html_web/live/admin_blog_tag_live.ex:401
+msgid "وضعیت رباط ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:292
+msgid "وضعیت نظر ارسالی از طرف کاربر"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:568
+#: lib/mishka_html_web/live/admin_comment_live.ex:303 lib/mishka_html_web/live/blog_category_live.ex:138
+#: lib/mishka_html_web/live/blog_post_live.ex:392 lib/mishka_html_web/live/blogs_live.ex:124
+msgid "ویژه"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:565
+#: lib/mishka_html_web/live/admin_comment_live.ex:300 lib/mishka_html_web/live/blog_category_live.ex:135
+#: lib/mishka_html_web/live/blog_post_live.ex:389 lib/mishka_html_web/live/blogs_live.ex:121
+msgid "پایین"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:337
+msgid "پسورد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_change_password_live.ex:60
+msgid "پسورد شما با موفقیت به روز رسانی شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:338
+msgid "پسورد و گذرواژه کاربر باید پیرو ساخت قوانین سیستم باشد و همینطور در بانک اطلاعاتی به صورت کد شده ذخیره سازی گردد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:558
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:594 lib/mishka_html_web/live/admin_blog_category_live.ex:608
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:717 lib/mishka_html_web/live/admin_blog_post_live.ex:616
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:625 lib/mishka_html_web/live/admin_blog_post_live.ex:639
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:748 lib/mishka_html_web/live/admin_blog_post_live.ex:857
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:381 lib/mishka_html_web/live/admin_blog_tag_live.ex:406
+msgid "پیشنهادی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:36
+#: lib/mishka_html_web/live/admin_subscription_live.ex:316
+msgid "چنین اشتراکی وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:37
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:300 lib/mishka_html_web/live/admin_blog_tags_live.ex:106
+msgid "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_category_live.ex:44
+msgid "چنین مجموعه ای وجود ندارد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_categories_live.ex:111
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:45 lib/mishka_html_web/live/admin_blog_category_live.ex:503
+#: lib/mishka_html_web/live/admin_subscriptions_live.ex:107
+msgid "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:34
+msgid "چنین محتوایی وجود ندارد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:290
+#: lib/mishka_html_web/live/blog_post_live.ex:343 lib/mishka_html_web/live/blog_post_live.ex:358
+msgid "چنین محتوایی وجود ندارد یا حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_posts_live.ex:100
+msgid "چنین مطلبی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_authors_live.ex:26
+msgid "چنین مطلبی وجود ندارد یا از قبل حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:44
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:497 lib/mishka_html_web/live/admin_blog_post_tags_live.ex:24
+msgid "چنین مطلبی وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_comment_live.ex:35
+#: lib/mishka_html_web/live/admin_comment_live.ex:62 lib/mishka_html_web/live/admin_comment_live.ex:196
+#: lib/mishka_html_web/live/admin_comments_live.ex:128
+msgid "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/blog_post_live.ex:271
+msgid "چنین نظری وجود ندارد یا ممکن است حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_roles_live.ex:106
+msgid "چنین نقشی برای دسترسی وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_password_live.ex:43
+msgid "چنین کاربری وجود ندارد یا حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:33
+#: lib/mishka_html_web/live/admin_user_live.ex:236 lib/mishka_html_web/live/admin_users_live.ex:107
+msgid "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:231
+msgid "کاربر به روز رسانی شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_authors_live.ex:42
+msgid "کاربر تکراری امکان ثبت ندارد. یا ممکن است در موقع ثبت کاربر مذکور حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:212
+msgid "کاربر مورد نظر ساخته شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_change_password_live.ex:67
+#: lib/mishka_html_web/live/reset_change_password_live.ex:80 lib/mishka_html_web/live/reset_change_password_live.ex:87
+msgid "کاربر مورد نظر پیدا نشد یا از قبل حذف شده است"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:229
+msgid "کاربر: %{title} به روز شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_users_live.ex:90
+msgid "کاربر: %{title} حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_user_live.ex:209
+msgid "کاربر: %{title} درست شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_password_live.ex:33
+msgid "کد ارسالی از طرف شما صحیح می باشد. لطفا پسورد جدید خود را وارد کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_change_password_live.ex:33
+#: lib/mishka_html_web/live/reset_change_password_live.ex:73 lib/mishka_html_web/live/reset_change_password_live.ex:99
+msgid "کد ارسالی شما اشتباه می باشد یا ممکن است منقضی شده باشد. لطفا دوباره تلاش کنید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/reset_password_live.ex:38
+msgid "کد ارسالی شما اشتباه می باشد. لطفا دوباره تلاش کنید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:562
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:629 lib/mishka_html_web/live/admin_blog_tag_live.ex:385
+msgid "کلمات کلیدی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:712
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:743
+msgid "گزارش"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscriptions_live.ex:90
+msgid "یک اشتراک از بخش: %{title} حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:309
+msgid "یک اشتراک از بهش: %{title} به روز شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_subscription_live.ex:291
+msgid "یک اشتراک برای بخش: %{title} درست شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_tags_live.ex:77
+msgid "یک برچسب از مطلب %{title} حذف شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_post_tags_live.ex:72
+msgid "یک برچسب به مطلب %{title} اضافه شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:549
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:543 lib/mishka_html_web/live/admin_blog_tag_live.ex:372
+#: lib/mishka_html_web/live/admin_user_live.ex:302 lib/mishka_html_web/live/admin_user_live.ex:311
+#: lib/mishka_html_web/live/admin_user_role_live.ex:172 lib/mishka_html_web/live/admin_user_role_live.ex:181
+msgid "یکتا"
+msgstr ""

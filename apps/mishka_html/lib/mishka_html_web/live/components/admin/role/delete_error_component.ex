@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Role.DeleteErrorComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="error-card-modal col">
@@ -13,13 +14,13 @@ defmodule MishkaHtmlWeb.Admin.Role.DeleteErrorComponent do
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <span class="error-card-modal-main-text">
-          متاسفانه شما امکان حذف این نقش را ندارید. به احتمال زیاد از این شناسه در جاهای دیگر سیستم استفاده شده است.
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "متاسفانه شما امکان حذف این نقش را ندارید. به احتمال زیاد از این شناسه در جاهای دیگر سیستم استفاده شده است.") %>
         </span>
 
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <div class="modal-close-btn">
-          <button type="button" class="btn btn-danger" phx-click="close_modal">بستن</button>
+          <button type="button" class="btn btn-danger" phx-click="close_modal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بستن") %></button>
         </div>
         </div>
       </div>

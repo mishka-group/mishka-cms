@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     socket =
       assign(socket,
         dynamic_form: [],
-        page_title: "مدیریت ویرایش نظر",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت ویرایش نظر"),
         body_color: "#a29ac3cf",
         basic_menu: false,
         id: nil,
@@ -32,7 +32,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
       {:error, :get_record_by_id, @error_atom} ->
 
         socket
-        |> put_flash(:warning, "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminCommentsLive))
 
       {:ok, :get_record_by_id, @error_atom, repo_data} ->
@@ -59,7 +59,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
   @impl true
   def handle_params(_params, _url, socket) do
     socket
-    |> put_flash(:warning, "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+    |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد."))
     |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminCommentsLive))
     {:noreply, socket}
   end
@@ -162,13 +162,13 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
 
     case Comment.edit(Map.merge(params, %{"id" => socket.assigns.id})) do
@@ -184,7 +184,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
       {:ok, :edit, @error_atom, _repo_data} ->
         socket =
           socket
-          |> put_flash(:info, "نظر به روز رسانی شد")
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نظر به روز رسانی شد"))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminCommentsLive))
 
         {:noreply, socket}
@@ -193,7 +193,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
       {:error, :edit, :uuid, _error_tag} ->
         socket =
           socket
-          |> put_flash(:warning, "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد."))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminCommentsLive))
 
         {:noreply, socket}
@@ -207,13 +207,13 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
     {:noreply, socket}
   end
@@ -278,77 +278,77 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
   def basic_menu_list() do
     [
         %{type: "status", status: [
-          %{title: "ضروری", class: "badge bg-danger"}
+          %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
         ],
         options: [
-          {"غیر فعال", :inactive},
-          {"فعال", :active},
-          {"آرشیو شده", :archived},
-          {"حذف با پرچم", :soft_delete},
+          {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), :inactive},
+          {MishkaTranslator.Gettext.dgettext("html_live", "فعال"), :active},
+          {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), :archived},
+          {MishkaTranslator.Gettext.dgettext("html_live", "حذف با پرچم"), :soft_delete},
         ],
         form: "select",
         class: "col-sm-4",
-        title: "وضعیت",
-        description: "وضعیت نظر ارسالی از طرف کاربر"},
+        title: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت"),
+        description: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت نظر ارسالی از طرف کاربر")},
 
 
         %{type: "priority", status: [
-          %{title: "ضروری", class: "badge bg-danger"}
+          %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
         ],
         options: [
-          {"بدون اولویت", :none},
-          {"پایین", :low},
-          {"متوسط", :medium},
-          {"بالا", :high},
-          {"ویژه", :featured}
+          {MishkaTranslator.Gettext.dgettext("html_live", "بدون اولویت"), :none},
+          {MishkaTranslator.Gettext.dgettext("html_live", "پایین"), :low},
+          {MishkaTranslator.Gettext.dgettext("html_live", "متوسط"), :medium},
+          {MishkaTranslator.Gettext.dgettext("html_live", "بالا"), :high},
+          {MishkaTranslator.Gettext.dgettext("html_live", "ویژه"), :featured}
         ],
         form: "select",
         class: "col-sm-4",
-        title: "اولویت",
-        description: "اولیت نظر ارسالی"},
+        title: MishkaTranslator.Gettext.dgettext("html_live", "اولویت"),
+        description: MishkaTranslator.Gettext.dgettext("html_live", "اولیت نظر ارسالی")},
 
         %{type: "section", status: [
-          %{title: "ضروری", class: "badge bg-danger"}
+          %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
         ],
         options: [
-          {"مطالب", :blog_post},
+          {MishkaTranslator.Gettext.dgettext("html_live", "مطالب"), :blog_post},
         ],
         form: "select",
         class: "col-sm-4",
-        title: "بخش",
-        description: "بخش تخصیص یافته به نظر"},
+        title: MishkaTranslator.Gettext.dgettext("html_live", "بخش"),
+        description: MishkaTranslator.Gettext.dgettext("html_live", "بخش تخصیص یافته به نظر")},
 
         %{type: "section_id", status: [
-          %{title: "ضروری", class: "badge bg-danger"}
+          %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
         ],
         form: "text",
         class: "col-sm-3",
-        title: "شناسه بخش",
-        description: "شناسه بخش تخصیص یافته به نظر ارسالی"},
+        title: MishkaTranslator.Gettext.dgettext("html_live", "شناسه بخش"),
+        description: MishkaTranslator.Gettext.dgettext("html_live", "شناسه بخش تخصیص یافته به نظر ارسالی")},
 
         %{type: "sub", status: [
-          %{title: "ضروری", class: "badge bg-danger"}
+          %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
         ],
         form: "text",
         class: "col-sm-3",
-        title: "شناسه نظر",
-        description: "شناسه بخش تخصیص یافته به نظر ارسالی"},
+        title: MishkaTranslator.Gettext.dgettext("html_live", "شناسه نظر"),
+        description: MishkaTranslator.Gettext.dgettext("html_live", "شناسه بخش تخصیص یافته به نظر ارسالی")},
 
         %{type: "user_id", status: [
-          %{title: "ضروری", class: "badge bg-danger"}
+          %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
         ],
         form: "text",
         class: "col-sm-3",
-        title: "شناسه کاربر",
-        description: "هر نظر باید به یک کاربر تخصیص پیدا کند."},
+        title: MishkaTranslator.Gettext.dgettext("html_live", "شناسه کاربر"),
+        description: MishkaTranslator.Gettext.dgettext("html_live", "هر نظر باید به یک کاربر تخصیص پیدا کند.")},
 
         %{type: "description", status: [
-          %{title: "ضروری", class: "badge bg-danger"}
+          %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
         ],
         form: "textarea",
         class: "col-sm-12",
-        title: "توضیحات",
-        description: "نظر ارسالی از طرف کاربر"},
+        title: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات"),
+        description: MishkaTranslator.Gettext.dgettext("html_live", "نظر ارسالی از طرف کاربر")},
       ]
   end
 end

@@ -21,7 +21,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
     socket = case Post.show_by_id(post_id) do
       {:error, :get_record_by_id, _error_atom} ->
         socket
-        |> put_flash(:warning, "چنین مطلبی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین مطلبی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
 
       {:ok, :get_record_by_id, _error_atom, repo_data} ->
@@ -69,12 +69,12 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   def handle_info({tag, :ok, repo_record}, socket) when tag in [:blog_tag_mapper, :tag] do
     socket = case repo_record.__meta__.state do
       :loaded ->
-        Notif.notify_subscribers(%{id: repo_record.id, msg: "یک برچسب به مطلب #{socket.assigns.page_title} اضافه شد"})
+        Notif.notify_subscribers(%{id: repo_record.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک برچسب به مطلب %{title} اضافه شد", title: socket.assigns.page_title)})
         socket
         |> assign(tags: Tag.post_tags(socket.assigns.post_id))
 
       :deleted ->
-        Notif.notify_subscribers(%{id: repo_record.id, msg: "یک برچسب از مطلب #{socket.assigns.page_title} حذف شد."})
+        Notif.notify_subscribers(%{id: repo_record.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک برچسب از مطلب %{title} حذف شد.", title: socket.assigns.page_title)})
         socket
         |> assign(tags: Tag.post_tags(socket.assigns.post_id))
 

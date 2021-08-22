@@ -1,7 +1,7 @@
 defmodule MishkaDatabase.Schema.MishkaContent.Bookmark do
   use Ecto.Schema
 
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -24,11 +24,11 @@ defmodule MishkaDatabase.Schema.MishkaContent.Bookmark do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_required, message: "can't be blank")
+    |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
     |> MishkaDatabase.validate_binary_id(:user_id)
     |> MishkaDatabase.validate_binary_id(:section_id)
-    |> foreign_key_constraint(:user_id, message: "you can't delete it because there is a dependency")
-    |> unique_constraint(:section, name: :index_bookmarks_on_section_and_section_id_and_user_id, message: "this requested already been bookmarked.")
+    |> foreign_key_constraint(:user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
+    |> unique_constraint(:section, name: :index_bookmarks_on_section_and_section_id_and_user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این بخش قبلا بوکمارک شده است"))
   end
 
 end

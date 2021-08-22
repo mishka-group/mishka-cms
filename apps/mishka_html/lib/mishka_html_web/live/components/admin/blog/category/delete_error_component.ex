@@ -14,25 +14,25 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.DeleteErrorComponent do
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <span class="error-card-modal-main-text">
-          شما نمی توانید این مجموعه را حذف کنید بخاطر اینکه چندین مطلب به مجموعه مذکور متصل شده است و قبل از
+          <%= MishkaTranslator.Gettext.dgettext("html_live_component", "شما نمی توانید این مجموعه را حذف کنید بخاطر اینکه چندین مطلب به مجموعه مذکور متصل شده است و قبل از
           حذف کردن مجموعه باید این مطالب به مجموعه دیگیری تخصیص پیدا کنند یا حذف شوند.
           حذف همه
-          برای حذف تمام مطالب و همینطور این مجموعه می توانید روی دکمه
+          برای حذف تمام مطالب و همینطور این مجموعه می توانید روی دکمه") %>
         </span>
 
-        <span class="badge bg-dark vazir rtl error-modal-badage-dark">حذف همه</span>
-        کلیک کنید.
+        <span class="badge bg-dark vazir rtl error-modal-badage-dark"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف همه") %></span>
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "کلیک کنید.") %>
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <div class="alert alert-warning d-flex align-items-center" role="alert">
           <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
           <div>
-            اگر روی دکمه حذف همه بفشارید دیگر مطالب مربوط به مجموعه مذکور و خود مجموعه قابل برگشت نیست.
+            <%= MishkaTranslator.Gettext.dgettext("html_live_component", "اگر روی دکمه حذف همه بفشارید دیگر مطالب مربوط به مجموعه مذکور و خود مجموعه قابل برگشت نیست.") %>
           </div>
         </div>
         <div class="col space30"> </div>
         <div class="modal-close-btn">
-          <button type="button" class="btn btn-danger" phx-click="close_modal">بستن</button>
+          <button type="button" class="btn btn-danger" phx-click="close_modal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بستن") %></button>
         </div>
         </div>
       </div>

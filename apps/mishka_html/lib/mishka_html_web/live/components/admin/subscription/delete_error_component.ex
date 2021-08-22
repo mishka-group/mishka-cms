@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Subscription.DeleteErrorComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="error-card-modal col">
@@ -13,7 +14,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.DeleteErrorComponent do
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <span class="error-card-modal-main-text">
-          متاسفانه شما امکان حذف این اشتراک را ندارید. به احتمال زیاد از این شناسه در جاهای دیگر سیستم استفاده شده است.
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "متاسفانه شما امکان حذف این اشتراک را ندارید. به احتمال زیاد از این شناسه در جاهای دیگر سیستم استفاده شده است.") %>
         </span>
 
         <div class="clearfix"></div>
@@ -21,12 +22,12 @@ defmodule MishkaHtmlWeb.Admin.Subscription.DeleteErrorComponent do
         <div class="alert alert-warning d-flex align-items-center" role="alert">
           <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
           <div>
-            در نسخه بعدی برای حذف سیستمی کاربر امکان حذف کامل اشتراک نیز در سیستم پیاده سازی می شود. به همین ترتیب فعلن فقط می توانید اشتراک را غیر فعال کنید.
+          <%= MishkaTranslator.Gettext.dgettext("html_live_component", "در نسخه بعدی برای حذف سیستمی کاربر امکان حذف کامل اشتراک نیز در سیستم پیاده سازی می شود. به همین ترتیب فعلن فقط می توانید اشتراک را غیر فعال کنید.") %>
           </div>
         </div>
         <div class="col space30"> </div>
         <div class="modal-close-btn">
-          <button type="button" class="btn btn-danger" phx-click="close_modal">بستن</button>
+          <button type="button" class="btn btn-danger" phx-click="close_modal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بستن") %></button>
         </div>
         </div>
       </div>

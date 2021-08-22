@@ -19,7 +19,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
         page: 1,
         open_modal: false,
         component: nil,
-        page_title: "مدیریت نظرات",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت نظرات"),
         body_color: "#a29ac3cf",
         comments: Comment.comments(conditions: {1, 10}, filters: %{}, user_id: nil)
       )
@@ -108,7 +108,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case Comment.delete(id) do
       {:ok, :delete, :comment, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "از لیست یک نظر حذف شد."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "از لیست یک نظر حذف شد.")})
         comment_assign(
           socket,
           params: socket.assigns.filters,
@@ -125,7 +125,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
 
       {:error, :delete, type, :comment} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین نظری وجود ندارد یا ممکن است از قبل حذف شده باشد."))
 
       {:error, :delete, :comment, _repo_error} ->
         socket

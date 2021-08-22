@@ -3,6 +3,7 @@ defmodule MishkaHtml.Plug.NotLoginPlug do
   use MishkaHtmlWeb, :controller
   alias MishkaUser.Token.CurrentPhoenixToken
   alias MishkaHtmlWeb.Router.Helpers, as: Routes
+  require MishkaTranslator.Gettext
 
   def init(default), do: default
 
@@ -11,7 +12,7 @@ defmodule MishkaHtml.Plug.NotLoginPlug do
       {:ok, :verify_token, :current, _current_token_info} ->
 
         conn
-        |> put_flash(:error, "شما از قبل وارد سایت شده اید.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "شما از قبل وارد سایت شده اید."))
         |> redirect(to: Routes.live_path(conn, MishkaHtmlWeb.HomeLive))
         |> halt()
 

@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Client.BlogPost.SubComment do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
     <div class="phx-modal"
@@ -13,7 +14,7 @@ defmodule MishkaHtmlWeb.Client.BlogPost.SubComment do
 
           <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">پاسخ به نظر:
+            <h5 class="modal-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "پاسخ به نظر:") %>
             <%= MishkaHtml.full_name_sanitize(@sub_comment.full_name) %>
             </h5>
           </div>
@@ -21,7 +22,7 @@ defmodule MishkaHtmlWeb.Client.BlogPost.SubComment do
             <%= HtmlSanitizeEx.basic_html(@sub_comment.description) %>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" phx-click="close_modal">بستن</button>
+            <button type="button" class="btn btn-danger" phx-click="close_modal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بستن") %></button>
           </div>
         </div>
       </div>

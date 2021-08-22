@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.AdminLogsLive do
   use MishkaHtmlWeb, :live_view
 
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminLogView, "admin_logs_live.html", assigns)
@@ -9,7 +10,7 @@ defmodule MishkaHtmlWeb.AdminLogsLive do
   @impl true
   def mount(_params, _session, socket) do
     Process.send_after(self(), :menu, 100)
-    {:ok, assign(socket, page_title: "مدیریت لاگ ها", body_color: "#a29ac3cf")}
+    {:ok, assign(socket, page_title: MishkaTranslator.Gettext.dgettext("html_live",  "مدیریت لاگ ها"), body_color: "#a29ac3cf")}
   end
 
   @impl true

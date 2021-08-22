@@ -13,7 +13,7 @@ defmodule MishkaHtmlWeb.HomeLive do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
-        page_title: "صفحه اصلی وب سایت تگرگ",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "صفحه اصلی وب سایت تگرگ"),
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
         user_id: Map.get(session, "user_id"),

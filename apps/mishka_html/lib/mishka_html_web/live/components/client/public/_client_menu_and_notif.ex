@@ -1,7 +1,6 @@
 
 defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   use MishkaHtmlWeb, :live_view
-
   alias MishkaUser.Token.CurrentPhoenixToken
 
   @impl true
@@ -33,7 +32,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
                       <li class="nav-item client-menu-nav-item">
                           <%=
-                              live_redirect "خانه",
+                              live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "خانه"),
                               to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
                               class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.HomeLive", @menu_name)}"
                           %>
@@ -41,7 +40,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
                       <li class="nav-item client-menu-nav-item">
                           <%=
-                              live_redirect "بلاگ",
+                              live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "بلاگ"),
                               to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
                               class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.BlogsLive", @menu_name)}"
                           %>
@@ -49,10 +48,10 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
                       <li class="nav-item client-menu-nav-item">
                             <%= if !is_nil(@user_id) do %>
-                                <%= link("خروج", to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
+                                <%= link(MishkaTranslator.Gettext.dgettext("html_live_component", "خروج"), to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
                             <% else %>
                                 <%=
-                                live_redirect "ورود",
+                                live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ورود"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
                                 class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.LoginLive", @menu_name)}"
                                 %>
@@ -69,7 +68,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
                       <li class="nav-item client-menu-nav-item">
                           <%=
-                              live_redirect "خانه",
+                              live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "خانه"),
                               to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
                               class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.HomeLive", @menu_name)}"
                           %>
@@ -77,7 +76,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
                       <li class="nav-item client-menu-nav-item">
                           <%=
-                              live_redirect "بلاگ",
+                              live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "بلاگ"),
                               to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
                               class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.BlogsLive", @menu_name)}"
                           %>
@@ -85,10 +84,10 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
                       <li class="nav-item client-menu-nav-item">
                             <%= if !is_nil(@user_id) do %>
-                                <%= link("خروج", to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
+                                <%= link(MishkaTranslator.Gettext.dgettext("html_live_component", "خروج"), to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
                             <% else %>
                                 <%=
-                                live_redirect "ورود",
+                                live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ورود"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
                                 class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.LoginLive", @menu_name)}"
                                 %>
@@ -191,7 +190,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
         {:permittes?, false} ->
 
           socket
-          |> put_flash(:warning, "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید.")
+          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live_component", "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید."))
           |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.HomeLive))
 
       end

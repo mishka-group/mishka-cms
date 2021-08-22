@@ -11,6 +11,7 @@ defmodule MishkaDatabase.MixProject do
       aliases: aliases(),
       lockfile: "../../mix.lock",
       elixir: "~> 1.11",
+      compilers: [:gettext | Mix.compilers()],
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -19,7 +20,7 @@ defmodule MishkaDatabase.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :mnesia],
+      extra_applications: [:logger, :mnesia, :mishka_translator],
       mod: {MishkaDatabase.Application, []}
     ]
   end
@@ -33,7 +34,8 @@ defmodule MishkaDatabase.MixProject do
       {:bcrypt_elixir, "~> 2.3"},
       {:ecto_enum, "~> 1.4"},
       {:jason, "~> 1.2"},
-      {:scrivener_ecto, "~> 2.7"}
+      {:scrivener_ecto, "~> 2.7"},
+      {:mishka_translator, in_umbrella: true}
     ]
   end
 

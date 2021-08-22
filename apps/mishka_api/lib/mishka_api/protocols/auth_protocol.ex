@@ -42,6 +42,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   use MishkaApiWeb, :controller
   alias MishkaUser.Token.Token
   alias MishkaDatabase.Cache.{RandomCode}
+  require MishkaTranslator.Gettext
 
   @request_error_tag :user
   @hard_secret_random_link "Test refresh"
@@ -52,7 +53,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :register,
       system: @request_error_tag,
-      message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "خطایی در ذخیره سازی داده های شما روخ داده است."),
       errors: MishkaDatabase.translate_errors(repo_error)
     })
   end
@@ -71,7 +72,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :register,
       system: @request_error_tag,
-      message: "ثبت نام شما موفقیت آمیز بود. لطفا به ایمیل خود مراجعه کنید و کد فعال سازی ایمیل را برای تایید حساب کاربری ارسال فرمایید. لازم به ذکر هست کد فعال سازی فقط 5 دقیقه اعتبار دارد.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "ثبت نام شما موفقیت آمیز بود. لطفا به ایمیل خود مراجعه کنید و کد فعال سازی ایمیل را برای تایید حساب کاربری ارسال فرمایید. لازم به ذکر هست کد فعال سازی فقط 5 دقیقه اعتبار دارد."),
       user_info: Map.take(repo_data, allowed_fields |> Enum.map(&String.to_existing_atom/1))
     })
   end
@@ -104,7 +105,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :login,
       system: @request_error_tag,
-      message: "با موفقیت وارد سیستم شدید.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "با موفقیت وارد سیستم شدید."),
       user_info: Map.take(user_info, allowed_fields |> Enum.map(&String.to_existing_atom/1)),
       auth: %{
         refresh_token: refresh_token.token,
@@ -124,7 +125,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :login,
       system: @request_error_tag,
-      message: "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید.")
     })
   end
 
@@ -134,7 +135,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :login,
       system: @request_error_tag,
-      message: "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید.")
     })
   end
 
@@ -144,7 +145,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :login,
       system: @request_error_tag,
-      message: "شما در بیش از ۵ دستگاه لاگین نمودید لطفا از یکی از پلتفرما خارج شوید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "شما در بیش از ۵ دستگاه لاگین نمودید لطفا از یکی از پلتفرما خارج شوید.")
     })
   end
 
@@ -164,7 +165,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: "با حساب کاربری شما بیشتر از 5 دستگاه وارد سیستم شدند. برای ورود باید از یکی از دستگاه ها خارج شوید و اگر خودتان وارد نشدید سریعا پسورد خود را تغییر داده و همینطور تمام توکن ها را درحساب کاربری خود حذف نمایید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "با حساب کاربری شما بیشتر از 5 دستگاه وارد سیستم شدند. برای ورود باید از یکی از دستگاه ها خارج شوید و اگر خودتان وارد نشدید سریعا پسورد خود را تغییر داده و همینطور تمام توکن ها را درحساب کاربری خود حذف نمایید.")
     })
   end
 
@@ -174,7 +175,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: "توکن ارسالی منقضی شده است."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن ارسالی منقضی شده است.")
     })
   end
 
@@ -184,7 +185,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: "توکن ارسالی اشتباه می باشد."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن ارسالی اشتباه می باشد.")
     })
   end
 
@@ -194,7 +195,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: "توکن ارسالی ممکن است اشتباه باشد یا از سیستم حذف شده است."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن ارسالی ممکن است اشتباه باشد یا از سیستم حذف شده است.")
     })
   end
 
@@ -204,7 +205,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: "توکن ارسالی ممکن است اشتباه باشد یا از سیستم حذف شده است."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن ارسالی ممکن است اشتباه باشد یا از سیستم حذف شده است.")
     })
   end
 
@@ -214,7 +215,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: "لطفا بر اساس مستندات توکن درخواستی را در هدر ارسال نمایید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "لطفا بر اساس مستندات توکن درخواستی را در هدر ارسال نمایید.")
     })
   end
 
@@ -224,7 +225,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: " توکن ارسالی اشتباه می باشد یا منقضی گردیده است"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", " توکن ارسالی اشتباه می باشد یا منقضی گردیده است")
     })
   end
 
@@ -239,7 +240,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :refresh_token,
       system: @request_error_tag,
-      message: "توکن شما با موفقیت تازه سازی گردید. و توکن قبلی نیز حذف شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن شما با موفقیت تازه سازی گردید. و توکن قبلی نیز حذف شد."),
       user_info: Map.take(user_info, allowed_fields |> Enum.map(&String.to_existing_atom/1)),
       auth: %{
 
@@ -260,7 +261,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :logout,
       system: @request_error_tag,
-      message: "شما با موفقیت از سیستم خارج  شدید"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "شما با موفقیت از سیستم خارج  شدید")
     })
   end
 
@@ -270,7 +271,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :logout,
       system: @request_error_tag,
-      message: "این خطا در زمانی روخ می دهد که توکن شما معتبر نباشد یا قبلا از سیستم پاک شده باشد."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می دهد که توکن شما معتبر نباشد یا قبلا از سیستم پاک شده باشد.")
     })
   end
 
@@ -288,7 +289,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       action: :change_password,
       system: @request_error_tag,
       user_info: Map.from_struct(info) |> Map.take(allowed_fields  |> Enum.map(&String.to_existing_atom/1)),
-      message: "پسورد کاربر با موفقیت تغییر کرد. تمامی توکن های کاربر پاک گردید لطفا دوباره وارد دستگاه های موردنظر خود با پسورد جدید شوید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "پسورد کاربر با موفقیت تغییر کرد. تمامی توکن های کاربر پاک گردید لطفا دوباره وارد دستگاه های موردنظر خود با پسورد جدید شوید.")
     })
   end
 
@@ -298,7 +299,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :change_password,
       system: @request_error_tag,
-      message: "چنین کاربری وجود ندارد."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "چنین کاربری وجود ندارد.")
     })
   end
 
@@ -308,7 +309,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :change_password,
       system: @request_error_tag,
-      message: "پسورد کنونی شما اشتباه می باشد لطفا با دقت دوباره ارسال فرمایید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "پسورد کنونی شما اشتباه می باشد لطفا با دقت دوباره ارسال فرمایید.")
     })
   end
 
@@ -318,7 +319,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :change_password,
       system: @request_error_tag,
-      message: "شناسه وارد شده کاربر اشتباه می باشد یا از سیستم حذف گردیده است.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "شناسه وارد شده کاربر اشتباه می باشد یا از سیستم حذف گردیده است."),
     })
   end
 
@@ -328,7 +329,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :change_password,
       system: @request_error_tag,
-      message: "شناسه وارد شده کاربر اشتباه می باشد یا از سیستم حذف گردیده است.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "شناسه وارد شده کاربر اشتباه می باشد یا از سیستم حذف گردیده است."),
     })
   end
 
@@ -338,7 +339,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :change_password,
       system: @request_error_tag,
-      message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "خطایی در ذخیره سازی داده های شما روخ داده است."),
       errors: MishkaDatabase.translate_errors(repo_error)
     })
   end
@@ -349,7 +350,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :change_password,
       system: @request_error_tag,
-      message: "خطای غیرقابل پیشبینی روخ داده است."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "خطای غیرقابل پیشبینی روخ داده است.")
     })
   end
 
@@ -360,7 +361,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :user_tokens,
       system: @request_error_tag,
-      message: "توکن شما با موفقیت تازه سازی گردید. و توکن قبلی نیز حذف شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن شما با موفقیت تازه سازی گردید. و توکن قبلی نیز حذف شد."),
       user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1)),
       user_tokens_info:
 
@@ -385,7 +386,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :user_tokens,
       system: @request_error_tag,
-      message: "کاربر مورد نظر ممکن است از سیستم حذف شده بشد یا دسترسی آن قطع گردیده"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "کاربر مورد نظر ممکن است از سیستم حذف شده بشد یا دسترسی آن قطع گردیده")
     })
   end
 
@@ -396,7 +397,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :get_token_expire_time,
       system: @request_error_tag,
-      message: "توکن شما با موفقیت در سیستم اسکن گردید",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن شما با موفقیت در سیستم اسکن گردید"),
       user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1)),
       user_token_info:
       case MishkaUser.Token.TokenManagemnt.get_token(user_info.id, token) do
@@ -413,7 +414,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :get_token_expire_time,
       system: @request_error_tag,
-      message: "کاربر مورد نظر ممکن است از سیستم حذف شده بشد یا دسترسی آن قطع گردیده"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "کاربر مورد نظر ممکن است از سیستم حذف شده بشد یا دسترسی آن قطع گردیده")
     })
   end
 
@@ -430,7 +431,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :reset_password,
       system: @request_error_tag,
-      message: "در صورتی که ایمیل شما در سیستم وجود داشته باشید به زودی کد تغییر پسورد برای شما ایمیل می گردد. لازم به ذکر می باشد شما هر 6 دقیقه امکان ارسال ایمیل مجدد دارید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "در صورتی که ایمیل شما در سیستم وجود داشته باشید به زودی کد تغییر پسورد برای شما ایمیل می گردد. لازم به ذکر می باشد شما هر 6 دقیقه امکان ارسال ایمیل مجدد دارید.")
     })
   end
 
@@ -440,7 +441,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :reset_password,
       system: @request_error_tag,
-      message: "در صورتی که ایمیل شما در سیستم وجود داشته باشید به زودی کد تغییر پسورد برای شما ایمیل می گردد. لازم به ذکر می باشد شما هر 6 دقیقه امکان ارسال ایمیل مجدد دارید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "در صورتی که ایمیل شما در سیستم وجود داشته باشید به زودی کد تغییر پسورد برای شما ایمیل می گردد. لازم به ذکر می باشد شما هر 6 دقیقه امکان ارسال ایمیل مجدد دارید.")
     })
   end
 
@@ -450,7 +451,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :reset_password,
       system: @request_error_tag,
-      message: "این خطا در زمانی روخ می دهد که کد ریست پسورد اشتباه باشد یا وجود نداشته باشد."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می دهد که کد ریست پسورد اشتباه باشد یا وجود نداشته باشد.")
     })
   end
 
@@ -474,7 +475,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :reset_password,
           system: @request_error_tag,
-          message: "پسورد شما با موفقیت ریست شد و تمامی توکن های ایجاد شده برای حساب کاربری شما نیز منقضی گردید"
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "پسورد شما با موفقیت ریست شد و تمامی توکن های ایجاد شده برای حساب کاربری شما نیز منقضی گردید")
         })
 
     else
@@ -492,7 +493,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :delete_token,
       system: @request_error_tag,
-      message: "این خطا در زمانی روخ می دهد که توکن ارسالی وجود نداشته باشد"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می دهد که توکن ارسالی وجود نداشته باشد")
     })
   end
 
@@ -509,7 +510,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :delete_token,
       system: @request_error_tag,
-      message: "توکن شما با موفقیت از سیستم حذف گردید. باید توجه داشته باشید تمامی دستگاه هایی که از این توکن استفاده می کردند نیز به صورت خودکار خارج شدند و برای ورود مجدد لطفا دوباره در سیستم لاگین کنید."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن شما با موفقیت از سیستم حذف گردید. باید توجه داشته باشید تمامی دستگاه هایی که از این توکن استفاده می کردند نیز به صورت خودکار خارج شدند و برای ورود مجدد لطفا دوباره در سیستم لاگین کنید.")
     })
   end
 
@@ -520,7 +521,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :delete_tokens,
       system: @request_error_tag,
-      message: "توکن های شما با موفقیت حذف گردید"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "توکن های شما با موفقیت حذف گردید")
     })
   end
 
@@ -531,7 +532,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :edit_profile,
       system: @request_error_tag,
-      message: ".اطلاعات کاربر مورد نظر با موفقیت ویرایش گردید",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", ".اطلاعات کاربر مورد نظر با موفقیت ویرایش گردید"),
       user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
     })
   end
@@ -542,7 +543,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :edit_profile,
       system: @request_error_tag,
-      message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "خطایی در ذخیره سازی داده های شما روخ داده است."),
       errors: MishkaDatabase.translate_errors(repo_error)
     })
   end
@@ -553,7 +554,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :edit_profile,
       system: @request_error_tag,
-      message: "کاربر مذکور وجود ندارد یا از یستم حذف گردید"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "کاربر مذکور وجود ندارد یا از یستم حذف گردید")
     })
   end
 
@@ -566,7 +567,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account,
           system: @request_error_tag,
-          message: "حساب کاربری شما از قبل غیر فعال سازی گردیده است. اطلاعات تکمیلی در زمان درخواست غیر فعال سازی برای شما ایمیل گردید."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "حساب کاربری شما از قبل غیر فعال سازی گردیده است. اطلاعات تکمیلی در زمان درخواست غیر فعال سازی برای شما ایمیل گردید.")
         })
 
       _data ->
@@ -582,7 +583,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account,
           system: @request_error_tag,
-          message: "کد غیر فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید. لازم به ذکر هست هر 6 دقیقه امکان درخواست مجدد  کد غیر فعال سازی به ایمیل خود را خواهید داشت.",
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "کد غیر فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید. لازم به ذکر هست هر 6 دقیقه امکان درخواست مجدد  کد غیر فعال سازی به ایمیل خود را خواهید داشت."),
           user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
         })
     end
@@ -595,7 +596,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :deactive_account,
       system: @request_error_tag,
-      message: "این خطا در زمانی روخ می هد که کاربری وجود نداشته باشد یا از سیستم حذف گریده باشد."
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می هد که کاربری وجود نداشته باشد یا از سیستم حذف گریده باشد.")
     })
   end
 
@@ -614,7 +615,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           |> json(%{
             action: :deactive_account,
             system: @request_error_tag,
-            message: "حساب شما با موفقیت غیر فعال شد. ایمیلی در رابطه با چگونگی پاک سازی اطلاعات شما ارسال گردیده است. لازم به ذکر هست تمامی دستگاه های آنلاین شما به سیستم نیز خودکار خارج شدند. برای اتصال مجدد دوباره لاگین کنید",
+            message: MishkaTranslator.Gettext.dgettext("api_auth", "حساب شما با موفقیت غیر فعال شد. ایمیلی در رابطه با چگونگی پاک سازی اطلاعات شما ارسال گردیده است. لازم به ذکر هست تمامی دستگاه های آنلاین شما به سیستم نیز خودکار خارج شدند. برای اتصال مجدد دوباره لاگین کنید"),
             user_info: Map.take(repo_data, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
           })
 
@@ -625,7 +626,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account,
           system: @request_error_tag,
-          message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "خطایی در ذخیره سازی داده های شما روخ داده است."),
           errors: MishkaDatabase.translate_errors(repo_error)
         })
 
@@ -636,7 +637,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account,
           system: @request_error_tag,
-          message: "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد.")
         })
 
       [{:error, :get_user, :time}] ->
@@ -645,7 +646,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account,
           system: @request_error_tag,
-          message: "کد فعال سازی شما منقضی شده است."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "کد فعال سازی شما منقضی شده است.")
         })
 
       [{:error, :get_user, _acction}] ->
@@ -654,7 +655,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account,
           system: @request_error_tag,
-          message: "کد غیر فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "کد غیر فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید.")
         })
 
       {:ok, :active?, :inactive} ->
@@ -663,7 +664,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account,
           system: @request_error_tag,
-          message: "حساب کاربری شما از قبل غیر فعال سازی گردیده است. اطلاعات تکمیلی در زمان درخواست غیر فعال سازی برای شما ایمیل گردید."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "حساب کاربری شما از قبل غیر فعال سازی گردیده است. اطلاعات تکمیلی در زمان درخواست غیر فعال سازی برای شما ایمیل گردید.")
         })
     end
   end
@@ -680,7 +681,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           |> json(%{
             action: :verify_email,
             system: @request_error_tag,
-            message: "حساب شما با موفقیت فعال شد.",
+            message: MishkaTranslator.Gettext.dgettext("api_auth", "حساب شما با موفقیت فعال شد."),
             user_info: Map.take(repo_data, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
           })
 
@@ -691,7 +692,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email,
           system: @request_error_tag,
-          message: "خطایی در ذخیره سازی داده های شما روخ داده است.",
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "خطایی در ذخیره سازی داده های شما روخ داده است."),
           errors: MishkaDatabase.translate_errors(repo_error)
         })
 
@@ -702,7 +703,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email,
           system: @request_error_tag,
-          message: "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد.")
         })
 
       [{:error, :get_user, :time} ]->
@@ -711,7 +712,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email,
           system: @request_error_tag,
-          message: "کد فعال سازی شما منقضی شده است."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "کد فعال سازی شما منقضی شده است.")
         })
 
       [{:error, :get_user, _acction} ]->
@@ -720,7 +721,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email,
           system: @request_error_tag,
-          message: "کد فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "کد فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید.")
         })
 
       {:ok, :active?, :active} ->
@@ -729,7 +730,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email,
           system: @request_error_tag,
-          message: "حساب کاربری شما از قبل فعال سازی گردیده است."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "حساب کاربری شما از قبل فعال سازی گردیده است.")
         })
     end
   end
@@ -743,7 +744,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email,
           system: @request_error_tag,
-          message: "حساب کاربری شما از قبل فعال شده است"
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "حساب کاربری شما از قبل فعال شده است")
         })
 
       _data ->
@@ -759,7 +760,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email,
           system: @request_error_tag,
-          message: "کد فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید.لازم به ذکر هست هر 6 دقیقه امکان ارسال ایمیل مجدد کد فعال سازی را خواهید داشت.",
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "کد فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید.لازم به ذکر هست هر 6 دقیقه امکان ارسال ایمیل مجدد کد فعال سازی را خواهید داشت."),
           user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
         })
     end
@@ -773,7 +774,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email_by_email_link,
           system: @request_error_tag,
-          message: "حساب کاربری شما از قبل فعال گردیده است."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "حساب کاربری شما از قبل فعال گردیده است.")
         })
 
       _ ->
@@ -796,7 +797,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :verify_email_by_email_link,
           system: @request_error_tag,
-          message: "لینک فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.لازم به ذکر هست هر 6 دقیقه شما امکان ارسال ایمیل را خواهید داشت.",
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "لینک فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.لازم به ذکر هست هر 6 دقیقه شما امکان ارسال ایمیل را خواهید داشت."),
           user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
         })
 
@@ -809,7 +810,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :verify_email_by_email_link,
       system: @request_error_tag,
-      message: "چنین کاربری وجود ندارد یا از سیستم حذف گردیده"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "چنین کاربری وجود ندارد یا از سیستم حذف گردیده")
     })
   end
 
@@ -821,7 +822,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account_by_email_link,
           system: @request_error_tag,
-          message: "حساب کاربری شما از قبل غیر فعال گردیده است."
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "حساب کاربری شما از قبل غیر فعال گردیده است.")
         })
 
 
@@ -844,7 +845,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         |> json(%{
           action: :deactive_account_by_email_link,
           system: @request_error_tag,
-          message: "ایمیل غیر فعال سازی حساب کاربری برای شما ارسال گردید. لازم به ذکر هست هر 6 دقیقه شما امکان ارسال ایمیل مجدد لینک غیر فعال سازی را خواهید داشت.",
+          message: MishkaTranslator.Gettext.dgettext("api_auth", "ایمیل غیر فعال سازی حساب کاربری برای شما ارسال گردید. لازم به ذکر هست هر 6 دقیقه شما امکان ارسال ایمیل مجدد لینک غیر فعال سازی را خواهید داشت."),
           user_info: Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
         })
     end
@@ -856,7 +857,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :deactive_account_by_email_link,
       system: @request_error_tag,
-      message: "چنین کاربری وجود ندارد یا از سیستم حذف گردیده"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "چنین کاربری وجود ندارد یا از سیستم حذف گردیده")
     })
   end
 
@@ -879,7 +880,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :send_delete_tokens_link_by_email,
       system: @request_error_tag,
-      message: "اگر برای شما حساب کاربری از قبل ثبت شده باشد به زودی یک ایمیل حاوی لینک حذف توکن های خود دریافت خواهید کرد. لازم به ذکر است هر 6 دقیقه امکان درخواست مجدد برای یک حساب کاربری ممکن می شود"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "اگر برای شما حساب کاربری از قبل ثبت شده باشد به زودی یک ایمیل حاوی لینک حذف توکن های خود دریافت خواهید کرد. لازم به ذکر است هر 6 دقیقه امکان درخواست مجدد برای یک حساب کاربری ممکن می شود")
     })
   end
 
@@ -889,7 +890,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     |> json(%{
       action: :send_delete_tokens_link_by_email,
       system: @request_error_tag,
-      message: "اگر برای شما حساب کاربری از قبل ثبت شده باشد به زودی یک ایمیل حاوی لینک حذف توکن های خود دریافت خواهید کرد. لازم به ذکر است هر 6 دقیقه امکان درخواست مجدد برای یک حساب کاربری ممکن می شود"
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "اگر برای شما حساب کاربری از قبل ثبت شده باشد به زودی یک ایمیل حاوی لینک حذف توکن های خود دریافت خواهید کرد. لازم به ذکر است هر 6 دقیقه امکان درخواست مجدد برای یک حساب کاربری ممکن می شود")
       })
   end
 

@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
   use MishkaHtmlWeb, :live_view
   alias MishkaUser.Acl.Role
 
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminUserView, "admin_user_role_live.html", assigns)
@@ -13,7 +14,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
     socket =
       assign(socket,
         dynamic_form:  create_menu_list(basic_menu_list(), []),
-        page_title: "ساخت نقش",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "ساخت نقش"),
         body_color: "#a29ac3cf",
         basic_menu: false,
         changeset: role_changeset())
@@ -80,13 +81,13 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
 
     socket = case Role.create(params) do
@@ -95,9 +96,9 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :role, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "نقش: #{repo_data.name} درست شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "نقش: %{title} درست شده است.", title: repo_data.name)})
         socket
-        |> put_flash(:info, "نقش مورد نظر ساخته شد.")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نقش مورد نظر ساخته شد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))
 
     end
@@ -113,13 +114,13 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
     {:noreply, socket}
   end
@@ -167,22 +168,22 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
   def basic_menu_list() do
     [
       %{type: "name", status: [
-        %{title: "ضروری", class: "badge bg-danger"},
-        %{title: "یکتا", class: "badge bg-success"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"), class: "badge bg-success"}
       ],
       form: "text",
       class: "col-sm-3",
-      title: "نام نقش",
-      description: "برای ایجاد هر دسترسی نیاز به معرفی نقش می باشد که هر نقش داری یک نام است"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نام نقش"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "برای ایجاد هر دسترسی نیاز به معرفی نقش می باشد که هر نقش داری یک نام است")},
 
       %{type: "display_name", status: [
-        %{title: "ضروری", class: "badge bg-danger"},
-        %{title: "یکتا", class: "badge bg-success"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"), class: "badge bg-success"}
       ],
       form: "text",
       class: "col-sm-3",
-      title: "نام نمایشی",
-      description: "این فیلد نیز همانند نام هر نقش برای دسترسی ایجاد می شود و بیشتر برای شناسایی به کد شورت کد استفاده می گردد."}
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نام نمایشی"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "این فیلد نیز همانند نام هر نقش برای دسترسی ایجاد می شود و بیشتر برای شناسایی به کد شورت کد استفاده می گردد.")}
     ]
   end
 end

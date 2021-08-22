@@ -8,13 +8,13 @@
             </div>
 
             <div class="col vazir text-start top-post-btn">
-                <%= live_redirect "برچسب جدید", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagLive), class: "btn btn-outline-primary" %>
+                <%= live_redirect  MishkaTranslator.Gettext.dgettext("html_live_templates", "برچسب جدید"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagLive), class: "btn btn-outline-primary" %>
 
-                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+                <%= live_redirect  MishkaTranslator.Gettext.dgettext("html_live_templates", "مطالب"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
 
-                <%= live_redirect "مجموعه ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive), class: "btn btn-outline-info" %>
+                <%= live_redirect  MishkaTranslator.Gettext.dgettext("html_live_templates", "مجموعه ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive), class: "btn btn-outline-info" %>
 
-                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+                <%= live_redirect  MishkaTranslator.Gettext.dgettext("html_live_templates", "تنظیمات سئو"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
             </div>
         </div>
 
@@ -24,9 +24,9 @@
             <div class="clearfix"></div>
             <div class="row">
               <div class="col">
-              <h3 class="admin-dashbord-h3-right-side-title vazir">مدیریت برچسب ها</h3>
+              <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مدیریت برچسب ها") %></h3>
               <span class="admin-dashbord-right-side-text vazir">
-              شما در این بخش می توانید برچسب های مطالب را مدیریت نمایید.
+              <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید برچسب های مطالب را مدیریت نمایید.") %>
               </span>
               <div class="space20"></div>
 

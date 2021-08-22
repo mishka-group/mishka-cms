@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
     socket =
       socket
       |> assign(
-        page_title: "داشبورد مدیریت",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "داشبورد مدیریت"),
         body_color: "#a29ac3cf",
         user_id: user_id,
         users: MishkaUser.User.users(conditions: {1, 4}, filters: %{}),

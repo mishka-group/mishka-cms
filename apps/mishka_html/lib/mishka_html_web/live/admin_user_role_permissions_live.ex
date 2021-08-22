@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     socket =
       assign(socket,
         dynamic_form: [],
-        page_title: "مدیریت دسترسی ها",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت دسترسی ها"),
         body_color: "#a29ac3cf",
         basic_menu: false,
         changeset: permission_changeset(),

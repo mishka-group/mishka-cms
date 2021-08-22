@@ -1,5 +1,7 @@
 defmodule MishkaContent.Email.EmailHelper do
   alias MishkaContent.Email.{Email, Mailer}
+  require MishkaTranslator.Gettext
+
   # TODO: shluod be in config file or agent on ram
   # TODO: create type space for this file
 
@@ -17,11 +19,15 @@ defmodule MishkaContent.Email.EmailHelper do
   defp create_email_info(:verify_email, {user_email, code_or_link}) do
     %{
       email: "#{user_email}",
-      subject: "فعال سازی ایمیل حساب کاربری",
+      subject: MishkaTranslator.Gettext.dgettext("content_email", "فعال سازی ایمیل حساب کاربری"),
       description: """
       <p dir="rtl" style="text-align: right;">
-      از طرف حساب کاربری شما درخواست فعال سازی ایمیل ارسال گردید است که به شرح زیر می باشد.
-       در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید.
+       #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "از طرف حساب کاربری شما درخواست فعال سازی ایمیل ارسال گردید است که به شرح زیر می باشد.
+        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
+        )
+       }
       </p>
       <p dir="rtl" style="text-align: right;">لینک یا کد فعال سازی ایمیل به شرح زیر می باشد:</p>
       <hr>
@@ -29,14 +35,22 @@ defmodule MishkaContent.Email.EmailHelper do
       <hr>
       <p> </p>
       <p dir="rtl" style="text-align: right;">
-      باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید
-      برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را
-      انتخاب کنید.
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید
+        برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را
+        انتخاب کنید."
+        )
+      }
       </p>
-      <p dir="rtl" style="text-align: right;">کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد.</p>
+      <p dir="rtl" style="text-align: right;">
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email", "کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد.")
+      }
+      </p>
       <p> </p>
       """,
-      short_description: "درخواست فعال سازی ایمیل حساب کاربری",
+      short_description: MishkaTranslator.Gettext.dgettext("content_email", "درخواست فعال سازی ایمیل حساب کاربری"),
       main_image_link: "https://trangell.com",
       main_image: "https://online.bobcards.com/assets/images/Loginbanner.svg"
     }
@@ -47,26 +61,41 @@ defmodule MishkaContent.Email.EmailHelper do
   defp create_email_info(:deactive_account, {user_email, code_or_link}) do
     %{
       email: "#{user_email}",
-      subject: "درخواست غیر فعال سازی حساب کاربری",
+      subject: MishkaTranslator.Gettext.dgettext("content_email", "درخواست غیر فعال سازی حساب کاربری"),
       description: """
       <p dir="rtl" style="text-align: right;">
-      از طرف حساب کاربری شما درخواست غیرفعال سازی حساب ارسال گردید است که به شرح زیر می باشد.
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "
+        از طرف حساب کاربری شما درخواست غیرفعال سازی حساب ارسال گردید است که به شرح زیر می باشد.
        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید.
+        "
+        )
+      }
       </p>
-      <p dir="rtl" style="text-align: right;">لینک یا کد غیرفعال سازی حساب کاربری به شرح زیر می باشد:</p>
+      <p dir="rtl" style="text-align: right;">
+      #{MishkaTranslator.Gettext.dgettext("content_email", "لینک یا کد غیرفعال سازی حساب کاربری به شرح زیر می باشد:")}</p>
       <hr>
       #{code_or_link}
       <hr>
       <p> </p>
       <p dir="rtl" style="text-align: right;">
-      باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "
+        باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید
       برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را
       انتخاب کنید.
+        "
+        )
+      }
       </p>
-      <p dir="rtl" style="text-align: right;">کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد.</p>
+      <p dir="rtl" style="text-align: right;">
+      #{MishkaTranslator.Gettext.dgettext("content_email", "کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد.")}
+      </p>
       <p> </p>
       """,
-      short_description: "درخواست غیر فعال سازی حساب کاربری",
+      short_description: MishkaTranslator.Gettext.dgettext("content_email", "درخواست غیر فعال سازی حساب کاربری"),
       main_image_link: "https://trangell.com",
       main_image: "https://online.bobcards.com/assets/images/Loginbanner.svg"
     }
@@ -77,26 +106,38 @@ defmodule MishkaContent.Email.EmailHelper do
   defp create_email_info(:delete_tokens, {user_email, code_or_link}) do
     %{
       email: "#{user_email}",
-      subject: "درخواست پاک سازی توکن ها و سیستم های وارد شده",
+      subject: MishkaTranslator.Gettext.dgettext("content_email", "درخواست پاک سازی توکن ها و سیستم های وارد شده"),
       description: """
       <p dir="rtl" style="text-align: right;">
-      از طرف حساب کاربری شما درخواست پاک سازی توکن ها ارسال گردید است که به شرح زیر می باشد.
-       در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید.
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "از طرف حساب کاربری شما درخواست پاک سازی توکن ها ارسال گردید است که به شرح زیر می باشد.
+        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
+        )
+      }
       </p>
-      <p dir="rtl" style="text-align: right;">لینک یا کد تازه پاک سازی توکن به شرح زیر می باشد:</p>
+      <p dir="rtl" style="text-align: right;">
+      #{MishkaTranslator.Gettext.dgettext("content_email", "لینک یا کد تازه پاک سازی توکن به شرح زیر می باشد:")}
+      </p>
       <hr>
       #{code_or_link}
       <hr>
       <p> </p>
       <p dir="rtl" style="text-align: right;">
-      باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید
-      برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را
-      انتخاب کنید.
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید
+        برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را
+        انتخاب کنید."
+        )
+      }
       </p>
-      <p dir="rtl" style="text-align: right;">کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد.</p>
+      <p dir="rtl" style="text-align: right;">
+      #{MishkaTranslator.Gettext.dgettext("content_email", "کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد.")}
+      </p>
       <p> </p>
       """,
-      short_description: "درخواست پاک سازی توکن ها و سیستم های وارد شده",
+      short_description: MishkaTranslator.Gettext.dgettext("content_email", "درخواست پاک سازی توکن ها و سیستم های وارد شده"),
       main_image_link: "https://trangell.com",
       main_image: "https://online.bobcards.com/assets/images/Loginbanner.svg"
     }
@@ -108,26 +149,42 @@ defmodule MishkaContent.Email.EmailHelper do
   defp create_email_info(:forget_password, {user_email, code_or_link}) do
     %{
       email: "#{user_email}",
-      subject: "فراموشی پسورد",
+      subject: MishkaTranslator.Gettext.dgettext("content_email", "فراموشی پسورد"),
       description: """
       <p dir="rtl" style="text-align: right;">
-      از طرف حساب کاربری شما درخواست فراموشی پسورد ارسال گردید است که به شرح زیر می باشد.
-       در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید.
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "از طرف حساب کاربری شما درخواست فراموشی پسورد ارسال گردید است که به شرح زیر می باشد.
+        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
+        )
+      }
       </p>
-      <p dir="rtl" style="text-align: right;">لینک یا کد تازه سازی پسورد به شرح زیر می باشد:</p>
+      <p dir="rtl" style="text-align: right;">
+      #{MishkaTranslator.Gettext.dgettext("content_email", "لینک یا کد تازه سازی پسورد به شرح زیر می باشد:")}
+      </p>
       <hr>
       #{code_or_link}
       <hr>
       <p> </p>
       <p dir="rtl" style="text-align: right;">
-      باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید
-      برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را
-      انتخاب کنید.
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید
+        برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را
+        انتخاب کنید."
+        )
+      }
       </p>
-      <p dir="rtl" style="text-align: right;">کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد.</p>
+      <p dir="rtl" style="text-align: right;">
+      #{
+        MishkaTranslator.Gettext.dgettext("content_email",
+        "کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد."
+        )
+      }
+      </p>
       <p> </p>
       """,
-      short_description: "درخواست فراموشی پسورد",
+      short_description: MishkaTranslator.Gettext.dgettext("content_email", "درخواست فراموشی پسورد"),
       main_image_link: "https://trangell.com",
       main_image: "https://online.bobcards.com/assets/images/Loginbanner.svg"
     }

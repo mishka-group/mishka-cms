@@ -175,7 +175,7 @@
         <div class="space40"></div>
         <p class="text-center">
             <%=
-                live_redirect "نمایش بیشتر مطالب",
+                live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش بیشتر مطالب"),
                 to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
                 class: "btn btn-outline-secondary btn-lg"
             %>

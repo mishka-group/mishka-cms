@@ -9,9 +9,9 @@
 
             <div class="col vazir text-start top-post-btn">
 
-                <%= live_redirect "برگشت به برچسب ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagsLive), class: "btn btn-outline-primary" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به برچسب ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagsLive), class: "btn btn-outline-primary" %>
 
-                <%= live_redirect "مطالب", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "مطالب"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
 
             </div>
         </div>
@@ -28,9 +28,9 @@
         <div class="space50"></div>
         <h2 class="vazir">
             <%= if is_nil(@id) do %>
-                ساخت برچسب جدید
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "ساخت برچسب جدید") %>
             <% else %>
-                ویرایش اطلاعات برچسب
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "ویرایش اطلاعات برچسب") %>
             <% end %>
         </h2>
         <div class="space20"></div>
@@ -41,15 +41,15 @@
         <div class="col admin-create-category">
 
             <a phx-click="basic_menu" class="btn btn-info admin-create-category-tools" >
-                فیلد های پایه
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "فیلد های پایه") %>
             </a>
 
             <a phx-click="make_all_basic_menu" class="btn btn-danger admin-create-category-tools" >
-                فیلدهای ضروری
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "فیلدهای ضروری") %>
             </a>
 
             <a phx-click="clear_all_field" class="btn btn-secondary admin-create-category-tools" >
-                حذف تمام فیلد ها
+               <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "حذف تمام فیلد ها") %>
             </a>
 
             <div class="clearfix"></div>
@@ -168,9 +168,9 @@
                     <div class="space30"></div>
                     <div class="col-sm-12 admin-there-is-no-field vazir">
                     <div class="space30"></div>
-                        <span class="admin-there-is-no-field-text">هیچ فیلدی به فرم اضافه نشده است.</span>
+                        <span class="admin-there-is-no-field-text"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "هیچ فیلدی به فرم اضافه نشده است.") %></span>
                         <div class="space10"></div>
-                        <span class="text-muted">از کلید های بالا می توانید فرم های مورد نظر خود را اضافه کنید.</span>
+                        <span class="text-muted"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "از کلید های بالا می توانید فرم های مورد نظر خود را اضافه کنید.") %></span>
                         <div class="space30"></div>
                     </div>
                     <div class="clearfix"></div>

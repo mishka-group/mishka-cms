@@ -22,7 +22,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         page: 1,
         open_modal: false,
         component: nil,
-        page_title: "مدیریت مطالب",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مطالب"),
         body_color: "#a29ac3cf",
         posts: Post.posts(conditions: {1, 10}, filters: %{}, user_id: user_id),
         fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}, user_id: user_id),
@@ -80,7 +80,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case Post.delete(id) do
       {:ok, :delete, :post, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مطلب: %{title} حذف شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         post_assign(
           socket,
           params: socket.assigns.filters,
@@ -97,11 +97,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
       {:error, :delete, type, :post} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, "چنین مطلبی ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین مطلبی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
 
       {:error, :delete, :post, _repo_error} ->
         socket
-        |> put_flash(:error, "خطا در حذف مطلب اتفاق افتاده است.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف مطلب اتفاق افتاده است."))
     end
 
     {:noreply, socket}

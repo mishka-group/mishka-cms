@@ -1,11 +1,12 @@
 defmodule MishkaHtmlWeb.Admin.Dashboard.LastBlogPostsComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="container rtl">
         <div class="clearfix"></div>
-        <h3 class="admin-home-calendar-h3-title-last-post">آخرین مطالب منتشر شده:</h3>
+        <h3 class="admin-home-calendar-h3-title-last-post"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "آخرین مطالب منتشر شده:") %></h3>
 
         <div class="row">
           <%= for post <- @posts do %>

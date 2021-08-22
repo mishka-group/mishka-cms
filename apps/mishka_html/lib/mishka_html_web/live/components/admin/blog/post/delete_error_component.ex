@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="error-card-modal col">
@@ -13,36 +14,36 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent do
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <span class="error-card-modal-main-text">
-        شما نمی توانید این مطلب را حذف کنید. دلیل این موضوع می توانید به وابستگی های احتمالی به این مطلب ربط داشته باشد. از جمله مواردی که محتمل می باشد:
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "شما نمی توانید این مطلب را حذف کنید. دلیل این موضوع می توانید به وابستگی های احتمالی به این مطلب ربط داشته باشد. از جمله مواردی که محتمل می باشد:") %>
         <ul>
           <li>
-          تخصیص نویسندگان به این مطلب
+          <%= MishkaTranslator.Gettext.dgettext("html_live_component", "تخصیص نویسندگان به این مطلب") %>
           </li>
 
           <li>
-          لایک شدن این پست به وسیله کاربران
+          <%= MishkaTranslator.Gettext.dgettext("html_live_component", "لایک شدن این پست به وسیله کاربران") %>
           </li>
 
           <li>
-          تخصیص دادن یک یا چند برچسبب به این مطلب.
+          <%= MishkaTranslator.Gettext.dgettext("html_live_component", "تخصیص دادن یک یا چند برچسبب به این مطلب.") %>
           </li>
         </ul>
-          لازم به ذکر است اگر از حذف کامل این مطلب اطمینان دارید شما می توانید روی دکمه
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "لازم به ذکر است اگر از حذف کامل این مطلب اطمینان دارید شما می توانید روی دکمه") %>
         </span>
 
-        <span class="badge bg-dark vazir rtl error-modal-badage-dark">حذف همه</span>
-        کلیک کنید.
+        <span class="badge bg-dark vazir rtl error-modal-badage-dark"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف همه") %></span>
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "کلیک کنید.") %>
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <div class="alert alert-warning d-flex align-items-center" role="alert">
           <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
           <div>
-            اگر روی حذف کامل کلیک کنید دیگر این مطلب و تمام وابستگی های آن قابل برگشت نیست.
+          <%= MishkaTranslator.Gettext.dgettext("html_live_component", "اگر روی حذف کامل کلیک کنید دیگر این مطلب و تمام وابستگی های آن قابل برگشت نیست.") %>
           </div>
         </div>
         <div class="col space30"> </div>
         <div class="modal-close-btn">
-          <button type="button" class="btn btn-danger" phx-click="close_modal">بستن</button>
+          <button type="button" class="btn btn-danger" phx-click="close_modal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بستن") %></button>
         </div>
         </div>
       </div>

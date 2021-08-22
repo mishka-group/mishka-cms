@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
     <div class="col-sm-6 admin-upload-form vazir">
@@ -28,7 +29,7 @@ defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
           </div>
           <div class="clearfix"></div>
           <div class="space10"></div>
-          <span class="text-muted">یا فایل را بکشید و اینجا رها کنید.</span>
+          <span class="text-muted"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "یا فایل را بکشید و اینجا رها کنید.") %></span>
           <div class="clearfix"></div>
           <div class="space30"></div>
 

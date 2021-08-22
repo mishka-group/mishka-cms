@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.User.ListComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="col bw admin-blog-post-list">
@@ -10,13 +11,13 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
             <table class="table vazir">
                 <thead>
                     <tr>
-                        <th scope="col" id="div-image">تصویر</th>
-                        <th scope="col" id="div-title">نام کامل</th>
-                        <th scope="col" id="div-category">نام کاربری</th>
-                        <th scope="col" id="div-status">ایمیل</th>
-                        <th scope="col" id="div-priority">وضعیت</th>
-                        <th scope="col" id="div-update">ثبت</th>
-                        <th scope="col" id="div-opration">عملیات</th>
+                        <th scope="col" id="div-image"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تصویر") %></th>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نام کامل") %></th>
+                        <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نام کاربری") %></th>
+                        <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ایمیل") %></th>
+                        <th scope="col" id="div-priority"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "وضعیت") %></th>
+                        <th scope="col" id="div-update"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ثبت") %></th>
+                        <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "عملیات") %></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,7 +56,7 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
 
                                 <a class="btn btn-outline-primary vazir" phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
 
-                            <%= live_redirect "ویرایش",
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.id),
                                 class: "btn btn-outline-danger vazir"
                             %>
@@ -64,24 +65,21 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                             <div class="space20"></div>
                             <div class="col">
                                 <label for="country" class="form-label">
-                                انتخاب دسترسی
+                                <%= MishkaTranslator.Gettext.dgettext("html_live_component", "انتخاب دسترسی") %>
                                 </label>
                                 <form  phx-change="search_role">
-                                    <input class="form-control" type="text" placeholder="جستجو نقش" name="name">
+                                    <input class="form-control" type="text" placeholder="<%= MishkaTranslator.Gettext.dgettext("html_live_component", "جستجوی پیشرفته") %>" name="name">
                                 </form>
                                 <form  phx-change="user_role">
                                     <input type="hidden" value="<%= item.id %>" name="user_id">
                                     <select class="form-select" id="role" name="role" size="2" style="min-height: 150px;">
-                                    <option value="delete_user_role">بدون دسترسی</option>
+                                    <option value="delete_user_role"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بدون دسترسی") %></option>
                                     <%= for item <- @roles.entries do %>
                                         <option value="<%= item.id %>" <%= if(!is_nil(user_role) and item.id == user_role.id, do: "selected") %>><%= item.name %></option>
                                     <% end %>
                                     </select>
                                 </form>
                             </div>
-
-
-
                         </td>
                     </tr>
                     <% end %>

@@ -18,7 +18,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
       page: 1,
       open_modal: false,
       component: nil,
-      page_title: "نقش های کاربری",
+      page_title: MishkaTranslator.Gettext.dgettext("html_live", "نقش های کاربری"),
       body_color: "#a29ac3cf",
       roles: Role.roles(conditions: {1, 20}, filters: %{})
     )
@@ -86,7 +86,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
     MishkaUser.Acl.AclTask.delete_role(id)
     socket = case Role.delete(id) do
       {:ok, :delete, :role, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "نقش: #{MishkaHtml.full_name_sanitize(repo_data.name)} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "نقش: %{title} حذف شده است.", title: MishkaHtml.full_name_sanitize(repo_data.name))})
         role_assign(
           socket,
           params: socket.assigns.filters,
@@ -103,11 +103,11 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
 
       {:error, :delete, type, :role} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, "چنین نقشی برای دسترسی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning,  MishkaTranslator.Gettext.dgettext("html_live", "چنین نقشی برای دسترسی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
 
       {:error, :delete, :role, _repo_error} ->
         socket
-        |> put_flash(:error, "خطا در حذف نقش برای دسترسی اتفاق افتاده است.")
+        |> put_flash(:error,  MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف نقش برای دسترسی اتفاق افتاده است."))
     end
 
     {:noreply, socket}

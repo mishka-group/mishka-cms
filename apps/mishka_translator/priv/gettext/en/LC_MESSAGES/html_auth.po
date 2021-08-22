@@ -1,0 +1,94 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:87
+msgid "ایمیل حساب کاربری شما با موفقیت تایید گردید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:34
+msgid "با موفقیت وارد شده اید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/plug/current_token_plug.ex:20
+msgid "برای دسترسی به این صفحه لطفا وارد سایت شوید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:202
+msgid "تمامی توکن های شما و همینطور دستگاه های آنلاین به حساب کاربری شما با موفقیت پاکسازی و خارج شدند"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:154
+msgid "حساب کاربری شما از قبل غیر فعال شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:40
+msgid "حساب کاربری شما از قبل غیر فعال گردیده و این به درخواست صاحب حساب می باشد. برای استفاده مجدد از حساب لطفا دوباره درخواست فعال سازی از بخش کاربری را ارسال فرمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:95
+msgid "حساب کاربری شما از قبل فعال سازی شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:101
+#: lib/mishka_html_web/controllers/auth_controller.ex:160 lib/mishka_html_web/controllers/auth_controller.ex:211
+msgid "حساب کاربری شما بافت نشد. این اتفاق در زمانی روخ می دهد که از قبل حساب کاربری شما غیر فعال یا حذف شده باشد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:45
+msgid "حساب کاربری شما بیشتر از ۵ بار در سیستم های مختلف استفاده شده است. لطفا یکی از این موارد را غیر فعال کنید و خروج را بفشارید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:146
+msgid "حساب کاربری غیرفعال سازی گردید. اگر نیازمند به استفاده مجدد هست از بخش کاربری دوباره درخواست فعال سازی حساب را ارسال فرمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/plug/not_login_plug.ex:15
+msgid "شما از قبل وارد سایت شده اید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/plug/acl_check_plug.ex:29
+#: lib/mishka_html/plug/acl_check_plug.ex:35
+msgid "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما ویرایش شده باشد. دوباره وارد سایت شوید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:50
+msgid "ممکن است ایمیل یا پسورد شما اشتباه باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:166
+msgid "کد غیر فعال سازی حساب کاربری شما غیر معتبر است یا منقضی شده است. لطفا دوباره تلاش کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:107
+msgid "کد فعال سازی حساب کاربری شما غیر معتبر است یا منقضی شده است. لطفا دوباره تلاش کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/controllers/auth_controller.ex:217
+msgid "کد پاکسازی توکن حساب کاربری شما غیر معتبر است یا منقضی شده است. لطفا دوباره تلاش کنید."
+msgstr ""

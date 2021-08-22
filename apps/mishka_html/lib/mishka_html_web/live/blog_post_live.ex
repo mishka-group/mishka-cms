@@ -31,7 +31,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
       nil ->
         socket =
           socket
-          |> put_flash(:info, "چنین محتوایی وجود ندارد")
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "چنین محتوایی وجود ندارد"))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
 
         {:ok, socket}
@@ -55,7 +55,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
             user_id: Map.get(session, "user_id"),
             post: post,
             send_comment: false,
-            comment_msg: "برای ارسال نظر کلیک کنید ....",
+            comment_msg: MishkaTranslator.Gettext.dgettext("html_live", "برای ارسال نظر کلیک کنید ...."),
             sub: nil,
             changeset: CommentSchema.changeset(%CommentSchema{}, %{}),
             comments: [],
@@ -102,7 +102,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   def handle_event("start_comment", _params, socket) do
     socket = case socket.assigns.user_id do
       nil ->
-        assign(socket, comment_msg: "برای ارسال نظر باید وارد وب سایت شوید.")
+        assign(socket, comment_msg: MishkaTranslator.Gettext.dgettext("html_live", "برای ارسال نظر باید وارد وب سایت شوید."))
       _record ->
         assign(socket, send_comment: true)
     end
@@ -132,7 +132,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     socket = case Comment.comment(filters: %{id: sub_id, section: "blog_post", status: "active"}, user_id: socket.assigns.user_id) do
       nil ->
         socket
-        |> put_flash(:warning, "به نظر می رسد نظر مذکور حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به نظر می رسد نظر مذکور حذف شده باشد."))
 
       record ->
         socket
@@ -173,12 +173,12 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
       {:error, :get_record_by_id, _error_tag} ->
         socket
-        |> put_flash(:warning, "به نظر می رسد مطلب مذکور حذف شده است.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به نظر می رسد مطلب مذکور حذف شده است."))
 
 
       {:user_id, true} ->
         socket
-        |> put_flash(:warning, "لطفا برای بوکمارک کردن این مطلب وارد وب سایت شوید")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "لطفا برای بوکمارک کردن این مطلب وارد وب سایت شوید"))
 
       {:error, :add, :bookmark, _changeset} ->
         Bookmark.delete(socket.assigns.user_id, socket.assigns.id)
@@ -205,7 +205,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     else
       {:error, :get_record_by_id, _error_tag} ->
         socket
-        |> put_flash(:warning, "به نظر می رسد مطلب مذکور حذف شده است.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به نظر می رسد مطلب مذکور حذف شده است."))
 
       {:ok, :show_by_user_and_post_id, liked_record} ->
         Like.delete(liked_record.id)
@@ -215,12 +215,12 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
       {:error, :show_by_user_and_post_id, :cast_error}  ->
           socket
-          |> put_flash(:warning, "خطایی در دریافت اطلاعات وجود آماده است.")
+          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در دریافت اطلاعات وجود آماده است."))
           |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
       {:user_id, true} ->
         socket
-        |> put_flash(:warning, "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))
     end
 
     {:noreply, socket}
@@ -238,7 +238,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
       {:error, :get_record_by_id, _error_tag} ->
 
         socket
-        |> put_flash(:warning, "به نظر می رسد نظر مذکور حذف شده است.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به نظر می رسد نظر مذکور حذف شده است."))
 
       {:ok, :show_by_user_and_comment_id, liked_record} ->
         CommentLike.delete(liked_record.id)
@@ -246,7 +246,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
         socket
       _n ->
         socket
-        |> put_flash(:warning, "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))
     end
     {:noreply, socket}
   end
@@ -263,12 +263,12 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     else
       {:user_id, true} ->
         socket
-        |> assign(comment_msg: "برای ارسال نظر باید وارد وب سایت شوید.", send_comment: false)
+        |> assign(comment_msg: MishkaTranslator.Gettext.dgettext("html_live", "برای ارسال نظر باید وارد وب سایت شوید."), send_comment: false)
         |> push_event("jump_to_comment_form", %{})
 
       _n ->
         socket
-        |> assign(comment_msg: "چنین نظری وجود ندارد یا ممکن است حذف شده باشد.", send_comment: false)
+        |> assign(comment_msg: MishkaTranslator.Gettext.dgettext("html_live", "چنین نظری وجود ندارد یا ممکن است حذف شده باشد."), send_comment: false)
         |> push_event("jump_to_comment_form", %{})
     end
     {:noreply, socket}
@@ -281,13 +281,13 @@ defmodule MishkaHtmlWeb.BlogPostLive do
          {:ok, :add, :comment, _repo_data} <- Comment.create(%{description: description, sub: socket.assigns.sub, section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
           notify_subscribers({:comment, socket.assigns.page})
             socket
-            |> assign(comment_msg: "نظر شما با موفقیت ارسال شد!!! برای ارسال نظر جدید کلیک کنید.", send_comment: false, sub: nil)
+            |> assign(comment_msg: MishkaTranslator.Gettext.dgettext("html_live", "نظر شما با موفقیت ارسال شد!!! برای ارسال نظر جدید کلیک کنید."), send_comment: false, sub: nil)
             |> assign(description: nil)
             |> push_event("jump_to_comment_form", %{description: nil})
     else
       {:post, true} ->
           socket
-          |> put_flash(:info, "چنین محتوایی وجود ندارد یا حذف شده است.")
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "چنین محتوایی وجود ندارد یا حذف شده است."))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
 
       {:error, :add, :comment, repo_error} ->
@@ -340,7 +340,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     socket = case Post.post(socket.assigns.alias_link, "active") do
       nil ->
         socket
-        |> put_flash(:info, "چنین محتوایی وجود ندارد یا حذف شده است.")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "چنین محتوایی وجود ندارد یا حذف شده است."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
 
       _post ->
@@ -355,7 +355,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     socket = case Post.post(socket.assigns.alias_link, "active") do
       nil ->
         socket
-        |> put_flash(:info, "چنین محتوایی وجود ندارد یا حذف شده است.")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "چنین محتوایی وجود ندارد یا حذف شده است."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
 
       post ->
@@ -385,11 +385,11 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
   def priority(priority) do
     case priority do
-      :none -> "ندارد"
-      :low -> "پایین"
-      :medium -> "متوسط"
-      :high -> "بالا"
-      :featured -> "ویژه"
+      :none -> MishkaTranslator.Gettext.dgettext("html_live", "ندارد")
+      :low -> MishkaTranslator.Gettext.dgettext("html_live", "پایین")
+      :medium -> MishkaTranslator.Gettext.dgettext("html_live", "متوسط")
+      :high -> MishkaTranslator.Gettext.dgettext("html_live", "بالا")
+      :featured -> MishkaTranslator.Gettext.dgettext("html_live", "ویژه")
     end
   end
 

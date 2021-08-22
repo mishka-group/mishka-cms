@@ -56,4 +56,10 @@ defmodule MishkaHtml do
     end)
     |> Enum.filter(& !is_nil(&1))
   end
+
+  import MishkaTranslator.Gettext
+
+  def hello do
+    gettext("Here is one string to html render")
+  end
 end

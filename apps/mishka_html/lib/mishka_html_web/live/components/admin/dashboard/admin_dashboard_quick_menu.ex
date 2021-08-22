@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="col admin-home-quickmenu-center-block vazir">
@@ -10,13 +11,13 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
           <div class="col-sm-6 admin-home-tab">
             <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
               <li class="nav-item " role="presentation">
-                <a class="nav-link active" id="tab1-tab" data-bs-toggle="pill" data-bs-target="#tab1" role="tab" aria-controls="tab1" aria-selected="true">خانه</a>
+                <a class="nav-link active" id="tab1-tab" data-bs-toggle="pill" data-bs-target="#tab1" role="tab" aria-controls="tab1" aria-selected="true"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "خانه") %></a>
               </li>
               <li class="nav-item " role="presentation">
-                <a class="nav-link" id="tab3-tab" data-bs-toggle="pill" data-bs-target="#tab3" role="tab" aria-controls="tab3" aria-selected="false">پشتیبانی</a>
+                <a class="nav-link" id="tab3-tab" data-bs-toggle="pill" data-bs-target="#tab3" role="tab" aria-controls="tab3" aria-selected="false"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "پشتیبانی") %></a>
               </li>
               <li class="nav-item " role="presentation">
-                <a class="nav-link" id="tab2-tab" data-bs-toggle="pill" data-bs-target="#tab2" role="tab" aria-controls="tab2" aria-selected="false">مدیریت پروژه</a>
+                <a class="nav-link" id="tab2-tab" data-bs-toggle="pill" data-bs-target="#tab2" role="tab" aria-controls="tab2" aria-selected="false"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "مدیریت پروژه") %></a>
               </li>
             </ul>
           </div>
@@ -27,9 +28,9 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
 
         <div class="clearfix"></div>
 
-        <h3 class="admin-dashbord-h3-right-side-title vazir">داشبورد مدیریتی</h3>
+        <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "داشبورد مدیریتی") %></h3>
         <span class="admin-dashbord-right-side-text vazir">
-          شما در این بخش می توانید به صورت سریع بخش های مختلف از سایت خود را برای مدیریت انتخاب کنید.
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "شما در این بخش می توانید به صورت سریع بخش های مختلف از سایت خود را برای مدیریت انتخاب کنید.") %>
         </span>
         <div class="clearfix"></div>
         <div class="col space20"> </div>
@@ -54,7 +55,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
               <div class="clearfix"></div>
 
               <span class="text-center rtl vazir admin-home-create-post-title-text">
-                مطالب
+              <%= MishkaTranslator.Gettext.dgettext("html_live_component", "مطالب") %>
               </span>
             </div>
 
@@ -69,7 +70,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
               <div class="clearfix"></div>
 
               <span class="text-center rtl vazir admin-home-create-category-title-text" phx-click="blog-categories" phx-target="<%= @myself %>">
-                مجموعه ها
+              <%= MishkaTranslator.Gettext.dgettext("html_live_component", "مجموعه ها") %>
               </span>
             </div>
 
@@ -84,7 +85,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
               <div class="clearfix"></div>
 
               <span class="text-center rtl vazir admin-home-seo-title-text">
-                تنظیمات سئو
+              <%= MishkaTranslator.Gettext.dgettext("html_live_component", "تنظیمات سئو") %>
               </span>
             </div>
 
@@ -95,7 +96,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
             <%# activity %>
             <div class="col activity-menu vazir">
               <h3 class="text-center activities-title-admin-home"  phx-click="activities" phx-target="<%= @myself %>">
-                <span class="activities-title-admin-home-text">لاگ لحظه ای</span>
+                <span class="activities-title-admin-home-text"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "لاگ لحظه ای") %></span>
 
                 <a class="iconly-bulkArrow---Right-Square"><span class="path1"></span><span class="path2"></span></a>
               </h3>
@@ -137,7 +138,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
                 <div class="clearfix"></div>
 
                 <span class="text-center rtl vazir admin-home-users-text">
-                  مدیریت کاربران
+                <%= MishkaTranslator.Gettext.dgettext("html_live_component", "مدیریت کاربران") %>
                 </span>
                 <div class="clearfix"></div>
             </div>
@@ -154,7 +155,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
                   <div class="clearfix"></div>
 
                   <span class="text-center rtl vazir admin-home-comment-text">
-                    نظر ها
+                  <%= MishkaTranslator.Gettext.dgettext("html_live_component", "نظر ها") %>
                   </span>
                   <div class="clearfix"></div>
                 </div>
@@ -170,7 +171,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
                   <div class="clearfix"></div>
 
                   <span class="text-center rtl vazir admin-home-comment-text">
-                    اشتراک
+                  <%= MishkaTranslator.Gettext.dgettext("html_live_component", "اشتراک") %>
                   </span>
                   <div class="clearfix"></div>
                 </div>
@@ -188,7 +189,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
                   <div class="clearfix"></div>
 
                   <span class="text-center rtl vazir admin-home-comment-text">
-                   آمار و گزارش ها
+                  <%= MishkaTranslator.Gettext.dgettext("html_live_component", "آمار و گزارش ها") %>
                   </span>
                   <div class="clearfix"></div>
                 </div>

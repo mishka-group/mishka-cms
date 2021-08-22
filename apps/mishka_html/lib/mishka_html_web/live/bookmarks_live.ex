@@ -18,7 +18,7 @@ defmodule MishkaHtmlWeb.BookmarksLive do
 
     socket =
       assign(socket,
-        page_title: "مدیریت بوکمارک کاربران",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت بوکمارک کاربران"),
         user_id: user_id,
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
@@ -37,7 +37,7 @@ defmodule MishkaHtmlWeb.BookmarksLive do
     socket = case MishkaContent.Cache.BookmarkManagement.get_record(socket.assigns.user_id, section_id) do
       nil ->
         socket
-        |> put_flash(:warning, "به نظر می رسد بوکمارک مذکور حذف شده است.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live","به نظر می رسد بوکمارک مذکور حذف شده است."))
 
       record ->
         socket
@@ -52,7 +52,7 @@ defmodule MishkaHtmlWeb.BookmarksLive do
     socket = case MishkaContent.Cache.BookmarkManagement.get_record(socket.assigns.user_id, section_id) do
       nil ->
         socket
-        |> put_flash(:warning, "به نظر می رسد بوکمارک مذکور حذف شده است.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live","به نظر می رسد بوکمارک مذکور حذف شده است."))
 
       _record ->
 
@@ -101,7 +101,7 @@ defmodule MishkaHtmlWeb.BookmarksLive do
     socket = case bookmars_paginate(socket.assigns.user_id, socket.assigns.page + 1, socket.assigns.page_size, socket) do
       nil ->
         socket
-        |> put_flash(:warning, "بوکمارک های شما به همین تعداد می باشد")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live","بوکمارک های شما به همین تعداد می باشد"))
         |> assign(next_page: false)
         |> assign(previous_page: true)
 

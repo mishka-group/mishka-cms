@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="col bw admin-blog-post-list">
@@ -8,12 +9,12 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
         <table class="table vazir">
           <thead>
               <tr>
-                <th scope="col" id="div-image">بخش</th>
-                <th scope="col" id="div-title">وضعیت</th>
-                <th scope="col" id="div-category">کاربر</th>
-                <th scope="col" id="div-status">ثبت</th>
-                <th scope="col" id="div-priority">انقضا</th>
-                <th scope="col" id="div-opration">عملیات</th>
+                <th scope="col" id="div-image"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بخش") %></th>
+                <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "وضعیت") %></th>
+                <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "کاربر") %></th>
+                <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ثبت") %></th>
+                <th scope="col" id="div-priority"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "انقضا") %></th>
+                <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "عملیات") %></th>
               </tr>
           </thead>
           <tbody>
@@ -46,7 +47,7 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
 
                   <td class="align-middle text-center">
                     <%= if is_nil(item.expire_time) do %>
-                    <span class="badge rounded-pill bg-secondary"> ندارد </span>
+                    <span class="badge rounded-pill bg-secondary"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ندارد") %> </span>
                     <% else %>
                     <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
                         span_id: "expire_time-#{item.id}-component",
@@ -56,11 +57,11 @@ defmodule MishkaHtmlWeb.Admin.Subscription.ListComponent do
                   </td>
 
                   <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
-                    <%= live_redirect "ویرایش",
+                    <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش"),
                     to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSubscriptionLive, id: item.id),
                     class: "btn btn-outline-info vazir"
                     %>
-                    <a class="btn btn-outline-danger vazir" phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
+                    <a class="btn btn-outline-danger vazir" phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
                   </td>
               </tr>
               <% end %>

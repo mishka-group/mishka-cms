@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     socket =
       assign(socket,
         dynamic_form: [],
-        page_title: "مدیریت ساخت مجموعه",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت ساخت مجموعه"),
         body_color: "#a29ac3cf",
         basic_menu: false,
         options_menu: false,
@@ -42,7 +42,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       {:error, :get_record_by_id, @error_atom} ->
 
         socket
-        |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
 
       {:ok, :get_record_by_id, @error_atom, repo_data} ->
@@ -139,13 +139,13 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{tag_list})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", tag_list: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
 
 
@@ -191,13 +191,13 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{tag_list})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", tag_list: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
     {:noreply, socket}
   end
@@ -452,9 +452,9 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         ])
 
       {:ok, :add, :category, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} درست شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket
-        |> put_flash(:info, "مجموعه با موفقیت ایجاد شد")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "مجموعه با موفقیت ایجاد شد"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
     end
 
@@ -493,14 +493,14 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         ])
 
       {:ok, :edit, :category, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} به روز شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket
-        |> put_flash(:info, "مجموعه به روز رسانی شد")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "مجموعه به روز رسانی شد"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
 
       {:error, :edit, :uuid, _error_tag} ->
         socket
-        |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))
     end
 
@@ -523,80 +523,80 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   def basic_menu_list() do
     [
       %{type: "title", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "text",
       class: "col-sm-4",
-      title: "تیتر",
-      description: "ساخت تیتر مناسب برای مجموعه مورد نظر"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "تیتر"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "ساخت تیتر مناسب برای مجموعه مورد نظر")},
 
       %{type: "status", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       options: [
-        {"غیر فعال", :inactive},
-        {"فعال", :active},
-        {"آرشیو شده", :archived},
-        {"حذف با پرچم", :soft_delete},
+        {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), :inactive},
+        {MishkaTranslator.Gettext.dgettext("html_live", "فعال"), :active},
+        {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), :archived},
+        {MishkaTranslator.Gettext.dgettext("html_live", "حذف با پرچم"), :soft_delete},
       ],
       form: "select",
       class: "col-sm-1",
-      title: "وضعیت",
-      description: "انتخاب نوع وضعیت می توانید بر اساس دسترسی های کاربران باشد یا نمایش یا عدم نمایش مجموعه به کاربران."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "انتخاب نوع وضعیت می توانید بر اساس دسترسی های کاربران باشد یا نمایش یا عدم نمایش مجموعه به کاربران.")},
 
       %{type: "alias_link", status: [
-        %{title: "ضروری", class: "badge bg-danger"},
-        %{title: "یکتا", class: "badge bg-success"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"), class: "badge bg-success"}
       ],
       form: "convert_title_to_link",
       class: "col-sm-3",
-      title: "لینک مجموعه",
-      description: "انتخاب لینک مجموعه برای ثبت و نمایش به کاربر. این فیلد یکتا می باشد."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "لینک مجموعه"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "انتخاب لینک مجموعه برای ثبت و نمایش به کاربر. این فیلد یکتا می باشد.")},
 
       %{type: "meta_keywords", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "پیشنهادی", class: "badge bg-dark"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "add_tag",
       class: "col-sm-4",
-      title: "کلمات کلیدی",
-      description: "انتخاب چندین کلمه کلیدی برای ثبت بهتر مجموعه در موتور های جستجو."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "کلمات کلیدی"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "انتخاب چندین کلمه کلیدی برای ثبت بهتر مجموعه در موتور های جستجو.")},
 
 
       %{type: "description", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "editor",
       class: "col-sm-12",
-      title: "توضیحات",
-      description: "توضیحات اصلی مربوط به مجموعه. این فیلد شامل یک ادیتور نیز می باشد."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات اصلی مربوط به مجموعه. این فیلد شامل یک ادیتور نیز می باشد.")},
 
 
       %{type: "short_description", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "textarea",
       class: "col-sm-6",
-      title: "توضیحات کوتاه",
-      description: "ساخت بلاک توضیحات کوتاه برای مجموعه"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات کوتاه"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "ساخت بلاک توضیحات کوتاه برای مجموعه")},
 
       %{type: "main_image", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "upload",
       class: "col-sm-6",
-      title: "تصویر اصلی",
-      description: "تصویر نمایه مجموعه. این فیلد به صورت تک تصویر می باشد."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "تصویر اصلی"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "تصویر نمایه مجموعه. این فیلد به صورت تک تصویر می باشد.")},
 
 
       %{type: "meta_description", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "پیشنهادی", class: "badge bg-dark"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "textarea",
       class: "col-sm-6",
-      title: "توضیحات متا",
-      description: "توضیحات خلاصه در مورد محتوا که حدود 200 کاراکتر می باشد."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات متا"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات خلاصه در مورد محتوا که حدود 200 کاراکتر می باشد.")},
     ]
   end
 
@@ -604,37 +604,37 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     [
 
       %{type: "header_image", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "پیشنهادی", class: "badge bg-dark"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "upload",
       class: "col-sm-6",
-      title: "تصویر هدر",
-      description: "این تصویر در برخی از قالب ها بالای هدر مجموعه نمایش داده می شود"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "تصویر هدر"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "این تصویر در برخی از قالب ها بالای هدر مجموعه نمایش داده می شود")},
 
 
       %{type: "sub", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "غیر پیشنهادی", class: "badge bg-warning"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"}
       ],
       form: "text_search",
       class: "col-sm-3",
-      title: "زیر مجموعه",
-      description: "شما می توانید به واسطه این فیلد مجموعه جدید را زیر مجموعه دیگری بکنید"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "زیر مجموعه"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "شما می توانید به واسطه این فیلد مجموعه جدید را زیر مجموعه دیگری بکنید")},
 
       %{type: "custom_title", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "غیر پیشنهادی", class: "badge bg-warning"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
       ],
       form: "text",
       class: "col-sm-3",
-      title: "تیتر سفارشی",
-      description: "برای نمایش بهتر در برخی از قالب ها استفاده می گردد"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "تیتر سفارشی"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "برای نمایش بهتر در برخی از قالب ها استفاده می گردد")},
 
       %{type: "robots", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "غیر پیشنهادی", class: "badge bg-warning"},
-        %{title: "هشدار", class: "badge bg-secondary"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "هشدار"), class: "badge bg-secondary"},
       ],
       options: [
         {"IndexFollow", :IndexFollow},
@@ -644,194 +644,194 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       ],
       form: "select",
       class: "col-sm-2",
-      title: "وضعیت رباط ها",
-      description: " انتخاب دسترسی رباط ها برای ثبت محتوای مجموعه. لطفا در صورت نداشتن اطلاعات این فیلد را پر نکنید"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت رباط ها"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", " انتخاب دسترسی رباط ها برای ثبت محتوای مجموعه. لطفا در صورت نداشتن اطلاعات این فیلد را پر نکنید")},
 
       %{type: "category_visibility", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"}
       ],
       options: [
-        {"نمایش", :show},
-        {"مخفی", :invisibel},
-        {"نمایش تست", :test_show},
-        {"مخفی تست", :test_invisibel},
+        {MishkaTranslator.Gettext.dgettext("html_live", "نمایش"), :show},
+        {MishkaTranslator.Gettext.dgettext("html_live", "مخفی"), :invisibel},
+        {MishkaTranslator.Gettext.dgettext("html_live", "نمایش تست"), :test_show},
+        {MishkaTranslator.Gettext.dgettext("html_live", "مخفی تست"), :test_invisibel},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "نمایش مجموعه",
-      description: "نحوه نمایش مجموعه برای مدیریت بهتر دسترسی های کاربران."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نمایش مجموعه"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "نحوه نمایش مجموعه برای مدیریت بهتر دسترسی های کاربران.")},
 
       %{type: "allow_commenting", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "غیر پیشنهادی", class: "badge bg-warning"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "اجازه ارسال نظر",
-      description: "اجازه ارسال نظر از طرف کاربر در پست های تخصیص یافته به این مجموعه"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "اجازه ارسال نظر"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه ارسال نظر از طرف کاربر در پست های تخصیص یافته به این مجموعه")},
 
 
       %{type: "allow_liking", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "غیر پیشنهادی", class: "badge bg-warning"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "اجازه پسند کردن",
-      description: "امکان یا اجازه پسند کردن پست های مربوط به این مجموعه"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "اجازه پسند کردن"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "امکان یا اجازه پسند کردن پست های مربوط به این مجموعه")},
 
       %{type: "allow_printing", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "اجازه پرینت گرفتن",
-      description: "اجازه پرینت گرفتن در صفحه اختصاصی مربوط به پرینت در محتوا"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "اجازه پرینت گرفتن"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه پرینت گرفتن در صفحه اختصاصی مربوط به پرینت در محتوا")},
 
       %{type: "allow_reporting", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "گزارش",
-      description: "اجازه گزارش دادن کاربران در محتوا های تخصیص یافته در این مجموعه."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "گزارش"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه گزارش دادن کاربران در محتوا های تخصیص یافته در این مجموعه.")},
 
       %{type: "allow_social_sharing", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "پیشنهادی", class: "badge bg-dark"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "شبکه های اجتماعی",
-      description: "اجازه فعال سازی دکمه اشتراک گذاری در شبکه های اجتماعی"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "شبکه های اجتماعی"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه فعال سازی دکمه اشتراک گذاری در شبکه های اجتماعی")},
 
       %{type: "allow_subscription", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "اشتراک",
-      description: "اجازه مشترک شدن کاربران در محتوا های تخصیص یافته به این مجموعه"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "اشتراک"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه مشترک شدن کاربران در محتوا های تخصیص یافته به این مجموعه")},
 
       %{type: "allow_bookmarking", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "بوکمارک",
-      description: "اجازه بوک مارک کردن محتوا به وسیله کاربران."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "بوکمارک"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه بوک مارک کردن محتوا به وسیله کاربران.")},
 
       %{type: "allow_notif", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "ناتیفکیشن",
-      description: "اجازه ارسال ناتیفیکیشن به کاربران"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "ناتیفکیشن"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه ارسال ناتیفیکیشن به کاربران")},
 
       %{type: "show_hits", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "نمایش تعداد بازدید",
-      description: "اجازه نمایش تعداد بازدید پست های مربوط به این مجموعه."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نمایش تعداد بازدید"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه نمایش تعداد بازدید پست های مربوط به این مجموعه.")},
 
       %{type: "show_time", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "تاریخ ارسال مطلب",
-      description: "نمایش یا عدم نمایش تاریخ ارسال در پست های تخصیص یافته در این مجموعه"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "تاریخ ارسال مطلب"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "نمایش یا عدم نمایش تاریخ ارسال در پست های تخصیص یافته در این مجموعه")},
 
       %{type: "show_authors", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "نمایش نویسندگان",
-      description: "اجازه نمایش نویسندگان در محتوا های تخصیص یافته به این مجموعه."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نمایش نویسندگان"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه نمایش نویسندگان در محتوا های تخصیص یافته به این مجموعه.")},
 
       %{type: "show_category", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "مجموعه",
-      description: "اجازه نمایش مجموعه در محتوا های تخصیص یافته به این مجموعه"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه نمایش مجموعه در محتوا های تخصیص یافته به این مجموعه")},
 
       %{type: "show_links", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "لینک ها",
-      description: "اجازه نمایش یا عدم نمایش لینک های پیوستی محتوا های تخصیص یافته  به این مجموعه"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "لینک ها"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه نمایش یا عدم نمایش لینک های پیوستی محتوا های تخصیص یافته  به این مجموعه")},
 
       %{type: "show_location", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       options: [
-        {"بله", true},
-        {"خیر", false},
+        {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
+        {MishkaTranslator.Gettext.dgettext("html_live", "خیر"), false},
       ],
       form: "select",
       class: "col-sm-2",
-      title: "نمایش نقشه",
-      description: "اجازه نمایش نقشه در هر محتوا مربوط به این مجموعه."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نمایش نقشه"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "اجازه نمایش نقشه در هر محتوا مربوط به این مجموعه.")},
     ]
   end
 

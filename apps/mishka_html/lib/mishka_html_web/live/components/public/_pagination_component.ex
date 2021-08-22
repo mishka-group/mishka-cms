@@ -17,10 +17,10 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
             </li>
             <% end %>
             <li class="page-item">
-                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= if(@data.page_number + 1 <= @data.total_pages, do: @data.page_number + 1, else: @data.page_number) %>" phx-target="<%= @myself %>">بعدی</a>
+                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= if(@data.page_number + 1 <= @data.total_pages, do: @data.page_number + 1, else: @data.page_number) %>" phx-target="<%= @myself %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بعدی") %></a>
             </li>
             <li class="page-item">
-                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= if(@data.page_number > 1, do: @data.page_number - 1, else: 1) %>" phx-target="<%= @myself %>">قبلی</a>
+                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= if(@data.page_number > 1, do: @data.page_number - 1, else: 1) %>" phx-target="<%= @myself %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "قبلی") %></a>
             </li>
         </ul>
       </nav>

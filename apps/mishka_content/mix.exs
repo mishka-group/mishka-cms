@@ -10,6 +10,7 @@ defmodule MishkaContent.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.11",
+      compilers: [:gettext | Mix.compilers()],
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -18,7 +19,7 @@ defmodule MishkaContent.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :mishka_database, :ecto_sql, :ecto, :phoenix_pubsub, :bamboo, :bamboo_smtp, :phoenix_html],
+      extra_applications: [:logger, :mishka_translator, :mishka_database, :ecto_sql, :ecto, :phoenix_pubsub, :bamboo, :bamboo_smtp, :phoenix_html],
       mod: {MishkaContent.Application, []}
     ]
   end
@@ -31,7 +32,8 @@ defmodule MishkaContent.MixProject do
       {:bamboo, "~> 2.1.0"},
       {:bamboo_smtp, "~> 4.0.1"},
       {:bamboo_phoenix, "~> 1.0.0"},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:mishka_translator, in_umbrella: true}
     ]
   end
 end

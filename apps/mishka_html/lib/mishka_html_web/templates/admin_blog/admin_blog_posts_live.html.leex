@@ -9,15 +9,15 @@
 
             <div class="col vazir text-start top-post-btn">
 
-                <%= live_redirect "مطلب جدید", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive), class: "btn btn-outline-primary" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "مطلب جدید"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive), class: "btn btn-outline-primary" %>
 
-                <%= live_redirect "مجموعه ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive), class: "btn btn-outline-danger" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "مجموعه ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoriesLive), class: "btn btn-outline-danger" %>
 
-                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "نظرات"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-info" %>
 
-                <%= live_redirect "تنظیمات سئو", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "تنظیمات سئو"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
 
-                <%= live_redirect "برچسب ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagsLive), class: "btn btn-outline-warning" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برچسب ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagsLive), class: "btn btn-outline-warning" %>
 
             </div>
         </div>

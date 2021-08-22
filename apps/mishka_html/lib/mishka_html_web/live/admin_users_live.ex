@@ -19,7 +19,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         page: 1,
         open_modal: false,
         component: nil,
-        page_title: "مدیریت کاربران",
+        page_title:  MishkaTranslator.Gettext.dgettext("html_live", "مدیریت کاربران"),
         body_color: "#a29ac3cf",
         users: User.users(conditions: {1, 10}, filters: %{}),
         roles: MishkaUser.Acl.Role.roles(conditions: {1, 10}, filters: %{})
@@ -87,7 +87,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case User.delete(id) do
       {:ok, :delete, :user, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} حذف شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
         user_assign(
           socket,
           params: socket.assigns.filters,
@@ -104,11 +104,11 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
       {:error, :delete, type, :user} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد."))
 
       {:error, :delete, :user, _repo_error} ->
         socket
-        |> put_flash(:error, "خطایی در حذف کاربر اتفاق افتاده است.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در حذف کاربر اتفاق افتاده است."))
     end
 
     {:noreply, socket}

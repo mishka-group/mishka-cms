@@ -93,12 +93,13 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   @request_error_tag :content
   alias MishkaContent.General.Comment
   alias MishkaContent.Blog.BlogLink
+  require MishkaTranslator.Gettext
 
   def posts(params, conn) do
     json_output(conn, params: params, action: :posts)
   end
   def post(nil, conn, _type) do
-    not_available_record(action: :post, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :post, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def post(parametr, conn, %{type: :comment, comment: comment}) do
@@ -114,7 +115,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :post,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت دریافت شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت دریافت شد."),
       post_info: Map.merge(parametr, %{
         comments: %{
           entries: comments.entries,
@@ -135,7 +136,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :post,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت دریافت شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت دریافت شد."),
       post_info: Map.merge(parametr, %{links: links}),
     })
   end
@@ -161,7 +162,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_post({:error, :edit, _, :post}, conn, _allowed_fields) do
-    not_available_record(action: :edit_post, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :edit_post, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_post({:error, :edit, :post, repo_error}, conn, _allowed_fields) do
@@ -175,7 +176,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_post({:error, :edit, _, :post}, conn, _allowed_fields) do
-    not_available_record(action: :delete_post, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_post, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def destroy_post({:ok, :delete, :post, repo_data}, conn, allowed_fields) do
@@ -189,7 +190,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def destroy_post({:error, :delete, _, :post}, conn, _allowed_fields) do
-    not_available_record(action: :destroy_post, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :destroy_post, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def create_category({:error, :add, :category, repo_error}, conn, _allowed_fields) do
@@ -203,7 +204,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_category({:error, :edit, _, :category}, conn, _allowed_fields) do
-    not_available_record(action: :edit_category, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :edit_category, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def edit_category({:ok, :edit, :category, repo_data}, conn, allowed_fields) do
@@ -222,7 +223,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_category({:error, :edit, _, :category}, conn, _allowed_fields) do
-    not_available_record(action: :delete_category, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_category, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_category({:error, :edit, :category, repo_error}, conn, _allowed_fields) do
@@ -236,7 +237,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def destroy_category({:error, :delete, _, :category}, conn, _allowed_fields) do
-    not_available_record(action: :destroy_category, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :destroy_category, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def destroy_category({:ok, :delete, :category, repo_data}, conn, allowed_fields) do
@@ -250,13 +251,13 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :categories,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت دریافت شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت دریافت شد."),
       categories: parametr
     })
   end
 
   def category({:error, _, :category}, conn, _allowed_fields) do
-    not_available_record(action: :category, conn: conn, msg: "خطایی در فراخوانی داده مورد نیاز شما پیش آماده است")
+    not_available_record(action: :category, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "خطایی در فراخوانی داده مورد نیاز شما پیش آماده است"))
   end
 
   def category({:ok, _, :category, category_info}, conn, allowed_fields) do
@@ -265,7 +266,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :category,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت دریافت شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت دریافت شد."),
       category_info: Map.take(category_info, allowed_fields)
     })
   end
@@ -286,7 +287,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :delete_post_like,
       system: @request_error_tag,
-      message: "خطایی در پسند کردن پست مورد نظر پیش آماده است",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "خطایی در پسند کردن پست مورد نظر پیش آماده است"),
       errors: :not_found
     })
   end
@@ -302,11 +303,11 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_post_like({:error, :delete, _, :post_like}, conn, _allowed_fields) do
-    not_available_record(action: :post_like, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :post_like, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def comment(nil, conn, _allowed_fields) do
-    not_available_record(action: :comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :comment, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def comment(parametr, conn, allowed_fields) do
@@ -315,7 +316,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :comment,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت دریافت شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت دریافت شد."),
       comment_info: Map.take(parametr, allowed_fields)
     })
   end
@@ -345,7 +346,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_comment({:error, :edit, _, :comment}, conn, _allowed_fields) do
-    not_available_record(action: :edit_comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :edit_comment, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def like_comment({:ok, :add, :comment_like, repo_data}, conn, allowed_fields) do
@@ -359,7 +360,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_comment_like({:error, :delete, :comment_like, :not_found}, conn, _allowed_fields) do
-    not_available_record(action: :delete_comment_like, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_comment_like, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_comment_like({:error, :delete, :comment_like, repo_error}, conn, _allowed_fields) do
@@ -368,7 +369,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_comment_like({:error, :delete, _, :comment_like}, conn, _allowed_fields) do
-    not_available_record(action: :delete_comment_like, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_comment_like, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_comment_like({:ok, :delete, :comment_like, repo_data}, conn, allowed_fields) do
@@ -377,7 +378,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_comment({:error, :edit, :comment, :not_found}, conn, _allowed_fields) do
-    not_available_record(action: :delete_comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_comment, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_comment({:error, :edit, :comment, repo_error}, conn, _allowed_fields) do
@@ -391,7 +392,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_comment({:error, :edit, _, :comment}, conn, _allowed_fields) do
-    not_available_record(action: :delete_comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_comment, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def destroy_comment({:error, :delete, :comment, repo_error}, conn, _allowed_fields) do
@@ -405,7 +406,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def destroy_comment({:error, :delete, _, :comment}, conn, _allowed_fields) do
-    not_available_record(action: :destroy_comment, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :destroy_comment, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def create_tag({:ok, :add, :blog_tag, repo_data}, conn, allowed_fields) do
@@ -419,7 +420,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_tag({:error, :edit, _, :blog_tag}, conn, _allowed_fields) do
-    not_available_record(action: :edit_tag, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :edit_tag, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def edit_tag({:error, :edit, :blog_tag, repo_error}, conn, _allowed_fields) do
@@ -433,7 +434,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_tag({:error, :delete, _, :blog_tag}, conn, _allowed_fields) do
-    not_available_record(action: :delete_tag, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_tag, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_tag({:error, :delete, :blog_tag, repo_error}, conn, _allowed_fields) do
@@ -457,11 +458,11 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def remove_post_tag({:error, :delete, :blog_tag_mapper, :not_found}, conn, _allowed_fields) do
-    not_available_record(action: :remove_post_tag, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :remove_post_tag, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def remove_post_tag({:error, :delete, _, :blog_tag_mapper}, conn, _allowed_fields) do
-    not_available_record(action: :remove_post_tag, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :remove_post_tag, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def remove_post_tag({:error, :delete, :blog_tag_mapper, repo_error}, conn, _allowed_fields) do
@@ -484,7 +485,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :post_tags,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت دریافت شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت دریافت شد."),
       tags: parametr,
     })
   end
@@ -509,11 +510,11 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_bookmark({:error, :delete, :bookmark, :not_found}, conn, _allowed_fields) do
-    not_available_record(action: :delete_bookmark, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_bookmark, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_bookmark({:error, :delete, _, :bookmark}, conn, _allowed_fields) do
-    not_available_record(action: :delete_bookmark, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_bookmark, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_bookmark({:error, :delete, :bookmark, repo_error}, conn, _allowed_fields) do
@@ -532,11 +533,11 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_subscription({:error, :delete, :subscription, :not_found}, conn, _allowed_fields) do
-    not_available_record(action: :delete_subscription, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_subscription, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_subscription({:error, :delete, _, :subscription}, conn, _allowed_fields) do
-    not_available_record(action: :delete_subscription, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_subscription, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_subscription({:error, :delete, :subscription, repo_error}, conn, _allowed_fields) do
@@ -565,7 +566,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_blog_link({:error, :edit, _, :blog_link}, conn, _allowed_fields) do
-    not_available_record(action: :edit_blog_link, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :edit_blog_link, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def edit_blog_link({:error, :edit, :blog_link, repo_error}, conn, _allowed_fields) do
@@ -574,7 +575,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_blog_link({:error, :delete, _, :blog_link}, conn, _allowed_fields) do
-    not_available_record(action: :delete_blog_link, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_blog_link, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_blog_link({:error, :delete, :blog_link, repo_error}, conn, _allowed_fields) do
@@ -611,7 +612,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: :authors,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت دریافت شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت دریافت شد."),
       authors: parametr,
     })
   end
@@ -627,11 +628,11 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_author({:error, :delete, :blog_author, :not_found}, conn, _allowed_fields) do
-    not_available_record(action: :delete_author, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_author, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_author({:error, :delete, _, :blog_author}, conn, _allowed_fields) do
-    not_available_record(action: :delete_author, conn: conn, msg: "داده مورد نظر وجود ندارد")
+    not_available_record(action: :delete_author, conn: conn, msg: MishkaTranslator.Gettext.dgettext("api_content", "داده مورد نظر وجود ندارد"))
   end
 
   def delete_author({:error, :delete, :blog_author, repo_error}, conn, _allowed_fields) do
@@ -650,7 +651,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: action,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت انجام شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت انجام شد."),
       "#{name}": Map.take(repo_data, allowed_fields)
     })
   end
@@ -661,7 +662,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: action,
       system: @request_error_tag,
-      message: "خطایی در ارسال داده ها پیش آماده است.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "خطایی در ارسال داده ها پیش آماده است."),
       errors: MishkaDatabase.translate_errors(repo_error)
     })
   end
@@ -672,7 +673,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: action,
       system: @request_error_tag,
-      message: "درخواست شما با موفقیت دریافت شد.",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "درخواست شما با موفقیت دریافت شد."),
       entries: params.entries,
       page_number: params.page_number,
       page_size: params.page_size,
@@ -687,7 +688,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
     |> json(%{
       action: action,
       system: @request_error_tag,
-      message: "رکورد مورد نظر وجود ندارد",
+      message: MishkaTranslator.Gettext.dgettext("api_content", "رکورد مورد نظر وجود ندارد"),
       errors: %{id: [msg]}
     })
   end

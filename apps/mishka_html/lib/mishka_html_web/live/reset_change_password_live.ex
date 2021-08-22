@@ -19,7 +19,7 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
 
           Process.send_after(self(), :menu, 100)
           assign(socket,
-            page_title: "تغییر پسورد کاربر",
+            page_title: MishkaTranslator.Gettext.dgettext("html_live", "تغییر پسورد کاربر"),
             seo_tags: seo_tags(socket, random_link),
             body_color: "#40485d",
             user_id: Map.get(session, "user_id"),
@@ -30,7 +30,7 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
     else
       _ ->
         socket
-        |> put_flash(:error, "کد ارسالی شما اشتباه می باشد یا ممکن است منقضی شده باشد. لطفا دوباره تلاش کنید")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کد ارسالی شما اشتباه می باشد یا ممکن است منقضی شده باشد. لطفا دوباره تلاش کنید"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.ResetPasswordLive))
 
     end
@@ -57,46 +57,46 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
         MishkaUser.Acl.AclManagement.stop(user_info.id)
 
         socket
-        |> put_flash(:success, "پسورد شما با موفقیت به روز رسانی شد.")
+        |> put_flash(:success, MishkaTranslator.Gettext.dgettext("html_live", "پسورد شما با موفقیت به روز رسانی شد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.LoginLive))
     else
 
       {:error, :get_record_by_field, _error_tag} ->
 
         socket
-        |> put_flash(:error, "کاربر مورد نظر پیدا نشد یا از قبل حذف شده است")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کاربر مورد نظر پیدا نشد یا از قبل حذف شده است"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.ResetPasswordLive))
 
       {:random_link, true} ->
 
         socket
-        |> put_flash(:error, "کد ارسالی شما اشتباه می باشد یا ممکن است منقضی شده باشد. لطفا دوباره تلاش کنید")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کد ارسالی شما اشتباه می باشد یا ممکن است منقضی شده باشد. لطفا دوباره تلاش کنید"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.ResetPasswordLive))
 
 
       {:error, :edit, :uuid, _error_tag} ->
 
         socket
-        |> put_flash(:error, "کاربر مورد نظر پیدا نشد یا از قبل حذف شده است")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کاربر مورد نظر پیدا نشد یا از قبل حذف شده است"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.ResetPasswordLive))
 
 
       {:error, :edit, :get_record_by_id, _error_tag} ->
 
         socket
-        |> put_flash(:error, "کاربر مورد نظر پیدا نشد یا از قبل حذف شده است")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کاربر مورد نظر پیدا نشد یا از قبل حذف شده است"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.ResetPasswordLive))
 
       {:error, :edit, :user, repo_error} ->
 
         socket
         |> assign(errors: MishkaDatabase.translate_errors(repo_error))
-        |> put_flash(:error, "خطایی در به روز رسانی حساب پیش آمده است.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در به روز رسانی حساب پیش آمده است."))
 
       _ ->
 
         socket
-        |> put_flash(:error, "کد ارسالی شما اشتباه می باشد یا ممکن است منقضی شده باشد. لطفا دوباره تلاش کنید")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کد ارسالی شما اشتباه می باشد یا ممکن است منقضی شده باشد. لطفا دوباره تلاش کنید"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.ResetPasswordLive))
     end
 

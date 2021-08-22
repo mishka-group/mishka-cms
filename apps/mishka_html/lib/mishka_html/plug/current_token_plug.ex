@@ -2,8 +2,9 @@ defmodule MishkaHtml.Plug.CurrentTokenPlug do
   import Plug.Conn
   use MishkaHtmlWeb, :controller
   alias MishkaUser.Token.CurrentPhoenixToken
-
+  require MishkaTranslator.Gettext
   alias MishkaHtmlWeb.Router.Helpers, as: Routes
+
   def init(default), do: default
 
   def call(conn, _default) do
@@ -16,7 +17,7 @@ defmodule MishkaHtml.Plug.CurrentTokenPlug do
         |> delete_session(:current_token)
         |> delete_session(:user_id)
         |> delete_session(:live_socket_id)
-        |> put_flash(:error, "برای دسترسی به این صفحه لطفا وارد سایت شوید")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "برای دسترسی به این صفحه لطفا وارد سایت شوید"))
         |> redirect(to: Routes.auth_path(conn, :login))
         |> halt()
     end

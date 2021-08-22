@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.AdminSeoLive do
   use MishkaHtmlWeb, :live_view
 
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminSeoView, "admin_seo_live.html", assigns)
@@ -9,7 +10,7 @@ defmodule MishkaHtmlWeb.AdminSeoLive do
   @impl true
   def mount(_params, _session, socket) do
     Process.send_after(self(), :menu, 100)
-    {:ok, assign(socket, page_title: "تنظیمات سئو", body_color: "#a29ac3cf")}
+    {:ok, assign(socket, page_title: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات سئو"), body_color: "#a29ac3cf")}
   end
 
   @impl true

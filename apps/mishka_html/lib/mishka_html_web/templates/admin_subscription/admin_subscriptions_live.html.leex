@@ -8,9 +8,9 @@
             </div>
 
             <div class="col vazir text-start top-post-btn">
-                <%= live_redirect "اشتراک جدید", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSubscriptionLive), class: "btn btn-outline-primary" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "اشتراک جدید"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSubscriptionLive), class: "btn btn-outline-primary" %>
 
-                <%= live_redirect "آمار و گزارش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "آمار و گزارش ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
             </div>
         </div>
 
@@ -20,9 +20,9 @@
             <div class="clearfix"></div>
             <div class="row">
               <div class="col">
-              <h3 class="admin-dashbord-h3-right-side-title vazir">اشتراک ها</h3>
+              <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "اشتراک ها") %></h3>
               <span class="admin-dashbord-right-side-text vazir">
-              شما در این بخش می توانید اشتراک های کاربران را مدیریت نمایید.
+              <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید اشتراک های کاربران را مدیریت نمایید.") %>
               </span>
               <div class="space20"></div>
 

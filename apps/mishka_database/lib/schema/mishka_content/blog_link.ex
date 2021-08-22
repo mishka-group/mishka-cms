@@ -1,7 +1,7 @@
 defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
   use Ecto.Schema
 
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -34,9 +34,9 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_required, message: "can't be blank")
+    |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
     |> MishkaDatabase.validate_binary_id(:section_id)
-    |> unique_constraint(:short_link, name: :index_blog_links_on_short_link, message: "this short link has already been taken.")
+    |> unique_constraint(:short_link, name: :index_blog_links_on_short_link, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این لینک کوتاه از قبل انتخاب شده است. لطفا لینک دیگری را وارد کنید."))
   end
 
 end

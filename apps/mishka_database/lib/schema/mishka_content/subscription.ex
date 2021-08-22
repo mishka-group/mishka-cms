@@ -1,7 +1,7 @@
 defmodule MishkaDatabase.Schema.MishkaContent.Subscription do
   use Ecto.Schema
 
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -25,11 +25,11 @@ defmodule MishkaDatabase.Schema.MishkaContent.Subscription do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_required, message: "can't be blank")
+    |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
     |> MishkaDatabase.validate_binary_id(:section_id)
     |> MishkaDatabase.validate_binary_id(:user_id)
-    |> foreign_key_constraint(:user_id, message: "ممکن است کاربر مورد نظر وجود نداشته باشد یا اینکه اگر برای حذف اقدام کرده اید این رکورد در چندجای دیگر استفاده شده است و وابستگی دارد.")
-    |> unique_constraint(:section, name: :index_subscriptions_on_section_and_section_id_and_user_id, message: "you have already been subscriped.")
+    |> foreign_key_constraint(:user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
+    |> unique_constraint(:section, name: :index_subscriptions_on_section_and_section_id_and_user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "شما از قبل در این بخش مشترک شده اید."))
   end
 
 end

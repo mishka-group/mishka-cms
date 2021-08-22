@@ -17,7 +17,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
     socket =
       assign(socket,
         dynamic_form: [],
-        page_title: "ساخت یا ویرایش اشتراک",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "ساخت یا ویرایش اشتراک"),
         body_color: "#a29ac3cf",
         basic_menu: false,
         id: nil,
@@ -33,7 +33,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
     socket = case Subscription.show_by_id(id) do
       {:error, :get_record_by_id, @error_atom} ->
         socket
-        |> put_flash(:warning, "چنین اشتراکی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین اشتراکی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
 
       {:ok, :get_record_by_id, @error_atom, repo_data} ->
@@ -158,13 +158,13 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ") ))
     end
 
     case socket.assigns.id do
@@ -181,13 +181,13 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
 
     {:noreply, socket}
@@ -288,9 +288,9 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :subscription, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "یک اشتراک برای بخش: #{repo_data.section} درست شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک برای بخش: %{title} درست شده است.", title: repo_data.section)})
         socket
-        |> put_flash(:info, "اشتراک مورد نظر ساخته شد.")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "اشتراک مورد نظر ساخته شد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
     end
 
@@ -306,14 +306,14 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
         ])
 
       {:ok, :edit, :subscription, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "یک اشتراک از بهش: #{repo_data.section} به روز شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک از بهش: %{title} به روز شده است.", title: repo_data.section)})
         socket
-        |> put_flash(:info, "اشتراک کاربر مورد نظر به روز رسانی شد")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "اشتراک کاربر مورد نظر به روز رسانی شد"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
 
       {:error, :edit, :uuid, _error_tag} ->
         socket
-        |> put_flash(:warning, "چنین اشتراکی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین اشتراکی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))
     end
 
@@ -323,54 +323,54 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
   def basic_menu_list() do
     [
       %{type: "status", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       options: [
-        {"غیر فعال", :inactive},
-        {"فعال", :active},
-        {"آرشیو شده", :archived},
-        {"حذف با پرچم", :soft_delete},
+        {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), :inactive},
+        {MishkaTranslator.Gettext.dgettext("html_live", "فعال"), :active},
+        {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), :archived},
+        {MishkaTranslator.Gettext.dgettext("html_live", "حذف با پرچم"), :soft_delete},
       ],
       form: "select",
       class: "col-sm-4",
-      title: "وضعیت",
-      description: "وضعیت اشتراک کاربر نسبت به بخش انتخابی"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت اشتراک کاربر نسبت به بخش انتخابی")},
 
       %{type: "section", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       options: [
-        {"مطالب", :blog_post},
+        {MishkaTranslator.Gettext.dgettext("html_live", "مطالب"), :blog_post},
       ],
       form: "select",
       class: "col-sm-4",
-      title: "بخش",
-      description: "بخش مورد نظر اشتراک ثبت شده"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "بخش"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "بخش مورد نظر اشتراک ثبت شده")},
 
       %{type: "section_id", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "text",
       class: "col-sm-3",
-      title: "شناسه بخش",
-      description: "شناسه بخش مورد نظر که باید اشتراک کاربر در آن ثبت گردد"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "شناسه بخش"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "شناسه بخش مورد نظر که باید اشتراک کاربر در آن ثبت گردد")},
 
       %{type: "expire_time", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "غیر پیشنهادی", class: "badge bg-warning"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"}
       ],
       form: "text",
       class: "col-sm-3",
-      title: "انقضا",
-      description: "با تعریف کردن انقضا شما می توانید اشتراک را برای مدت محدودی فعال نمایید."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "انقضا"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "با تعریف کردن انقضا شما می توانید اشتراک را برای مدت محدودی فعال نمایید.")},
 
       %{type: "user_id", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "text_search",
       class: "col-sm-3",
-      title: "شناسه کاربر",
-      description: "هر اشتراکی باید به یک کاربر تخصیص یابد."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "شناسه کاربر"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "هر اشتراکی باید به یک کاربر تخصیص یابد.")},
     ]
   end
 end

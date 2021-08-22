@@ -20,7 +20,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
         open_modal: false,
         component: nil,
         body_color: "#a29ac3cf",
-        page_title: "مدیریت مجموعه ها",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مجموعه ها"),
         categories: Category.categories(conditions: {1, 10}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [categories: []]}
@@ -86,7 +86,11 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case Category.delete(id) do
       {:ok, :delete, :category, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "مجموعه: #{MishkaHtml.title_sanitize(repo_data.title)} حذف شده است."})
+        Notif.notify_subscribers(%{
+          id: repo_data.id,
+          msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} حذف شده است.", title: MishkaHtml.title_sanitize(repo_data.title))
+          }
+        )
         category_assign(
           socket,
           params: socket.assigns.filters,
@@ -104,11 +108,11 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
       {:error, :delete, type, :category} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
 
       {:error, :delete, :category, _repo_error} ->
         socket
-        |> put_flash(:error, "خطا در حذف مجموعه اتفاق افتاده است.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف مجموعه اتفاق افتاده است."))
     end
 
     {:noreply, socket}

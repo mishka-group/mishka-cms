@@ -1,7 +1,7 @@
 defmodule MishkaApi.Plug.AclCheckPlug do
   import Plug.Conn
   use MishkaApiWeb, :controller
-
+  require MishkaTranslator.Gettext
 
   def init(default), do: default
 
@@ -24,10 +24,10 @@ defmodule MishkaApi.Plug.AclCheckPlug do
       {:acl_check, true, nil} -> conn
 
       {:user_id_check, true, nil} ->
-        error_message(conn, 401, "شما به این صفحه دسترسی ندارید.")
+        error_message(conn, 401, MishkaTranslator.Gettext.dgettext("api_auth", "شما به این صفحه دسترسی ندارید."))
 
       {:permittes?, false} ->
-        error_message(conn, 401, "شما به این صفحه دسترسی ندارید.")
+        error_message(conn, 401, MishkaTranslator.Gettext.dgettext("api_auth", "شما به این صفحه دسترسی ندارید."))
     end
   end
 

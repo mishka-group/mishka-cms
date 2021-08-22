@@ -1,7 +1,7 @@
 defmodule MishkaHtml.Plug.AclCheckPlug do
   import Plug.Conn
   use MishkaHtmlWeb, :controller
-
+  require MishkaTranslator.Gettext
   alias MishkaHtmlWeb.Router.Helpers, as: Routes
 
   def init(default), do: default
@@ -26,13 +26,13 @@ defmodule MishkaHtml.Plug.AclCheckPlug do
 
       {:user_id_check, true, nil} ->
         conn
-        |> put_flash(:error, "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما ویرایش شده باشد. دوباره وارد سایت شوید.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما ویرایش شده باشد. دوباره وارد سایت شوید."))
         |> redirect(to: Routes.live_path(conn, MishkaHtmlWeb.HomeLive))
         |> halt()
 
       {:permittes?, false} ->
         conn
-        |> put_flash(:error, "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما ویرایش شده باشد. دوباره وارد سایت شوید.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما ویرایش شده باشد. دوباره وارد سایت شوید."))
         |> redirect(to: Routes.live_path(conn, MishkaHtmlWeb.HomeLive))
         |> halt()
     end

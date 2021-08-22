@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="col bw admin-blog-post-list">
@@ -10,11 +11,11 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
             <table class="table vazir">
                     <thead>
                         <tr>
-                            <th scope="col" id="div-title">بخش</th>
-                            <th scope="col" id="div-category">وضعیت</th>
-                            <th scope="col" id="div-status">کاربر</th>
-                            <th scope="col" id="div-priority">ثبت</th>
-                            <th scope="col" id="div-opration">عملیات</th>
+                            <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بخش") %></th>
+                            <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "وضعیت") %></th>
+                            <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "کاربر") %></th>
+                            <th scope="col" id="div-priority"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ثبت") %></th>
+                            <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "عملیات") %></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,8 +43,8 @@ defmodule MishkaHtmlWeb.Admin.Comment.ListComponent do
                                 class: "btn btn-outline-danger vazir"
                                 %>
 
-                                <a class="btn btn-outline-info vazir", phx-click="dependency" phx-value-id="<%= item.id %>">وابستگی</a>
-                                <a class="btn btn-outline-dark vazir", phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
+                                <a class="btn btn-outline-info vazir", phx-click="dependency" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "وابستگی") %></a>
+                                <a class="btn btn-outline-dark vazir", phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
 
                             </td>
                         </tr>

@@ -14,7 +14,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
       {:ok, :get_record_by_id, _error_tag, _record} ->
         Process.send_after(self(), :menu, 100)
         assign(socket,
-          page_title: "مدیریت نویسندگان",
+          page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت نویسندگان"),
           body_color: "#a29ac3cf",
           authors: Author.authors(post_id),
           search_author: [],
@@ -23,7 +23,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
 
       _ ->
         socket
-        |> put_flash(:error, "چنین مطلبی وجود ندارد یا از قبل حذف شده است.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "چنین مطلبی وجود ندارد یا از قبل حذف شده است."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
     end
 
@@ -35,11 +35,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
     socket = case Author.create(%{post_id: socket.assigns.post_id, user_id: user_id}) do
       {:ok, :add, :blog_author, _record} ->
         socket
-        |> put_flash(:info, "نویسنده با موفقت ثبت شد.")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت ثبت شد."))
 
       _ ->
         socket
-        |> put_flash(:error, "کاربر تکراری امکان ثبت ندارد. یا ممکن است در موقع ثبت کاربر مذکور حذف شده باشد.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کاربر تکراری امکان ثبت ندارد. یا ممکن است در موقع ثبت کاربر مذکور حذف شده باشد."))
     end
     |> push_redirect(to: Routes.live_path(socket, __MODULE__, socket.assigns.post_id))
 
@@ -51,13 +51,13 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
     socket = case Author.delete(id) do
       {:ok, :delete, :blog_author, repo_data} ->
         socket
-        |> put_flash(:info, "نویسنده با موفقت حذف شد")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت حذف شد"))
         |> assign(authors: Author.authors(repo_data.post_id))
 
       _ ->
 
         socket
-        |> put_flash(:warning, "خطایی در حذف نویسنده پیش آمده است.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در حذف نویسنده پیش آمده است."))
     end
 
     {:noreply, socket}

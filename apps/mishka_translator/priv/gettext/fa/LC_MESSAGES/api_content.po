@@ -1,0 +1,64 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fa\n"
+"Plural-Forms: nplurals=1\n"
+
+#, elixir-format
+#: lib/mishka_api/protocols/content_protocol.ex:665
+msgid "خطایی در ارسال داده ها پیش آماده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/content_protocol.ex:260
+msgid "خطایی در فراخوانی داده مورد نیاز شما پیش آماده است"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/content_protocol.ex:290
+msgid "خطایی در پسند کردن پست مورد نظر پیش آماده است"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/content_protocol.ex:102
+#: lib/mishka_api/protocols/content_protocol.ex:165 lib/mishka_api/protocols/content_protocol.ex:179
+#: lib/mishka_api/protocols/content_protocol.ex:193 lib/mishka_api/protocols/content_protocol.ex:207
+#: lib/mishka_api/protocols/content_protocol.ex:226 lib/mishka_api/protocols/content_protocol.ex:240
+#: lib/mishka_api/protocols/content_protocol.ex:306 lib/mishka_api/protocols/content_protocol.ex:310
+#: lib/mishka_api/protocols/content_protocol.ex:349 lib/mishka_api/protocols/content_protocol.ex:363
+#: lib/mishka_api/protocols/content_protocol.ex:372 lib/mishka_api/protocols/content_protocol.ex:381
+#: lib/mishka_api/protocols/content_protocol.ex:395 lib/mishka_api/protocols/content_protocol.ex:409
+#: lib/mishka_api/protocols/content_protocol.ex:423 lib/mishka_api/protocols/content_protocol.ex:437
+#: lib/mishka_api/protocols/content_protocol.ex:461 lib/mishka_api/protocols/content_protocol.ex:465
+#: lib/mishka_api/protocols/content_protocol.ex:513 lib/mishka_api/protocols/content_protocol.ex:517
+#: lib/mishka_api/protocols/content_protocol.ex:536 lib/mishka_api/protocols/content_protocol.ex:540
+#: lib/mishka_api/protocols/content_protocol.ex:569 lib/mishka_api/protocols/content_protocol.ex:578
+#: lib/mishka_api/protocols/content_protocol.ex:631 lib/mishka_api/protocols/content_protocol.ex:635
+msgid "داده مورد نظر وجود ندارد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/content_protocol.ex:654
+msgid "درخواست شما با موفقیت انجام شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/content_protocol.ex:118
+#: lib/mishka_api/protocols/content_protocol.ex:139 lib/mishka_api/protocols/content_protocol.ex:254
+#: lib/mishka_api/protocols/content_protocol.ex:269 lib/mishka_api/protocols/content_protocol.ex:319
+#: lib/mishka_api/protocols/content_protocol.ex:488 lib/mishka_api/protocols/content_protocol.ex:615
+#: lib/mishka_api/protocols/content_protocol.ex:676
+msgid "درخواست شما با موفقیت دریافت شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/content_protocol.ex:691
+msgid "رکورد مورد نظر وجود ندارد"
+msgstr ""

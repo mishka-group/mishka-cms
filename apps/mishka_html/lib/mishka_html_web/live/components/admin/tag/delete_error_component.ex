@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Tag.DeleteErrorComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="error-card-modal col">
@@ -13,7 +14,7 @@ defmodule MishkaHtmlWeb.Admin.Tag.DeleteErrorComponent do
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <span class="error-card-modal-main-text">
-          متاسفانه شما امکان حذف این برچسب را ندارید. به احتمال زیاد از این شناسه در مطالب دیگر سیستم استفاده شده است.
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "متاسفانه شما امکان حذف این برچسب را ندارید. به احتمال زیاد از این شناسه در مطالب دیگر سیستم استفاده شده است.") %>
         </span>
 
         <div class="clearfix"></div>
@@ -21,12 +22,12 @@ defmodule MishkaHtmlWeb.Admin.Tag.DeleteErrorComponent do
         <div class="alert alert-warning d-flex align-items-center" role="alert">
           <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
           <div>
-            لازم به ذکر است در نسخه های بعدی حذف کامل برچسب به علاوه حذف آن در مطالب نیز اضافه می گردد. لذا اگر حذف کامل مدنظر است بایستی اول  در هر مطلب برچسب مورد نظر را حذف کنید و بعد از آن برچسب را حذف نمایید.
+          <%= MishkaTranslator.Gettext.dgettext("html_live_component", "لازم به ذکر است در نسخه های بعدی حذف کامل برچسب به علاوه حذف آن در مطالب نیز اضافه می گردد. لذا اگر حذف کامل مدنظر است بایستی اول  در هر مطلب برچسب مورد نظر را حذف کنید و بعد از آن برچسب را حذف نمایید.") %>
           </div>
         </div>
         <div class="col space30"> </div>
         <div class="modal-close-btn">
-          <button type="button" class="btn btn-danger" phx-click="close_modal">بستن</button>
+          <button type="button" class="btn btn-danger" phx-click="close_modal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بستن") %></button>
         </div>
         </div>
       </div>

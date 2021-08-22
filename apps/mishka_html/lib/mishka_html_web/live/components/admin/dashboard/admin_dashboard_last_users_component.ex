@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     # MishkaHtml.full_name_sanitize(user_full_name)
     ~L"""
@@ -10,7 +11,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent do
           <span class="col-sm-1 iconly-bulkChat">
             <span class="path1"></span><span class="path2"></span>
           </span>
-          <span class="col admin-home-last-comment-title rtl">آخرین ثبت نام ها</span>
+          <span class="col admin-home-last-comment-title rtl"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "آخرین ثبت نام ها") %></span>
         </div>
         </h3>
         <div class="space20"></div>
@@ -19,9 +20,6 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent do
               <li><%= MishkaHtml.full_name_sanitize(user.full_name) %></li>
             <% end %>
           </ul>
-
-
-
       </div>
     """
   end

@@ -18,7 +18,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
 
     socket =
       assign(socket,
-        page_title: "ثبت نام کاربر",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام کاربر"),
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
         changeset: changeset,
@@ -51,7 +51,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
 
         socket =
           socket
-          |> put_flash(:info, "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید.")
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."))
           |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.LoginLive))
 
         {:noreply, socket}

@@ -14,7 +14,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
-        page_title: "مدیریت برچسب ها",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت برچسب ها"),
         body_color: "#a29ac3cf",
         filters: %{},
         page_size: 10,
@@ -90,7 +90,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case Tag.delete(id) do
       {:ok, :delete, :blog_tag, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "برچسب: #{MishkaHtml.title_sanitize(repo_data.title)} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "برچسب: %{title} حذف شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket
         |> tag_assign(params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
 
@@ -103,11 +103,11 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
 
       {:error, :delete, type, :blog_tag} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
 
       {:error, :delete, :blog_tag, _repo_error} ->
         socket
-        |> put_flash(:error, "خطا در حذف برچسب اتفاق افتاده است.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف برچسب اتفاق افتاده است."))
     end
 
     {:noreply, socket}

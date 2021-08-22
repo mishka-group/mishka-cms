@@ -19,7 +19,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
         page: 1,
         open_modal: false,
         component: nil,
-        page_title: "مدیریت اشتراک ها",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت اشتراک ها"),
         body_color: "#a29ac3cf",
         subscriptions: Subscription.subscriptions(conditions: {1, 10}, filters: %{})
       )
@@ -87,7 +87,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case Subscription.delete(id) do
       {:ok, :delete, :subscription, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "یک اشتراک از بخش: #{repo_data.section} حذف شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک از بخش: %{title} حذف شده است.", title: repo_data.section)})
         subscription_assign(
           socket,
           params: socket.assigns.filters,
@@ -104,11 +104,11 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
 
       {:error, :delete, type, :subscription} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
 
       {:error, :delete, :subscription, _repo_error} ->
         socket
-        |> put_flash(:error, "خطا در حذف مجموعه اتفاق افتاده است.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف مجموعه اتفاق افتاده است."))
     end
 
     {:noreply, socket}

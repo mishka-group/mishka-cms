@@ -37,6 +37,7 @@ defmodule MishkaHtmlWeb do
       import Phoenix.Controller,
         only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
 
+      require MishkaTranslator.Gettext
       # Include shared imports and aliases for views
       unquote(view_helpers())
     end
@@ -49,6 +50,7 @@ defmodule MishkaHtmlWeb do
       alias MishkaHtmlWeb.Admin.Public.Notif
       alias MishkaHtmlWeb.Client.Public.ClientMenuAndNotif
       alias MishkaHtmlWeb.Admin.Public.AdminMenu
+      require MishkaTranslator.Gettext
       unquote(view_helpers())
     end
   end
@@ -56,7 +58,7 @@ defmodule MishkaHtmlWeb do
   def live_component do
     quote do
       use Phoenix.LiveComponent
-
+      require MishkaTranslator.Gettext
       unquote(view_helpers())
     end
   end
@@ -85,7 +87,7 @@ defmodule MishkaHtmlWeb do
 
       # Import LiveView helpers (live_render, live_component, live_patch, etc)
       import Phoenix.LiveView.Helpers
-
+      require MishkaTranslator.Gettext
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
 

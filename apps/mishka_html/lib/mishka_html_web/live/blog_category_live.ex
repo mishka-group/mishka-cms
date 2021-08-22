@@ -24,7 +24,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
           assign(socket,
             category_id: record.id,
             alias_link: record.alias_link,
-            page_title: "مطالب مجموعه #{MishkaHtml.title_sanitize(record.title)}",
+            page_title: MishkaTranslator.Gettext.dgettext("html_live", "مطالب مجموعه %{title}", title: MishkaHtml.title_sanitize(record.title)),
             seo_tags: seo_tags(socket, record),
             page_size: 12,
             filters: %{category_id: record.id},
@@ -41,7 +41,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
         socket =
           socket
-          |> put_flash(:info, "چنین مجموعه ای وجود ندارد")
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "چنین مجموعه ای وجود ندارد"))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
         {:ok, socket}
     end
@@ -82,7 +82,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
       {:error, :get_record_by_id, _error_tag} ->
 
         socket
-        |> put_flash(:warning, "به نظر می رسد مطلب مذکور حذف شده است.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به نظر می رسد مطلب مذکور حذف شده است."))
 
       {:ok, :show_by_user_and_post_id, liked_record} ->
         Like.delete(liked_record.id)
@@ -91,12 +91,12 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
       {:error, :show_by_user_and_post_id, :cast_error}  ->
           socket
-          |> put_flash(:warning, "خطایی در دریافت اطلاعات وجود آماده است.")
+          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در دریافت اطلاعات وجود آماده است."))
           |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
       {:user_id, true} ->
         socket
-        |> put_flash(:warning, "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))
     end
 
     {:noreply, socket}
@@ -131,11 +131,11 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
   def priority(priority) do
     case priority do
-      :none -> "ندارد"
-      :low -> "پایین"
-      :medium -> "متوسط"
-      :high -> "بالا"
-      :featured -> "ویژه"
+      :none -> MishkaTranslator.Gettext.dgettext("html_live", "ندارد")
+      :low -> MishkaTranslator.Gettext.dgettext("html_live", "پایین")
+      :medium -> MishkaTranslator.Gettext.dgettext("html_live", "متوسط")
+      :high -> MishkaTranslator.Gettext.dgettext("html_live", "بالا")
+      :featured -> MishkaTranslator.Gettext.dgettext("html_live", "ویژه")
     end
   end
 

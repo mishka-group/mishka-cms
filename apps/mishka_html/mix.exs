@@ -24,7 +24,7 @@ defmodule MishkaHtml.MixProject do
   def application do
     [
       mod: {MishkaHtml.Application, []},
-      extra_applications: [:logger, :runtime_tools, :mishka_user, :mishka_content]
+      extra_applications: [:logger, :runtime_tools, :mishka_user, :mishka_content, :mishka_translator]
     ]
   end
 
@@ -46,14 +46,14 @@ defmodule MishkaHtml.MixProject do
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:mishka_user, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
       {:jalaali, "~> 0.3.0"},
       {:slugify, "~> 1.3"},
-      {:html_sanitize_ex, "~> 1.4"}
+      {:html_sanitize_ex, "~> 1.4"},
+      {:mishka_translator, in_umbrella: true}
     ]
   end
 

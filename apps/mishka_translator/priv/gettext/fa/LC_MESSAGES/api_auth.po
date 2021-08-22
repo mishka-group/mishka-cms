@@ -1,0 +1,277 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fa\n"
+"Plural-Forms: nplurals=1\n"
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:228
+msgid " توکن ارسالی اشتباه می باشد یا منقضی گردیده است"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:535
+msgid ".اطلاعات کاربر مورد نظر با موفقیت ویرایش گردید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:883
+#: lib/mishka_api/protocols/auth_protocol.ex:893
+msgid "اگر برای شما حساب کاربری از قبل ثبت شده باشد به زودی یک ایمیل حاوی لینک حذف توکن های خود دریافت خواهید کرد. لازم به ذکر است هر 6 دقیقه امکان درخواست مجدد برای یک حساب کاربری ممکن می شود"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:848
+msgid "ایمیل غیر فعال سازی حساب کاربری برای شما ارسال گردید. لازم به ذکر هست هر 6 دقیقه شما امکان ارسال ایمیل مجدد لینک غیر فعال سازی را خواهید داشت."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:128
+#: lib/mishka_api/protocols/auth_protocol.ex:138
+msgid "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:496
+msgid "این خطا در زمانی روخ می دهد که توکن ارسالی وجود نداشته باشد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:274
+msgid "این خطا در زمانی روخ می دهد که توکن شما معتبر نباشد یا قبلا از سیستم پاک شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:640
+#: lib/mishka_api/protocols/auth_protocol.ex:706
+msgid "این خطا در زمانی روخ می دهد که حساب کاربری شما در سایت وجود نداشته باشد یا از سیستم حذف گردیده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:454
+msgid "این خطا در زمانی روخ می دهد که کد ریست پسورد اشتباه باشد یا وجود نداشته باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:599
+msgid "این خطا در زمانی روخ می هد که کاربری وجود نداشته باشد یا از سیستم حذف گریده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:168
+msgid "با حساب کاربری شما بیشتر از 5 دستگاه وارد سیستم شدند. برای ورود باید از یکی از دستگاه ها خارج شوید و اگر خودتان وارد نشدید سریعا پسورد خود را تغییر داده و همینطور تمام توکن ها را درحساب کاربری خود حذف نمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:108
+msgid "با موفقیت وارد سیستم شدید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:188
+msgid "توکن ارسالی اشتباه می باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:198
+#: lib/mishka_api/protocols/auth_protocol.ex:208
+msgid "توکن ارسالی ممکن است اشتباه باشد یا از سیستم حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:178
+msgid "توکن ارسالی منقضی شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:513
+msgid "توکن شما با موفقیت از سیستم حذف گردید. باید توجه داشته باشید تمامی دستگاه هایی که از این توکن استفاده می کردند نیز به صورت خودکار خارج شدند و برای ورود مجدد لطفا دوباره در سیستم لاگین کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:243
+#: lib/mishka_api/protocols/auth_protocol.ex:364
+msgid "توکن شما با موفقیت تازه سازی گردید. و توکن قبلی نیز حذف شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:400
+msgid "توکن شما با موفقیت در سیستم اسکن گردید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/plug/access_token_plug.ex:23
+#: lib/mishka_api/plug/access_token_plug.ex:26
+msgid "توکن شما منقضی شده است"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:524
+msgid "توکن های شما با موفقیت حذف گردید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:75
+msgid "ثبت نام شما موفقیت آمیز بود. لطفا به ایمیل خود مراجعه کنید و کد فعال سازی ایمیل را برای تایید حساب کاربری ارسال فرمایید. لازم به ذکر هست کد فعال سازی فقط 5 دقیقه اعتبار دارد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:618
+msgid "حساب شما با موفقیت غیر فعال شد. ایمیلی در رابطه با چگونگی پاک سازی اطلاعات شما ارسال گردیده است. لازم به ذکر هست تمامی دستگاه های آنلاین شما به سیستم نیز خودکار خارج شدند. برای اتصال مجدد دوباره لاگین کنید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:684
+msgid "حساب شما با موفقیت فعال شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:570
+#: lib/mishka_api/protocols/auth_protocol.ex:667
+msgid "حساب کاربری شما از قبل غیر فعال سازی گردیده است. اطلاعات تکمیلی در زمان درخواست غیر فعال سازی برای شما ایمیل گردید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:825
+msgid "حساب کاربری شما از قبل غیر فعال گردیده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:733
+msgid "حساب کاربری شما از قبل فعال سازی گردیده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:747
+msgid "حساب کاربری شما از قبل فعال شده است"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:777
+msgid "حساب کاربری شما از قبل فعال گردیده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:353
+msgid "خطای غیرقابل پیشبینی روخ داده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:56
+#: lib/mishka_api/protocols/auth_protocol.ex:342 lib/mishka_api/protocols/auth_protocol.ex:546
+#: lib/mishka_api/protocols/auth_protocol.ex:629 lib/mishka_api/protocols/auth_protocol.ex:695
+msgid "خطایی در ذخیره سازی داده های شما روخ داده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:434
+#: lib/mishka_api/protocols/auth_protocol.ex:444
+msgid "در صورتی که ایمیل شما در سیستم وجود داشته باشید به زودی کد تغییر پسورد برای شما ایمیل می گردد. لازم به ذکر می باشد شما هر 6 دقیقه امکان ارسال ایمیل مجدد دارید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:264
+msgid "شما با موفقیت از سیستم خارج  شدید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/plug/access_token_plug.ex:20
+msgid "شما به این صفحه دسترسی ندارید لطفا در هنگام ارسال درخواست توکن خود را ارسال فرمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/plug/acl_check_plug.ex:27
+#: lib/mishka_api/plug/acl_check_plug.ex:30
+msgid "شما به این صفحه دسترسی ندارید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:148
+msgid "شما در بیش از ۵ دستگاه لاگین نمودید لطفا از یکی از پلتفرما خارج شوید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:322
+#: lib/mishka_api/protocols/auth_protocol.ex:332
+msgid "شناسه وارد شده کاربر اشتباه می باشد یا از سیستم حذف گردیده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:218
+msgid "لطفا بر اساس مستندات توکن درخواستی را در هدر ارسال نمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:800
+msgid "لینک فعال سازی حساب کاربری برای شما ایمیل  گردید. لطفا ایمیل خود را چک نمایید.لازم به ذکر هست هر 6 دقیقه شما امکان ارسال ایمیل را خواهید داشت."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:478
+msgid "پسورد شما با موفقیت ریست شد و تمامی توکن های ایجاد شده برای حساب کاربری شما نیز منقضی گردید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:292
+msgid "پسورد کاربر با موفقیت تغییر کرد. تمامی توکن های کاربر پاک گردید لطفا دوباره وارد دستگاه های موردنظر خود با پسورد جدید شوید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:312
+msgid "پسورد کنونی شما اشتباه می باشد لطفا با دقت دوباره ارسال فرمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:813
+#: lib/mishka_api/protocols/auth_protocol.ex:860
+msgid "چنین کاربری وجود ندارد یا از سیستم حذف گردیده"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:302
+msgid "چنین کاربری وجود ندارد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:557
+msgid "کاربر مذکور وجود ندارد یا از یستم حذف گردید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:389
+#: lib/mishka_api/protocols/auth_protocol.ex:417
+msgid "کاربر مورد نظر ممکن است از سیستم حذف شده بشد یا دسترسی آن قطع گردیده"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:586
+msgid "کد غیر فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید. لازم به ذکر هست هر 6 دقیقه امکان درخواست مجدد  کد غیر فعال سازی به ایمیل خود را خواهید داشت."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:658
+msgid "کد غیر فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:763
+msgid "کد فعال سازی حساب کاربری برای شما ارسال گردید. لطفا ایمیل خود را چک نمایید.لازم به ذکر هست هر 6 دقیقه امکان ارسال ایمیل مجدد کد فعال سازی را خواهید داشت."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:724
+msgid "کد فعال سازی شما اشتباه است یا در سیستم برای حساب کاربری شما کدی ثبت نشده است. لطفا دوباره درخواست جدید ثبت کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_api/protocols/auth_protocol.ex:649
+#: lib/mishka_api/protocols/auth_protocol.ex:715
+msgid "کد فعال سازی شما منقضی شده است."
+msgstr ""

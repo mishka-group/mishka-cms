@@ -1,6 +1,8 @@
 defmodule MishkaHtmlWeb.Admin.Role.ListComponent do
   use MishkaHtmlWeb, :live_component
 
+
+
   def render(assigns) do
     ~L"""
       <div class="col bw admin-blog-post-list">
@@ -9,10 +11,10 @@ defmodule MishkaHtmlWeb.Admin.Role.ListComponent do
             <table class="table vazir">
                 <thead>
                     <tr>
-                        <th scope="col" id="div-image">نام</th>
-                        <th scope="col" id="div-title">نام نمایش</th>
-                        <th scope="col" id="div-category">ثبت</th>
-                        <th scope="col" id="div-opration">عملیات</th>
+                        <th scope="col" id="div-image"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نام") %></th>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نام نمایش") %></th>
+                        <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ثبت") %></th>
+                        <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "عملیات") %></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,11 +34,11 @@ defmodule MishkaHtmlWeb.Admin.Role.ListComponent do
                         </td>
 
                         <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
-                            <%= live_redirect "مدیریت دسترسی ها",
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "مدیریت دسترسی ها"),
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserRolePermissionsLive, id: item.id),
                             class: "btn btn-outline-info vazir"
                             %>
-                            <a class="btn btn-outline-danger vazir" phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
+                            <a class="btn btn-outline-danger vazir" phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
                         </td>
                     </tr>
                     <% end %>

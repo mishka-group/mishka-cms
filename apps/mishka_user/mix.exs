@@ -19,7 +19,7 @@ defmodule MishkaUser.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :mishka_database, :phoenix, :mnesia, :mishka_content, :mishka_translator],
+      extra_applications: [:logger, :mishka_database, :phoenix, :mnesia, :mishka_content, :mishka_translator, :jose],
       mod: {MishkaUser.Application, []}
     ]
   end
@@ -32,7 +32,8 @@ defmodule MishkaUser.MixProject do
       {:mishka_translator, in_umbrella: true},
       {:plug, "~> 1.11"},
       {:guardian, "~> 2.1"},
-      {:phoenix, "~> 1.5.7"}
+      {:phoenix, "~> 1.5.7"},
+      {:jose, "~> 1.11"}
     ]
   end
 end

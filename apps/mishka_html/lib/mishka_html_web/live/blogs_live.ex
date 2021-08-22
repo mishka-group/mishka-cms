@@ -20,7 +20,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
     user_id = Map.get(session, "user_id")
     socket =
       assign(socket,
-        page_title: "بلاگ",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live","بلاگ"),
         seo_tags: seo_tags(socket),
         page_size: 12,
         filters: %{},
@@ -68,7 +68,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
       {:error, :get_record_by_id, _error_tag} ->
 
         socket
-        |> put_flash(:warning, "به نظر می رسد مطلب مذکور حذف شده است.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live","به نظر می رسد مطلب مذکور حذف شده است."))
 
       {:ok, :show_by_user_and_post_id, liked_record} ->
         Like.delete(liked_record.id)
@@ -77,12 +77,12 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
       {:error, :show_by_user_and_post_id, :cast_error}  ->
           socket
-          |> put_flash(:warning, "خطایی در دریافت اطلاعات وجود آماده است.")
+          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live","خطایی در دریافت اطلاعات وجود آماده است."))
           |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
       {:user_id, true} ->
         socket
-        |> put_flash(:warning, "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live","به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))
     end
 
     {:noreply, socket}
@@ -117,11 +117,11 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   def priority(priority) do
     case priority do
-      :none -> "ندارد"
-      :low -> "پایین"
-      :medium -> "متوسط"
-      :high -> "بالا"
-      :featured -> "ویژه"
+      :none -> MishkaTranslator.Gettext.dgettext("html_live","ندارد")
+      :low -> MishkaTranslator.Gettext.dgettext("html_live","پایین")
+      :medium -> MishkaTranslator.Gettext.dgettext("html_live","متوسط")
+      :high -> MishkaTranslator.Gettext.dgettext("html_live","بالا")
+      :featured -> MishkaTranslator.Gettext.dgettext("html_live","ویژه")
     end
   end
 

@@ -7,10 +7,10 @@
             </div>
 
             <div class="col vazir text-start top-post-btn">
-                <%= live_redirect "برگشت به مطالب" , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive),
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطالب") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive),
                     class: "btn btn-outline-primary" %>
 
-                    <%= live_redirect "برچسب ها" , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagsLive),
+                    <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برچسب ها") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagsLive),
                         class: "btn btn-outline-danger" %>
 
             </div>
@@ -23,13 +23,13 @@
         <div class="row">
             <div class="col">
                 <h3 class="admin-dashbord-h3-right-side-title vazir">
-                    مدیریت برچسب های مطلب
+                    <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مدیریت برچسب های مطلب") %>
                     <%= @page_title %>
                 </h3>
                 <div class="space10"></div>
                 <span class="admin-dashbord-right-side-text vazir">
-                    شما در این بخش می توانید به مطلب مورد نظر یک یا چند برچسب تخصیص بدهید یا از لیست برچسب های مطلب
-                    مذکور موردی که نیاز ندارید را حذف کنید.
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید به مطلب مورد نظر یک یا چند برچسب تخصیص بدهید یا از لیست برچسب های مطلب
+                    مذکور موردی که نیاز ندارید را حذف کنید.") %>
                 </span>
                 <div class="space20"></div>
 
@@ -41,7 +41,7 @@
 
                     <form phx-change="search_tag" id="tag-form">
                         <div class="col-md-4 vazir">
-                            <label for="blogPostTags" class="form-label">جستجو برچسب و اضافه کردن به مطلب</label>
+                            <label for="blogPostTags" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "جستجو برچسب و اضافه کردن به مطلب") %></label>
                             <div class="space10"> </div>
                             <input type="text" class="title-input-text form-control" name="search-tag-title" id="search-tag">
                             <div class="col space10"> </div>
@@ -56,7 +56,7 @@
 
                                             <small class="text-muted">
                                                 <div class="btn btn-outline-primary vazir" phx-click="add_tag" phx-value-id="<%= item.id %>">
-                                                    اضافه کردن
+                                                   <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "اضافه کردن") %>
                                                 </div>
                                             </small>
                                         </div>
@@ -79,10 +79,10 @@
             <table class="table vazir">
                 <thead>
                     <tr>
-                        <th scope="col" id="div-title">تیتر</th>
-                        <th scope="col" id="div-category">تیتر سفارشی</th>
-                        <th scope="col" id="div-status">وضعیت رباط</th>
-                        <th scope="col" id="div-opration">عملیات</th>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "تیتر") %> </th>
+                        <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "تیتر سفارشی") %> </th>
+                        <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "وضعیت رباط") %> </th>
+                        <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "عملیات") %> </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,7 +98,7 @@
                             <%= item.robots %>
                         </td>
                         <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
-                            <a class="btn btn-outline-danger vazir" , phx-click="delete" phx-value-id="<%= item.id %>">حذف برچسب از این مطلب</a>
+                            <a class="btn btn-outline-danger vazir" , phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "حذف برچسب از این مطلب") %></a>
                         </td>
                     </tr>
                     <% end %>

@@ -7,11 +7,11 @@
             </div>
 
             <div class="col vazir text-start top-post-btn">
-                <%= live_redirect "برگشت به نقش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserRolesLive), class: "btn btn-outline-primary" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به نقش ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserRolesLive), class: "btn btn-outline-primary" %>
 
-                <%= live_redirect "برگشت به کاربران", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUsersLive), class: "btn btn-outline-info" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به کاربران"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUsersLive), class: "btn btn-outline-info" %>
 
-                <%= live_redirect "آمار و گزارش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "آمار و گزارش ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
             </div>
         </div>
 
@@ -21,9 +21,9 @@
             <div class="clearfix"></div>
             <div class="row">
               <div class="col">
-              <h3 class="admin-dashbord-h3-right-side-title vazir">دسترسی ها</h3>
+              <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "دسترسی ها") %></h3>
               <span class="admin-dashbord-right-side-text vazir">
-              در این بخش شما امکان اضافه کردن نقش های مورد نیاز خود برای هر نقش را خواهید داشت. بعد از تخصیص هر دسترسی می توانید نقش را به یک کاربر متصل کنید
+              <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "در این بخش شما امکان اضافه کردن نقش های مورد نیاز خود برای هر نقش را خواهید داشت. بعد از تخصیص هر دسترسی می توانید نقش را به یک کاربر متصل کنید") %></span>
               </span>
               <div class="space20"></div>
 
@@ -32,7 +32,7 @@
                     <div class="space40"></div>
                     <hr>
                     <div class="space40"></div>
-                    <h3 class="admin-dashbord-h3-right-side-title vazir">ایجاد دسترسی</h3>
+                    <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "ایجاد دسترسی") %></h3>
                     <%= f = form_for @changeset, "#",
                         phx_submit: "save",
                         multipart: true %>
@@ -41,12 +41,12 @@
                         <div class="row vazir">
 
                             <div class="col-md-3">
-                                <%= label f , "دسترسی" %>
+                                <%= label f , MishkaTranslator.Gettext.dgettext("html_live_templates", "دسترسی") %>
                                 <%= select f, :permission,
                                     [
-                                        {"ویرایش", :edit},
-                                        {"نمایش", :view},
-                                        {"تمام دسترسی ها", :*},
+                                        {MishkaTranslator.Gettext.dgettext("html_live_templates", "ویرایش"), :edit},
+                                        {MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش"), :view},
+                                        {MishkaTranslator.Gettext.dgettext("html_live_templates", "تمام دسترسی ها"), :*},
                                     ],
                                     class: "form-select"
                                 %>
@@ -56,10 +56,10 @@
                                 <%= label f , "انتخاب بخش" %>
                                 <%= select f, :section,
                                     [
-                                        {"مطالب", :blog},
-                                        {"نظرات", :comment},
-                                        {"داشبورد مدیریت", :admin},
-                                        {"تمام بخش ها", :*}
+                                        {MishkaTranslator.Gettext.dgettext("html_live_templates", "مطالب"), :blog},
+                                        {MishkaTranslator.Gettext.dgettext("html_live_templates", "نظرات"), :comment},
+                                        {MishkaTranslator.Gettext.dgettext("html_live_templates", "داشبورد مدیریت"), :admin},
+                                        {MishkaTranslator.Gettext.dgettext("html_live_templates", "تمام بخش ها"), :*}
                                     ],
                                     class: "form-select"
                                 %>
@@ -87,10 +87,10 @@
             <table class="table vazir">
                 <thead>
                     <tr>
-                        <th scope="col" id="div-title">دسترسی</th>
-                        <th scope="col" id="div-category">نام نقش</th>
-                        <th scope="col" id="div-status">نمایش نقش</th>
-                        <th scope="col" id="div-opration">عملیات</th>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "دسترسی") %></th>
+                        <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "نام نقش") %></th>
+                        <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش نقش") %></th>
+                        <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "عملیات") %></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,7 +106,7 @@
                             <%= item.role_display_name %>
                         </td>
                         <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
-                            <a class="btn btn-outline-danger vazir" phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
+                            <a class="btn btn-outline-danger vazir" phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "حذف") %></a>
                         </td>
                     </tr>
                     <% end %>

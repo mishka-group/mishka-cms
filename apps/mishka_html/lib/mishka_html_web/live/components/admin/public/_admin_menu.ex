@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaUser.Token.CurrentPhoenixToken
+
   def mount(_params, session, socket) do
     if connected?(socket), do: subscribe()
     Process.send_after(self(), :update, 10)
@@ -37,9 +38,9 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
       <div class="collapse" id="navbarToggleExternalContent">
         <div class="p-4">
           <div class="col admin-home-quickmenu-top-menu rtl">
-            <%= live_redirect "داشبورد", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminDashboardLive) %>
-            <%= live_redirect "مدیریت فایل", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive) %>
-            <%= live_redirect "سایت", to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive) %>
+            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "داشبورد"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminDashboardLive) %>
+            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "مدیریت فایل"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive) %>
+            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "سایت"), to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive) %>
           </div>
         </div>
       </div>
@@ -105,7 +106,7 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
         {:permittes?, false} ->
 
           socket
-          |> put_flash(:warning, "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید.")
+          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live_component", "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید."))
           |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.HomeLive))
 
       end

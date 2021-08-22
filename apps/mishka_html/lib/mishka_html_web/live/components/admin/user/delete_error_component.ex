@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.User.DeleteErrorComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="error-card-modal col">
@@ -13,10 +14,10 @@ defmodule MishkaHtmlWeb.Admin.User.DeleteErrorComponent do
         <div class="clearfix"></div>
         <div class="col space30"> </div>
         <span class="error-card-modal-main-text">
-          حساب کاربری مهمترین بخش هر سیستم می باشد و وابستگی کامل به تمام بخش هایی که کاربر اطلاعاتی را وارد یا می خواند دارد. لذا به همین دلیل
+          <%= MishkaTranslator.Gettext.dgettext("html_live_component", "حساب کاربری مهمترین بخش هر سیستم می باشد و وابستگی کامل به تمام بخش هایی که کاربر اطلاعاتی را وارد یا می خواند دارد. لذا به همین دلیل
           شما به راحتی نمی توانید حساب کاربر را ببندید. بهترین روند این می باشد که کاربر درخواست حذف حساب خود را ارسال کند و بر اساس یک زمان بندی مشخص
           (به صورت مثال سه ماه بعد از درخواست)
-          سیستم شروع به حذف تمامی اطلاعات مجاز بکند.
+          سیستم شروع به حذف تمامی اطلاعات مجاز بکند.") %>
         </span>
 
         <div class="clearfix"></div>
@@ -24,12 +25,12 @@ defmodule MishkaHtmlWeb.Admin.User.DeleteErrorComponent do
         <div class="alert alert-warning d-flex align-items-center" role="alert">
           <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
           <div>
-            لازم به ذکر هست حذف خودکار به درخواست کاربر در نسخه های بعدی فعال می گردد. به همین ترتیب لطفا از حذف حساب کاربر خودداری فرمایید.
+            <%= MishkaTranslator.Gettext.dgettext("html_live_component", "لازم به ذکر هست حذف خودکار به درخواست کاربر در نسخه های بعدی فعال می گردد. به همین ترتیب لطفا از حذف حساب کاربر خودداری فرمایید.") %>
           </div>
         </div>
         <div class="col space30"> </div>
         <div class="modal-close-btn">
-          <button type="button" class="btn btn-danger" phx-click="close_modal">بستن</button>
+          <button type="button" class="btn btn-danger" phx-click="close_modal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بستن") %></button>
         </div>
         </div>
       </div>

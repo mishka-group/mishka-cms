@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
     socket =
       assign(socket,
         dynamic_form: [],
-        page_title: "ساخت یا ویرایش کاربر",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "ساخت یا ویرایش کاربر"),
         body_color: "#a29ac3cf",
         basic_menu: false,
         id: nil,
@@ -30,7 +30,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
     socket = case User.show_by_id(id) do
       {:error, :get_record_by_id, @error_atom} ->
         socket
-        |> put_flash(:warning, "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
       {:ok, :get_record_by_id, @error_atom, repo_data} ->
@@ -153,13 +153,13 @@ defmodule MishkaHtmlWeb.AdminUserLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
 
     case socket.assigns.id do
@@ -176,13 +176,13 @@ defmodule MishkaHtmlWeb.AdminUserLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
     {:noreply, socket}
   end
@@ -206,10 +206,10 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :user, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} درست شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
         MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
         socket
-        |> put_flash(:info, "کاربر مورد نظر ساخته شد.")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "کاربر مورد نظر ساخته شد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
     end
@@ -226,14 +226,14 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         ])
 
       {:ok, :edit, :user, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "کاربر: #{MishkaHtml.full_name_sanitize(repo_data.full_name)} به روز شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} به روز شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
         socket
-        |> put_flash(:info, "کاربر به روز رسانی شد")
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "کاربر به روز رسانی شد"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
       {:error, :edit, :uuid, _error_tag} ->
         socket
-        |> put_flash(:warning, "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
     end
@@ -289,61 +289,61 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   def basic_menu_list() do
     [
       %{type: "full_name", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "text",
       class: "col-sm-4",
-      title: "نام کامل",
-      description: "ساخت نام کامل کاربر"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نام کامل"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "ساخت نام کامل کاربر")},
 
 
       %{type: "username", status: [
-        %{title: "ضروری", class: "badge bg-danger"},
-        %{title: "یکتا", class: "badge bg-success"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"), class: "badge bg-success"}
       ],
       form: "text",
       class: "col-sm-4",
-      title: "نام کاربری",
-      description: "ساخت نام کاربری کاربر که باید در سیستم یکتا باشد و پیرو قوانین ساخت سایت باشد"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نام کاربری"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "ساخت نام کاربری کاربر که باید در سیستم یکتا باشد و پیرو قوانین ساخت سایت باشد")},
 
       %{type: "email", status: [
-        %{title: "ضروری", class: "badge bg-danger"},
-        %{title: "یکتا", class: "badge bg-success"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"), class: "badge bg-success"}
       ],
       form: "text",
       class: "col-sm-4",
-      title: "ایمیل کاربر",
-      description: "ایمیل کاربر پایه و اساس شناسایی کاربر در سیستم می باشد و همینطور ایمیل برای هر حساب کاربری یکتا می باشد"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "ایمیل کاربر"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "ایمیل کاربر پایه و اساس شناسایی کاربر در سیستم می باشد و همینطور ایمیل برای هر حساب کاربری یکتا می باشد")},
 
       %{type: "status", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       options: [
-        {"ثب نام شده", :registered},
-        {"فعال", :active},
-        {"غیر فعال", :inactive},
-        {"آرشیو شده", :archived},
+        {MishkaTranslator.Gettext.dgettext("html_live", "ثب نام شده"), :registered},
+        {MishkaTranslator.Gettext.dgettext("html_live", "فعال"), :active},
+        {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), :inactive},
+        {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), :archived},
       ],
       form: "select",
       class: "col-sm-4",
-      title: "وضعیت",
-      description: "وضعیت حساب کاربری"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت حساب کاربری")},
 
       %{type: "password", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       form: "text",
       class: "col-sm-4",
-      title: "پسورد",
-      description: "پسورد و گذرواژه کاربر باید پیرو ساخت قوانین سیستم باشد و همینطور در بانک اطلاعاتی به صورت کد شده ذخیره سازی گردد"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "پسورد"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "پسورد و گذرواژه کاربر باید پیرو ساخت قوانین سیستم باشد و همینطور در بانک اطلاعاتی به صورت کد شده ذخیره سازی گردد")},
 
       %{type: "unconfirmed_email", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
       ],
       form: "text",
       class: "col-sm-4",
-      title: "ایمیل فعال سازی",
-      description: "ایمیل فعال سازی فیلدی می باشد که در صورت خالی بود یعنی حساب کاربر یک بار به وسیله ایمیل فعال سازی گردیده است. لطفا با وضعیت کاربر به صورت همزمان بررسی گردد."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "ایمیل فعال سازی"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "ایمیل فعال سازی فیلدی می باشد که در صورت خالی بود یعنی حساب کاربر یک بار به وسیله ایمیل فعال سازی گردیده است. لطفا با وضعیت کاربر به صورت همزمان بررسی گردد.")},
     ]
   end
 end

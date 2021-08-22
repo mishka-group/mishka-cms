@@ -1,5 +1,6 @@
 defmodule MishkaApi.Plug.AccessTokenPlug do
   # use check token with type which is gotten on config file
+  require MishkaTranslator.Gettext
 
   import Plug.Conn
   use MishkaApiWeb, :controller
@@ -16,13 +17,13 @@ defmodule MishkaApi.Plug.AccessTokenPlug do
 
     else
       {:error, :access, :no_header} ->
-        error_message(conn, 401, "شما به این صفحه دسترسی ندارید لطفا در هنگام ارسال درخواست توکن خود را ارسال فرمایید.")
+        error_message(conn, 401, MishkaTranslator.Gettext.dgettext("api_auth", "شما به این صفحه دسترسی ندارید لطفا در هنگام ارسال درخواست توکن خود را ارسال فرمایید."))
 
       {:error, :verify_token, :access, :expired} ->
-        error_message(conn, 401, "توکن شما منقضی شده است")
+        error_message(conn, 401, MishkaTranslator.Gettext.dgettext("api_auth", "توکن شما منقضی شده است"))
 
       _error ->
-        error_message(conn, 401, "توکن شما نامعتبر است")
+        error_message(conn, 401, MishkaTranslator.Gettext.dgettext("api_auth", "توکن شما منقضی شده است"))
     end
   end
 

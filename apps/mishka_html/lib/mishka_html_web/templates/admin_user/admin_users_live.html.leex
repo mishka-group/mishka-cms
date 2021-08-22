@@ -9,13 +9,13 @@
 
             <div class="col vazir text-start top-post-btn">
 
-                <%= live_redirect "ساخت کاربر", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive), class: "btn btn-outline-primary" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "ساخت کاربر"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive), class: "btn btn-outline-primary" %>
 
-                <%= live_redirect "دسترسی ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserRolesLive), class: "btn btn-outline-info" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "دسترسی ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserRolesLive), class: "btn btn-outline-info" %>
 
-                <%= live_redirect "آمار و گزارش ها", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "آمار و گزارش ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSeoLive), class: "btn btn-outline-success" %>
 
-                <%= live_redirect "نظرات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "نظرات"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
             </div>
         </div>
 
@@ -25,9 +25,9 @@
         <div class="clearfix"></div>
         <div class="row">
             <div class="col">
-              <h3 class="admin-dashbord-h3-right-side-title vazir">کاربران</h3>
+              <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "کاربران") %></h3>
               <span class="admin-dashbord-right-side-text vazir">
-              شما در این بخش می توانید کاربران سایت را مدیریت نمایید.
+              <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید کاربران سایت را مدیریت نمایید.") %>
               </span>
               <div class="space20"></div>
             </div>

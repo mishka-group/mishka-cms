@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <div class="col bw admin-blog-post-list table-responsive">
@@ -8,13 +9,13 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
             <table class="table vazir">
                 <thead>
                     <tr>
-                        <th scope="col td-allert warning" id="div-image">تصویر</th>
-                        <th scope="col" id="div-title">تیتر</th>
-                        <th scope="col" id="div-category">مجموعه</th>
-                        <th scope="col" id="div-status">وضعیت</th>
-                        <th scope="col" id="div-priority">اولویت</th>
-                        <th scope="col" id="div-update">به روز رسانی</th>
-                        <th scope="col" id="div-opration">عملیات</th>
+                        <th scope="col td-allert warning" id="div-image"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تصویر") %></th>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تیتر") %>تیتر</th>
+                        <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "مجموعه") %></th>
+                        <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "وضعیت") %></th>
+                        <th scope="col" id="div-priority"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "اولویت") %></th>
+                        <th scope="col" id="div-update"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "به روز رسانی") %></th>
+                        <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "عملیات") %></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,22 +55,22 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                         %>
                         </td>
                         <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
-                            <a class="btn btn-outline-primary vazir", phx-click="delete" phx-value-id="<%= item.id %>">حذف</a>
-                            <%= live_redirect "نظرات",
+                            <a class="btn btn-outline-primary vazir", phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "نظرات"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive, section_id: item.id),
                                 class: "btn btn-outline-success vazir"
                             %>
-                            <%= live_redirect "حذف کامل",
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "حذف کامل"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
                                 class: "btn btn-outline-danger vazir"
                             %>
                             <div class="space10"></div>
                             <div class="clearfix"></div>
-                            <%= live_redirect "نویسندگان",
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "نویسندگان"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostAuthorsLive, item.id),
                                 class: "btn btn-outline-secondary vazir"
                             %>
-                            <%= live_redirect "برچسب ها",
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "برچسب ها"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostTagsLive, item.id),
                                 class: "btn btn-outline-warning vazir"
                             %>

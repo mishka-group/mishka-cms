@@ -1,7 +1,7 @@
 defmodule MishkaDatabase.Schema.MishkaContent.CommentLike do
   use Ecto.Schema
 
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -22,12 +22,12 @@ defmodule MishkaDatabase.Schema.MishkaContent.CommentLike do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_fields, message: "can't be blank")
+    |> validate_required(@all_fields, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
     |> MishkaDatabase.validate_binary_id(:user_id)
     |> MishkaDatabase.validate_binary_id(:comment_id)
-    |> foreign_key_constraint(:user_id, message: "you can't delete it because there is a dependency")
-    |> foreign_key_constraint(:comment_id, message: "you can't delete it because there is a dependency")
-    |> unique_constraint(:user_id, name: :index_comments_on_likes, message: "this comment has already been liked.")
+    |> foreign_key_constraint(:user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
+    |> foreign_key_constraint(:comment_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
+    |> unique_constraint(:user_id, name: :index_comments_on_likes, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این نظر از قبل پسند شده است."))
   end
 
 end

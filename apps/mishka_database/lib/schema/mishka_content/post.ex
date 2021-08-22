@@ -1,7 +1,7 @@
 defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
   use Ecto.Schema
 
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -68,18 +68,18 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@required_fields, message: "can't be blank")
-    |> validate_length(:title, max: 200, message: "maximum 200 characters")
-    |> validate_length(:short_description, max: 350, message: "maximum 350 characters")
-    |> validate_length(:main_image, max: 200, message: "maximum 200 characters")
-    |> validate_length(:header_image, max: 200, message: "maximum 200 characters")
-    |> validate_length(:alias_link, max: 200, message: "maximum 200 characters")
-    |> validate_length(:meta_keywords, max: 200, message: "maximum 200 characters")
-    |> validate_length(:meta_description, max: 164, message: "maximum 164 characters")
-    |> validate_length(:custom_title, max: 200, message: "maximum 200 characters")
+    |> validate_required(@required_fields, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_length(:title, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
+    |> validate_length(:short_description, max: 350, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 350))
+    |> validate_length(:main_image, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
+    |> validate_length(:header_image, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
+    |> validate_length(:alias_link, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
+    |> validate_length(:meta_keywords, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
+    |> validate_length(:meta_description, max: 164, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 164))
+    |> validate_length(:custom_title, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
     |> MishkaDatabase.validate_binary_id(:category_id)
-    |> foreign_key_constraint(:category_id, message: "this post has already been taken or you can't delete it because there is a dependency")
-    |> unique_constraint(:alias_link, name: :index_blog_posts_on_alias_link, message: "this post alias link has already been taken.")
+    |> foreign_key_constraint(:category_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
+    |> unique_constraint(:alias_link, name: :index_blog_posts_on_alias_link, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این لینک قبلا در مطلب دیگری استفاده شده است. لطفا لینک دیگری را انتخاب و ارسال کنید."))
   end
 
 end

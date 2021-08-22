@@ -1,7 +1,7 @@
 defmodule MishkaDatabase.Schema.MishkaUser.User do
   use Ecto.Schema
 
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -33,28 +33,28 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:full_name, :username, :email, :password_hash, :password, :status, :unconfirmed_email])
-    |> validate_required([:full_name, :username, :email, :status], message: "can't be blank")
-    |> validate_length(:full_name, min: 3, max: 60, message: "minimum 3 characters and maximum 20 characters")
-    |> validate_length(:password, min: 8, max: 100, message: "minimum 8 characters and maximum 100 characters")
-    |> validate_length(:username, min: 3, max: 20, message: "minimum 3 characters and maximum 20 characters")
-    |> validate_length(:email, min: 8, max: 50, message: "minimum 8 characters and maximum 50 characters")
+    |> validate_required([:full_name, :username, :email, :status], message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_length(:full_name, min: 3, max: 60, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 60, min_number: 3))
+    |> validate_length(:password, min: 8, max: 100, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 100, min_number: 8))
+    |> validate_length(:username, min: 3, max: 20, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 20, min_number: 3))
+    |> validate_length(:email, min: 8, max: 50, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 50, min_number: 8))
 
     # |> SanitizeStrategy.changeset_input_validation(MishkaAuth.get_config_info(:input_validation_status))
 
 
 
-    |> unique_constraint(:unconfirmed_email, name: :index_users_on_verified_email, message: "this email has already been taken.")
-    |> unique_constraint(:username, name: :index_users_on_username, message: "this username has already been taken.")
-    |> unique_constraint(:email, name: :index_users_on_email, message: "this email has already been taken.")
+    |> unique_constraint(:unconfirmed_email, name: :index_users_on_verified_email, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این ایمیل از قبل در سیستم ثبت شده است."))
+    |> unique_constraint(:username, name: :index_users_on_username, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این نام کاربری از قبل در سیستم ثبت شده است."))
+    |> unique_constraint(:email, name: :index_users_on_email, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این ایمیل از قبل در سیستم ثبت شده است."))
     |> hash_password
   end
 
   def login_changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:email, :password])
-    |> validate_required([:email, :password], message: "can't be blank")
-    |> validate_length(:password, min: 8, max: 100, message: "minimum 8 characters and maximum 100 characters")
-    |> validate_length(:email, min: 8, max: 50, message: "minimum 8 characters and maximum 50 characters")
+    |> validate_required([:email, :password], message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_length(:password, min: 8, max: 100, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 100, min_number: 8))
+    |> validate_length(:email, min: 8, max: 50, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 50, min_number: 8))
   end
 
 

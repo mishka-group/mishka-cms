@@ -1,6 +1,6 @@
 defmodule MishkaDatabase.Schema.MishkaUser.Role do
   use Ecto.Schema
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -18,7 +18,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.Role do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:name, :display_name])
-    |> validate_required([:name, :display_name], message: "can't be blank")
+    |> validate_required([:name, :display_name], message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
   end
 
 end

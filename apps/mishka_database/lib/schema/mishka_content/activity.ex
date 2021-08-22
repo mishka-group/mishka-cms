@@ -1,6 +1,6 @@
 defmodule MishkaDatabase.Schema.MishkaContent.Activity do
   use Ecto.Schema
-
+  require MishkaTranslator.Gettext
 
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -25,7 +25,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_required, message: "can't be blank")
+    |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
     |> MishkaDatabase.validate_binary_id(:section_id)
   end
 

@@ -1,7 +1,7 @@
 defmodule MishkaDatabase.Schema.MishkaContent.Comment do
   use Ecto.Schema
 
-
+  require MishkaTranslator.Gettext
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -33,10 +33,10 @@ defmodule MishkaDatabase.Schema.MishkaContent.Comment do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_required, message: "can't be blank")
-    |> validate_length(:description, min: 5, max: 2000, message: "حداکثر مجاز ارسال نظر 2000 کاراکتر می باشد و حداقل نیز ۵ کاراکتر")
+    |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_length(:description, min: 5, max: 2000, message:  MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
     |> MishkaDatabase.validate_binary_id(:section_id)
     |> MishkaDatabase.validate_binary_id(:sub)
-    |> foreign_key_constraint(:user_id, message: "this comment has already been taken or you can't delete it because there is a dependency")
+    |> foreign_key_constraint(:user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
   end
 end

@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.Client.Login.LoginFormComponent do
   use MishkaHtmlWeb, :live_component
 
+
   def render(assigns) do
     ~L"""
       <main class="form-signin vazir">
@@ -11,7 +12,7 @@ defmodule MishkaHtmlWeb.Client.Login.LoginFormComponent do
 
           <img class="mb-4" src="<%= Routes.static_path(@socket, "/images/icons8-login-as-user-80.png") %>" alt="" width="80" height="80">
           <div class="space10"></div>
-          <h1 class="h3 mb-3 fw-normal">لطفا وارد شوید</h1>
+          <h1 class="h3 mb-3 fw-normal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "لطفا وارد شوید") %></h1>
 
           <div class="space40"></div>
 
@@ -38,17 +39,17 @@ defmodule MishkaHtmlWeb.Client.Login.LoginFormComponent do
 
           <div class="space20"></div>
 
-          <%= submit "ورود به سایت", phx_disable_with: "Login..." , class: "w-100 btn btn-lg btn-primary", disabled: !@changeset.valid? %>
+          <%= submit MishkaTranslator.Gettext.dgettext("html_live_component", "ورود به سایت"), phx_disable_with: "Login..." , class: "w-100 btn btn-lg btn-primary", disabled: !@changeset.valid? %>
 
           <div class="space20"></div>
           <%=
-            live_redirect "ثبت نام در سایت",
+            live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ثبت نام در سایت"),
             to: Routes.live_path(@socket, MishkaHtmlWeb.RegisterLive),
             class: "btn btn-outline-info"
           %>
 
           <%=
-            live_redirect "فراموشی پسورد",
+            live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "فراموشی پسورد"),
             to: Routes.live_path(@socket, MishkaHtmlWeb.ResetPasswordLive),
             class: "btn btn-outline-danger"
           %>

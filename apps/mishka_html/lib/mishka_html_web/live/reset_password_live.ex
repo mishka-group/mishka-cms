@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
-        page_title: "فراموشی پسورد",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "فراموشی پسورد"),
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
         user_id: Map.get(session, "user_id")
@@ -30,17 +30,17 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
          {:ok, :get_record_by_field, :user, _repo_data} <- MishkaUser.User.show_by_email(random_code_info.email) do
 
           socket
-          |> put_flash(:success, "کد ارسالی از طرف شما صحیح می باشد. لطفا پسورد جدید خود را وارد کنید.")
+          |> put_flash(:success, MishkaTranslator.Gettext.dgettext("html_live", "کد ارسالی از طرف شما صحیح می باشد. لطفا پسورد جدید خود را وارد کنید."))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.ResetChangePasswordLive, random_link))
     else
       {:random_code, true, _random_code_info} ->
         socket
-        |> put_flash(:error, "کد ارسالی شما اشتباه می باشد. لطفا دوباره تلاش کنید")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کد ارسالی شما اشتباه می باشد. لطفا دوباره تلاش کنید"))
         |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
       {:error, :get_record_by_field, _error_tag} ->
         socket
-        |> put_flash(:error, "چنین کاربری وجود ندارد یا حذف شده است.")
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "چنین کاربری وجود ندارد یا حذف شده است."))
         |> push_redirect(to: Routes.live_path(socket, __MODULE__))
     end
 
@@ -76,7 +76,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
     socket =
       socket
-      |> put_flash(:info, "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید.")
+      |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."))
       |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
     {:noreply, socket}

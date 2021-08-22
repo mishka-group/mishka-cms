@@ -24,7 +24,7 @@ defmodule MishkaApi.MixProject do
   def application do
     [
       mod: {MishkaApi.Application, []},
-      extra_applications: [:logger, :runtime_tools, :mishka_user, :plug, :mishka_content, :mishka_html]
+      extra_applications: [:logger, :runtime_tools, :mishka_translator, :mishka_user, :plug, :mishka_content, :mishka_html]
     ]
   end
 
@@ -41,13 +41,13 @@ defmodule MishkaApi.MixProject do
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:mishka_user, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
       {:mishka_html, in_umbrella: true},
-      {:plug, "~> 1.11"}
+      {:plug, "~> 1.11"},
+      {:mishka_translator, in_umbrella: true}
     ]
   end
 

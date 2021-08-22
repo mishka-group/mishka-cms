@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
     socket =
       assign(socket,
         dynamic_form: [],
-        page_title: "مدیریت ساخت مجموعه",
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت ساخت مجموعه"),
         body_color: "#a29ac3cf",
         basic_menu: false,
         tags: [],
@@ -34,7 +34,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
       {:error, :get_record_by_id, @error_atom} ->
 
         socket
-        |> put_flash(:warning, "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogTagsLive))
 
       {:ok, :get_record_by_id, @error_atom, repo_data} ->
@@ -73,13 +73,13 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
 
     case socket.assigns.id do
@@ -96,13 +96,13 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
       fields_list ->
 
         socket
-        |> put_flash(:info, "
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
-         (#{MishkaHtml.list_tag_to_string(fields_list, ", ")})
+         (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
-         ")
+         ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
     {:noreply, socket}
   end
@@ -255,10 +255,10 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
         {:noreply, socket}
 
       {:ok, :add, :blog_tag, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: "برچسب: #{MishkaHtml.full_name_sanitize(repo_data.title)} درست شده است."})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "برچسب: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.title))})
         socket =
           socket
-          |> put_flash(:info, "برچسب مورد نظر ساخته شد.")
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "برچسب مورد نظر ساخته شد."))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogTagsLive))
         {:noreply, socket}
     end
@@ -288,7 +288,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
 
         socket =
           socket
-          |> put_flash(:info, "برچسب به روز رسانی شد")
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "برچسب به روز رسانی شد"))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogTagsLive))
 
         {:noreply, socket}
@@ -297,7 +297,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
       {:error, :edit, :uuid, _error_tag} ->
         socket =
           socket
-          |> put_flash(:warning, "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد.")
+          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین برچسبی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogTagsLive))
 
         {:noreply, socket}
@@ -352,43 +352,43 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
   def basic_menu_list() do
     [
       %{type: "title", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "text",
       class: "col-sm-4",
-      title: "تیتر",
-      description: "ساخت تیتر مناسب برای برچسب مورد نظر"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "تیتر"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "ساخت تیتر مناسب برای برچسب مورد نظر")},
 
       %{type: "custom_title", status: [
-        %{title: "ضروری", class: "badge bg-danger"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       form: "text",
       class: "col-sm-4",
-      title: "تیتر سفارشی",
-      description: "ساخت تیتر سفارشی مناسب برای برچسب مورد نظر"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "تیتر سفارشی"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "ساخت تیتر سفارشی مناسب برای برچسب مورد نظر")},
 
       %{type: "alias_link", status: [
-        %{title: "ضروری", class: "badge bg-danger"},
-        %{title: "یکتا", class: "badge bg-success"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"), class: "badge bg-success"}
       ],
       form: "convert_title_to_link",
       class: "col-sm-3",
-      title: "لینک برچسب",
-      description: "انتخاب لینک مجموعه برای ثبت و نمایش به کاربر. این فیلد یکتا می باشد."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "لینک برچسب"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "انتخاب لینک مجموعه برای ثبت و نمایش به کاربر. این فیلد یکتا می باشد.")},
 
       %{type: "meta_keywords", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "پیشنهادی", class: "badge bg-dark"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "add_tag",
       class: "col-sm-4",
-      title: "کلمات کلیدی",
-      description: "انتخاب چندین کلمه کلیدی برای ثبت بهتر مجموعه در موتور های جستجو."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "کلمات کلیدی"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "انتخاب چندین کلمه کلیدی برای ثبت بهتر مجموعه در موتور های جستجو.")},
 
       %{type: "robots", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "غیر پیشنهادی", class: "badge bg-warning"},
-        %{title: "هشدار", class: "badge bg-secondary"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "هشدار"), class: "badge bg-secondary"},
       ],
       options: [
         {"IndexFollow", :IndexFollow},
@@ -398,17 +398,17 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
       ],
       form: "select",
       class: "col-sm-2",
-      title: "وضعیت رباط ها",
-      description: " انتخاب دسترسی رباط ها برای ثبت محتوای داخل. لطفا در صورت نداشتن اطلاعات این فیلد را پر نکنید"},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "وضعیت رباط ها"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", " انتخاب دسترسی رباط ها برای ثبت محتوای داخل. لطفا در صورت نداشتن اطلاعات این فیلد را پر نکنید")},
 
       %{type: "meta_description", status: [
-        %{title: "غیر ضروری", class: "badge bg-info"},
-        %{title: "پیشنهادی", class: "badge bg-dark"}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "textarea",
       class: "col-sm-12",
-      title: "توضیحات متا",
-      description: "توضیحات خلاصه در مورد محتوا که حدود 200 کاراکتر می باشد."},
+      title: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات متا"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات خلاصه در مورد محتوا که حدود 200 کاراکتر می باشد.")},
 
 
     ]

@@ -9,6 +9,11 @@
 # move said applications out of the umbrella.
 use Mix.Config
 
+config :mishka_translator, MishkaTranslator.Gettext,
+  default_locale: "fa",
+  locales: ~w(en fa)
+
+
 config :mishka_api, :auth,
 token_type: :jwt_token
 
@@ -25,28 +30,21 @@ config :mishka_database, MishkaDatabase.Repo,
 config :mishka_database, ecto_repos: [MishkaDatabase.Repo]
 
 
-# config :mishka_html_web,
-#   generators: [context_app: :mishka_html]
-
 # # Configures the endpoint
 config :mishka_html, MishkaHtmlWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "afY0EvH0QD34GEhkEiXGjDAnxp9lskQjRbMQ1K8v69t3ZzPCK8RU+rbD4K3E3yHa",
+  secret_key_base: System.get_env("SECRET_KEY_BASE_HTML"),
   render_errors: [view: MishkaHtmlWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: MishkaHtml.PubSub,
-  live_view: [signing_salt: "wqSr52l4"]
+  live_view: [signing_salt: System.get_env("LIVE_VIEW_SALT")]
 
-
-# config :mishka_api_web,
-#     generators: [context_app: :mishka_api]
 
 
 config :mishka_api, MishkaApiWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "qP5c9diga3k115/empFNEEi/fgwXkhArZvpvFaiLqdi3Um1ntPh0P2AkleLzEpzY",
+  secret_key_base: System.get_env("SECRET_KEY_BASE_API"),
   render_errors: [view: MishkaApiWeb.ErrorView, accepts: ~w(json), layout: false],
-  pubsub_server: MishkaApi.PubSub,
-  live_view: [signing_salt: "e1v5FAl7"]
+  pubsub_server: MishkaApi.PubSub
 
 
 
@@ -55,10 +53,26 @@ config :mishka_user, MishkaUser.Guardian,
   allowed_algos: ["HS256"],
   secret_key: %{
   "alg" => "HS256",
+  # "k" => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
   "k" => "Exe6Qk6YPWWNmOS7rAtXQfPPngruPtEIivDB1nsXwSk",
   "kty" => "oct",
   "use" => "sig"
 }
+
+config :mishka_content, MishkaContent.Email.Mailer,
+  adapter: Bamboo.LocalAdapter
+  # server: "",
+  # hostname: "",
+  # port: 587,
+  # username: "",
+  # password: "",
+  # tls: :if_available,
+  # allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
+  # # ssl: true,
+  # retries: 1,
+  # no_mx_lookups: true,
+  # auth: :always
+
 
 # Configures Elixir's Logger
 config :logger, :console,

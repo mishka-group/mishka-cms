@@ -23,6 +23,10 @@
   font-family: Vazir-Regular;
 }
 
+a.client-post-bot-link {
+  text-decoration: none;
+}
+
 #div-image {
   color: #084298;
   background-color: #cfe2ff;

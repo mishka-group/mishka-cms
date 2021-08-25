@@ -291,7 +291,7 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       options: [
-        {MishkaTranslator.Gettext.dgettext("html_live", "پایین"), :bottem},
+        {MishkaTranslator.Gettext.dgettext("html_live", "پایین"), :bottom},
         {MishkaTranslator.Gettext.dgettext("html_live", "وسط"), :inside},
         {MishkaTranslator.Gettext.dgettext("html_live", "ویژه"), :featured},
       ],

@@ -6,7 +6,7 @@ defenum CategoryVisibility, show: 0, invisibel: 1, test_show: 2, test_invisibel:
 defenum PostVisibility, show: 0, invisibel: 1, test_show: 2, test_invisibel: 3
 defenum CommentSection, blog_post: 0
 defenum SubscriptionSection, blog_post: 0
-defenum BlogLinkType, bottem: 0, inside: 1, featured: 2
+defenum BlogLinkType, bottom: 0, inside: 1, featured: 2
 defenum ActivitiesStatusEnum, error: 0, info: 1, warning: 2, report: 3
 defenum ActivitiesTypeEnum, section: 0, email: 1, internal_api: 2, external_api: 3
 defenum ActivitiesSection, blog_post: 0, blog_category: 1, comment: 2, tag: 3, other: 4

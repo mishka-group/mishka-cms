@@ -550,7 +550,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "category_id", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی", class: "badge bg-warning")}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی", class: "badge bg-dark")}
       ],
       form: "text_search",
       class: "col-sm-3",

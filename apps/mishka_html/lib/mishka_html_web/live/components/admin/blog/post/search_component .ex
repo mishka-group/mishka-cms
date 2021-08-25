@@ -43,7 +43,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.SearchComponent do
               </div>
 
               <div class="col-md-1">
-                <label for="country" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "جستجوی پیشرفته") %>نحوه نمایش</label>
+                <label for="country" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نحوه نمایش") %></label>
                 <div class="col space10"> </div>
                 <select class="form-select" name="post_visibility" id="PostVisibility">
                   <option value=""><%= MishkaTranslator.Gettext.dgettext("html_live_component", "انتخاب") %></option>

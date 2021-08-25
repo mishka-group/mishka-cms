@@ -9,6 +9,9 @@
 
             <div class="col vazir text-start top-post-btn">
 
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطلب") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminLinksLive, @post_id),
+                    class: "btn btn-outline-info" %>
+
                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطالب") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive),
                     class: "btn btn-outline-primary" %>
             </div>

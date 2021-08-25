@@ -5,6 +5,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   alias MishkaContent.Blog.Like
   alias MishkaDatabase.Schema.MishkaContent.Comment, as: CommentSchema
   alias MishkaContent.General.{Comment, CommentLike, Bookmark}
+  alias MishkaContent.Blog.BlogLink
 
 
   # TODO: sharing to social media sites
@@ -42,6 +43,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
         end
 
         Process.send_after(self(), :menu, 100)
+        Process.send_after(self(), {:load_links, post.id}, 4000)
 
         socket =
           assign(socket,
@@ -65,10 +67,11 @@ defmodule MishkaHtmlWeb.BlogPostLive do
             component: nil,
             like: Like.count_post_likes(post.id, Map.get(session, "user_id")),
             sub_comment: %{},
-            bookmark: !is_nil(MishkaContent.Cache.BookmarkManagement.get_record(Map.get(session, "user_id"), post.id))
+            bookmark: !is_nil(MishkaContent.Cache.BookmarkManagement.get_record(Map.get(session, "user_id"), post.id)),
+            links: []
           )
 
-        {:ok, socket, temporary_assigns: [posts: [], comments: []]}
+        {:ok, socket, temporary_assigns: [comments: []]}
     end
 
     socket
@@ -307,6 +310,14 @@ defmodule MishkaHtmlWeb.BlogPostLive do
         section: "blog_post",
         status: "active"
         }, user_id: socket.assigns.user_id)
+    end)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:load_links, section_id}, socket) do
+    socket = update(socket, :links, fn _comments ->
+      BlogLink.links(filters: %{section_id: section_id, type: "bottom"})
     end)
     {:noreply, socket}
   end

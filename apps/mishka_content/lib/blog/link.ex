@@ -10,24 +10,33 @@ defmodule MishkaContent.Blog.BlogLink do
 
   @behaviour MishkaDatabase.CRUD
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_link")
+  end
+
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:blog_link)
   end
 
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
+    |> notify_subscribers(:blog_link)
   end
 
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:blog_link)
   end
 
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
+    |> notify_subscribers(:blog_link)
   end
 
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:blog_link)
   end
 
   def show_by_id(id) do
@@ -65,6 +74,7 @@ defmodule MishkaContent.Blog.BlogLink do
     from [link] in query,
     order_by: [desc: link.inserted_at, desc: link.id],
     select: %{
+      id: link.id,
       short_description: link.short_description,
       status: link.status,
       type: link.type,
@@ -75,6 +85,13 @@ defmodule MishkaContent.Blog.BlogLink do
       section_id: link.section_id,
     }
   end
+
+  def notify_subscribers({:ok, _, :blog_link, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "blog_link", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _), do: params
 
   def allowed_fields(:atom), do: BlogLink.__schema__(:fields)
   def allowed_fields(:string), do: BlogLink.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

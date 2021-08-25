@@ -1,0 +1,107 @@
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row admin-top-page-navigate">
+            <div class="col-sm-5 top-back-admin-menue">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "اضافه کردن لینک") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminLinkLive, @post_id),
+                    class: "btn btn-outline-danger" %>
+
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطالب") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive),
+                    class: "btn btn-outline-primary" %>
+            </div>
+        </div>
+
+
+
+        <div class="space20"></div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col">
+                <h3 class="admin-dashbord-h3-right-side-title vazir">
+                    <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مدیریت لینک ها") %>
+                    <%= @page_title %>
+                </h3>
+                <div class="space10"></div>
+                <span class="admin-dashbord-right-side-text vazir">
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید برای هر مطلب یک سری لینک با توضیحات اضافه کنید که به عنوان پیوست یا نمایش می تواند در تولید محتوا کاربردی باشد") %>
+                </span>
+                <div class="space20"></div>
+
+                <div class="col-sm-12">
+                    <div class="clearfix"></div>
+                    <div class="space40"></div>
+                    <hr>
+                    <div class="space40"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col bw admin-blog-post-list">
+
+
+        <div class="table-responsive">
+            <table class="table vazir">
+                <thead>
+                    <tr>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "تیتر") %> </th>
+                        <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "وضعیت") %> </th>
+                        <th scope="col" id="div-priority"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "نوع لینک") %> </th>
+                        <th scope="col" id="div-update"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "رباط") %> </th>
+                        <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "عملیات") %> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%= for {item, color} <- Enum.zip(@post_links, Stream.cycle(["wlist", "glist"])) do %>
+                    <tr class="blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
+                        <td class="align-middle text-center">
+                            <%= MishkaHtml.title_sanitize(item.title) %>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%
+                            field = Enum.find(MishkaHtmlWeb.AdminLinkLive.basic_menu_list, fn x -> x.type == "status" end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.status end)
+                            %>
+                            <%= title %>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%
+                            field = Enum.find(MishkaHtmlWeb.AdminLinkLive.basic_menu_list, fn x -> x.type == "type" end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.type end)
+                            %>
+                            <%= title %>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%
+                            field = Enum.find(MishkaHtmlWeb.AdminLinkLive.basic_menu_list, fn x -> x.type == "robots" end)
+                            {title, _type} = Enum.find(field.options, fn {_title, type} -> type == item.robots end)
+                            %>
+                            <%= title %>
+                        </td>
+                        <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
+                            <a class="btn btn-outline-danger vazir" , phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "حذف لینک از این مطلب") %></a>
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "ویرایش لینک") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminLinkLive, @post_id, id: item.id),
+                                class: "btn btn-outline-info" %>
+                        </td>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <div class="space20"></div>
+
+        </div>
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

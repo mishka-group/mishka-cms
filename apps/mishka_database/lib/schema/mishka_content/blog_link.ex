@@ -15,7 +15,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
     field(:link, :string, size: 350, null: false)
     field(:short_link, :string, size: 350, null: true)
 
-    field(:robots, ContentRobotsEnum, null: false)
+    field(:robots, ContentRobotsEnum, null: false, default: :IndexFollow)
 
     field(:section_id, :binary_id, null: false)
 

@@ -53,8 +53,7 @@ config :mishka_user, MishkaUser.Guardian,
   allowed_algos: ["HS256"],
   secret_key: %{
   "alg" => "HS256",
-  # "k" => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-  "k" => "Exe6Qk6YPWWNmOS7rAtXQfPPngruPtEIivDB1nsXwSk",
+  "k" => "#{System.get_env("TOKEN_JWT_KEY")}",
   "kty" => "oct",
   "use" => "sig"
 }

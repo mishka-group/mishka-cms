@@ -10,7 +10,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                 <thead>
                     <tr>
                         <th scope="col td-allert warning" id="div-image"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تصویر") %></th>
-                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تیتر") %>تیتر</th>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تیتر") %></th>
                         <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "مجموعه") %></th>
                         <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "وضعیت") %></th>
                         <th scope="col" id="div-priority"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "اولویت") %></th>
@@ -72,7 +72,12 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                             %>
                             <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "برچسب ها"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostTagsLive, item.id),
-                                class: "btn btn-outline-warning vazir"
+                                class: "btn btn-warning vazir"
+                            %>
+
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "لینک ها"),
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminLinksLive, item.id),
+                                class: "btn btn-outline-info vazir"
                             %>
                         </td>
                     </tr>

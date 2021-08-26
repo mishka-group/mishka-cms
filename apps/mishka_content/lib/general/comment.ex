@@ -109,7 +109,7 @@ defmodule MishkaContent.General.Comment do
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
-  @spec comment([{:filters, map()} | {:user_id, data_uuid()}, ...]) :: map() | nil | tuple()
+  @spec comment([{:filters, map()} | {:user_id, data_uuid()}, ...]) :: map() | nil
   def comment(filters: filters, user_id: user_id) do
     user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
 

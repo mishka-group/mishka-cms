@@ -139,7 +139,7 @@ defmodule MishkaContent.Blog.Post do
     }
   end
 
-  @spec post(String.t(), String.t() | atom()) :: map() | list() | nil
+  @spec post(String.t(), String.t() | atom()) :: map() | nil
   def post(alias_link, status) do
     # when this project has many records as like, I think like counter should be seprated or create a
     # lazy query instead of this

@@ -15,6 +15,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.Role do
     timestamps(type: :utc_datetime)
   end
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:name, :display_name])

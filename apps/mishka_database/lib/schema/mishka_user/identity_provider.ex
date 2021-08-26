@@ -18,6 +18,8 @@ defmodule MishkaDatabase.Schema.MishkaUser.IdentityProvider do
 
   @all_fields ~w(provider_uid token user_id identity_provider)a
   @required_fields ~w(user_id identity_provider)a
+
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

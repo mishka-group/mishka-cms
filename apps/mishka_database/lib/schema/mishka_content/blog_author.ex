@@ -13,7 +13,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogAuthor do
     timestamps(type: :utc_datetime)
   end
 
-
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:post_id, :user_id])

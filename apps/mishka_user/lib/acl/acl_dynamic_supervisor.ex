@@ -1,11 +1,11 @@
 defmodule MishkaUser.Acl.AclDynamicSupervisor do
 
+  @spec start_job(map() | list() | tuple()) :: :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
   def start_job(args) do
     DynamicSupervisor.start_child(MishkaUser.Acl.AclOtpRunner, {MishkaUser.Acl.AclManagement, args})
   end
 
   @spec running_imports :: [any]
-
   def running_imports() do
     match_all = {:"$1", :"$2", :"$3"}
     guards = [{:"==", :"$3", "user_permission"}]
@@ -15,7 +15,6 @@ defmodule MishkaUser.Acl.AclDynamicSupervisor do
 
 
   @spec get_user_pid(String.t()) :: {:error, :get_user_pid} | {:ok, :get_user_pid, pid}
-
   def get_user_pid(user_id) do
     case Registry.lookup(MishkaUser.Acl.AclRegistry, user_id) do
       [] -> {:error, :get_user_pid}

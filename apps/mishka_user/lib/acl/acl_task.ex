@@ -2,14 +2,20 @@ defmodule MishkaUser.Acl.AclTask do
   use GenServer
   require Logger
 
+  @type data_uuid() :: Ecto.UUID.t
+
+
+  @spec start_link(keyword() | list() | tuple() | map()) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
+  @spec update_role(data_uuid()) :: :ok
   def update_role(role_id) do
     GenServer.cast(__MODULE__, {:update_role, role_id})
   end
 
+  @spec delete_role(data_uuid()) :: :ok
   def delete_role(role_id) do
     GenServer.cast(__MODULE__, {:delete_role, role_id})
   end

@@ -11,12 +11,12 @@ msgid ""
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/user.ex:46 lib/schema/mishka_user/user.ex:48
+#: lib/schema/mishka_user/user.ex:47 lib/schema/mishka_user/user.ex:49
 msgid "این ایمیل از قبل در سیستم ثبت شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/bookmark.ex:31
+#: lib/schema/mishka_content/bookmark.ex:32
 msgid "این بخش قبلا بوکمارک شده است"
 msgstr ""
 
@@ -26,49 +26,49 @@ msgid "این برچسب از قبل اضافه شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/user_role.ex:25
+#: lib/schema/mishka_user/user_role.ex:26
 msgid "این حساب کربری از قبل در سیستم ثبت شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/identity_provider.ex:27
-#: lib/schema/mishka_user/identity_provider.ex:28
+#: lib/schema/mishka_user/identity_provider.ex:29
+#: lib/schema/mishka_user/identity_provider.ex:30
 msgid "این خدمات دهنده برای حساب کاربری ارسال شده از قبل در سیستم ثبت نام شده است"
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/permission.ex:21
+#: lib/schema/mishka_user/permission.ex:22
 msgid "این سطح دسترسی از قبل برای نقش مذکور اضافه شده است"
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/blog_tag.ex:36
+#: lib/schema/mishka_content/blog_tag.ex:37
 msgid "این لینک از قبل انتخاب شده است لطفا لینک دیگیری وارد کنید"
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/post.ex:82
+#: lib/schema/mishka_content/post.ex:83
 msgid "این لینک قبلا در مطلب دیگری استفاده شده است. لطفا لینک دیگری را انتخاب و ارسال کنید."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/blog_link.ex:39
+#: lib/schema/mishka_content/blog_link.ex:40
 msgid "این لینک کوتاه از قبل انتخاب شده است. لطفا لینک دیگری را وارد کنید."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/blog_like.ex:31
-#: lib/schema/mishka_content/post_like.ex:30
+#: lib/schema/mishka_content/blog_like.ex:32
+#: lib/schema/mishka_content/post_like.ex:31
 msgid "این مطلب از قبل پسند شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/user.ex:47
+#: lib/schema/mishka_user/user.ex:48
 msgid "این نام کاربری از قبل در سیستم ثبت شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/comment_like.ex:30
+#: lib/schema/mishka_content/comment_like.ex:31
 msgid "این نظر از قبل پسند شده است."
 msgstr ""
 
@@ -78,58 +78,58 @@ msgid "این نویسنده از قبل اضافه شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/blog_tag.ex:31
-#: lib/schema/mishka_content/blog_tag.ex:32 lib/schema/mishka_content/blog_tag.ex:33
-#: lib/schema/mishka_content/blog_tag.ex:34 lib/schema/mishka_content/blog_tag.ex:35
-#: lib/schema/mishka_content/category.ex:62 lib/schema/mishka_content/category.ex:63
-#: lib/schema/mishka_content/category.ex:64 lib/schema/mishka_content/category.ex:65
-#: lib/schema/mishka_content/category.ex:66 lib/schema/mishka_content/category.ex:67
-#: lib/schema/mishka_content/category.ex:68 lib/schema/mishka_content/category.ex:69
-#: lib/schema/mishka_content/comment.ex:37 lib/schema/mishka_content/post.ex:72 lib/schema/mishka_content/post.ex:73
-#: lib/schema/mishka_content/post.ex:74 lib/schema/mishka_content/post.ex:75 lib/schema/mishka_content/post.ex:76
-#: lib/schema/mishka_content/post.ex:77 lib/schema/mishka_content/post.ex:78 lib/schema/mishka_content/post.ex:79
+#: lib/schema/mishka_content/blog_tag.ex:32
+#: lib/schema/mishka_content/blog_tag.ex:33 lib/schema/mishka_content/blog_tag.ex:34
+#: lib/schema/mishka_content/blog_tag.ex:35 lib/schema/mishka_content/blog_tag.ex:36
+#: lib/schema/mishka_content/category.ex:63 lib/schema/mishka_content/category.ex:64
+#: lib/schema/mishka_content/category.ex:65 lib/schema/mishka_content/category.ex:66
+#: lib/schema/mishka_content/category.ex:67 lib/schema/mishka_content/category.ex:68
+#: lib/schema/mishka_content/category.ex:69 lib/schema/mishka_content/category.ex:70
+#: lib/schema/mishka_content/comment.ex:38 lib/schema/mishka_content/post.ex:73 lib/schema/mishka_content/post.ex:74
+#: lib/schema/mishka_content/post.ex:75 lib/schema/mishka_content/post.ex:76 lib/schema/mishka_content/post.ex:77
+#: lib/schema/mishka_content/post.ex:78 lib/schema/mishka_content/post.ex:79 lib/schema/mishka_content/post.ex:80
 msgid "حداکثر تعداد کاراکتر های مجاز %{number} می باشد"
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/user.ex:37 lib/schema/mishka_user/user.ex:38
-#: lib/schema/mishka_user/user.ex:39 lib/schema/mishka_user/user.ex:40 lib/schema/mishka_user/user.ex:56
-#: lib/schema/mishka_user/user.ex:57
+#: lib/schema/mishka_user/user.ex:38 lib/schema/mishka_user/user.ex:39
+#: lib/schema/mishka_user/user.ex:40 lib/schema/mishka_user/user.ex:41 lib/schema/mishka_user/user.ex:57
+#: lib/schema/mishka_user/user.ex:58
 msgid "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}"
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/subscription.ex:32
+#: lib/schema/mishka_content/subscription.ex:33
 msgid "شما از قبل در این بخش مشترک شده اید."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/activity.ex:28
-#: lib/schema/mishka_content/blog_author.ex:20 lib/schema/mishka_content/blog_like.ex:26
-#: lib/schema/mishka_content/blog_link.ex:37 lib/schema/mishka_content/blog_tag.ex:30
-#: lib/schema/mishka_content/blog_tag_mapper.ex:21 lib/schema/mishka_content/bookmark.ex:27
-#: lib/schema/mishka_content/category.ex:61 lib/schema/mishka_content/comment.ex:36
-#: lib/schema/mishka_content/comment_like.ex:25 lib/schema/mishka_content/notif.ex:29 lib/schema/mishka_content/post.ex:71
-#: lib/schema/mishka_content/post_like.ex:25 lib/schema/mishka_content/subscription.ex:28
-#: lib/schema/mishka_user/identity_provider.ex:24 lib/schema/mishka_user/permission.ex:18 lib/schema/mishka_user/role.ex:21
-#: lib/schema/mishka_user/user.ex:36 lib/schema/mishka_user/user.ex:55 lib/schema/mishka_user/user_role.ex:20
+#: lib/schema/mishka_content/activity.ex:29
+#: lib/schema/mishka_content/blog_author.ex:20 lib/schema/mishka_content/blog_like.ex:27
+#: lib/schema/mishka_content/blog_link.ex:38 lib/schema/mishka_content/blog_tag.ex:31
+#: lib/schema/mishka_content/blog_tag_mapper.ex:21 lib/schema/mishka_content/bookmark.ex:28
+#: lib/schema/mishka_content/category.ex:62 lib/schema/mishka_content/comment.ex:37
+#: lib/schema/mishka_content/comment_like.ex:26 lib/schema/mishka_content/notif.ex:30 lib/schema/mishka_content/post.ex:72
+#: lib/schema/mishka_content/post_like.ex:26 lib/schema/mishka_content/subscription.ex:29
+#: lib/schema/mishka_user/identity_provider.ex:26 lib/schema/mishka_user/permission.ex:19 lib/schema/mishka_user/role.ex:22
+#: lib/schema/mishka_user/user.ex:37 lib/schema/mishka_user/user.ex:56 lib/schema/mishka_user/user_role.ex:21
 msgid "فیلد مذکور نمی تواند خالی باشد"
 msgstr ""
 
 #, elixir-format
 #: lib/schema/mishka_content/blog_author.ex:23
-#: lib/schema/mishka_content/blog_author.ex:24 lib/schema/mishka_content/blog_like.ex:29
-#: lib/schema/mishka_content/blog_like.ex:30 lib/schema/mishka_content/blog_tag_mapper.ex:24
-#: lib/schema/mishka_content/blog_tag_mapper.ex:25 lib/schema/mishka_content/bookmark.ex:30
-#: lib/schema/mishka_content/comment.ex:40 lib/schema/mishka_content/comment_like.ex:28
-#: lib/schema/mishka_content/comment_like.ex:29 lib/schema/mishka_content/notif.ex:32 lib/schema/mishka_content/post.ex:81
-#: lib/schema/mishka_content/post_like.ex:28 lib/schema/mishka_content/post_like.ex:29
-#: lib/schema/mishka_content/subscription.ex:31 lib/schema/mishka_user/identity_provider.ex:26
-#: lib/schema/mishka_user/permission.ex:20 lib/schema/mishka_user/user_role.ex:23 lib/schema/mishka_user/user_role.ex:24
+#: lib/schema/mishka_content/blog_author.ex:24 lib/schema/mishka_content/blog_like.ex:30
+#: lib/schema/mishka_content/blog_like.ex:31 lib/schema/mishka_content/blog_tag_mapper.ex:24
+#: lib/schema/mishka_content/blog_tag_mapper.ex:25 lib/schema/mishka_content/bookmark.ex:31
+#: lib/schema/mishka_content/comment.ex:41 lib/schema/mishka_content/comment_like.ex:29
+#: lib/schema/mishka_content/comment_like.ex:30 lib/schema/mishka_content/notif.ex:33 lib/schema/mishka_content/post.ex:82
+#: lib/schema/mishka_content/post_like.ex:29 lib/schema/mishka_content/post_like.ex:30
+#: lib/schema/mishka_content/subscription.ex:32 lib/schema/mishka_user/identity_provider.ex:28
+#: lib/schema/mishka_user/permission.ex:21 lib/schema/mishka_user/user_role.ex:24 lib/schema/mishka_user/user_role.ex:25
 msgid "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/category.ex:71
+#: lib/schema/mishka_content/category.ex:72
 msgid "چنین لینکی قبلا برای یک مجموعه دیگر انتخاب شده است. لطفا لینک دیگری را ارسال کنید."
 msgstr ""

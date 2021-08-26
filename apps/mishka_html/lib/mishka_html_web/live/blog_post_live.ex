@@ -173,15 +173,13 @@ defmodule MishkaHtmlWeb.BlogPostLive do
           notify_subscribers({:bookmark_post, socket.assigns.page})
           socket
     else
+      {:user_id, true} ->
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "لطفا برای بوکمارک کردن این مطلب وارد وب سایت شوید"))
 
       {:error, :get_record_by_id, _error_tag} ->
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به نظر می رسد مطلب مذکور حذف شده است."))
-
-
-      {:user_id, true} ->
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "لطفا برای بوکمارک کردن این مطلب وارد وب سایت شوید"))
 
       {:error, :add, :bookmark, _changeset} ->
         Bookmark.delete(socket.assigns.user_id, socket.assigns.id)
@@ -224,6 +222,11 @@ defmodule MishkaHtmlWeb.BlogPostLive do
       {:user_id, true} ->
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))
+
+       _ ->
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در دریافت اطلاعات وجود آماده است."))
+        |> push_redirect(to: Routes.live_path(socket, __MODULE__))
     end
 
     {:noreply, socket}
@@ -247,6 +250,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
         CommentLike.delete(liked_record.id)
         notify_subscribers({:liked_comment, socket.assigns.page})
         socket
+
       _n ->
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))

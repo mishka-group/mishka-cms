@@ -30,13 +30,14 @@ msgid "ارسال"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_blog/blog_post_live.html.leex:136
+#: lib/mishka_html_web/templates/client_blog/blog_post_live.html.leex:156
 msgid "ارسال نظر"
 msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_blog_category_live.html.leex:229 lib/mishka_html_web/templates/admin_blog/admin_blog_post_live.html.leex:229
-#: lib/mishka_html_web/templates/admin_blog/admin_blog_tag_live.html.leex:173 lib/mishka_html_web/templates/admin_comment/admin_comment_live.html.leex:147
+#: lib/mishka_html_web/templates/admin_blog/admin_blog_tag_live.html.leex:173 lib/mishka_html_web/templates/admin_blog/admin_link_live.html.leex:94
+#: lib/mishka_html_web/templates/admin_comment/admin_comment_live.html.leex:147
 #: lib/mishka_html_web/templates/admin_subscription/admin_subscription_live.html.leex:145 lib/mishka_html_web/templates/admin_user/admin_user_live.html.leex:146
 #: lib/mishka_html_web/templates/admin_user/admin_user_role_live.html.leex:75
 msgid "از کلید های بالا می توانید فرم های مورد نظر خود را اضافه کنید."
@@ -99,7 +100,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_blog_post_live.html.leex:12
-#: lib/mishka_html_web/templates/admin_blog/admin_blog_post_tags_live.html.leex:10
+#: lib/mishka_html_web/templates/admin_blog/admin_blog_post_tags_live.html.leex:10 lib/mishka_html_web/templates/admin_blog/admin_link_live.html.leex:15
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:13
 msgid "برگشت به مطالب"
 msgstr ""
 
@@ -157,7 +159,7 @@ msgid "تنظیمات سئو"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/admin_blog/admin_blog_post_tags_live.html.leex:82
+#: lib/mishka_html_web/templates/admin_blog/admin_blog_post_tags_live.html.leex:82 lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:51
 msgid "تیتر"
 msgstr ""
 
@@ -250,6 +252,7 @@ msgid "ساخت نقش"
 msgstr ""
 
 #, elixir-format
+#: lib/mishka_html_web/templates/admin_blog/admin_link_live.html.leex:31
 #: lib/mishka_html_web/templates/admin_user/admin_user_role_live.html.leex:31
 msgid "ساخت نقش جدید"
 msgstr ""
@@ -290,7 +293,7 @@ msgid "شما در این بخش می توانید کاربران سایت را 
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_blog/blog_post_live.html.leex:132
+#: lib/mishka_html_web/templates/client_blog/blog_post_live.html.leex:152
 msgid "شناسه نظری که می خواهید به آن پاسخ بدهید اضافه گردید"
 msgstr ""
 
@@ -305,7 +308,7 @@ msgid "صفحه قبلی"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/admin_blog/admin_blog_post_tags_live.html.leex:85
+#: lib/mishka_html_web/templates/admin_blog/admin_blog_post_tags_live.html.leex:85 lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:55
 #: lib/mishka_html_web/templates/admin_user/admin_user_role_permissions_live.html.leex:93
 msgid "عملیات"
 msgstr ""
@@ -319,7 +322,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_blog_category_live.html.leex:57 lib/mishka_html_web/templates/admin_blog/admin_blog_post_live.html.leex:56
-#: lib/mishka_html_web/templates/admin_blog/admin_blog_tag_live.html.leex:48 lib/mishka_html_web/templates/admin_comment/admin_comment_live.html.leex:44
+#: lib/mishka_html_web/templates/admin_blog/admin_blog_tag_live.html.leex:48 lib/mishka_html_web/templates/admin_blog/admin_link_live.html.leex:42
+#: lib/mishka_html_web/templates/admin_comment/admin_comment_live.html.leex:44
 #: lib/mishka_html_web/templates/admin_subscription/admin_subscription_live.html.leex:49 lib/mishka_html_web/templates/admin_user/admin_user_live.html.leex:49
 #: lib/mishka_html_web/templates/admin_user/admin_user_role_live.html.leex:42
 msgid "فیلدهای ضروری"
@@ -382,7 +386,7 @@ msgid "مطلب جدید"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_blog/blog_post_live.html.leex:135
+#: lib/mishka_html_web/templates/client_blog/blog_post_live.html.leex:155
 msgid "منصرف شدن"
 msgstr ""
 
@@ -397,7 +401,7 @@ msgid "نام کامل"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_blog/blog_post_live.html.leex:123
+#: lib/mishka_html_web/templates/client_blog/blog_post_live.html.leex:143
 msgid "نظر خود را در فیلد زیر قرار بدهید:"
 msgstr ""
 
@@ -439,7 +443,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_blog_category_live.html.leex:227 lib/mishka_html_web/templates/admin_blog/admin_blog_post_live.html.leex:227
-#: lib/mishka_html_web/templates/admin_blog/admin_blog_tag_live.html.leex:171 lib/mishka_html_web/templates/admin_comment/admin_comment_live.html.leex:145
+#: lib/mishka_html_web/templates/admin_blog/admin_blog_tag_live.html.leex:171 lib/mishka_html_web/templates/admin_blog/admin_link_live.html.leex:92
+#: lib/mishka_html_web/templates/admin_comment/admin_comment_live.html.leex:145
 #: lib/mishka_html_web/templates/admin_subscription/admin_subscription_live.html.leex:143 lib/mishka_html_web/templates/admin_user/admin_user_live.html.leex:144
 #: lib/mishka_html_web/templates/admin_user/admin_user_role_live.html.leex:73
 msgid "هیچ فیلدی به فرم اضافه نشده است."
@@ -488,4 +493,49 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/templates/admin_user/admin_users_live.html.leex:28
 msgid "کاربران"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:10
+msgid "اضافه کردن لینک"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/mishka_html_web/templates/admin_blog/admin_link_live.html.leex:12
+msgid "برگشت به مطلب"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:86
+msgid "حذف لینک از این مطلب"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:54
+msgid "رباط"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:30
+msgid "شما در این بخش می توانید برای هر مطلب یک سری لینک با توضیحات اضافه کنید که به عنوان پیوست یا نمایش می تواند در تولید محتوا کاربردی باشد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:25
+msgid "مدیریت لینک ها"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:53
+msgid "نوع لینک"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:52
+msgid "وضعیت"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:87
+msgid "ویرایش لینک"
 msgstr ""

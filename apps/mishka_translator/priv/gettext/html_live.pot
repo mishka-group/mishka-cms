@@ -13,7 +13,8 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_tag_live.ex:76
 #: lib/mishka_html_web/live/admin_blog_tag_live.ex:99 lib/mishka_html_web/live/admin_comment_live.ex:165
-#: lib/mishka_html_web/live/admin_comment_live.ex:210 lib/mishka_html_web/live/admin_subscription_live.ex:161
+#: lib/mishka_html_web/live/admin_comment_live.ex:210 lib/mishka_html_web/live/admin_link_live.ex:144
+#: lib/mishka_html_web/live/admin_link_live.ex:169 lib/mishka_html_web/live/admin_subscription_live.ex:161
 #: lib/mishka_html_web/live/admin_subscription_live.ex:184 lib/mishka_html_web/live/admin_user_live.ex:156
 #: lib/mishka_html_web/live/admin_user_live.ex:179 lib/mishka_html_web/live/admin_user_role_live.ex:84
 #: lib/mishka_html_web/live/admin_user_role_live.ex:117
@@ -41,7 +42,8 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:539
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:581 lib/mishka_html_web/live/admin_comment_live.ex:286
-#: lib/mishka_html_web/live/admin_subscription_live.ex:331 lib/mishka_html_web/live/admin_user_live.ex:325
+#: lib/mishka_html_web/live/admin_link_live.ex:281 lib/mishka_html_web/live/admin_subscription_live.ex:331
+#: lib/mishka_html_web/live/admin_user_live.ex:325
 msgid "آرشیو شده"
 msgstr ""
 
@@ -238,8 +240,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:567
-#: lib/mishka_html_web/live/admin_comment_live.ex:302 lib/mishka_html_web/live/blog_category_live.ex:137
-#: lib/mishka_html_web/live/blog_post_live.ex:391 lib/mishka_html_web/live/blogs_live.ex:123
+#: lib/mishka_html_web/live/admin_comment_live.ex:302 lib/mishka_html_web/live/blog_category_live.ex:142
+#: lib/mishka_html_web/live/blog_post_live.ex:406 lib/mishka_html_web/live/blogs_live.ex:128
 msgid "بالا"
 msgstr ""
 
@@ -266,13 +268,13 @@ msgid "بدون اولویت"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:105
-#: lib/mishka_html_web/live/blog_post_live.ex:266
+#: lib/mishka_html_web/live/blog_post_live.ex:108
+#: lib/mishka_html_web/live/blog_post_live.ex:273
 msgid "برای ارسال نظر باید وارد وب سایت شوید."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:58
+#: lib/mishka_html_web/live/blog_post_live.ex:60
 msgid "برای ارسال نظر کلیک کنید ...."
 msgstr ""
 
@@ -331,8 +333,8 @@ msgid "بله"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_category_live.ex:99
-#: lib/mishka_html_web/live/blog_post_live.ex:223 lib/mishka_html_web/live/blog_post_live.ex:249
+#: lib/mishka_html_web/live/blog_category_live.ex:84
+#: lib/mishka_html_web/live/blog_post_live.ex:224 lib/mishka_html_web/live/blog_post_live.ex:256
 #: lib/mishka_html_web/live/blogs_live.ex:85
 msgid "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."
 msgstr ""
@@ -344,19 +346,19 @@ msgid "به نظر می رسد بوکمارک مذکور حذف شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_category_live.ex:85
-#: lib/mishka_html_web/live/blog_post_live.ex:176 lib/mishka_html_web/live/blog_post_live.ex:208
+#: lib/mishka_html_web/live/blog_category_live.ex:89
+#: lib/mishka_html_web/live/blog_post_live.ex:182 lib/mishka_html_web/live/blog_post_live.ex:209
 #: lib/mishka_html_web/live/blogs_live.ex:71
 msgid "به نظر می رسد مطلب مذکور حذف شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:241
+#: lib/mishka_html_web/live/blog_post_live.ex:247
 msgid "به نظر می رسد نظر مذکور حذف شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:135
+#: lib/mishka_html_web/live/blog_post_live.ex:138
 msgid "به نظر می رسد نظر مذکور حذف شده باشد."
 msgstr ""
 
@@ -441,7 +443,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:580
-#: lib/mishka_html_web/live/admin_blog_post_live.ex:595
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:595 lib/mishka_html_web/live/admin_link_live.ex:333
 msgid "توضیحات کوتاه"
 msgstr ""
 
@@ -475,7 +477,7 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:540
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:582 lib/mishka_html_web/live/admin_comment_live.ex:287
-#: lib/mishka_html_web/live/admin_subscription_live.ex:332
+#: lib/mishka_html_web/live/admin_link_live.ex:282 lib/mishka_html_web/live/admin_subscription_live.ex:332
 msgid "حذف با پرچم"
 msgstr ""
 
@@ -516,8 +518,10 @@ msgid "خطایی در حذف کاربر اتفاق افتاده است."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_category_live.ex:94
-#: lib/mishka_html_web/live/blog_post_live.ex:218 lib/mishka_html_web/live/blogs_live.ex:80
+#: lib/mishka_html_web/live/blog_category_live.ex:98
+#: lib/mishka_html_web/live/blog_category_live.ex:103 lib/mishka_html_web/live/blog_post_live.ex:219
+#: lib/mishka_html_web/live/blog_post_live.ex:228 lib/mishka_html_web/live/blogs_live.ex:80
+#: lib/mishka_html_web/live/blogs_live.ex:89
 msgid "خطایی در دریافت اطلاعات وجود آماده است."
 msgstr ""
 
@@ -663,11 +667,14 @@ msgstr ""
 #: lib/mishka_html_web/live/admin_comment_live.ex:296 lib/mishka_html_web/live/admin_comment_live.ex:311
 #: lib/mishka_html_web/live/admin_comment_live.ex:322 lib/mishka_html_web/live/admin_comment_live.ex:330
 #: lib/mishka_html_web/live/admin_comment_live.ex:338 lib/mishka_html_web/live/admin_comment_live.ex:346
-#: lib/mishka_html_web/live/admin_subscription_live.ex:326 lib/mishka_html_web/live/admin_subscription_live.ex:340
-#: lib/mishka_html_web/live/admin_subscription_live.ex:351 lib/mishka_html_web/live/admin_subscription_live.ex:368
-#: lib/mishka_html_web/live/admin_user_live.ex:292 lib/mishka_html_web/live/admin_user_live.ex:301
-#: lib/mishka_html_web/live/admin_user_live.ex:310 lib/mishka_html_web/live/admin_user_live.ex:319
-#: lib/mishka_html_web/live/admin_user_role_live.ex:171 lib/mishka_html_web/live/admin_user_role_live.ex:180
+#: lib/mishka_html_web/live/admin_link_live.ex:267 lib/mishka_html_web/live/admin_link_live.ex:276
+#: lib/mishka_html_web/live/admin_link_live.ex:291 lib/mishka_html_web/live/admin_link_live.ex:304
+#: lib/mishka_html_web/live/admin_link_live.ex:329 lib/mishka_html_web/live/admin_subscription_live.ex:326
+#: lib/mishka_html_web/live/admin_subscription_live.ex:340 lib/mishka_html_web/live/admin_subscription_live.ex:351
+#: lib/mishka_html_web/live/admin_subscription_live.ex:368 lib/mishka_html_web/live/admin_user_live.ex:292
+#: lib/mishka_html_web/live/admin_user_live.ex:301 lib/mishka_html_web/live/admin_user_live.ex:310
+#: lib/mishka_html_web/live/admin_user_live.ex:319 lib/mishka_html_web/live/admin_user_role_live.ex:171
+#: lib/mishka_html_web/live/admin_user_role_live.ex:180
 msgid "ضروری"
 msgstr ""
 
@@ -695,15 +702,17 @@ msgstr ""
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:820 lib/mishka_html_web/live/admin_blog_post_live.ex:832
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:844 lib/mishka_html_web/live/admin_blog_post_live.ex:856
 #: lib/mishka_html_web/live/admin_blog_tag_live.ex:380 lib/mishka_html_web/live/admin_blog_tag_live.ex:389
-#: lib/mishka_html_web/live/admin_blog_tag_live.ex:405 lib/mishka_html_web/live/admin_subscription_live.ex:359
-#: lib/mishka_html_web/live/admin_user_live.ex:333 lib/mishka_html_web/live/admin_user_live.ex:341
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:405 lib/mishka_html_web/live/admin_link_live.ex:313
+#: lib/mishka_html_web/live/admin_subscription_live.ex:359 lib/mishka_html_web/live/admin_user_live.ex:333
+#: lib/mishka_html_web/live/admin_user_live.ex:341
 msgid "غیر ضروری"
 msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:537
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:579 lib/mishka_html_web/live/admin_comment_live.ex:284
-#: lib/mishka_html_web/live/admin_subscription_live.ex:329 lib/mishka_html_web/live/admin_user_live.ex:324
+#: lib/mishka_html_web/live/admin_link_live.ex:279 lib/mishka_html_web/live/admin_subscription_live.ex:329
+#: lib/mishka_html_web/live/admin_user_live.ex:324
 msgid "غیر فعال"
 msgstr ""
 
@@ -711,10 +720,10 @@ msgstr ""
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:618
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:627 lib/mishka_html_web/live/admin_blog_category_live.ex:636
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:666 lib/mishka_html_web/live/admin_blog_category_live.ex:680
-#: lib/mishka_html_web/live/admin_blog_post_live.ex:553 lib/mishka_html_web/live/admin_blog_post_live.ex:649
-#: lib/mishka_html_web/live/admin_blog_post_live.ex:658 lib/mishka_html_web/live/admin_blog_post_live.ex:667
-#: lib/mishka_html_web/live/admin_blog_post_live.ex:697 lib/mishka_html_web/live/admin_blog_post_live.ex:711
-#: lib/mishka_html_web/live/admin_blog_tag_live.ex:390 lib/mishka_html_web/live/admin_subscription_live.ex:360
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:649 lib/mishka_html_web/live/admin_blog_post_live.ex:658
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:667 lib/mishka_html_web/live/admin_blog_post_live.ex:697
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:711 lib/mishka_html_web/live/admin_blog_tag_live.ex:390
+#: lib/mishka_html_web/live/admin_link_live.ex:314 lib/mishka_html_web/live/admin_subscription_live.ex:360
 msgid "غیر پیشنهادی"
 msgstr ""
 
@@ -726,12 +735,13 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:538
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:580 lib/mishka_html_web/live/admin_comment_live.ex:285
-#: lib/mishka_html_web/live/admin_subscription_live.ex:330 lib/mishka_html_web/live/admin_user_live.ex:323
+#: lib/mishka_html_web/live/admin_link_live.ex:280 lib/mishka_html_web/live/admin_subscription_live.ex:330
+#: lib/mishka_html_web/live/admin_user_live.ex:323
 msgid "فعال"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:181
+#: lib/mishka_html_web/live/blog_post_live.ex:178
 msgid "لطفا برای بوکمارک کردن این مطلب وارد وب سایت شوید"
 msgstr ""
 
@@ -763,8 +773,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:566
-#: lib/mishka_html_web/live/admin_comment_live.ex:301 lib/mishka_html_web/live/blog_category_live.ex:136
-#: lib/mishka_html_web/live/blog_post_live.ex:390 lib/mishka_html_web/live/blogs_live.ex:122
+#: lib/mishka_html_web/live/admin_comment_live.ex:301 lib/mishka_html_web/live/blog_category_live.ex:141
+#: lib/mishka_html_web/live/blog_post_live.ex:405 lib/mishka_html_web/live/blogs_live.ex:127
 msgid "متوسط"
 msgstr ""
 
@@ -944,8 +954,8 @@ msgid "نحوه نمایش مطلب برای مدیریت بهتر دسترسی 
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_category_live.ex:134
-#: lib/mishka_html_web/live/blog_post_live.ex:388 lib/mishka_html_web/live/blogs_live.ex:120
+#: lib/mishka_html_web/live/blog_category_live.ex:139
+#: lib/mishka_html_web/live/blog_post_live.ex:403 lib/mishka_html_web/live/blogs_live.ex:125
 msgid "ندارد"
 msgstr ""
 
@@ -960,7 +970,7 @@ msgid "نظر به روز رسانی شد"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:284
+#: lib/mishka_html_web/live/blog_post_live.ex:291
 msgid "نظر شما با موفقیت ارسال شد!!! برای ارسال نظر جدید کلیک کنید."
 msgstr ""
 
@@ -1053,6 +1063,7 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:637
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:668 lib/mishka_html_web/live/admin_blog_tag_live.ex:391
+#: lib/mishka_html_web/live/admin_link_live.ex:315
 msgid "هشدار"
 msgstr ""
 
@@ -1064,7 +1075,8 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:544
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:586 lib/mishka_html_web/live/admin_comment_live.ex:291
-#: lib/mishka_html_web/live/admin_subscription_live.ex:336 lib/mishka_html_web/live/admin_user_live.ex:329
+#: lib/mishka_html_web/live/admin_link_live.ex:286 lib/mishka_html_web/live/admin_subscription_live.ex:336
+#: lib/mishka_html_web/live/admin_user_live.ex:329
 msgid "وضعیت"
 msgstr ""
 
@@ -1081,6 +1093,7 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:647
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:678 lib/mishka_html_web/live/admin_blog_tag_live.ex:401
+#: lib/mishka_html_web/live/admin_link_live.ex:325
 msgid "وضعیت رباط ها"
 msgstr ""
 
@@ -1091,15 +1104,17 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:568
-#: lib/mishka_html_web/live/admin_comment_live.ex:303 lib/mishka_html_web/live/blog_category_live.ex:138
-#: lib/mishka_html_web/live/blog_post_live.ex:392 lib/mishka_html_web/live/blogs_live.ex:124
+#: lib/mishka_html_web/live/admin_comment_live.ex:303 lib/mishka_html_web/live/admin_link_live.ex:296
+#: lib/mishka_html_web/live/blog_category_live.ex:143 lib/mishka_html_web/live/blog_post_live.ex:407
+#: lib/mishka_html_web/live/blogs_live.ex:129
 msgid "ویژه"
 msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_post_live.ex:565
-#: lib/mishka_html_web/live/admin_comment_live.ex:300 lib/mishka_html_web/live/blog_category_live.ex:135
-#: lib/mishka_html_web/live/blog_post_live.ex:389 lib/mishka_html_web/live/blogs_live.ex:121
+#: lib/mishka_html_web/live/admin_comment_live.ex:300 lib/mishka_html_web/live/admin_link_live.ex:294
+#: lib/mishka_html_web/live/blog_category_live.ex:140 lib/mishka_html_web/live/blog_post_live.ex:404
+#: lib/mishka_html_web/live/blogs_live.ex:126
 msgid "پایین"
 msgstr ""
 
@@ -1121,10 +1136,12 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:558
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:594 lib/mishka_html_web/live/admin_blog_category_live.ex:608
-#: lib/mishka_html_web/live/admin_blog_category_live.ex:717 lib/mishka_html_web/live/admin_blog_post_live.ex:616
-#: lib/mishka_html_web/live/admin_blog_post_live.ex:625 lib/mishka_html_web/live/admin_blog_post_live.ex:639
-#: lib/mishka_html_web/live/admin_blog_post_live.ex:748 lib/mishka_html_web/live/admin_blog_post_live.ex:857
-#: lib/mishka_html_web/live/admin_blog_tag_live.ex:381 lib/mishka_html_web/live/admin_blog_tag_live.ex:406
+#: lib/mishka_html_web/live/admin_blog_category_live.ex:717 lib/mishka_html_web/live/admin_blog_post_live.ex:553
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:616 lib/mishka_html_web/live/admin_blog_post_live.ex:625
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:639 lib/mishka_html_web/live/admin_blog_post_live.ex:748
+#: lib/mishka_html_web/live/admin_blog_post_live.ex:857 lib/mishka_html_web/live/admin_blog_tag_live.ex:381
+#: lib/mishka_html_web/live/admin_blog_tag_live.ex:406 lib/mishka_html_web/live/admin_link_live.ex:268
+#: lib/mishka_html_web/live/admin_link_live.ex:305
 msgid "پیشنهادی"
 msgstr ""
 
@@ -1153,13 +1170,13 @@ msgid "چنین مجموعه ای وجود ندارد یا ممکن است از 
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:34
+#: lib/mishka_html_web/live/blog_post_live.ex:35
 msgid "چنین محتوایی وجود ندارد"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:290
-#: lib/mishka_html_web/live/blog_post_live.ex:343 lib/mishka_html_web/live/blog_post_live.ex:358
+#: lib/mishka_html_web/live/blog_post_live.ex:297
+#: lib/mishka_html_web/live/blog_post_live.ex:358 lib/mishka_html_web/live/blog_post_live.ex:373
 msgid "چنین محتوایی وجود ندارد یا حذف شده است."
 msgstr ""
 
@@ -1170,6 +1187,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_post_authors_live.ex:26
+#: lib/mishka_html_web/live/admin_link_live.ex:31 lib/mishka_html_web/live/admin_links_live.ex:27
 msgid "چنین مطلبی وجود ندارد یا از قبل حذف شده است."
 msgstr ""
 
@@ -1187,7 +1205,7 @@ msgid "چنین نظری وجود ندارد یا ممکن است از قبل ح
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/blog_post_live.ex:271
+#: lib/mishka_html_web/live/blog_post_live.ex:278
 msgid "چنین نظری وجود ندارد یا ممکن است حذف شده باشد."
 msgstr ""
 
@@ -1302,4 +1320,105 @@ msgstr ""
 #: lib/mishka_html_web/live/admin_user_live.ex:302 lib/mishka_html_web/live/admin_user_live.ex:311
 #: lib/mishka_html_web/live/admin_user_role_live.ex:172 lib/mishka_html_web/live/admin_user_role_live.ex:181
 msgid "یکتا"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:326
+msgid " انتخاب دسترسی رباط ها برای ثبت لینک محتوا. لطفا در صورت نداشتن اطلاعات این فیلد را پر نکنید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:287
+msgid "انتخاب نوع وضعیت می توانید بر اساس دسترسی های کاربران باشد یا نمایش یا عدم نمایش لینک به کاربران."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:301
+msgid "این فیلد برای مشخص کردن نحوه نمایش در یک محتوا می باشد که بستگی به طراح قالب دارد که چطور از آن استفاده کند. در قالب پیشفرض اگر پایین انتخاب شود آخر مطلب نمایش داده می شود"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:334
+msgid "توضیحات کوتاه مربوط به لینک. این فیلد شامل یک ادیتور نیز می باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:272
+msgid "تیتر لینک"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_links_live.ex:48
+msgid "خطا در حذف لینک اتفاق افتاده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:20
+msgid "ساخت یا ویرایش لینک برای مطلب %{title}"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:273
+msgid "شما می توانید برای هر لینک یک تیتر قرار بدهید که به سئو شما نیز کمک خواهد کرد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:310
+msgid "شما می توانید به واسطه این فیلد لینکی که می خواهید ریدایرکت انجام شود را قرار بدهید. لازم به ذکر است اگر تنظیمات کوتاه کننده لینک فعال باشد و لینک کوتاه نیز قرار گرفته باشد اولیت کلیک کردن با لینک کوتاه می باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:309
+msgid "لینک"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_links_live.ex:40
+msgid "لینک با موفقیت حذف شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:243
+msgid "لینک مورد نظر ساخته شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:256
+msgid "لینک: %{title} به روز رسانی شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_links_live.ex:38
+msgid "لینک: %{title} حذف شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:241
+msgid "لینک: %{title} درست شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_links_live.ex:18
+msgid "مطلب %{title}"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:258
+msgid "نقش مورد نظر به روز رسانی شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:300
+msgid "نوع فعال سازی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:295
+msgid "وسط"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_link_live.ex:46
+#: lib/mishka_html_web/live/admin_links_live.ex:44
+msgid "چنین لینکی وجود ندارد یا ممکن است از قبل حذف شده باشد."
 msgstr ""

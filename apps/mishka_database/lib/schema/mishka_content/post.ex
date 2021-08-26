@@ -65,6 +65,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     status priority alias_link robots post_visibility category_id
   )a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

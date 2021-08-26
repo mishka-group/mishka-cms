@@ -19,6 +19,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.CommentLike do
     user_id comment_id
   )a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

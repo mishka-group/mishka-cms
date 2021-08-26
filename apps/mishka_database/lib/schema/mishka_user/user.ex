@@ -30,6 +30,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
     timestamps(type: :utc_datetime)
   end
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:full_name, :username, :email, :password_hash, :password, :status, :unconfirmed_email])

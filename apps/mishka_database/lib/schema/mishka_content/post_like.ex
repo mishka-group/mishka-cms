@@ -19,6 +19,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.PostLike do
     user_id post_id
   )a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

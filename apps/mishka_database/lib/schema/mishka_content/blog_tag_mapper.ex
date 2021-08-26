@@ -14,7 +14,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogTagMapper do
     timestamps(type: :utc_datetime)
   end
 
-
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:post_id, :tag_id])

@@ -14,6 +14,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.UserRole do
   end
 
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:user_id, :role_id])

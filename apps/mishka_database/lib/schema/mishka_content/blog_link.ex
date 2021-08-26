@@ -31,6 +31,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
     short_description status type title link robots section_id
   )a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

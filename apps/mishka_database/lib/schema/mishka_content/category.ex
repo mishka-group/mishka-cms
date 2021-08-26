@@ -55,6 +55,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Category do
   )a
 
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

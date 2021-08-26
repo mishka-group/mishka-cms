@@ -1,5 +1,6 @@
 defmodule MishkaContent.Cache.BookmarkDynamicSupervisor do
 
+  @spec start_job(list() | map() | tuple() | String.t()) :: :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
   def start_job(args) do
     DynamicSupervisor.start_child(MishkaContent.Cache.BookmarkOtpRunner, {MishkaContent.Cache.BookmarkManagement, args})
   end

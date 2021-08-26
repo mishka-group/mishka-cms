@@ -22,6 +22,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
   @all_fields ~w(type section section_id priority status action extra)a
   @all_required ~w(type section priority status action)a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

@@ -8,46 +8,74 @@ defmodule MishkaContent.Blog.Category do
           error_atom: :category,
           repo: MishkaDatabase.Repo
 
+  @type data_uuid() :: Ecto.UUID.t
+  @type record_input() :: map()
+  @type error_tag() :: :category
+  @type repo_data() :: Ecto.Schema.t()
+  @type repo_error() :: Ecto.Changeset.t()
+
   @behaviour MishkaDatabase.CRUD
 
   def subscribe do
     Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_category")
   end
 
+  @spec create(record_input()) ::
+  {:error, :add, error_tag(), repo_error()} | {:ok, :add, error_tag(), repo_data()}
   def create(attrs) do
     crud_add(attrs)
     |> notify_subscribers(:category)
   end
 
+  @spec create(record_input(), allowed_fields :: list()) ::
+  {:error, :add, error_tag(), repo_error()} | {:ok, :add, error_tag(), repo_data()}
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
     |> notify_subscribers(:category)
   end
 
+  @spec edit(record_input()) ::
+  {:error, :edit, :uuid, error_tag()} |
+  {:error, :edit, :get_record_by_id, error_tag()} |
+  {:error, :edit, error_tag(), repo_error()} | {:ok, :edit, error_tag(), repo_data()}
   def edit(attrs) do
     crud_edit(attrs)
     |> notify_subscribers(:category)
   end
 
+  @spec edit(record_input(), allowed_fields :: list()) ::
+  {:error, :edit, :uuid, error_tag()} |
+  {:error, :edit, :get_record_by_id, error_tag()} |
+  {:error, :edit, error_tag(), repo_error()} | {:ok, :edit, error_tag(), repo_data()}
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
     |> notify_subscribers(:category)
   end
 
+  @spec delete(data_uuid()) ::
+  {:error, :delete, :uuid, error_tag()} |
+  {:error, :delete, :get_record_by_id, error_tag()} |
+  {:error, :delete, :forced_to_delete, error_tag()} |
+  {:error, :delete, error_tag(), repo_error()} | {:ok, :delete, error_tag(), repo_data()}
   def delete(id) do
     crud_delete(id)
     |> notify_subscribers(:category)
   end
 
+  @spec show_by_id(data_uuid()) ::
+          {:error, :get_record_by_id, error_tag()} | {:ok, :get_record_by_id, error_tag(), repo_data()}
   def show_by_id(id) do
     crud_get_record(id)
   end
 
+  @spec show_by_alias_link(String.t()) ::
+          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_alias_link(alias_link) do
     crud_get_by_field("alias_link", alias_link)
   end
 
 
+  @spec search_category_title(String.t(), integer()) :: list()
   def search_category_title(title, limit) do
     like = "%#{title}%"
     try do
@@ -64,6 +92,31 @@ defmodule MishkaContent.Blog.Category do
       |> MishkaDatabase.Repo.all()
     rescue
       _e -> []
+    end
+  end
+
+  @spec categories([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t() | list()
+  def categories(conditions: {page, page_size}, filters: filters) do
+    try do
+      query = from(cat in Category) |> convert_filters_to_where(filters)
+      from([cat] in query,
+      order_by: [desc: cat.inserted_at, desc: cat.id],
+      select: %{
+        id: cat.id,
+        title: cat.title,
+        status: cat.status,
+        alias_link: cat.alias_link,
+        short_description: cat.short_description,
+        main_image: cat.main_image,
+        header_image: cat.header_image,
+        category_visibility: cat.category_visibility,
+        updated_at: cat.updated_at,
+        inserted_at: cat.inserted_at,
+      })
+      |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
+    rescue
+      Ecto.Query.CastError ->
+        %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
     end
   end
 
@@ -90,30 +143,10 @@ defmodule MishkaContent.Blog.Category do
     end
   end
 
-  def categories(conditions: {page, page_size}, filters: filters) do
-    try do
-      query = from(cat in Category) |> convert_filters_to_where(filters)
-      from([cat] in query,
-      order_by: [desc: cat.inserted_at, desc: cat.id],
-      select: %{
-        id: cat.id,
-        title: cat.title,
-        status: cat.status,
-        alias_link: cat.alias_link,
-        short_description: cat.short_description,
-        main_image: cat.main_image,
-        header_image: cat.header_image,
-        category_visibility: cat.category_visibility,
-        updated_at: cat.updated_at,
-        inserted_at: cat.inserted_at,
-      })
-      |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
-    rescue
-      Ecto.Query.CastError ->
-        %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
-    end
-  end
-
+  @spec posts([
+          {:conditions, {:basic_data, integer() | String.t(), integer() | String.t()} | {:extra_data, integer() | String.t(), integer() | String.t()}} | {:filters, map()},
+          ...
+        ]) :: Scrivener.Page.t()
   def posts(conditions: {type, page, page_size}, filters: filters) when type in [:extra_data, :basic_data] do
     query = from(cat in Category) |> convert_filters_to_where(filters)
     from([cat] in query, join: post in assoc(cat, :blog_posts))
@@ -175,6 +208,7 @@ defmodule MishkaContent.Blog.Category do
     }
   end
 
+  @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: Category.__schema__(:fields)
   def allowed_fields(:string), do: Category.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 

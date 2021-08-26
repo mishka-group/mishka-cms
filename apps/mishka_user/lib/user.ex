@@ -161,6 +161,7 @@ defmodule MishkaUser.User do
     Ecto.Query.CastError -> []
   end
 
+  @spec users([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
   def users(conditions: {page, page_size}, filters: filters) do
     from(u in User, left_join: roles in assoc(u, :roles)) |> convert_filters_to_where(filters)
     |> fields()
@@ -209,9 +210,11 @@ defmodule MishkaUser.User do
     }
   end
 
+  @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: User.__schema__(:fields)
   def allowed_fields(:string), do: User.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 
+  @spec notify_subscribers(tuple(), atom() | String.t()) :: tuple() | map()
   def notify_subscribers({:ok, _, :user, repo_data} = params, type_send) do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "user", {type_send, :ok, repo_data})
     params

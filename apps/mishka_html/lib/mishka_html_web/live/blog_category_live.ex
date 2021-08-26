@@ -79,6 +79,10 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
           notify_subscribers({:liked, socket.assigns.page})
           update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
     else
+      {:user_id, true} ->
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))
+
       {:error, :get_record_by_id, _error_tag} ->
 
         socket
@@ -94,9 +98,10 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
           |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در دریافت اطلاعات وجود آماده است."))
           |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
-      {:user_id, true} ->
+      _ ->
         socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در دریافت اطلاعات وجود آماده است."))
+        |> push_redirect(to: Routes.live_path(socket, __MODULE__))
     end
 
     {:noreply, socket}

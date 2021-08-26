@@ -254,10 +254,9 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/components/admin/blog/category/search_component.ex:13 lib/mishka_html_web/live/components/admin/blog/post/search_component .ex:13
-#: lib/mishka_html_web/live/components/admin/blog/post/search_component .ex:46 lib/mishka_html_web/live/components/admin/comment/search_component.ex:13
-#: lib/mishka_html_web/live/components/admin/role/search_component.ex:13 lib/mishka_html_web/live/components/admin/subscription/search_component.ex:13
-#: lib/mishka_html_web/live/components/admin/tag/search_component.ex:13 lib/mishka_html_web/live/components/admin/user/list_component.ex:71
-#: lib/mishka_html_web/live/components/admin/user/search_component.ex:13
+#: lib/mishka_html_web/live/components/admin/comment/search_component.ex:13 lib/mishka_html_web/live/components/admin/role/search_component.ex:13
+#: lib/mishka_html_web/live/components/admin/subscription/search_component.ex:13 lib/mishka_html_web/live/components/admin/tag/search_component.ex:13
+#: lib/mishka_html_web/live/components/admin/user/list_component.ex:71 lib/mishka_html_web/live/components/admin/user/search_component.ex:13
 msgid "جستجوی پیشرفته"
 msgstr ""
 
@@ -589,7 +588,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/components/admin/blog/category/list_component.ex:15
-#: lib/mishka_html_web/live/components/admin/blog/category/search_component.ex:33
+#: lib/mishka_html_web/live/components/admin/blog/category/search_component.ex:33 lib/mishka_html_web/live/components/admin/blog/post/search_component .ex:46
 msgid "نحوه نمایش"
 msgstr ""
 
@@ -709,4 +708,9 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/components/admin/public/_notif.ex:24
 msgid "یک دقیقه پیش"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:78
+msgid "لینک ها"
 msgstr ""

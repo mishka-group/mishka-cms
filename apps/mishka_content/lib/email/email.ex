@@ -3,6 +3,7 @@ defmodule MishkaContent.Email.Email do
   use Timex
   use Phoenix.HTML
 
+  @spec account_email(map()) :: Bamboo.Email.t()
   def account_email(info) do
     iran_now_time = Timex.now("Iran")
     new_email(
@@ -22,6 +23,7 @@ defmodule MishkaContent.Email.Email do
   end
 
 
+  @spec email_converter(map()) :: map()
   def email_converter(info) do
     {:safe, html} = html_sorce(info)
 
@@ -31,10 +33,12 @@ defmodule MishkaContent.Email.Email do
     }
   end
 
+  @spec html_sorce(map) :: tuple() | map()
   def html_sorce(info) do
     raw("#{email_header(info)} #{email_main(info)} #{email_footer(info)}")
   end
 
+  @spec email_main(map()) :: any()
   def email_main(info) do
     """
     <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
@@ -72,6 +76,7 @@ defmodule MishkaContent.Email.Email do
   # def email_main("verify_email", info) do
   # end
 
+  @spec email_header(map()) :: any()
   def email_header(info) do
     """
     <!doctype html>
@@ -391,6 +396,7 @@ defmodule MishkaContent.Email.Email do
     """
   end
 
+  @spec email_footer(map()) :: any()
   def email_footer(info) do
     """
       <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->

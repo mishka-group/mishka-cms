@@ -2,12 +2,18 @@ defmodule MishkaUser.Token.CurrentPhoenixToken do
   alias MishkaUser.Token.TokenManagemnt
   @hard_secret_current "Test current"
 
+  @type data_uuid() :: Ecto.UUID.t
+  @type token() :: String.t()
+
+  @spec create_token(data_uuid() | String.t(), :current) :: {:ok, :current, nonempty_binary}
   def create_token(id, :current) do
     token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_current, %{id: id, type: "access"}, [key_digest: :sha256])
     {:ok, :current, token}
   end
 
 
+
+  @spec save_token(map()) :: {:ok, :save_token, nonempty_binary}
   def save_token(user_info) do
     MishkaUser.Token.TokenDynamicSupervisor.start_job([id: user_info.id, type: "token"])
     {:ok, type, token} = create_token(user_info.id, :current)
@@ -31,6 +37,7 @@ defmodule MishkaUser.Token.CurrentPhoenixToken do
     {:ok, :save_token, token}
   end
 
+  @spec verify_token(nil | token(), atom()) :: tuple()
   def verify_token(token, :current) do
     Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_current, token, [max_age: token_expire_time(:current).age])
     |> verify_token_condition(:current)

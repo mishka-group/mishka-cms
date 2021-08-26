@@ -1,6 +1,10 @@
 defmodule MishkaUser.Acl.Access do
   @separator ":"
 
+  @type action() :: String.t()
+  @type data_uuid() :: Ecto.UUID.t
+
+  @spec permittes?(action(), data_uuid() | binary) :: boolean
   def permittes?(action, user_id) do
     # need to be loaded on OTP state instead of db every page
     Enum.any?(MishkaUser.Acl.AclManagement.get_all(user_id).user_permission, fn %{value: permission} ->
@@ -8,6 +12,7 @@ defmodule MishkaUser.Acl.Access do
     end)
   end
 
+  @spec is_permitted?([{:action, action()} | {:permission, binary}, ...]) :: boolean
   def is_permitted?(action: action, permission: permission) do
     permission_chunks = String.split(permission, @separator)
     String.split(action, @separator, parts: length(permission_chunks))

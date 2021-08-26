@@ -23,6 +23,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
   @all_fields ~w(status section section_id short_description expire_time extra user_id)a
   @all_required ~w(status section)a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

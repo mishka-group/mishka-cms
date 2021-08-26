@@ -22,6 +22,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Subscription do
   @all_fields ~w(status section section_id expire_time extra user_id)a
   @all_required ~w(status section section_id user_id)a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

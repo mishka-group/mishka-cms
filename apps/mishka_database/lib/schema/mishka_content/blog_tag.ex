@@ -24,6 +24,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogTag do
   @all_fields ~w(title alias_link meta_keywords meta_description custom_title robots)a
   @required_fields ~w(title alias_link robots)a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

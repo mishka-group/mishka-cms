@@ -75,6 +75,7 @@ defmodule MishkaUser.Identity do
     crud_get_by_field("provider_uid", provider_uid)
   end
 
+  @spec identities([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
   def identities(conditions: {page, page_size}, filters: filters) do
     from(identity in IdentityProvider) |> convert_filters_to_where(filters)
     |> fields()

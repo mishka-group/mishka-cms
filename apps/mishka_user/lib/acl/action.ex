@@ -1,5 +1,6 @@
 defmodule MishkaUser.Acl.Action do
 
+  @spec actions :: map()
   def actions() do
     %{
       # client router
@@ -25,6 +26,7 @@ defmodule MishkaUser.Acl.Action do
     }
   end
 
+  @spec actions(:api) :: map()
   def actions(:api) do
     %{
 

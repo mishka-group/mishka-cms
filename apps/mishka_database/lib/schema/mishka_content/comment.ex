@@ -30,6 +30,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Comment do
     description status priority user_id section_id section
   )a
 
+  @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)

@@ -83,6 +83,11 @@ defmodule MishkaHtmlWeb.BlogsLive do
       {:user_id, true} ->
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live","به ظاهر مشکلی وجود دارد در صورت تکرار لطفا یک بار از وب سایت خارج و دوباره وارد شوید."))
+
+      _ ->
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live","خطایی در دریافت اطلاعات وجود آماده است."))
+        |> push_redirect(to: Routes.live_path(socket, __MODULE__))
     end
 
     {:noreply, socket}

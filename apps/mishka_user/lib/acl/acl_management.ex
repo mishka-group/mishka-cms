@@ -7,6 +7,7 @@ defmodule MishkaUser.Acl.AclManagement do
   @type id() :: String.t()
   @type token() :: String.t()
 
+  @spec start_link(keyword) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(args) do
     id = Keyword.get(args, :id)
     type = Keyword.get(args, :type)

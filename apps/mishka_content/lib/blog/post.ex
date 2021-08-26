@@ -9,45 +9,75 @@ defmodule MishkaContent.Blog.Post do
           error_atom: :post,
           repo: MishkaDatabase.Repo
 
+
+  @type data_uuid() :: Ecto.UUID.t
+  @type record_input() :: map()
+  @type error_tag() :: :post
+  @type repo_data() :: Ecto.Schema.t()
+  @type repo_error() :: Ecto.Changeset.t()
+
   @behaviour MishkaDatabase.CRUD
 
   def subscribe do
     Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_post")
   end
 
+  @spec create(record_input()) ::
+  {:error, :add, error_tag(), repo_error()} | {:ok, :add, error_tag(), repo_data()}
   def create(attrs) do
     crud_add(attrs)
     |> notify_subscribers(:post)
   end
 
+  @spec create(record_input(), allowed_fields :: list()) ::
+  {:error, :add, error_tag(), repo_error()} | {:ok, :add, error_tag(), repo_data()}
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
     |> notify_subscribers(:post)
   end
 
+  @spec edit(record_input()) ::
+  {:error, :edit, :uuid, error_tag()} |
+  {:error, :edit, :get_record_by_id, error_tag()} |
+  {:error, :edit, error_tag(), repo_error()} | {:ok, :edit, error_tag(), repo_data()}
   def edit(attrs) do
     crud_edit(attrs)
     |> notify_subscribers(:post)
   end
 
+  @spec edit(record_input(), allowed_fields :: list()) ::
+  {:error, :edit, :uuid, error_tag()} |
+  {:error, :edit, :get_record_by_id, error_tag()} |
+  {:error, :edit, error_tag(), repo_error()} | {:ok, :edit, error_tag(), repo_data()}
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
     |> notify_subscribers(:post)
   end
 
+  @spec delete(data_uuid()) ::
+  {:error, :delete, :uuid, error_tag()} |
+  {:error, :delete, :get_record_by_id, error_tag()} |
+  {:error, :delete, :forced_to_delete, error_tag()} |
+  {:error, :delete, error_tag(), repo_error()} | {:ok, :delete, error_tag(), repo_data()}
   def delete(id) do
     crud_delete(id)
     |> notify_subscribers(:post)
   end
 
+  @spec show_by_id(data_uuid()) ::
+          {:error, :get_record_by_id, error_tag()} | {:ok, :get_record_by_id, error_tag(), repo_data()}
   def show_by_id(id) do
     crud_get_record(id)
   end
 
+  @spec show_by_alias_link(String.t()) ::
+          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_alias_link(alias_link) do
     crud_get_by_field("alias_link", alias_link)
   end
 
+  @spec posts([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()} | {:user_id, nil | data_uuid()}, ...]) ::
+          Scrivener.Page.t()
   def posts(conditions: {page, page_size}, filters: filters, user_id: user_id) when is_binary(user_id) or is_nil(user_id) do
     user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
 
@@ -109,6 +139,7 @@ defmodule MishkaContent.Blog.Post do
     }
   end
 
+  @spec post(String.t(), String.t() | atom()) :: map() | list() | nil
   def post(alias_link, status) do
     # when this project has many records as like, I think like counter should be seprated or create a
     # lazy query instead of this
@@ -154,9 +185,11 @@ defmodule MishkaContent.Blog.Post do
     Ecto.Query.CastError -> nil
   end
 
+  @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: Post.__schema__(:fields)
   def allowed_fields(:string), do: Post.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 
+  @spec notify_subscribers(tuple(), atom() | String.t()) :: tuple() | map()
   def notify_subscribers({:ok, _, :post, repo_data} = params, type_send) do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "blog_post", {type_send, :ok, repo_data})
     params

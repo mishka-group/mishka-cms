@@ -12,9 +12,9 @@ config :mishka_api, MishkaApiWeb.Endpoint,
 
 
 config :mishka_database, MishkaDatabase.Repo,
-  username: System.get_env("DB_USER"),
-  password: System.get_env("DB_PASSWORD"),
-  database: "mishka_database_test#{System.get_env("MIX_TEST_PARTITION")}",
+  username: System.get_env("DATABASE_USER"),
+  password: System.get_env("DATABASE_PASSWORD"),
+  database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "postgresql",
   pool_size: 10,
   pool: Ecto.Adapters.SQL.Sandbox

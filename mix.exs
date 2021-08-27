@@ -31,6 +31,7 @@ defmodule MishkaCms.Umbrella.MixProject do
 
   defp aliases do
     [
+      "assets.deploy": ["esbuild default --minify", "phx.digest"],
       setup: ["cmd mix setup"],
       "ecto.setup": ["ecto.drop", "ecto.create", "ecto.migrate"],
     ]

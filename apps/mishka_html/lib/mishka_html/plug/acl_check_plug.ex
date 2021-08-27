@@ -9,7 +9,7 @@ defmodule MishkaHtml.Plug.AclCheckPlug do
   def call(conn, _default) do
     module = case Map.get(conn.private, :phoenix_live_view) do
       nil -> "NotFound"
-      {module, _router_info} -> module
+      module -> module  |> elem(0)
     end
 
     acl_got = Map.get(MishkaUser.Acl.Action.actions, module |> to_string())

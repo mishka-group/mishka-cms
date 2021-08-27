@@ -1,5 +1,9 @@
 /* This file is for your main application css. */
 @import "./phoenix.css";
+@import "../static/css/default-template.css";
+@import "../static/css/main.min.css";
+@import "../static/css/ckeditor-styles.css";
+@import "../static/css/bootstrap.min.css";
 
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,

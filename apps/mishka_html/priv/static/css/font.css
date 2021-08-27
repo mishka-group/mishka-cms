@@ -1,0 +1,24 @@
+@font-face {
+  font-family: 'Iconly-bulk';
+  src:  url('../fonts/Iconly-bulk.eot?7ldoi4');
+  src:  url('../fonts/Iconly-bulk.eot?7ldoi4#iefix') format('embedded-opentype'),
+    url('../fonts/Iconly-bulk.ttf?7ldoi4') format('truetype'),
+    url('../fonts/Iconly-bulk.woff?7ldoi4') format('woff'),
+    url('../fonts/Iconly-bulk.svg?7ldoi4#Iconly-bulk') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Vazir-Regular';
+  src:  url('../fonts/Vazir-Regular.eot?7ldoi4');
+  src:  url('../fonts/Vazir-Regular.eot?7ldoi4#iefix') format('embedded-opentype'),
+    url('../fonts/Vazir-Regular.ttf?7ldoi4') format('truetype'),
+    url('../fonts/Vazir-Regular.woff?7ldoi4') format('woff');
+
+
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}

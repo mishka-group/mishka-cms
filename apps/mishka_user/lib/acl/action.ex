@@ -8,21 +8,21 @@ defmodule MishkaUser.Acl.Action do
 
 
       # admin router
-      "Elixir.MishkaHtmlWeb.AdminDashboardLive" => "admin:*" ,
-      "Elixir.MishkaHtmlWeb.AdminBlogPostsLive" => "admin:edit" ,
-      "Elixir.MishkaHtmlWeb.AdminBlogPostLive" => "admin:edit" ,
-      "Elixir.MishkaHtmlWeb.AdminBlogCategoriesLive" => "admin:edit" ,
-      "Elixir.MishkaHtmlWeb.AdminBlogCategoryLive" => "admin:edit" ,
-      "Elixir.MishkaHtmlWeb.AdminBookmarksLive" => "*" ,
-      "Elixir.MishkaHtmlWeb.AdminSubscriptionsLive" => "*" ,
-      "Elixir.MishkaHtmlWeb.AdminSubscriptionLive" => "*" ,
-      "Elixir.MishkaHtmlWeb.AdminCommentsLive" => "admin:edit" ,
-      "Elixir.MishkaHtmlWeb.AdminCommentLive" => "admin:edit" ,
-      "Elixir.MishkaHtmlWeb.AdminUsersLive" => "*" ,
-      "Elixir.MishkaHtmlWeb.AdminUserLive" => "*" ,
-      "Elixir.MishkaHtmlWeb.AdminLogsLive" => "*" ,
-      "Elixir.MishkaHtmlWeb.AdminSeoLive" => "*" ,
-      "Elixir.MishkaHtmlWeb.AdminBlogPostAuthorsLive" => "admin:edit"
+      "MishkaHtmlWeb.AdminDashboardLive" => "admin:*" ,
+      "MishkaHtmlWeb.AdminBlogPostsLive" => "admin:edit" ,
+      "MishkaHtmlWeb.AdminBlogPostLive" => "admin:edit" ,
+      "MishkaHtmlWeb.AdminBlogCategoriesLive" => "admin:edit" ,
+      "MishkaHtmlWeb.AdminBlogCategoryLive" => "admin:edit" ,
+      "MishkaHtmlWeb.AdminBookmarksLive" => "*" ,
+      "MishkaHtmlWeb.AdminSubscriptionsLive" => "*" ,
+      "MishkaHtmlWeb.AdminSubscriptionLive" => "*" ,
+      "MishkaHtmlWeb.AdminCommentsLive" => "admin:edit" ,
+      "MishkaHtmlWeb.AdminCommentLive" => "admin:edit" ,
+      "MishkaHtmlWeb.AdminUsersLive" => "*" ,
+      "MishkaHtmlWeb.AdminUserLive" => "*" ,
+      "MishkaHtmlWeb.AdminLogsLive" => "*" ,
+      "MishkaHtmlWeb.AdminSeoLive" => "*" ,
+      "MishkaHtmlWeb.AdminBlogPostAuthorsLive" => "admin:edit"
     }
   end
 

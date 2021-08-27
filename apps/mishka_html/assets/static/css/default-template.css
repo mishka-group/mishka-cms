@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
   font-family: 'Vazir-Regular';
   src:  url('../fonts/Vazir-Regular.eot?7ldoi4');
   src:  url('../fonts/Vazir-Regular.eot?7ldoi4#iefix') format('embedded-opentype'),
@@ -9,7 +9,7 @@
   font-weight: normal;
   font-style: normal;
   font-display: block;
-}
+} */
 
 .rtl {
   direction: rtl;
@@ -948,7 +948,7 @@ select.form-select {
   background-color: white !important;
 }
 /* icon */
-@font-face {
+/* @font-face {
   font-family: 'Iconly-bulk';
   src:  url('../fonts/Iconly-bulk.eot?7ldoi4');
   src:  url('../fonts/Iconly-bulk.eot?7ldoi4#iefix') format('embedded-opentype'),
@@ -958,7 +958,7 @@ select.form-select {
   font-weight: normal;
   font-style: normal;
   font-display: block;
-}
+} */
 
 [class^="iconly-bulk"], [class*=" iconly-bulk"] {
   /* use !important to prevent issues with browser extensions that change fonts */

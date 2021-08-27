@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
   font-family: 'Vazir-Regular';
   src:  url('../fonts/Vazir-Regular.eot?7ldoi4');
   src:  url('../fonts/Vazir-Regular.eot?7ldoi4#iefix') format('embedded-opentype'),
@@ -9,7 +9,7 @@
   font-weight: normal;
   font-style: normal;
   font-display: block;
-}
+} */
 
 .rtl {
   direction: rtl;

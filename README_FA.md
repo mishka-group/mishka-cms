@@ -56,8 +56,6 @@ https://github.com/shahryarjb
   
 ```elixir
 - Elixir 1.12.0 (compiled with Erlang/OTP 24)
-- Node v14.17.0
-- NPM v6.14.14
 - Postgres v13
 ```
   
@@ -76,7 +74,7 @@ mix ecto.create # اول باید در فایل کانفیگ اطلاعات دی
 mix ecto.migrate
 mix deps.get
 mix deps.compile
-cd /app/apps/mishka_html/assets/ && npm install
+mix assets.deploy
 mix test
 mix run apps/mishka_database/priv/repo/seeds.exs # در صورتی که می خواهید مطالب و کاربر آزمایشی درست شود. فقط یک بار اجرا شود
 iex -S mix phx.server # هر سری که می خواهید سرور را اجرا کنید

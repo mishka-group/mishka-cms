@@ -12,14 +12,15 @@ config :mishka_html, MishkaHtmlWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch",
-      "--watch-options-stdin",
-      cd: Path.expand("../apps/mishka_html/assets", __DIR__)
-    ]
+    # node: [
+    #   "node_modules/webpack/bin/webpack.js",
+    #   "--mode",
+    #   "development",
+    #   "--watch",
+    #   "--watch-options-stdin",
+    #   cd: Path.expand("../apps/mishka_html/assets", __DIR__)
+    # ]
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
 
 config :mishka_api, MishkaApiWeb.Endpoint,

@@ -9,7 +9,7 @@ defmodule MishkaUser.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.11",
+      elixir: "~> 1.12",
       compilers: [:gettext | Mix.compilers()],
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -30,9 +30,9 @@ defmodule MishkaUser.MixProject do
       {:mishka_database, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
       {:mishka_translator, in_umbrella: true},
-      {:plug, "~> 1.11"},
-      {:guardian, "~> 2.1"},
-      {:phoenix, "~> 1.5.7"},
+      {:plug, "~> 1.12"},
+      {:guardian, "~> 2.2"},
+      {:phoenix, "~> 1.6.0-rc.0", override: true},
       {:jose, "~> 1.11"}
     ]
   end

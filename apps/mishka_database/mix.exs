@@ -28,8 +28,8 @@ defmodule MishkaDatabase.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ecto_sql, "~> 3.5"},
-      {:postgrex, "~> 0.15.7"},
+      {:ecto_sql, "~> 3.7"},
+      {:postgrex, "~> 0.15.10"},
       {:comeonin, "~> 5.3"},
       {:bcrypt_elixir, "~> 2.3"},
       {:ecto_enum, "~> 1.4"},

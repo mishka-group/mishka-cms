@@ -47,7 +47,8 @@ defmodule MishkaApi.MixProject do
       {:mishka_content, in_umbrella: true},
       {:mishka_html, in_umbrella: true},
       {:plug, "~> 1.11"},
-      {:mishka_translator, in_umbrella: true}
+      {:mishka_translator, in_umbrella: true},
+      {:sobelow, "~> 0.8", only: :dev}
     ]
   end
 

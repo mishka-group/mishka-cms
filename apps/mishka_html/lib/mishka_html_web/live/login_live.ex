@@ -29,19 +29,27 @@ defmodule MishkaHtmlWeb.LoginLive do
   def handle_event("save", %{"user" => params}, socket) do
     filtered_params = Map.merge(params, %{"email" => MishkaHtml.email_sanitize(params["email"])})
     changeset = user_changeset(filtered_params)
-    {:noreply,
-     assign(
-       socket,
-       changeset: changeset,
-       trigger_submit: changeset.valid?
-     )}
+
+    socket =
+      socket
+      |> assign(
+        changeset: changeset,
+        trigger_submit: changeset.valid?
+      )
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("validate", %{"user" => params}, socket) do
     filtered_params = Map.merge(params, %{"email" => MishkaHtml.email_sanitize(params["email"])})
     changeset = user_changeset(filtered_params)
-    {:noreply, assign(socket, changeset: changeset)}
+
+    socket =
+      if(changeset.valid?, do: push_event(socket, "update_recaptcha", %{client_side_code: System.get_env("CLIENT_SIDE_CODE")}), else: socket)
+      |> assign(
+        changeset: changeset
+      )
+    {:noreply, socket}
   end
 
   @impl true

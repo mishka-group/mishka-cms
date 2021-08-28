@@ -8,6 +8,8 @@ defmodule MishkaHtmlWeb.Client.Login.LoginFormComponent do
         <%= f = form_for @changeset, Routes.auth_path(@socket, :login),
             phx_submit: "save",
             phx_change: "validate",
+            id: "ClientLoginForm",
+            phx_hook: "GooglereCAPTCHA",
             phx_trigger_action: @trigger_submit %>
 
           <img class="mb-4" src="<%= Routes.static_path(@socket, "/images/icons8-login-as-user-80.png") %>" alt="" width="80" height="80">
@@ -37,8 +39,9 @@ defmodule MishkaHtmlWeb.Client.Login.LoginFormComponent do
             <%= error_tag f, :password %>
           </div>
 
-          <div class="space20"></div>
+          <%= hidden_input(f, :"g-recaptcha-response", id: "g-recaptcha-response")%>
 
+          <div class="space20"></div>
           <%= submit MishkaTranslator.Gettext.dgettext("html_live_component", "ورود به سایت"), phx_disable_with: "Login..." , class: "w-100 btn btn-lg btn-primary", disabled: !@changeset.valid? %>
 
           <div class="space20"></div>

@@ -117,6 +117,22 @@ Hooks.Calendar = {
   }
 }
 
+function onClick(client_side_code) {
+  grecaptcha.ready(function() {
+    grecaptcha.execute(client_side_code, {action: 'submit'}).then(function(token) {
+        filed = document.getElementById("g-recaptcha-response").value = token;
+    });
+  });
+}
+
+Hooks.GooglereCAPTCHA = {
+  mounted() {
+    this.handleEvent("update_recaptcha", ({client_side_code}) => {
+      onClick(client_side_code)
+    });
+  }
+}
+
 Hooks.TextSearch = {
   mounted() {
     this.handleEvent("update_text_search", ({value}) => {

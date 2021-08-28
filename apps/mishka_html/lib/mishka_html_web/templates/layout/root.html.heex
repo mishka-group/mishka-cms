@@ -13,7 +13,7 @@
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/js/bootstrap.min.js")}></script>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/js/main.min.js")}></script>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
-    <script defer phx-track-static type="text/javascript" src="https://www.google.com/recaptcha/api.js?render=6LcZqSocAAAAAKicPG-I0dmBHr6YEQVzSVoOkCCW"></script>
+    <script defer phx-track-static type="text/javascript" src={"https://www.google.com/recaptcha/api.js?render=" <> System.get_env("CLIENT_SIDE_CODE")}></script>
   </head>
   <body id="liveBody">
     <%= @inner_content %>

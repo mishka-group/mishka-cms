@@ -57,7 +57,7 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
           <div class="space20"></div>
 
           <div class="input-group input-group-lg">
-              <%= password_input f, :password, value: input_value(f, :password), placeholder: MishkaTranslator.Gettext.dgettext("html_live_component", "پسورد خود را وارد کنید"), class: "form-control", autocomplete: "off" %>
+              <%= password_input f, :password, placeholder: MishkaTranslator.Gettext.dgettext("html_live_component", "پسورد خود را وارد کنید"), class: "form-control", autocomplete: "off" %>
           </div>
           <div class="form-error-tag vazir">
           <div class="space20"></div>

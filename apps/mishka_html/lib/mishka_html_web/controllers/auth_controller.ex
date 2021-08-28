@@ -6,7 +6,8 @@ defmodule MishkaHtmlWeb.AuthController do
   alias MishkaDatabase.Cache.RandomCode
   @hard_secret_random_link "Test refresh"
 
-  def login(conn, %{"user" => %{"email" => email, "password" => password}} = _params) do
+  def login(conn, %{"user" => %{"email" => email, "password" => password}} = params) do
+    IO.inspect(params)
     # to_string(:inet_parse.ntoa(conn.remote_ip))
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),

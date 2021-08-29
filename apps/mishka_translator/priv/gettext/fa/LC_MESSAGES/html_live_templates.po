@@ -25,7 +25,7 @@ msgid "آمار و گزارش ها"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:32 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:23
+#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:32 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:24
 msgid "ارسال"
 msgstr ""
 
@@ -169,7 +169,7 @@ msgid "تیتر سفارشی"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:42 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:33
+#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:42 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:34
 msgid "ثبت نام در سایت"
 msgstr ""
 
@@ -451,7 +451,7 @@ msgid "هیچ فیلدی به فرم اضافه نشده است."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:36 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:27
+#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:36 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:28
 msgid "ورود به سایت"
 msgstr ""
 
@@ -495,17 +495,17 @@ msgstr ""
 msgid "کاربران"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:10
 msgid "اضافه کردن لینک"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_link_live.html.leex:12
 msgid "برگشت به مطلب"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:86
 msgid "حذف لینک از این مطلب"
 msgstr ""
@@ -530,12 +530,12 @@ msgstr ""
 msgid "نوع لینک"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:52
 msgid "وضعیت"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/templates/admin_blog/admin_links_live.html.leex:87
 msgid "ویرایش لینک"
 msgstr ""

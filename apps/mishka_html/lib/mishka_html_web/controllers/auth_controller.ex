@@ -6,9 +6,10 @@ defmodule MishkaHtmlWeb.AuthController do
   alias MishkaDatabase.Cache.RandomCode
   @hard_secret_random_link "Test refresh"
 
-  def login(conn, %{"user" => %{"email" => email, "password" => password}} = _params) do
+  def login(conn, %{"user" => %{"email" => email, "password" => password, "g-recaptcha-response" => token}} = _params) do
     # to_string(:inet_parse.ntoa(conn.remote_ip))
-    with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
+    with {:ok, :verify, _token_info} <- MishkaUser.Validation.GoogleRecaptcha.verify(token),
+         {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, user_info.status == :inactive},
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do
@@ -43,6 +44,12 @@ defmodule MishkaHtmlWeb.AuthController do
       {:error, :more_device, _error_tag} ->
         conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "حساب کاربری شما بیشتر از ۵ بار در سیستم های مختلف استفاده شده است. لطفا یکی از این موارد را غیر فعال کنید و خروج را بفشارید."))
+        |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
+
+      {:error, :verify, msg} ->
+
+        conn
+        |> put_flash(:error, msg)
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
 
       _error ->

@@ -24,6 +24,7 @@ defmodule MishkaUser.Application do
       {Registry, keys: :unique, name: MishkaUser.Acl.AclRegistry},
       {DynamicSupervisor, acl_runner_config},
       {MishkaUser.Acl.AclTask, []},
+      {Finch, name: MyHttpClient}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

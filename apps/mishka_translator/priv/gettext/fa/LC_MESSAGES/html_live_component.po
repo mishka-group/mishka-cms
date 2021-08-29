@@ -119,7 +119,7 @@ msgid "ایمیل"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:47
+#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:49
 msgid "ایمیل خود را وارد کنید"
 msgstr ""
 
@@ -238,12 +238,12 @@ msgid "ثبت"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:71
+#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:74
 msgid "ثبت نام"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/login/login_form_component.ex:46
+#: lib/mishka_html_web/live/components/client/login/login_form_component.ex:49
 msgid "ثبت نام در سایت"
 msgstr ""
 
@@ -338,7 +338,7 @@ msgid "ریست"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:15
+#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:17
 msgid "ساخت حساب کاربری جدید"
 msgstr ""
 
@@ -419,8 +419,8 @@ msgid "غیر نمایش تست"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/login/login_form_component.ex:52
-#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:81
+#: lib/mishka_html_web/live/components/client/login/login_form_component.ex:55
+#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:84
 msgid "فراموشی پسورد"
 msgstr ""
 
@@ -462,7 +462,7 @@ msgid "لایک شدن این پست به وسیله کاربران"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/login/login_form_component.ex:15
+#: lib/mishka_html_web/live/components/client/login/login_form_component.ex:17
 msgid "لطفا وارد شوید"
 msgstr ""
 
@@ -560,7 +560,7 @@ msgid "نام نمایش نقش"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:20
+#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:22
 msgid "نام و نام خانوادگی خود را وارد کنید"
 msgstr ""
 
@@ -576,7 +576,7 @@ msgid "نام کاربری"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:32
+#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:34
 msgid "نام کاربری خود را وارد کنید"
 msgstr ""
 
@@ -640,8 +640,8 @@ msgid "ورود"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/login/login_form_component.ex:42
-#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:75
+#: lib/mishka_html_web/live/components/client/login/login_form_component.ex:45
+#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:78
 msgid "ورود به سایت"
 msgstr ""
 
@@ -679,7 +679,7 @@ msgid "پایین"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:60
+#: lib/mishka_html_web/live/components/client/register/register_form_component.ex:62
 msgid "پسورد خود را وارد کنید"
 msgstr ""
 

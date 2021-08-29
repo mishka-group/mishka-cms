@@ -466,7 +466,7 @@ msgid "ثب نام شده"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/register_live.ex:54
+#: lib/mishka_html_web/live/register_live.ex:56
 msgid "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."
 msgstr ""
 
@@ -550,7 +550,8 @@ msgid "داشبورد مدیریت"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:79
+#: lib/mishka_html_web/live/reset_password_live.ex:76
+#: lib/mishka_html_web/live/reset_password_live.ex:81 lib/mishka_html_web/live/reset_password_live.ex:86
 msgid "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."
 msgstr ""
 
@@ -729,7 +730,7 @@ msgid "غیر پیشنهادی"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:18
+#: lib/mishka_html_web/live/reset_password_live.ex:20
 msgid "فراموشی پسورد"
 msgstr ""
 
@@ -1216,7 +1217,7 @@ msgid "چنین نقشی برای دسترسی وجود ندارد یا ممکن
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:43
+#: lib/mishka_html_web/live/reset_password_live.ex:45
 msgid "چنین کاربری وجود ندارد یا حذف شده است."
 msgstr ""
 
@@ -1263,7 +1264,7 @@ msgid "کاربر: %{title} درست شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:33
+#: lib/mishka_html_web/live/reset_password_live.ex:35
 msgid "کد ارسالی از طرف شما صحیح می باشد. لطفا پسورد جدید خود را وارد کنید."
 msgstr ""
 
@@ -1274,7 +1275,7 @@ msgid "کد ارسالی شما اشتباه می باشد یا ممکن است 
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:38
+#: lib/mishka_html_web/live/reset_password_live.ex:40
 msgid "کد ارسالی شما اشتباه می باشد. لطفا دوباره تلاش کنید"
 msgstr ""
 
@@ -1323,12 +1324,12 @@ msgstr ""
 msgid "یکتا"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:326
 msgid " انتخاب دسترسی رباط ها برای ثبت لینک محتوا. لطفا در صورت نداشتن اطلاعات این فیلد را پر نکنید"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:287
 msgid "انتخاب نوع وضعیت می توانید بر اساس دسترسی های کاربران باشد یا نمایش یا عدم نمایش لینک به کاربران."
 msgstr ""
@@ -1338,17 +1339,17 @@ msgstr ""
 msgid "این فیلد برای مشخص کردن نحوه نمایش در یک محتوا می باشد که بستگی به طراح قالب دارد که چطور از آن استفاده کند. در قالب پیشفرض اگر پایین انتخاب شود آخر مطلب نمایش داده می شود"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:334
 msgid "توضیحات کوتاه مربوط به لینک. این فیلد شامل یک ادیتور نیز می باشد."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:272
 msgid "تیتر لینک"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_links_live.ex:48
 msgid "خطا در حذف لینک اتفاق افتاده است."
 msgstr ""
@@ -1368,42 +1369,42 @@ msgstr ""
 msgid "شما می توانید به واسطه این فیلد لینکی که می خواهید ریدایرکت انجام شود را قرار بدهید. لازم به ذکر است اگر تنظیمات کوتاه کننده لینک فعال باشد و لینک کوتاه نیز قرار گرفته باشد اولیت کلیک کردن با لینک کوتاه می باشد."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:309
 msgid "لینک"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_links_live.ex:40
 msgid "لینک با موفقیت حذف شد"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:243
 msgid "لینک مورد نظر ساخته شد."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:256
 msgid "لینک: %{title} به روز رسانی شده است."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_links_live.ex:38
 msgid "لینک: %{title} حذف شده است."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:241
 msgid "لینک: %{title} درست شده است."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_links_live.ex:18
 msgid "مطلب %{title}"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:258
 msgid "نقش مورد نظر به روز رسانی شد."
 msgstr ""
@@ -1418,7 +1419,7 @@ msgstr ""
 msgid "وسط"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/admin_link_live.ex:46
 #: lib/mishka_html_web/live/admin_links_live.ex:44
 msgid "چنین لینکی وجود ندارد یا ممکن است از قبل حذف شده باشد."

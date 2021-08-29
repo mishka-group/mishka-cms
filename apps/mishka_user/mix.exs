@@ -33,7 +33,8 @@ defmodule MishkaUser.MixProject do
       {:plug, "~> 1.12"},
       {:guardian, "~> 2.2"},
       {:phoenix, "~> 1.6.0-rc.0", override: true},
-      {:jose, "~> 1.11"}
+      {:jose, "~> 1.11"},
+      {:finch, "~> 0.8.1"}
     ]
   end
 end

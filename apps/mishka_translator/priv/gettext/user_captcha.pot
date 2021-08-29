@@ -1,0 +1,36 @@
+## This file is a PO Template file.
+##
+## "msgid"s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run "mix gettext.extract" to bring this file up to
+## date. Leave "msgstr"s empty as changing them here as no
+## effect: edit them in PO (.po) files instead.
+msgid ""
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:54
+msgid "برای ورود باید توکن دریافتی از گوگل را ارسال فرمایید در صورت تلاش مجدد و نمایش دوباره این پیام با پشتیبانی در تماس باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:57
+msgid "درخواست شما قدیمی می باشد لطفا تلاش کنید در صورت تکرار صفحه را رفرش نمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:56
+msgid "درخواست شما معتبر نمی باشد لطفا دوباره تلاش کنید"
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:52 lib/validation/google_recaptcha.ex:53
+msgid "کد امنیتی ضد رباط شما ارسال نشده است لطفا در صورت نمایش این پیام با پشتیبانی وب سایت در تماس باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:55
+msgid "کد ضد رباط شما درست نمی باشد و درخواست شما نا معتبر شناخته شده است لطفا دوباره تلاش کنید"
+msgstr ""

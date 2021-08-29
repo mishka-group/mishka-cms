@@ -24,7 +24,7 @@ msgid "آمار و گزارش ها"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:32 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:23
+#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:32 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:24
 msgid "ارسال"
 msgstr ""
 
@@ -168,7 +168,7 @@ msgid "تیتر سفارشی"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:42 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:33
+#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:42 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:34
 msgid "ثبت نام در سایت"
 msgstr ""
 
@@ -450,7 +450,7 @@ msgid "هیچ فیلدی به فرم اضافه نشده است."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:36 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:27
+#: lib/mishka_html_web/templates/client_auth/reset_change_password_live.html.leex:36 lib/mishka_html_web/templates/client_auth/reset_password_live.html.leex:28
 msgid "ورود به سایت"
 msgstr ""
 

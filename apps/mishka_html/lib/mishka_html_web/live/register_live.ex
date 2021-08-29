@@ -29,15 +29,18 @@ defmodule MishkaHtmlWeb.RegisterLive do
 
   @impl true
   def handle_event("save", %{"user" => params}, socket) do
+    token = params["g-recaptcha-response"]
     filtered_params = Map.merge(params, %{
       "email" => MishkaHtml.email_sanitize(params["email"]),
       "full_name" => MishkaHtml.full_name_sanitize(params["full_name"]),
       "username" => MishkaHtml.username_sanitize(params["username"]),
       "unconfirmed_email" => MishkaHtml.email_sanitize(params["unconfirmed_email"])
     })
-    case MishkaUser.User.create(filtered_params, ["full_name", "email", "password", "username", "unconfirmed_email"]) do
-      {:ok, :add, _error_tag, repo_data} ->
-        MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
+
+
+    socket = with {:ok, :verify, _token_info} <- MishkaUser.Validation.GoogleRecaptcha.verify(token),
+                  {:ok, :add, _error_tag, repo_data} <- MishkaUser.User.create(filtered_params, ["full_name", "email", "password", "username", "unconfirmed_email"]) do
+      MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
 
         random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: repo_data.id, type: "access"}, [key_digest: :sha256])
         RandomCode.save(repo_data.email, random_link)
@@ -49,16 +52,21 @@ defmodule MishkaHtmlWeb.RegisterLive do
 
           MishkaContent.Email.EmailHelper.send(:verify_email, {repo_data.email, site_link})
 
-        socket =
           socket
           |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."))
           |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.LoginLive))
 
-        {:noreply, socket}
+    else
+      {:error, :add, _error_tag, changeset} -> assign(socket, changeset: changeset)
 
-      {:error, :add, _error_tag, changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+      {:error, :verify, msg} ->
+
+        socket
+        |> put_flash(:error, msg)
+        |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
     end
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -72,7 +80,12 @@ defmodule MishkaHtmlWeb.RegisterLive do
     })
 
     changeset = user_changeset(filtered_params)
-    {:noreply, assign(socket, changeset: changeset)}
+
+    socket =
+      if(changeset.valid?, do: push_event(socket, "update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")}), else: socket)
+      |> assign(changeset: changeset)
+
+    {:noreply, socket}
   end
 
   @impl true

@@ -11,6 +11,11 @@
   font-display: block;
 } */
 
+.alert {
+  padding: 10px !important;
+  margin-bottom: 10px !important;
+}
+
 .rtl {
   direction: rtl;
 }

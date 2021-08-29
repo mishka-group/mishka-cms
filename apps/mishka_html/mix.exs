@@ -54,7 +54,8 @@ defmodule MishkaHtml.MixProject do
       {:slugify, "~> 1.3"},
       {:html_sanitize_ex, "~> 1.4"},
       {:mishka_translator, in_umbrella: true},
-      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev}
+      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
+      {:sobelow, "~> 0.8", only: :dev}
     ]
   end
 

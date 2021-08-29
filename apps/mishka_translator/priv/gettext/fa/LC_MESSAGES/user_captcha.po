@@ -1,0 +1,37 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fa\n"
+"Plural-Forms: nplurals=1\n"
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:54
+msgid "برای ورود باید توکن دریافتی از گوگل را ارسال فرمایید در صورت تلاش مجدد و نمایش دوباره این پیام با پشتیبانی در تماس باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:57
+msgid "درخواست شما قدیمی می باشد لطفا تلاش کنید در صورت تکرار صفحه را رفرش نمایید."
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:56
+msgid "درخواست شما معتبر نمی باشد لطفا دوباره تلاش کنید"
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:52 lib/validation/google_recaptcha.ex:53
+msgid "کد امنیتی ضد رباط شما ارسال نشده است لطفا در صورت نمایش این پیام با پشتیبانی وب سایت در تماس باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/validation/google_recaptcha.ex:55
+msgid "کد ضد رباط شما درست نمی باشد و درخواست شما نا معتبر شناخته شده است لطفا دوباره تلاش کنید"
+msgstr ""

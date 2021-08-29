@@ -8,6 +8,8 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
         <%= f = form_for @changeset, "#",
             phx_submit: "save",
             phx_change: "validate",
+            id: "ClientRegisterForm",
+            phx_hook: "GooglereCAPTCHA",
             onkeydown: "return event.key != 'Enter';" %>
 
           <img class="mb-4" src="<%= Routes.static_path(@socket, "/images/icons8-login-as-user-80.png") %>" alt="" width="80" height="80">
@@ -57,7 +59,7 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
           <div class="space20"></div>
 
           <div class="input-group input-group-lg">
-              <%= password_input f, :password, value: input_value(f, :password), placeholder: MishkaTranslator.Gettext.dgettext("html_live_component", "پسورد خود را وارد کنید"), class: "form-control", autocomplete: "off" %>
+              <%= password_input f, :password, placeholder: MishkaTranslator.Gettext.dgettext("html_live_component", "پسورد خود را وارد کنید"), class: "form-control", autocomplete: "off" %>
           </div>
           <div class="form-error-tag vazir">
           <div class="space20"></div>
@@ -67,6 +69,7 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
 
 
           <div class="space20"></div>
+          <%= hidden_input(f, :"g-recaptcha-response", id: "g-recaptcha-response")%>
 
           <%= submit MishkaTranslator.Gettext.dgettext("html_live_component", "ثبت نام"), phx_disable_with: "Login..." , class: "w-100 btn btn-lg btn-primary", disabled: !@changeset.valid? %>
 

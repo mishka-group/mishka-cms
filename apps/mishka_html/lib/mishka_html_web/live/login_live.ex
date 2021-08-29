@@ -45,7 +45,7 @@ defmodule MishkaHtmlWeb.LoginLive do
     changeset = user_changeset(filtered_params)
 
     socket =
-      if(changeset.valid?, do: push_event(socket, "update_recaptcha", %{client_side_code: System.get_env("CLIENT_SIDE_CODE")}), else: socket)
+      if(changeset.valid?, do: push_event(socket, "update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")}), else: socket)
       |> assign(
         changeset: changeset
       )

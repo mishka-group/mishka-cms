@@ -14,7 +14,9 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
-      assign(socket,
+      socket
+      |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
+      |> assign(
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "فراموشی پسورد"),
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
@@ -53,9 +55,11 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
   end
 
   @impl true
-  def handle_event("save", %{"email" => email}, socket) do
-    # TODO: if Capcha code is true
-    with {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
+  def handle_event("save", %{"email" => email} = params, socket) do
+    # TODO: should save ip and email on state ro rate limit
+    token = params["g-recaptcha-response"]
+    socket = with {:ok, :verify, _token_info} <- MishkaUser.Validation.GoogleRecaptcha.verify(token),
+         {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
          {:random_code, true} <- {:random_code, is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(MishkaHtml.email_sanitize(email)))} do
 
           random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: repo_data.id, type: "access"}, [key_digest: :sha256])
@@ -68,16 +72,26 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
           MishkaContent.Email.EmailHelper.send(:forget_password, {repo_data.email, site_link})
 
+          socket
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."))
+          |> push_redirect(to: Routes.live_path(socket, __MODULE__))
     else
-      # TODO: should save ip and email on state ro rate limit
-      {:error, :get_record_by_field, _error_tag} -> {:error, :get_record_by_field}
-      {:random_code, false} -> {:random_code, false}
-    end
+      {:error, :get_record_by_field, _error_tag} ->
+        socket
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."))
+        |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
-    socket =
-      socket
-      |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."))
-      |> push_redirect(to: Routes.live_path(socket, __MODULE__))
+      {:random_code, false} ->
+        socket
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."))
+        |> push_redirect(to: Routes.live_path(socket, __MODULE__))
+
+      {:error, :verify, msg} ->
+
+        socket
+        |> put_flash(:error, msg)
+        |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
+    end
 
     {:noreply, socket}
   end

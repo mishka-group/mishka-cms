@@ -465,7 +465,7 @@ msgid "ثب نام شده"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/register_live.ex:54
+#: lib/mishka_html_web/live/register_live.ex:56
 msgid "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."
 msgstr ""
 
@@ -549,7 +549,8 @@ msgid "داشبورد مدیریت"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:79
+#: lib/mishka_html_web/live/reset_password_live.ex:76
+#: lib/mishka_html_web/live/reset_password_live.ex:81 lib/mishka_html_web/live/reset_password_live.ex:86
 msgid "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."
 msgstr ""
 
@@ -728,7 +729,7 @@ msgid "غیر پیشنهادی"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:18
+#: lib/mishka_html_web/live/reset_password_live.ex:20
 msgid "فراموشی پسورد"
 msgstr ""
 
@@ -1215,7 +1216,7 @@ msgid "چنین نقشی برای دسترسی وجود ندارد یا ممکن
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:43
+#: lib/mishka_html_web/live/reset_password_live.ex:45
 msgid "چنین کاربری وجود ندارد یا حذف شده است."
 msgstr ""
 
@@ -1262,7 +1263,7 @@ msgid "کاربر: %{title} درست شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:33
+#: lib/mishka_html_web/live/reset_password_live.ex:35
 msgid "کد ارسالی از طرف شما صحیح می باشد. لطفا پسورد جدید خود را وارد کنید."
 msgstr ""
 
@@ -1273,7 +1274,7 @@ msgid "کد ارسالی شما اشتباه می باشد یا ممکن است 
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/reset_password_live.ex:38
+#: lib/mishka_html_web/live/reset_password_live.ex:40
 msgid "کد ارسالی شما اشتباه می باشد. لطفا دوباره تلاش کنید"
 msgstr ""
 

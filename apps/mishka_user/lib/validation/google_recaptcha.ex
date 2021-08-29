@@ -1,6 +1,7 @@
 defmodule MishkaUser.Validation.GoogleRecaptcha do
   # TODO: next version should have remoteip checker
   # TODO: these config should be stored on state and db
+  require MishkaTranslator.Gettext
 
   @url "https://www.google.com/recaptcha/api/siteverify"
   @request_name MyHttpClient
@@ -48,12 +49,12 @@ defmodule MishkaUser.Validation.GoogleRecaptcha do
   defp re_captcha_error_messages(error) do
     error_msg =
     [
-      {"missing-input-secret", "The secret parameter is missing."},
-      {"invalid-input-secret", "The secret parameter is invalid or malformed."},
-      {"missing-input-response", "The response parameter is missing."},
-      {"invalid-input-response", "The response parameter is invalid or malformed."},
-      {"bad-request", "The request is invalid or malformed."},
-      {"timeout-or-duplicate", "The response is no longer valid: either is too old or has been used previously."}
+      {"missing-input-secret", MishkaTranslator.Gettext.dgettext("user_captcha", "کد امنیتی ضد رباط شما ارسال نشده است لطفا در صورت نمایش این پیام با پشتیبانی وب سایت در تماس باشید.")},
+      {"invalid-input-secret", MishkaTranslator.Gettext.dgettext("user_captcha", "کد امنیتی ضد رباط شما ارسال نشده است لطفا در صورت نمایش این پیام با پشتیبانی وب سایت در تماس باشید.")},
+      {"missing-input-response", MishkaTranslator.Gettext.dgettext("user_captcha", "برای ورود باید توکن دریافتی از گوگل را ارسال فرمایید در صورت تلاش مجدد و نمایش دوباره این پیام با پشتیبانی در تماس باشید.")},
+      {"invalid-input-response", MishkaTranslator.Gettext.dgettext("user_captcha", "کد ضد رباط شما درست نمی باشد و درخواست شما نا معتبر شناخته شده است لطفا دوباره تلاش کنید")},
+      {"bad-request", MishkaTranslator.Gettext.dgettext("user_captcha", "درخواست شما معتبر نمی باشد لطفا دوباره تلاش کنید")},
+      {"timeout-or-duplicate", MishkaTranslator.Gettext.dgettext("user_captcha", "درخواست شما قدیمی می باشد لطفا تلاش کنید در صورت تکرار صفحه را رفرش نمایید.")}
     ]
     |> Enum.find(fn {er, _msg} -> er == error end)
     |> case do

@@ -11,6 +11,9 @@
   font-display: block;
 } */
 
+.click-cursor {
+  cursor: pointer;
+}
 .alert {
   padding: 10px !important;
   margin-bottom: 10px !important;
@@ -551,37 +554,6 @@ header {
 
 .top-post-btn .btn {
   font-size: 18px;
-}
-
-/* spacer */
-.space10 {
-  clear: both !important;
-  margin-top: 10px;
-}
-
-.space20 {
-  clear: both !important;
-  margin-top: 20px;
-}
-
-.space30 {
-  clear: both;
-  margin-top: 30px;
-}
-
-.space40 {
-  clear: both;
-  margin-top: 40px;
-}
-
-.space50 {
-  clear: both;
-  margin-top: 50px;
-}
-
-.space60 {
-  clear: both;
-  margin-top: 60px;
 }
 
 .admin-home-blog-post-img {

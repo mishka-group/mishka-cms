@@ -20,6 +20,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         basic_menu: false,
         id: nil,
         configs: [{"", ""}],
+        draft_state: [],
         changeset: setting_changeset())
 
     {:ok, socket}
@@ -43,11 +44,23 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         end)
         |> Enum.reject(fn x -> x.value == nil end)
 
+        draft_state = repo_data.configs
+        |> Map.to_list()
+        |> Enum.with_index(fn element, index -> {index, element} end)
+        |> Enum.map(fn {item, {field, value}} ->
+          [
+            {"input-name-#{item + 1}", field},
+            {"input-value-#{item + 1}", value}
+          ]
+        end)
+        |> Enum.concat()
+
         socket
         |> assign([
           dynamic_form: user_info,
           id: repo_data.id,
-          configs: Map.to_list(repo_data.configs)
+          configs: Map.to_list(repo_data.configs),
+          draft_state: draft_state
         ])
     end
 
@@ -110,6 +123,34 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
   end
 
   @impl true
+  def handle_event("delete_user_form", %{"id" => id}, socket) do
+
+    user_fields = socket.assigns.draft_state
+    |> Enum.reject(fn {key, _value} -> key == id end)
+    |> Enum.filter(fn {key, _value} -> String.slice(key, 0..5) == "input-" end)
+
+    configs = create_configs(user_fields, :list)
+
+    draft_state = configs
+    |> Map.to_list()
+    |> Enum.with_index(fn element, index -> {index, element} end)
+    |> Enum.map(fn {item, {field, value}} ->
+      [
+        {"input-name-#{item + 1}", field},
+        {"input-value-#{item + 1}", value}
+      ]
+    end)
+    |> Enum.concat()
+
+
+    socket =
+      socket
+      |> assign(draft_state: draft_state, configs: configs |> Map.to_list)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("clear_all_field", _, socket) do
     socket =
       socket
@@ -147,7 +188,14 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
   end
 
   @impl true
-  def handle_event("draft", _params, socket) do
+  def handle_event("draft", params, socket) do
+    configs = params
+    |> Map.drop(["setting", "_target", "_csrf_token"])
+
+    socket =
+      socket
+      |> assign(draft_state: configs)
+
     {:noreply, socket}
   end
 
@@ -158,7 +206,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
 
   @impl true
   def handle_event("save", %{"setting" => params} = full_params, socket) do
-    configs = if(create_configs(full_params) != %{}, do: create_configs(full_params), else: nil)
+    configs = if(create_configs(full_params, :map) != %{}, do: create_configs(full_params, :map), else: nil)
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
       [] -> socket
       fields_list ->
@@ -203,8 +251,19 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
     {:noreply, socket}
   end
 
+  defp create_configs(params, :list) do
+    params
+    |> create_configs()
+  end
+
+  defp create_configs(params, :map) do
+    Map.to_list(params)
+    |> create_configs()
+  end
+
   defp create_configs(params) do
-    user_fields = Map.to_list(params)
+    user_fields =
+    params
     |> Enum.filter(fn {key, _value} -> String.slice(key, 0..5) == "input-" end)
 
     Enum.map(user_fields, fn {key, field_name} ->

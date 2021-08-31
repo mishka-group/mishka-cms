@@ -105,7 +105,6 @@
                     <div class="clearfix"></div>
                     <div class="space30"></div>
 
-                    <% IO.inspect @configs %>
                     <%= if @dynamic_form != [] do %>
                          <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddFieldComponent,
                             id: "form_builder"

@@ -5,6 +5,38 @@
 @import "../static/css/ckeditor-styles.css";
 @import "../static/css/bootstrap.min.css";
 
+
+/* spacer */
+.space10 {
+  clear: both !important;
+  margin-top: 10px;
+}
+
+.space20 {
+  clear: both !important;
+  margin-top: 20px;
+}
+
+.space30 {
+  clear: both;
+  margin-top: 30px;
+}
+
+.space40 {
+  clear: both;
+  margin-top: 40px;
+}
+
+.space50 {
+  clear: both;
+  margin-top: 50px;
+}
+
+.space60 {
+  clear: both;
+  margin-top: 60px;
+}
+
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {

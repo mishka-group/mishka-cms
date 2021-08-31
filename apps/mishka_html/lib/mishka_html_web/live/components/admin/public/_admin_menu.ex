@@ -28,7 +28,7 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
 
           <div class="col admin-home-quickmenu-top-menu rtl">
             <%= live_redirect "داشبورد", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminDashboardLive) %>
-            <%= live_redirect "مدیریت فایل", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive) %>
+            <%= live_redirect "تنظیمات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSettingsLive) %>
             <%= live_redirect "سایت", to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive) %>
           </div>
 

@@ -19,7 +19,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         body_color: "#a29ac3cf",
         basic_menu: false,
         id: nil,
-        configs: 1,
+        configs: [{"", ""}],
         changeset: setting_changeset())
 
     {:ok, socket}
@@ -36,6 +36,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
 
       {:ok, :get_record_by_id, @error_atom, repo_data} ->
+
         user_info = Enum.map(all_field, fn field ->
          record = Enum.find(creata_setting_state(repo_data), fn user -> user.type == field.type end)
          Map.merge(field, %{value: if(is_nil(record), do: nil, else: record.value)})
@@ -46,6 +47,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         |> assign([
           dynamic_form: user_info,
           id: repo_data.id,
+          configs: Map.to_list(repo_data.configs)
         ])
     end
 
@@ -151,7 +153,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
 
   @impl true
   def handle_event("add_field", _params, socket) do
-    {:noreply, assign(socket, configs: socket.assigns.configs + 1)}
+    {:noreply, assign(socket, configs: socket.assigns.configs ++ [{"", ""}])}
   end
 
   @impl true
@@ -172,7 +174,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
 
     case socket.assigns.id do
       nil -> create_setting(socket, params: {Map.merge(params, %{"configs" => configs})})
-      id ->  edit_setting(socket, params: {params, id})
+      id ->  edit_setting(socket, params: {Map.merge(params, %{"configs" => configs}), id})
     end
   end
 

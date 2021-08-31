@@ -119,9 +119,11 @@
                     <div class="space30"></div>
 
                     <%= if @dynamic_form != [] do %>
-                        <%= for item <- Enum.shuffle(1..@configs) |> Enum.sort do %>
+                        <%= for {item, {field, value}} <- Enum.with_index(@configs, fn element, index -> {index, element} end) do %>
                             <%= live_component @socket, MishkaHtmlWeb.Admin.Setting.AddFieldComponent,
-                                id: "#{item}"
+                                id: "#{item + 1}",
+                                field: field,
+                                value: value
                             %>
                         <% end %>
                     <% end %>

@@ -5,7 +5,7 @@ defmodule MishkaHtmlWeb.Admin.Setting.AddFieldComponent do
     ~L"""
       <div class="col-sm-3 vazir" id="title-<%= @id %>">
         <label for="add_field_label<%= @id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تیتر فیلد:") %></label>
-        <button phx-click="delete_form" phx-value-type="<%= @id %>" type="button" class="btn-close" aria-label="Close"></button>
+        <button phx-click="delete_user_form" phx-value-id="input-name-<%= @id %>" type="button" class="btn-close" aria-label="Close"></button>
         <input type="text" id="input-name-<%= @id %>" name="input-name-<%= @id %>" class="form-control bw" value="<%= @field %>">
       </div>
 

@@ -27,11 +27,6 @@
 
       </div>
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Setting.SearchComponent,
-            id: :admin_category_search,
-            filters: @filters
-        %>
-
         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
                             id: :live_flash,
                             flash: @flash

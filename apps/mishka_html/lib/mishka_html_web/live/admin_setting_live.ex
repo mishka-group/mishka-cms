@@ -158,7 +158,8 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         basic_menu: false,
         changeset: setting_changeset(),
         dynamic_form: [],
-        configs: 1
+        configs: [{"", ""}],
+        draft_state: []
       ])
 
     {:noreply, socket}

@@ -95,23 +95,7 @@
                                 %>
 
                             <div class="clearfix"></div>
-
-                            <% "add_field" -> %>
-                            <div class="clearfix"></div>
-
-                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddFieldComponent,
-                                        id: String.to_atom("admin_form_text_#{form.type}"),
-                                        search_fields: MishkaHtmlWeb.AdminSettingLive.search_fields(form.type)
-                                %>
-
-                            <div class="clearfix"></div>
                            <% _ -> %>
-                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
-                                        id: String.to_atom("admin_form_text_#{form.type}"),
-                                        form: form,
-                                        f: f,
-                                        search_fields: MishkaHtmlWeb.AdminSettingLive.search_fields(form.type)
-                                %>
 
                             <div class="clearfix"></div>
 
@@ -121,7 +105,15 @@
                     <div class="clearfix"></div>
                     <div class="space30"></div>
 
+                    <% IO.inspect @configs %>
                     <%= if @dynamic_form != [] do %>
+                         <%= live_component @socket, MishkaHtmlWeb.Admin.Form.AddFieldComponent,
+                            id: "form_builder"
+                        %>
+
+                        <div class="clearfix"></div>
+                        <div class="space30"></div>
+
                         <%= for {item, {field, value}} <- Enum.with_index(@configs, fn element, index -> {index, element} end) do %>
                             <%= live_component @socket, MishkaHtmlWeb.Admin.Setting.AddFieldComponent,
                                 id: "#{item + 1}",

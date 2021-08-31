@@ -19,7 +19,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.Role do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:name, :display_name])
-    |> validate_required([:name, :display_name], message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_required([:name, :display_name], message: MishkaTranslator.Gettext.dgettext("db_schema_user", "فیلد مذکور نمی تواند خالی باشد"))
   end
 
 end

@@ -15,7 +15,7 @@ defmodule MishkaUser.Token.PhoenixToken do
   @spec create_token(id(), :access | :refresh) :: {:ok, :access | :refresh, token()}
 
   def create_token(id, :access) do
-    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, System.get_env("SECRET_ACCES_TOKEN_SALT"), %{id: id, type: "access"}, [key_digest: :sha256])
+    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, System.get_env("SECRET_ACCESS_TOKEN_SALT"), %{id: id, type: "access"}, [key_digest: :sha256])
     # save reresh token on disk db
     {:ok, :access, token}
   end
@@ -117,7 +117,7 @@ defmodule MishkaUser.Token.PhoenixToken do
   end
 
   def verify_token(token, :access) do
-    Phoenix.Token.verify(MishkaApiWeb.Endpoint, System.get_env("SECRET_ACCES_TOKEN_SALT"), token, [max_age: token_expire_time(:access).age])
+    Phoenix.Token.verify(MishkaApiWeb.Endpoint, System.get_env("SECRET_ACCESS_TOKEN_SALT"), token, [max_age: token_expire_time(:access).age])
     |> verify_token_condition(:access)
     |> verify_token_on_state(token)
   end

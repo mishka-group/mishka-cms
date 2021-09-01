@@ -1,5 +1,5 @@
 defmodule MishkaDatabase.Public.Setting do
-  # TODO: update state
+
   alias MishkaDatabase.Schema.Public.Setting, as: SettingSchema
 
   import Ecto.Query

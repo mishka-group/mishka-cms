@@ -44,7 +44,8 @@ defmodule MishkaDatabase.Public.Setting do
     crud_get_record(id)
   end
 
-  @spec settings([{:conditions, {String.t() | integer(), String.t() | integer()}} | {:filters, record_input()}, ...]) :: Scrivener.Page.t()
+
+  @spec settings([{:conditions, {String.t() | integer(), String.t() | integer()}} | {:filters, map()}, ...]) :: any
   def settings(conditions: {page, page_size}, filters: filters) do
     try do
       query = from(set in SettingSchema) |> convert_filters_to_where(filters)
@@ -93,6 +94,13 @@ defmodule MishkaDatabase.Public.Setting do
   def allowed_fields(:string), do: SettingSchema.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 
   def notify_subscribers({:ok, _, :setting, repo_data} = params, type_send) do
+    # send stop and re-create
+    Task.Supervisor.async_nolink(MishkaDatabase.Public.ReStartSettingAgentTaskSupervisor, fn ->
+      :timer.sleep(10000)
+      MishkaDatabase.Public.SettingAgent.update()
+    end)
+
+
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "setting", {type_send, :ok, repo_data})
     params
   end

@@ -64,15 +64,27 @@ defmodule MishkaDatabase.Public.Setting do
     end
   end
 
+  def settings(filters: filters) do
+    try do
+      query = from(set in SettingSchema) |> convert_filters_to_where(filters)
+      from([set] in query,
+      order_by: [desc: set.inserted_at, desc: set.id],
+      select: %{
+        id: set.id,
+        section: set.section,
+        configs: set.configs,
+        updated_at: set.updated_at,
+        inserted_at: set.inserted_at,
+      })
+      |> MishkaDatabase.Repo.all()
+    rescue
+      Ecto.Query.CastError -> []
+    end
+  end
+
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      case key do
-        :section ->
-          like = "%#{value}%"
-          from set in query, where: like(set.section, ^like)
-
-        _ -> from set in query, where: field(set, ^key) == ^value
-      end
+      from set in query, where: field(set, ^key) == ^value
     end)
   end
 

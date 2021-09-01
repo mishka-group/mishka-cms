@@ -10,7 +10,8 @@ defmodule MishkaDatabase.Application do
     children = [
       {MishkaDatabase.Cache.MnesiaToken, []},
       {MishkaDatabase.Cache.RandomCode, []},
-      MishkaDatabase.Repo
+      MishkaDatabase.Repo,
+      MishkaDatabase.Public.SettingAgent
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -8,11 +8,6 @@ defmodule MishkaUser.Token.PhoenixToken do
   @type result() :: map() | tuple() | atom()
   @type time() :: integer()
   @type clime() :: map() | tuple() | struct()
-
-
-  # TODO: should be on config file or ram
-  @hard_secret_refresh "Test refresh"
-  @hard_secret_access "Test access"
   # ["access", "refresh", "current"]
 
 
@@ -20,13 +15,13 @@ defmodule MishkaUser.Token.PhoenixToken do
   @spec create_token(id(), :access | :refresh) :: {:ok, :access | :refresh, token()}
 
   def create_token(id, :access) do
-    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_access, %{id: id, type: "access"}, [key_digest: :sha256])
+    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, System.get_env("SECRET_ACCES_TOKEN_SALT"), %{id: id, type: "access"}, [key_digest: :sha256])
     # save reresh token on disk db
     {:ok, :access, token}
   end
 
   def create_token(id, :refresh) do
-    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_refresh, %{id: id, type: "refresh"}, [key_digest: :sha256])
+    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, System.get_env("SECRET_REFRESH_TOKEN_SALT"), %{id: id, type: "refresh"}, [key_digest: :sha256])
     # save reresh token on disk db
     {:ok, :refresh, token}
   end
@@ -116,13 +111,13 @@ defmodule MishkaUser.Token.PhoenixToken do
           | {:ok, :verify_token, :access | :refresh, map}
 
   def verify_token(token, :refresh) do
-    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_refresh, token, [max_age: token_expire_time(:refresh).age])
+    Phoenix.Token.verify(MishkaApiWeb.Endpoint, System.get_env("SECRET_REFRESH_TOKEN_SALT"), token, [max_age: token_expire_time(:refresh).age])
     |> verify_token_condition(:refresh)
     |> verify_token_on_state(token)
   end
 
   def verify_token(token, :access) do
-    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_access, token, [max_age: token_expire_time(:access).age])
+    Phoenix.Token.verify(MishkaApiWeb.Endpoint, System.get_env("SECRET_ACCES_TOKEN_SALT"), token, [max_age: token_expire_time(:access).age])
     |> verify_token_condition(:access)
     |> verify_token_on_state(token)
   end

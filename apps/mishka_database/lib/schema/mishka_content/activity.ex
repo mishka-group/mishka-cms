@@ -9,8 +9,8 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
   schema "activities" do
 
     field(:type, ActivitiesTypeEnum, null: false)
-    field(:section, ActivitiesSection, null: false, null: false)
-    field(:section_id, :binary_id, primary_key: false, null: true)
+    field(:section, ActivitiesSection, null: false)
+    field(:section_id, :binary_id, primary_key: false)
     field(:priority, ContentPriorityEnum, null: false)
     field(:status, ActivitiesStatusEnum, null: false)
     field(:action, ActivitiesAction, null: false)

@@ -36,13 +36,13 @@ defmodule MishkaUser.User do
 
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_add, 1}
   def create(attrs) do
-    crud_add(attrs)
+    crud_add(Map.merge(attrs, %{"unconfirmed_email" => attrs["email"]}))
     |> notify_subscribers(:user)
   end
 
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_add, 1}
   def create(attrs, allowed_fields) do
-    crud_add(attrs, allowed_fields)
+    crud_add(Map.merge(attrs, %{"unconfirmed_email" => attrs["email"]}), allowed_fields)
     |> notify_subscribers(:user)
   end
 

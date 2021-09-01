@@ -19,30 +19,39 @@ defmodule MishkaContent.General.Subscription do
     Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "subscription")
   end
 
-  @spec create(record_input()) ::
-  {:error, :add, error_tag(), repo_error()} | {:ok, :add, error_tag(), repo_data()}
+  @doc delegate_to: {MishkaDatabase.CRUD, :crud_add, 1}
   def create(attrs) do
     crud_add(attrs)
     |> notify_subscribers(:subscription)
   end
 
-  @spec edit(record_input()) ::
-  {:error, :edit, :uuid, error_tag()} |
-  {:error, :edit, :get_record_by_id, error_tag()} |
-  {:error, :edit, error_tag(), repo_error()} | {:ok, :edit, error_tag(), repo_data()}
+  @doc delegate_to: {MishkaDatabase.CRUD, :crud_add, 1}
+  def create(attrs, allowed_fields) do
+    crud_add(attrs, allowed_fields)
+    |> notify_subscribers(:subscription)
+  end
+
+  @doc delegate_to: {MishkaDatabase.CRUD, :crud_edit, 1}
   def edit(attrs) do
     crud_edit(attrs)
     |> notify_subscribers(:subscription)
   end
 
-  @spec delete(data_uuid()) ::
-  {:error, :delete, :uuid, error_tag()} |
-  {:error, :delete, :get_record_by_id, error_tag()} |
-  {:error, :delete, :forced_to_delete, error_tag()} |
-  {:error, :delete, error_tag(), repo_error()} | {:ok, :delete, error_tag(), repo_data()}
+  @doc delegate_to: {MishkaDatabase.CRUD, :crud_edit, 1}
+  def edit(attrs, allowed_fields) do
+    crud_edit(attrs, allowed_fields)
+    |> notify_subscribers(:subscription)
+  end
+
+  @doc delegate_to: {MishkaDatabase.CRUD, :crud_delete, 1}
   def delete(id) do
     crud_delete(id)
     |> notify_subscribers(:subscription)
+  end
+
+  @doc delegate_to: {MishkaDatabase.CRUD, :crud_get_record, 1}
+  def show_by_id(id) do
+    crud_get_record(id)
   end
 
   @spec delete(data_uuid(), data_uuid()) ::
@@ -59,13 +68,6 @@ defmodule MishkaContent.General.Subscription do
   rescue
     Ecto.Query.CastError -> {:error, :delete, :subscription, :not_found}
   end
-
-  @spec show_by_id(data_uuid()) ::
-          {:error, :get_record_by_id, error_tag()} | {:ok, :get_record_by_id, error_tag(), repo_data()}
-  def show_by_id(id) do
-    crud_get_record(id)
-  end
-
 
   @spec subscriptions([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
   def subscriptions(conditions: {page, page_size}, filters: filters) do

@@ -1,0 +1,58 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: fa\n"
+"Plural-Forms: nplurals=1\n"
+
+#, elixir-format
+#: lib/schema/mishka_user/user.ex:47 lib/schema/mishka_user/user.ex:49
+msgid "این ایمیل از قبل در سیستم ثبت شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/schema/mishka_user/user_role.ex:26
+msgid "این حساب کربری از قبل در سیستم ثبت شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/schema/mishka_user/identity_provider.ex:29
+#: lib/schema/mishka_user/identity_provider.ex:30
+msgid "این خدمات دهنده برای حساب کاربری ارسال شده از قبل در سیستم ثبت نام شده است"
+msgstr ""
+
+#, elixir-format
+#: lib/schema/mishka_user/permission.ex:22
+msgid "این سطح دسترسی از قبل برای نقش مذکور اضافه شده است"
+msgstr ""
+
+#, elixir-format
+#: lib/schema/mishka_user/user.ex:48
+msgid "این نام کاربری از قبل در سیستم ثبت شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/schema/mishka_user/user.ex:38 lib/schema/mishka_user/user.ex:39
+#: lib/schema/mishka_user/user.ex:40 lib/schema/mishka_user/user.ex:41 lib/schema/mishka_user/user.ex:57
+#: lib/schema/mishka_user/user.ex:58
+msgid "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}"
+msgstr ""
+
+#, elixir-format
+#: lib/schema/mishka_user/identity_provider.ex:26
+#: lib/schema/mishka_user/permission.ex:19 lib/schema/mishka_user/role.ex:22 lib/schema/mishka_user/user.ex:37
+#: lib/schema/mishka_user/user.ex:56 lib/schema/mishka_user/user_role.ex:21
+msgid "فیلد مذکور نمی تواند خالی باشد"
+msgstr ""
+
+#, elixir-format
+#: lib/schema/mishka_user/identity_provider.ex:28
+#: lib/schema/mishka_user/permission.ex:21 lib/schema/mishka_user/user_role.ex:24 lib/schema/mishka_user/user_role.ex:25
+msgid "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"
+msgstr ""

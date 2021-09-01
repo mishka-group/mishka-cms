@@ -1,13 +1,12 @@
 defmodule MishkaUser.Token.CurrentPhoenixToken do
   alias MishkaUser.Token.TokenManagemnt
-  @hard_secret_current "Test current"
 
   @type data_uuid() :: Ecto.UUID.t
   @type token() :: String.t()
 
   @spec create_token(data_uuid() | String.t(), :current) :: {:ok, :current, nonempty_binary}
   def create_token(id, :current) do
-    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, @hard_secret_current, %{id: id, type: "access"}, [key_digest: :sha256])
+    token = Phoenix.Token.sign(MishkaApiWeb.Endpoint, System.get_env("SECRET_CURRENT_TOKEN_SALT"), %{id: id, type: "access"}, [key_digest: :sha256])
     {:ok, :current, token}
   end
 
@@ -39,7 +38,7 @@ defmodule MishkaUser.Token.CurrentPhoenixToken do
 
   @spec verify_token(nil | token(), atom()) :: tuple()
   def verify_token(token, :current) do
-    Phoenix.Token.verify(MishkaApiWeb.Endpoint, @hard_secret_current, token, [max_age: token_expire_time(:current).age])
+    Phoenix.Token.verify(MishkaApiWeb.Endpoint, System.get_env("SECRET_CURRENT_TOKEN_SALT"), token, [max_age: token_expire_time(:current).age])
     |> verify_token_condition(:current)
     |> verify_token_on_state(token)
   end

@@ -223,7 +223,8 @@ defmodule MishkaDatabase.CRUD do
   crud_get_record("6d80d5f4-781b-4fa8-9796-1821804de6ba")
   ```
 
-  خروجی:
+  Outputs:
+
   ```
   {:error, error_atom, :get_record_by_id}
   {:ok, error_atom, :get_record_by_id, record_info}
@@ -251,7 +252,8 @@ defmodule MishkaDatabase.CRUD do
   crud_get_by_field("email", "info@trangell.com")
   ```
 
-  خروجی:
+  Outputs:
+
   ```
   {:error, error_atom, :get_record_by_field}
   {:ok, error_atom, :get_record_by_field, record_info}

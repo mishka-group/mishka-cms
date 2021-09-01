@@ -13,7 +13,10 @@
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/js/bootstrap.min.js")}></script>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/js/main.min.js")}></script>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
-    <script defer phx-track-static type="text/javascript" src={"https://www.google.com/recaptcha/api.js?render=" <> System.get_env("CAPTCHA_CLIENT_SIDE_CODE")}></script>
+    <%= if MishkaDatabase.Public.SettingAgent.get_config(:public, "captcha_status") == "production" do %>
+      <script defer phx-track-static type="text/javascript" src={"https://www.google.com/recaptcha/api.js?render=" <> MishkaDatabase.Public.SettingAgent.get_config(:public, "google_recaptcha_client_side_code")}></script>
+    <% end %>
+    
   </head>
   <body id="liveBody">
     <%= @inner_content %>

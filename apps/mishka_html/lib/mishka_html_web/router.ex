@@ -90,6 +90,8 @@ defmodule MishkaHtmlWeb.Router do
     live "/role", AdminUserRoleLive
     live "/role-permissions", AdminUserRolePermissionsLive
     live "/blog-authors/:post_id", AdminBlogPostAuthorsLive
+    live "/settings", AdminSettingsLive
+    live "/setting", AdminSettingLive
   end
 
   if Mix.env == :dev do

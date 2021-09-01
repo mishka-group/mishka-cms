@@ -14,7 +14,8 @@ msgstr ""
 #: lib/mishka_html_web/live/admin_blog_tag_live.ex:76
 #: lib/mishka_html_web/live/admin_blog_tag_live.ex:99 lib/mishka_html_web/live/admin_comment_live.ex:165
 #: lib/mishka_html_web/live/admin_comment_live.ex:210 lib/mishka_html_web/live/admin_link_live.ex:144
-#: lib/mishka_html_web/live/admin_link_live.ex:169 lib/mishka_html_web/live/admin_subscription_live.ex:161
+#: lib/mishka_html_web/live/admin_link_live.ex:169 lib/mishka_html_web/live/admin_setting_live.ex:164
+#: lib/mishka_html_web/live/admin_setting_live.ex:187 lib/mishka_html_web/live/admin_subscription_live.ex:161
 #: lib/mishka_html_web/live/admin_subscription_live.ex:184 lib/mishka_html_web/live/admin_user_live.ex:156
 #: lib/mishka_html_web/live/admin_user_live.ex:179 lib/mishka_html_web/live/admin_user_role_live.ex:84
 #: lib/mishka_html_web/live/admin_user_role_live.ex:117
@@ -247,7 +248,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_comment_live.ex:318
-#: lib/mishka_html_web/live/admin_subscription_live.ex:347
+#: lib/mishka_html_web/live/admin_setting_live.ex:325 lib/mishka_html_web/live/admin_subscription_live.ex:347
 msgid "بخش"
 msgstr ""
 
@@ -488,7 +489,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_categories_live.ex:115
-#: lib/mishka_html_web/live/admin_subscriptions_live.ex:111
+#: lib/mishka_html_web/live/admin_settings_live.ex:104 lib/mishka_html_web/live/admin_subscriptions_live.ex:111
 msgid "خطا در حذف مجموعه اتفاق افتاده است."
 msgstr ""
 
@@ -670,7 +671,8 @@ msgstr ""
 #: lib/mishka_html_web/live/admin_comment_live.ex:338 lib/mishka_html_web/live/admin_comment_live.ex:346
 #: lib/mishka_html_web/live/admin_link_live.ex:267 lib/mishka_html_web/live/admin_link_live.ex:276
 #: lib/mishka_html_web/live/admin_link_live.ex:291 lib/mishka_html_web/live/admin_link_live.ex:304
-#: lib/mishka_html_web/live/admin_link_live.ex:329 lib/mishka_html_web/live/admin_subscription_live.ex:326
+#: lib/mishka_html_web/live/admin_link_live.ex:329 lib/mishka_html_web/live/admin_setting_live.ex:318
+#: lib/mishka_html_web/live/admin_setting_live.ex:329 lib/mishka_html_web/live/admin_subscription_live.ex:326
 #: lib/mishka_html_web/live/admin_subscription_live.ex:340 lib/mishka_html_web/live/admin_subscription_live.ex:351
 #: lib/mishka_html_web/live/admin_subscription_live.ex:368 lib/mishka_html_web/live/admin_user_live.ex:292
 #: lib/mishka_html_web/live/admin_user_live.ex:301 lib/mishka_html_web/live/admin_user_live.ex:310
@@ -802,6 +804,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_categories_live.ex:91
+#: lib/mishka_html_web/live/admin_settings_live.ex:80
 msgid "مجموعه: %{title} حذف شده است."
 msgstr ""
 
@@ -1166,7 +1169,7 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/admin_blog_categories_live.ex:111
 #: lib/mishka_html_web/live/admin_blog_category_live.ex:45 lib/mishka_html_web/live/admin_blog_category_live.ex:503
-#: lib/mishka_html_web/live/admin_subscriptions_live.ex:107
+#: lib/mishka_html_web/live/admin_settings_live.ex:100 lib/mishka_html_web/live/admin_subscriptions_live.ex:107
 msgid "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد."
 msgstr ""
 
@@ -1422,4 +1425,60 @@ msgstr ""
 #: lib/mishka_html_web/live/admin_link_live.ex:46
 #: lib/mishka_html_web/live/admin_links_live.ex:44
 msgid "چنین لینکی وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:333
+#: lib/mishka_html_web/live/admin_settings_live.ex:22
+msgid "تنظیمات"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:248
+msgid "تنظیمات بخش: %{title} به روز شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:227
+msgid "تنظیمات بخش: %{title} درست شده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:321
+msgid "تنظیمات عمومی"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:250
+msgid "تنظیمات مورد نظر به روز رسانی شد"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:230
+msgid "تنظیمات مورد نظر ساخته شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:326
+msgid "شما برای هر بخش از سایت می توانید فقط یک تنظیمات وارد کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:334
+msgid "شما در این بخش می توانید تنظیماتی که می خواهید را با اسم سفارشی خودتان وارد کنید. لازم به ذکر هست از تغییر اسم تنظیمات پیشفرض که موقع نصب به سیستم شما خودکار اضافه شدن به شدت پرهیز کنید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:18
+msgid "ویرایش و اضافه کردن تنظیمات"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:255
+msgid "چنین تنظیماتی وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html_web/live/admin_setting_live.ex:35
+msgid "چنین نمظیماتی وجود ندارد یا ممکن است از قبل حذف شده باشد."
 msgstr ""

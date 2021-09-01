@@ -108,25 +108,21 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
   end
 
   @impl true
-  def handle_info({:setting, :ok, repo_record}, socket) do
-    socket = case repo_record.__meta__.state do
-      :loaded ->
-        setting_assign(
-          socket,
-          params: socket.assigns.filters,
-          page_size: socket.assigns.page_size,
-          page_number: socket.assigns.page,
-        )
-
-       _ ->  socket
-    end
-
+  def handle_info(:menu, socket) do
+    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminSettingsLive"})
     {:noreply, socket}
   end
 
+
   @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminSettingsLive"})
+  def handle_info(_params, socket) do
+    setting_assign(
+      socket,
+      params: socket.assigns.filters,
+      page_size: socket.assigns.page_size,
+      page_number: socket.assigns.page,
+    )
+
     {:noreply, socket}
   end
 

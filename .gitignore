@@ -54,3 +54,6 @@ Temporary Items
 
 # Compiled C++ files
 *.out
+
+Dockerfile_postgres
+init_db.sh

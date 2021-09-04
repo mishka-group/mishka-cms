@@ -7,7 +7,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.Post,
       redirect: __MODULE__,
-      router: Routes
+      router: Routes,
+      skip_list: ["category_title"]
 
 
   @impl true

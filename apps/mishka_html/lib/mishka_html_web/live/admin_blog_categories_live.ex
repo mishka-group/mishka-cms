@@ -3,6 +3,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
   alias MishkaContent.Blog.Category
 
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.Category,
+      redirect: __MODULE__,
+      router: Routes
+
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_categories_live.html", assigns)
@@ -26,61 +32,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
     {:ok, socket, temporary_assigns: [categories: []]}
   end
 
-  @impl true
-  def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
-    {:noreply,
-      category_assign(socket, params: params["params"], page_size: count, page_number: page)
-    }
-  end
+  # Live CRUD
+  paginate(:categories, user_id: false)
 
-  @impl true
-  def handle_params(%{"page" => page}, _url, socket) do
-    {:noreply,
-      category_assign(socket, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: page)
-    }
-  end
-
-  @impl true
-  def handle_params(%{"count" => count} = params, _url, socket) do
-    {:noreply,
-      category_assign(socket, params: params["params"], page_size: count, page_number: 1)
-    }
-  end
-
-  @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("search", params, socket) do
-    socket =
-      push_patch(socket,
-        to:
-          Routes.live_path(
-            socket,
-            __MODULE__,
-            params: category_filter(params),
-            count: params["count"],
-          )
-      )
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("reset", _params, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, __MODULE__))}
-  end
-
-  @impl true
-  def handle_event("open_modal", _params, socket) do
-    {:noreply, assign(socket, [open_modal: true])}
-  end
-
-  @impl true
-  def handle_event("close_modal", _params, socket) do
-    {:noreply, assign(socket, [open_modal: false, component: nil])}
-  end
+  list_search_and_action()
 
   @impl true
   def handle_event("delete", %{"id" => id} = _params, socket) do

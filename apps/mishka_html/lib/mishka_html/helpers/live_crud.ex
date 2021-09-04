@@ -14,19 +14,22 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       @impl Phoenix.LiveView
       def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), params: params["params"], page_size: count, page_number: page)}
+        skip_list = Keyword.get(@interface_module, :skip_list)
+        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"], page_size: count, page_number: page)}
       end
 
       @impl Phoenix.LiveView
       def handle_params(%{"page" => page}, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: page)}
+        skip_list = Keyword.get(@interface_module, :skip_list)
+        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: page)}
       end
 
       @impl Phoenix.LiveView
       def handle_params(%{"count" => count} = params, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), params: params["params"], page_size: count, page_number: 1)}
+        skip_list = Keyword.get(@interface_module, :skip_list)
+        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"], page_size: count, page_number: 1)}
       end
 
       @impl Phoenix.LiveView
@@ -43,7 +46,9 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         module_selected = Keyword.get(@interface_module, :module)
         redirect = Keyword.get(@interface_module, :redirect)
         router = Keyword.get(@interface_module, :router)
-        {:noreply, push_patch(socket, to: router.live_path(socket, redirect, params: paginate_assign_filter(params, module_selected), count: params["count"]))}
+        skip_list = Keyword.get(@interface_module, :skip_list)
+        count = if(is_nil(params["count"]), do: socket.assigns.page_size, else: params["count"])
+        {:noreply, push_patch(socket, to: router.live_path(socket, redirect, params: paginate_assign_filter(params, module_selected, skip_list), count: count))}
       end
 
       @impl Phoenix.LiveView
@@ -66,21 +71,21 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   end
 
 
-  def paginate_assign_filter(params, module) when is_map(params) do
-    Map.take(params, module.allowed_fields(:string))
+  def paginate_assign_filter(params, module, skip_list) when is_map(params) do
+    skip_list = if(is_nil(skip_list), do: [], else: skip_list)
+    Map.take(params, module.allowed_fields(:string) ++ skip_list)
     |> Enum.reject(fn {_key, value} -> value == "" end)
     |> Map.new()
     |> MishkaDatabase.convert_string_map_to_atom_map()
   end
 
-  def paginate_assign_filter(_params, _module), do: %{}
-
-  def paginate_assign(socket, module, function, user_id, params: params, page_size: count, page_number: page) do
+  def paginate_assign_filter(_params, _module, _skip_list), do: %{}
+  def paginate_assign(socket, module, function, user_id, skip_list, params: params, page_size: count, page_number: page) do
 
     load_record = if user_id do
-      [conditions: {page, count}, filters: paginate_assign_filter(params, module), user_id: Map.get(socket.assigns, :auser_id)]
+      [conditions: {page, count}, filters: paginate_assign_filter(params, module, skip_list), user_id: Map.get(socket.assigns, :auser_id)]
     else
-      [conditions: {page, count}, filters: paginate_assign_filter(params, module)]
+      [conditions: {page, count}, filters: paginate_assign_filter(params, module, skip_list)]
     end
 
     new_assign =
@@ -94,11 +99,13 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     assign(socket, new_assign)
   end
 
-  defp page_count(count) do
+  defp page_count(""), do: 10
+  defp page_count(count) when is_binary(count) do
     case String.to_integer(count) do
       c when c > 100 -> 100
       c when c < 10 -> 10
       c -> c
     end
   end
+  defp page_count(_count), do: 10
 end

@@ -25,7 +25,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
       component: nil,
       page_title: MishkaTranslator.Gettext.dgettext("html_live", "نقش های کاربری"),
       body_color: "#a29ac3cf",
-      roles: Role.roles(conditions: {1, 20}, filters: %{})
+      roles: Role.roles(conditions: {1, 10}, filters: %{})
     )
     {:ok, socket, temporary_assigns: [roles: []]}
   end

@@ -6,7 +6,8 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaUser.User,
       redirect: __MODULE__,
-      router: Routes
+      router: Routes,
+      skip_list: ["role"]
 
   @impl true
   def render(assigns) do

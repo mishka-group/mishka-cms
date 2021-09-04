@@ -6,7 +6,8 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.General.Subscription,
       redirect: __MODULE__,
-      router: Routes
+      router: Routes,
+      skip_list: ["full_name"]
 
   @impl true
   def render(assigns) do

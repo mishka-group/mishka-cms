@@ -4,6 +4,12 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
   alias MishkaContent.General.Subscription
   alias MishkaUser.User
 
+  # TODO: change module
+  use MishkaHtml.Helpers.LiveCRUD,
+    module: MishkaContent.General.Subscription,
+    redirect: __MODULE__,
+    router: Routes
+
   @error_atom :subscription
 
   @impl true
@@ -224,11 +230,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminSubscriptionLive"})
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminSubscriptionLive")
 
   defp create_menu_list(menus_list, dynamic_form) do
     Enum.map(menus_list, fn menu ->

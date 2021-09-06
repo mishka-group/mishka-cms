@@ -4,6 +4,12 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
   alias MishkaDatabase.Public.Setting
   @error_atom :setting
 
+  # TODO: change module
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaDatabase.Public.Setting,
+      redirect: __MODULE__,
+      router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminSettingView, "admin_setting_live.html", assigns)
@@ -246,11 +252,8 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminSettingLive"})
-    {:noreply, socket}
-  end
+
+  selected_menue("MishkaHtmlWeb.AdminSettingLive")
 
   defp create_configs(params, :list) do
     params

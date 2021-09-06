@@ -55,11 +55,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
                                 class: "btn btn-outline-secondary vazir"
                             %>
-
-                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "حذف کامل"),
-                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
-                                class: "btn btn-outline-danger vazir"
-                            %>
                         </td>
                     </tr>
                     <% end %>

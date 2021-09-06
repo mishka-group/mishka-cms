@@ -70,6 +70,126 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
+  # TODO: we delete Notif to improve it on new version of the project
+  defmacro delete_list_item(function, component, user_id, do: after_condition, before: before_condition)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("delete", %{"id" => id} = _params, socket) do
+        before_condition = unquote(before_condition)
+        before_condition.(id)
+        module_selected = Keyword.get(@interface_module, :module)
+        skip_list = Keyword.get(@interface_module, :skip_list)
+        socket = MishkaHtml.Helpers.LiveCRUD.delete_item_of_list(socket, module_selected, unquote(function), id, unquote(user_id), unquote(component), skip_list, unquote(after_condition))
+        {:noreply, socket}
+      end
+    end
+  end
+
+  defmacro delete_list_item(function, component, user_id)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("delete", %{"id" => id} = _params, socket) do
+        module_selected = Keyword.get(@interface_module, :module)
+        skip_list = Keyword.get(@interface_module, :skip_list)
+        socket = MishkaHtml.Helpers.LiveCRUD.delete_item_of_list(socket, module_selected, unquote(function), id, unquote(user_id), unquote(component), skip_list, fn x -> x end)
+        {:noreply, socket}
+      end
+    end
+  end
+
+  defmacro soft_delete_list_item(function, record_id, do: after_condition)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("delete", %{"id" => id}, socket) do
+        module_selected = Keyword.get(@interface_module, :module)
+        {:noreply, soft_delete_item_of_list(socket, id, module_selected, unquote(after_condition), unquote(function), unquote(record_id))}
+      end
+    end
+  end
+
+  defmacro soft_delete_list_item(function, record_id)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("delete", %{"id" => id}, socket) do
+        module_selected = Keyword.get(@interface_module, :module)
+        {:noreply, soft_delete_item_of_list(socket, id, module_selected, fn -> nil end, unquote(function), unquote(record_id))}
+      end
+    end
+  end
+
+  defmacro update_list(function, user_id)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_info({_section, :ok, repo_record}, socket) do
+        module_selected = Keyword.get(@interface_module, :module)
+        skip_list = Keyword.get(@interface_module, :skip_list)
+        socket = case repo_record.__meta__.state do
+          :loaded ->
+            paginate_assign(socket, module_selected, unquote(function), unquote(user_id), skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
+
+          :deleted ->
+            paginate_assign(socket, module_selected, unquote(function), unquote(user_id), skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
+
+          _ ->  socket
+        end
+
+        {:noreply, socket}
+      end
+    end
+  end
+
+  defmacro selected_menue(module)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_info(:menu, socket) do
+        MishkaHtmlWeb.Admin.Public.AdminMenu.notify_subscribers({:menu, unquote(module)})
+        {:noreply, socket}
+      end
+    end
+  end
+
+  defmacro test(_module, do: after_con, before: before_con)  do
+    quote do
+      @impl Phoenix.LiveView
+      def test1() do
+        IO.inspect(after_con)
+        {:ok, :test_macro}
+      end
+    end
+  end
+
+  def delete_item_of_list(socket, module_selected, function, id,  user_id, component, skip_list, after_condition) do
+    require MishkaTranslator.Gettext
+    case module_selected.delete(id) do
+      {:ok, :delete, _error_atom, _repo_data} ->
+        after_condition.(id)
+        paginate_assign(socket, module_selected, function, user_id, skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
+      {:error, :delete, :forced_to_delete, _error_atom} ->
+        assign(socket, [open_modal: true, component: component])
+      {:error, :delete, type, _error_atom} when type in [:uuid, :get_record_by_id] ->
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
+      {:error, :delete, _error_atom, _repo_error} ->
+        socket
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف رکورد اتفاق افتاده است."))
+    end
+  end
+
+  def soft_delete_item_of_list(socket, id, module_selected, after_condition, function, record_id) do
+    require MishkaTranslator.Gettext
+    case module_selected.delete(id) do
+      {:ok, :delete, _error_atom, repo_data} ->
+        after_condition.()
+        new_assign = Map.new([{function, apply(module_selected, function, [Map.get(repo_data, record_id)])}]) |> Map.to_list()
+        assign(socket, authors: new_assign)
+      {:error, :delete, type, _error_atom} when type in [:uuid, :get_record_by_id] ->
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
+      {:error, :delete, _error_atom, _repo_error} ->
+        socket
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف رکورد اتفاق افتاده است."))
+    end
+  end
 
   def paginate_assign_filter(params, module, skip_list) when is_map(params) do
     skip_list = if(is_nil(skip_list), do: [], else: skip_list)
@@ -80,6 +200,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   end
 
   def paginate_assign_filter(_params, _module, _skip_list), do: %{}
+
   def paginate_assign(socket, module, function, user_id, skip_list, params: params, page_size: count, page_number: page) do
 
     load_record = if user_id do

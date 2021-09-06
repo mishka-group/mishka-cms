@@ -4,6 +4,11 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
   alias MishkaContent.General.Comment
   @error_atom :comment
 
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.General.Comment,
+      redirect: __MODULE__,
+      router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminCommentView, "admin_comment_live.html", assigns)
@@ -218,11 +223,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminCommentLive"})
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminCommentLive")
 
   defp creata_comment_state(repo_data) do
     Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :users, :id, :comments_likes])

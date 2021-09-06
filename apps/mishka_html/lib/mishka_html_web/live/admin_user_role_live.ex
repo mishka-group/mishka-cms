@@ -2,6 +2,11 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
   use MishkaHtmlWeb, :live_view
   alias MishkaUser.Acl.Role
 
+  # TODO: change module
+  use MishkaHtml.Helpers.LiveCRUD,
+    module: MishkaUser.Acl.Role,
+    redirect: __MODULE__,
+    router: Routes
 
   @impl true
   def render(assigns) do
@@ -125,11 +130,8 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserRoleLive"})
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminUserRoleLive")
+
 
   defp check_type_in_list(dynamic_form, new_item, type) do
     case Enum.any?(dynamic_form, fn x -> x.type == type end) do

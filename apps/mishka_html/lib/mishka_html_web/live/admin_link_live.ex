@@ -3,6 +3,11 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
   alias MishkaContent.Blog.BlogLink
   alias MishkaContent.Blog.Post
 
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.BlogLink,
+      redirect: __MODULE__,
+      router: Routes
+
   @error_atom :blog_link
 
   @impl true
@@ -177,11 +182,9 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminLinkLive"})
-    {:noreply, socket}
-  end
+
+  selected_menue("MishkaHtmlWeb.AdminLinkLive")
+
 
   defp creata_link_state(repo_data) do
     Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :id, :section_id, :short_link])

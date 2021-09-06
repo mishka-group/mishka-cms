@@ -38,7 +38,7 @@ defmodule MishkaHtml.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.6.0-rc.0", override: true},
-      {:phoenix_live_view, "~> 0.16.1"},
+      {:phoenix_live_view, "~> 0.16.3"},
       {:phoenix_ecto, "~> 4.4"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_html, "~> 3.0"},

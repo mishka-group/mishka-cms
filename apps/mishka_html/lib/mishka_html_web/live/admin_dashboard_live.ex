@@ -3,6 +3,11 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
 
   alias MishkaContent.Blog.Post
 
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.Post,
+      redirect: __MODULE__,
+      router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminDashboardView, "admin_dashboard_live.html", assigns)
@@ -25,11 +30,8 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
       {:ok, socket, temporary_assigns: [posts: [], users: []]}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminDashboardLive"})
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminDashboardLive")
+
 
   @impl true
   def handle_info({:user, :ok, repo_record}, socket) do

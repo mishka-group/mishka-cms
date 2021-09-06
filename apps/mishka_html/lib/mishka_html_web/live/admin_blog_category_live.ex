@@ -2,8 +2,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.Blog.Category
-
   @error_atom :category
+
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.Category,
+      redirect: __MODULE__,
+      router: Routes
 
   @impl true
   def render(assigns) do
@@ -369,11 +373,9 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogCategoryLive"})
-    {:noreply, socket}
-  end
+
+  selected_menue("MishkaHtmlWeb.AdminBlogCategoryLive")
+
 
   defp create_menu_list(menus_list, dynamic_form) do
     Enum.map(menus_list, fn menu ->

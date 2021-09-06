@@ -66,7 +66,8 @@ defmodule MishkaUser.Acl.UserRole do
 
   @spec roles(data_uuid()) :: any
   def roles(role_id) do
-    stream = from(u in UserRole, where: u.role_id == ^role_id, select: %{
+    stream = from(u in UserRole, where: u.role_id == ^role_id,
+    select: %{
       id: u.id, user_id: u.user_id, role_id: u.role_id
     })
     |> MishkaDatabase.Repo.stream()

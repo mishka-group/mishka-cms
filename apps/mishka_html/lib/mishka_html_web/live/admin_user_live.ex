@@ -4,6 +4,12 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   alias MishkaUser.User
   @error_atom :user
 
+  # TODO: change module
+  use MishkaHtml.Helpers.LiveCRUD,
+    module: MishkaUser.User,
+    redirect: __MODULE__,
+    router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminUserView, "admin_user_live.html", assigns)
@@ -187,11 +193,9 @@ defmodule MishkaHtmlWeb.AdminUserLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserLive"})
-    {:noreply, socket}
-  end
+
+  selected_menue("MishkaHtmlWeb.AdminUserLive")
+
 
   defp user_changeset(params \\ %{}) do
     MishkaDatabase.Schema.MishkaUser.User.changeset(

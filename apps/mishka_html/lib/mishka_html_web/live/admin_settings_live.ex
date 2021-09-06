@@ -1,6 +1,8 @@
 defmodule MishkaHtmlWeb.AdminSettingsLive do
   use MishkaHtmlWeb, :live_view
   alias MishkaDatabase.Public.Setting
+  alias MishkaHtmlWeb.Admin.Blog.Category.DeleteErrorComponent
+
 
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaDatabase.Public.Setting,
@@ -35,80 +37,14 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
 
   list_search_and_action()
 
+  delete_list_item(:settings, DeleteErrorComponent, false)
 
+  selected_menue("MishkaHtmlWeb.AdminSettingsLive")
+
+  update_list(:settings, false)
   @impl true
-  def handle_event("delete", %{"id" => id} = _params, socket) do
-    socket = case Setting.delete(id) do
-      {:ok, :delete, :setting, repo_data} ->
-        Notif.notify_subscribers(%{
-          id: repo_data.id,
-          msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} حذف شده است.", title: MishkaHtml.title_sanitize(repo_data.section))
-          }
-        )
-        setting_assign(
-          socket,
-          params: socket.assigns.filters,
-          page_size: socket.assigns.page_size,
-          page_number: socket.assigns.page,
-        )
-
-      {:error, :delete, :forced_to_delete, :setting} ->
-
-        socket
-        |> assign([
-          open_modal: true,
-          component: MishkaHtmlWeb.Admin.Blog.Category.DeleteErrorComponent
-        ])
-
-      {:error, :delete, type, :setting} when type in [:uuid, :get_record_by_id] ->
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین مجموعه ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
-
-      {:error, :delete, :setting, _repo_error} ->
-        socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف مجموعه اتفاق افتاده است."))
-    end
-
+  def handle_info(params, socket) do
+    IO.inspect(params)
     {:noreply, socket}
   end
-
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminSettingsLive"})
-    {:noreply, socket}
-  end
-
-
-  @impl true
-  def handle_info(_params, socket) do
-    setting_assign(
-      socket,
-      params: socket.assigns.filters,
-      page_size: socket.assigns.page_size,
-      page_number: socket.assigns.page,
-    )
-
-    {:noreply, socket}
-  end
-
-  defp setting_filter(params) when is_map(params) do
-    Map.take(params, Setting.allowed_fields(:string))
-    |> Enum.reject(fn {_key, value} -> value == "" end)
-    |> Map.new()
-    |> MishkaDatabase.convert_string_map_to_atom_map()
-  end
-
-  defp setting_filter(_params), do: %{}
-
-  defp setting_assign(socket, params: params, page_size: count, page_number: page) do
-    assign(socket,
-        [
-          settings: Setting.settings(conditions: {page, count}, filters: setting_filter(params)),
-          page_size: count,
-          filters: params,
-          page: page
-        ]
-      )
-  end
-
 end

@@ -56,13 +56,10 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.ListComponent do
                         </td>
                         <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
                             <a class="btn btn-outline-primary vazir", phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
+
                             <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "نظرات"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive, section_id: item.id),
                                 class: "btn btn-outline-success vazir"
-                            %>
-                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "حذف کامل"),
-                                to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
-                                class: "btn btn-outline-danger vazir"
                             %>
                             <div class="space10"></div>
                             <div class="clearfix"></div>

@@ -4,6 +4,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   alias MishkaContent.Blog.{Post, Category}
   @error_atom :post
 
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.Post,
+      redirect: __MODULE__,
+      router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_post_live.html", assigns)
@@ -365,11 +370,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogPostLive"})
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminBlogPostLive")
 
   def search_fields(type) do
     Enum.find(basic_menu_list() ++ more_options_menu_list(), fn x -> x.type == type end)

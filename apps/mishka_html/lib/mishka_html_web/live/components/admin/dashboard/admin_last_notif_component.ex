@@ -12,7 +12,6 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent do
             <span class="col admin-home-last-notif-title rtl"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "آخرین خبررسانی های عمومی") %></span>
             <div class="space20"></div>
             <ul class="admin-home-ul-of-lists vazir">
-            <div class="space20"></div>
               <li>اطلاع رسانی: به زودی ...</li>
               <li>اطلاع رسانی: به زودی ...</li>
               <li>اطلاع رسانی: به زودی ...</li>

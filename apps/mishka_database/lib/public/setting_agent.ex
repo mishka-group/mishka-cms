@@ -3,6 +3,7 @@ defmodule MishkaDatabase.Public.SettingAgent do
   alias MishkaDatabase.Public.Setting
   require Logger
 
+  # TODO: change it with GenServer
   def start_link(state) do
     Logger.info("SettingAgent was started")
     Agent.start_link(fn -> state end, name: __MODULE__)

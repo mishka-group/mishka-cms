@@ -232,7 +232,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   @impl true
   def handle_info(:schedule_delete_token, state) do
-    Logger.info("Delete expired token request was sent")
+    # Logger.info("Delete expired token request was sent")
     new_token = get_token_info(state)
     |> Enum.reject(fn x -> x.access_expires_in <= System.system_time(:second) end)
 

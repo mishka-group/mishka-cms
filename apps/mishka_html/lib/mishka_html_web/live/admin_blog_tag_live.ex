@@ -152,24 +152,15 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
-    new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
-      {:ok, :add_new_item_to_list, _new_item} ->
+  # Live CRUD
 
-        assign(socket, [
-          basic_menu: !socket.assigns.basic_menu,
-          dynamic_form:  socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
-        ])
+  basic_menu()
 
-      {:error, :add_new_item_to_list, _new_item} ->
-        assign(socket, [
-          basic_menu: !socket.assigns.basic_menu,
-        ])
-    end
+  make_all_basic_menu()
 
-    {:noreply, new_socket}
-  end
+  clear_all_field(tag_changeset())
+
+  delete_form()
 
   @impl true
   def handle_event("set_tag", %{"key" => "Enter", "value" => value}, socket) do
@@ -193,51 +184,6 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
       |> assign(:tags, Enum.reject(socket.assigns.tags, fn tag -> tag == value end))
     {:noreply, socket}
   end
-
-  @impl true
-  def handle_event("basic_menu", _params, socket) do
-    {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu])}
-  end
-
-  @impl true
-  def handle_event("make_all_basic_menu", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: socket.assigns.dynamic_form ++ create_menu_list(basic_menu_list(), socket.assigns.dynamic_form)
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("clear_all_field", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        changeset: tag_changeset(),
-        dynamic_form: []
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("delete_form", %{"type" => type}, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: Enum.reject(socket.assigns.dynamic_form, fn x -> x.type == type end)
-      ])
-
-    {:noreply, socket}
-  end
-
 
   selected_menue("MishkaHtmlWeb.AdminBlogCategoriesLive")
 
@@ -321,33 +267,6 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
     |> Enum.reject(fn x -> x.value == nil end)
   end
 
-  defp create_menu_list(menus_list, dynamic_form) do
-    Enum.map(menus_list, fn menu ->
-      case check_type_in_list(dynamic_form, %{type: menu.type, value: nil, class: menu.class}, menu.type) do
-        {:ok, :add_new_item_to_list, _new_item} ->
-
-          %{type: menu.type, value: nil, class: menu.class}
-
-        {:error, :add_new_item_to_list, _new_item} -> nil
-      end
-    end)
-    |> Enum.reject(fn x -> x == nil end)
-  end
-
-  defp check_type_in_list(dynamic_form, new_item, type) do
-    case Enum.any?(dynamic_form, fn x -> x.type == type end) do
-      true ->
-
-        {:error, :add_new_item_to_list, new_item}
-      false ->
-
-        {:ok, :add_new_item_to_list, add_new_item_to_list(dynamic_form, new_item)}
-    end
-  end
-
-  defp add_new_item_to_list(dynamic_form, new_item) do
-    List.insert_at(dynamic_form, -1, new_item)
-  end
 
   def search_fields(type) do
     Enum.find(basic_menu_list(), fn x -> x.type == type end)

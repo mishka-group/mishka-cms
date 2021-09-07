@@ -82,59 +82,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
-
-  @impl true
-  def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
-    new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
-      {:ok, :add_new_item_to_list, _new_item} ->
-
-        assign(socket, [
-          basic_menu: !socket.assigns.basic_menu,
-          options_menu: false,
-          dynamic_form:  socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
-        ])
-
-      {:error, :add_new_item_to_list, _new_item} ->
-        assign(socket, [
-          basic_menu: !socket.assigns.basic_menu,
-          options_menu: false
-        ])
-    end
-
-    {:noreply, new_socket}
-  end
-
-  @impl true
-  def handle_event("basic_menu", _params, socket) do
-    {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu, options_menu: false])}
-  end
-
-  @impl true
-  def handle_event("options_menu", %{"type" => type, "class" => class}, socket) do
-    new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
-      {:ok, :add_new_item_to_list, _new_item} ->
-
-        assign(socket, [
-          basic_menu: false,
-          options_menu: !socket.assigns.options_menu,
-          dynamic_form: socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
-        ])
-
-      {:error, :add_new_item_to_list, _new_item} ->
-        assign(socket, [
-          basic_menu: false,
-          options_menu: !socket.assigns.options_menu,
-        ])
-    end
-
-    {:noreply, new_socket}
-  end
-
-  @impl true
-  def handle_event("options_menu", _params, socket) do
-    {:noreply, assign(socket, [basic_menu: false, options_menu: !socket.assigns.options_menu])}
-  end
-
   @impl true
   def handle_event("save", %{"category" => params}, socket) do
     # TODO: put flash msg should be imported to gettext
@@ -206,68 +153,20 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("save-editor", %{"html" => params}, socket) do
-    socket =
-      socket
-      |> assign([editor: params])
-    {:noreply, socket}
-  end
+  # Live CRUD
+  basic_menu()
 
-  @impl true
-  def handle_event("delete_form", %{"type" => type}, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: Enum.reject(socket.assigns.dynamic_form, fn x -> x.type == type end)
-      ])
+  options_menu()
 
-    {:noreply, socket}
-  end
+  save_editor()
 
-  @impl true
-  def handle_event("make_all_basic_menu", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: socket.assigns.dynamic_form ++ create_menu_list(basic_menu_list(), socket.assigns.dynamic_form)
-      ])
+  delete_form()
 
-    {:noreply, socket}
-  end
+  make_all_basic_menu()
 
-  @impl true
-  def handle_event("clear_all_field", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        changeset: category_changeset(),
-        options_menu: false,
-        dynamic_form: []
-      ])
+  clear_all_field(category_changeset())
 
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("make_all_menu", _, socket) do
-    fields = create_menu_list(basic_menu_list() ++ more_options_menu_list(), socket.assigns.dynamic_form)
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: socket.assigns.dynamic_form ++ fields
-      ])
-
-    {:noreply, socket}
-  end
+  make_all_menu()
 
   @impl true
   def handle_event("text_search_click", %{"id" => id}, socket) do
@@ -376,34 +275,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   selected_menue("MishkaHtmlWeb.AdminBlogCategoryLive")
 
-
-  defp create_menu_list(menus_list, dynamic_form) do
-    Enum.map(menus_list, fn menu ->
-      case check_type_in_list(dynamic_form, %{type: menu.type, value: nil, class: menu.class}, menu.type) do
-        {:ok, :add_new_item_to_list, _new_item} ->
-
-          %{type: menu.type, value: nil, class: menu.class}
-
-        {:error, :add_new_item_to_list, _new_item} -> nil
-      end
-    end)
-    |> Enum.reject(fn x -> x == nil end)
-  end
-
-  defp add_new_item_to_list(dynamic_form, new_item) do
-    List.insert_at(dynamic_form, -1, new_item)
-  end
-
-  defp check_type_in_list(dynamic_form, new_item, type) do
-    case Enum.any?(dynamic_form, fn x -> x.type == type end) do
-      true ->
-
-        {:error, :add_new_item_to_list, new_item}
-      false ->
-
-        {:ok, :add_new_item_to_list, add_new_item_to_list(dynamic_form, new_item)}
-    end
-  end
 
   def search_fields(type) do
     Enum.find(basic_menu_list() ++ more_options_menu_list(), fn x -> x.type == type end)

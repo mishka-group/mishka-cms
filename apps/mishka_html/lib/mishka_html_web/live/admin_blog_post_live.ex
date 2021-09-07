@@ -82,120 +82,20 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
-    new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
-      {:ok, :add_new_item_to_list, _new_item} ->
+  # Live CRUD
+  basic_menu()
 
-        assign(socket, [
-          basic_menu: !socket.assigns.basic_menu,
-          options_menu: false,
-          dynamic_form:  socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
-        ])
+  options_menu()
 
-      {:error, :add_new_item_to_list, _new_item} ->
-        assign(socket, [
-          basic_menu: !socket.assigns.basic_menu,
-          options_menu: false
-        ])
-    end
+  save_editor()
 
-    {:noreply, new_socket}
-  end
+  delete_form()
 
-  @impl true
-  def handle_event("basic_menu", _params, socket) do
-    {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu, options_menu: false])}
-  end
+  make_all_basic_menu()
 
-  @impl true
-  def handle_event("options_menu", %{"type" => type, "class" => class}, socket) do
-    new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
-      {:ok, :add_new_item_to_list, _new_item} ->
+  clear_all_field(post_changeset())
 
-        assign(socket, [
-          basic_menu: false,
-          options_menu: !socket.assigns.options_menu,
-          dynamic_form: socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
-        ])
-
-      {:error, :add_new_item_to_list, _new_item} ->
-        assign(socket, [
-          basic_menu: false,
-          options_menu: !socket.assigns.options_menu,
-        ])
-    end
-
-    {:noreply, new_socket}
-  end
-
-  @impl true
-  def handle_event("options_menu", _params, socket) do
-    {:noreply, assign(socket, [basic_menu: false, options_menu: !socket.assigns.options_menu])}
-  end
-
-  @impl true
-  def handle_event("delete_form", %{"type" => type}, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: Enum.reject(socket.assigns.dynamic_form, fn x -> x.type == type end)
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("make_all_basic_menu", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: socket.assigns.dynamic_form ++ create_menu_list(basic_menu_list(), socket.assigns.dynamic_form)
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("clear_all_field", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        changeset: post_changeset(),
-        options_menu: false,
-        dynamic_form: []
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("make_all_menu", _, socket) do
-    fields = create_menu_list(basic_menu_list() ++ more_options_menu_list(), socket.assigns.dynamic_form)
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: socket.assigns.dynamic_form ++ fields
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("save-editor", %{"html" => params}, socket) do
-    socket =
-      socket
-      |> assign([editor: params])
-    {:noreply, socket}
-  end
+  make_all_menu()
 
   @impl true
   def handle_event("draft", %{"_target" => ["post", type], "post" => params}, socket) when type not in ["main_image", "main_image"] do
@@ -376,34 +276,6 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
     Enum.find(basic_menu_list() ++ more_options_menu_list(), fn x -> x.type == type end)
   end
 
-  defp create_menu_list(menus_list, dynamic_form) do
-    Enum.map(menus_list, fn menu ->
-      case check_type_in_list(dynamic_form, %{type: menu.type, value: nil, class: menu.class}, menu.type) do
-        {:ok, :add_new_item_to_list, _new_item} ->
-
-          %{type: menu.type, value: nil, class: menu.class}
-
-        {:error, :add_new_item_to_list, _new_item} -> nil
-      end
-    end)
-    |> Enum.reject(fn x -> x == nil end)
-  end
-
-  defp add_new_item_to_list(dynamic_form, new_item) do
-    List.insert_at(dynamic_form, -1, new_item)
-  end
-
-  defp check_type_in_list(dynamic_form, new_item, type) do
-    case Enum.any?(dynamic_form, fn x -> x.type == type end) do
-      true ->
-
-        {:error, :add_new_item_to_list, new_item}
-      false ->
-
-        {:ok, :add_new_item_to_list, add_new_item_to_list(dynamic_form, new_item)}
-    end
-  end
-
   defp post_changeset(params \\ %{}) do
     MishkaDatabase.Schema.MishkaContent.Blog.Post.changeset(
       %MishkaDatabase.Schema.MishkaContent.Blog.Post{}, params
@@ -551,7 +423,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "category_id", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی", class: "badge bg-dark")}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "text_search",
       class: "col-sm-3",
@@ -614,7 +486,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "meta_description", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی", class: "badge bg-dark")}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "textarea",
       class: "col-sm-6",
@@ -623,7 +495,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "meta_keywords", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی", class: "badge bg-dark")}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "add_tag",
       class: "col-sm-4",
@@ -637,7 +509,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "header_image", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی", class: "badge bg-dark")}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "upload",
       class: "col-sm-6",
@@ -647,7 +519,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "unpublish", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی", class: "badge bg-warning")}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"}
       ],
       form: "text",
       class: "col-sm-3",
@@ -656,7 +528,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "custom_title", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی", class: "badge bg-warning")},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
       ],
       form: "text",
       class: "col-sm-3",
@@ -665,8 +537,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "robots", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی", class: "badge bg-warning")},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "هشدار", class: "badge bg-secondary")},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "هشدار"), class: "badge bg-secondary"},
       ],
       options: [
         {"IndexFollow", :IndexFollow},
@@ -695,7 +567,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "allow_commenting", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی", class: "badge bg-warning")},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
       ],
       options: [
         {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
@@ -709,7 +581,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "allow_liking", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی", class: "badge bg-warning")},
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"},
       ],
       options: [
         {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
@@ -746,7 +618,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "allow_social_sharing", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی", class: "badge bg-dark")}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       options: [
         {MishkaTranslator.Gettext.dgettext("html_live", "بله"), true},
@@ -855,7 +727,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       %{type: "location", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی", class: "badge bg-dark")}
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
       ],
       form: "text",
       class: "col-sm-3",

@@ -148,14 +148,162 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-  defmacro test(_module, do: after_con, before: before_con)  do
+  defmacro basic_menu()  do
     quote do
       @impl Phoenix.LiveView
-      def test1() do
-        IO.inspect(after_con)
-        {:ok, :test_macro}
+      def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
+        new_socket = case check_type_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
+          {:ok, :add_new_item_to_list, _new_item} ->
+
+            assign(socket, [
+              basic_menu: !socket.assigns.basic_menu,
+              options_menu: false,
+              dynamic_form:  socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
+            ])
+
+          {:error, :add_new_item_to_list, _new_item} ->
+            assign(socket, [
+              basic_menu: !socket.assigns.basic_menu,
+              options_menu: false
+            ])
+        end
+
+        {:noreply, new_socket}
+      end
+
+      def handle_event("basic_menu", _params, socket) do
+        {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu, options_menu: false])}
+      end
+
+    end
+  end
+
+  defmacro options_menu()  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("options_menu", %{"type" => type, "class" => class}, socket) do
+        new_socket = case check_type_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
+          {:ok, :add_new_item_to_list, _new_item} ->
+
+            assign(socket, [
+              basic_menu: false,
+              options_menu: !socket.assigns.options_menu,
+              dynamic_form: socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
+            ])
+
+          {:error, :add_new_item_to_list, _new_item} ->
+            assign(socket, [
+              basic_menu: false,
+              options_menu: !socket.assigns.options_menu,
+            ])
+        end
+
+        {:noreply, new_socket}
+      end
+
+      @impl true
+      def handle_event("options_menu", _params, socket) do
+        {:noreply, assign(socket, [basic_menu: false, options_menu: !socket.assigns.options_menu])}
       end
     end
+  end
+
+  defmacro save_editor()  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("save-editor", %{"html" => params}, socket) do
+        socket =
+          socket
+          |> assign([editor: params])
+        {:noreply, socket}
+      end
+    end
+  end
+
+  defmacro delete_form()  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("delete_form", %{"type" => type}, socket) do
+        socket =
+          socket
+          |> assign([
+            basic_menu: false,
+            options_menu: false,
+            dynamic_form: Enum.reject(socket.assigns.dynamic_form, fn x -> x.type == type end)
+          ])
+
+        {:noreply, socket}
+      end
+    end
+  end
+
+  defmacro clear_all_field(changeset)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("clear_all_field", _, socket) do
+        {:noreply, assign(socket, [basic_menu: false, changeset: unquote(changeset), options_menu: false, dynamic_form: []])}
+      end
+    end
+  end
+
+  defmacro make_all_basic_menu()  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("make_all_basic_menu", _, socket) do
+        socket =
+          socket
+          |> assign([
+            basic_menu: false,
+            options_menu: false,
+            dynamic_form: socket.assigns.dynamic_form ++ create_menu_list(basic_menu_list(), socket.assigns.dynamic_form)
+          ])
+
+        {:noreply, socket}
+      end
+    end
+  end
+
+  defmacro make_all_menu()  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("make_all_menu", _, socket) do
+        fields = create_menu_list(basic_menu_list() ++ more_options_menu_list(), socket.assigns.dynamic_form)
+
+        socket =
+          socket
+          |> assign([
+            basic_menu: false,
+            options_menu: false,
+            dynamic_form: socket.assigns.dynamic_form ++ fields
+          ])
+
+        {:noreply, socket}
+      end
+    end
+  end
+
+  def check_type_list(dynamic_form, new_item, type) do
+    case Enum.any?(dynamic_form, fn x -> x.type == type end) do
+      true ->
+
+        {:error, :add_new_item_to_list, new_item}
+      false ->
+
+        {:ok, :add_new_item_to_list, List.insert_at(dynamic_form, -1, new_item)}
+    end
+  end
+
+  def create_menu_list(menus_list, dynamic_form) do
+    Enum.map(menus_list, fn menu ->
+      case check_type_list(dynamic_form, %{type: menu.type, value: nil, class: menu.class}, menu.type) do
+        {:ok, :add_new_item_to_list, _new_item} ->
+
+          %{type: menu.type, value: nil, class: menu.class}
+
+        {:error, :add_new_item_to_list, _new_item} -> nil
+      end
+    end)
+    |> Enum.reject(fn x -> x == nil end)
   end
 
   def delete_item_of_list(socket, module_selected, function, id,  user_id, component, skip_list, after_condition) do

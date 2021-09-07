@@ -78,37 +78,12 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("save-editor", %{"html" => params}, socket) do
-    socket =
-      socket
-      |> assign([editor: params])
-    {:noreply, socket}
-  end
+  # Live CRUD
+  save_editor()
 
-  @impl true
-  def handle_event("make_all_basic_menu", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        dynamic_form: socket.assigns.dynamic_form ++ create_menu_list(basic_menu_list(), socket.assigns.dynamic_form)
-      ])
+  make_all_basic_menu()
 
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("delete_form", %{"type" => type}, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        dynamic_form: Enum.reject(socket.assigns.dynamic_form, fn x -> x.type == type end)
-      ])
-
-    {:noreply, socket}
-  end
+  delete_form()
 
   @impl true
   def handle_event("draft", %{"_target" => ["blog_link", type], "blog_link" => params}, socket) do
@@ -197,30 +172,6 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
       }
     end)
     |> Enum.reject(fn x -> x.value == nil end)
-  end
-
-  defp check_type_in_list(dynamic_form, new_item, type) do
-    case Enum.any?(dynamic_form, fn x -> x.type == type end) do
-      true ->
-
-        {:error, :add_new_item_to_list, new_item}
-      false ->
-
-        {:ok, :add_new_item_to_list, List.insert_at(dynamic_form, -1, new_item)}
-    end
-  end
-
-  defp create_menu_list(menus_list, dynamic_form) do
-    Enum.map(menus_list, fn menu ->
-      case check_type_in_list(dynamic_form, %{type: menu.type, value: nil, class: menu.class}, menu.type) do
-        {:ok, :add_new_item_to_list, _new_item} ->
-
-          %{type: menu.type, value: nil, class: menu.class}
-
-        {:error, :add_new_item_to_list, _new_item} -> nil
-      end
-    end)
-    |> Enum.reject(fn x -> x == nil end)
   end
 
   defp link_changeset(params \\ %{}) do

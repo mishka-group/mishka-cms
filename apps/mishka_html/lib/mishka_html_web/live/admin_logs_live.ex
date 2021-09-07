@@ -1,6 +1,11 @@
 defmodule MishkaHtmlWeb.AdminLogsLive do
   use MishkaHtmlWeb, :live_view
 
+  # TODO: change module
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.BlogLink,
+      redirect: __MODULE__,
+      router: Routes
 
   @impl true
   def render(assigns) do
@@ -13,9 +18,5 @@ defmodule MishkaHtmlWeb.AdminLogsLive do
     {:ok, assign(socket, page_title: MishkaTranslator.Gettext.dgettext("html_live",  "مدیریت لاگ ها"), body_color: "#a29ac3cf")}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminLogsLive"})
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminLogsLive")
 end

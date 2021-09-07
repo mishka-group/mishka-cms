@@ -2,6 +2,13 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.Blog.Post
+  alias MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent
+
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.Post,
+      redirect: __MODULE__,
+      router: Routes,
+      skip_list: ["category_title"]
 
 
   @impl true
@@ -30,82 +37,12 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:ok, socket, temporary_assigns: [posts: []]}
   end
 
-  @impl true
-  def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
-    {:noreply,
-      post_assign(socket, params: params["params"], page_size: count, page_number: page)
-    }
-  end
+  # Live CRUD
+  paginate(:posts, user_id: true)
 
-  @impl true
-  def handle_params(%{"page" => page}, _url, socket) do
-    {:noreply,
-      post_assign(socket, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: page)
-    }
-  end
+  list_search_and_action()
 
-  @impl true
-  def handle_params(%{"count" => count} = params, _url, socket) do
-    {:noreply,
-      post_assign(socket, params: params["params"], page_size: count, page_number: 1)
-    }
-  end
-
-  @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("search", params, socket) do
-    socket =
-      push_patch(socket,
-        to:
-          Routes.live_path(
-            socket,
-            __MODULE__,
-            params: post_filter(params),
-            count: params["count"],
-          )
-      )
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("reset", _params, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, __MODULE__))}
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id} = _params, socket) do
-    socket = case Post.delete(id) do
-      {:ok, :delete, :post, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مطلب: %{title} حذف شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
-        post_assign(
-          socket,
-          params: socket.assigns.filters,
-          page_size: socket.assigns.page_size,
-          page_number: socket.assigns.page,
-        )
-
-      {:error, :delete, :forced_to_delete, :post} ->
-          socket
-          |> assign([
-            open_modal: true,
-            component: MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent
-          ])
-
-      {:error, :delete, type, :post} when type in [:uuid, :get_record_by_id] ->
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین مطلبی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
-
-      {:error, :delete, :post, _repo_error} ->
-        socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف مطلب اتفاق افتاده است."))
-    end
-
-    {:noreply, socket}
-  end
+  delete_list_item(:posts, DeleteErrorComponent, false)
 
   @impl true
   def handle_event("featured_post", %{"id" => id} = _params, socket) do
@@ -115,47 +52,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info({:post, :ok, repo_record}, socket) do
-    socket = case repo_record.__meta__.state do
-      :loaded ->
-        post_assign(
-          socket,
-          params: socket.assigns.filters,
-          page_size: socket.assigns.page_size,
-          page_number: socket.assigns.page,
-        )
+  update_list(:posts, true)
 
-       _ ->  socket
-    end
+  selected_menue("MishkaHtmlWeb.AdminBlogPostsLive")
 
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogPostsLive"})
-    {:noreply, socket}
-  end
-
-  defp post_filter(params) when is_map(params) do
-    Map.take(params, Post.allowed_fields(:string) ++ ["category_title"])
-    |> Enum.reject(fn {_key, value} -> value == "" end)
-    |> Map.new()
-    |> MishkaDatabase.convert_string_map_to_atom_map()
-  end
-
-  defp post_filter(_params), do: %{}
-
-
-  defp post_assign(socket, params: params, page_size: count, page_number: page) do
-    assign(socket,
-        [
-          posts: Post.posts(conditions: {page, count}, filters: post_filter(params), user_id: socket.assigns.user_id),
-          page_size: count,
-          filters: params,
-          page: page
-        ]
-      )
-  end
 end

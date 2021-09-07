@@ -92,7 +92,7 @@ defmodule MishkaContent.General.Comment do
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
-    Ecto.Query.CastError ->
+    _ ->
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 

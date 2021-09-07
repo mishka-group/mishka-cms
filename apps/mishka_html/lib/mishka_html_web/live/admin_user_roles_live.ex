@@ -2,6 +2,11 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaUser.Acl.Role
+  alias MishkaHtmlWeb.Admin.Role.DeleteErrorComponent
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaUser.Acl.Role,
+      redirect: __MODULE__,
+      router: Routes
 
   @impl true
   def render(assigns) do
@@ -20,139 +25,23 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
       component: nil,
       page_title: MishkaTranslator.Gettext.dgettext("html_live", "نقش های کاربری"),
       body_color: "#a29ac3cf",
-      roles: Role.roles(conditions: {1, 20}, filters: %{})
+      roles: Role.roles(conditions: {1, 10}, filters: %{})
     )
     {:ok, socket, temporary_assigns: [roles: []]}
   end
 
-  @impl true
-  def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
-    {:noreply,
-      role_assign(socket, params: params["params"], page_size: count, page_number: page)
-    }
-  end
+  # Live CRUD
+  paginate(:roles, user_id: false)
 
-  @impl true
-  def handle_params(%{"page" => page}, _url, socket) do
-    {:noreply,
-      role_assign(socket, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: page)
-    }
-  end
+  list_search_and_action()
 
-  @impl true
-  def handle_params(%{"count" => count} = params, _url, socket) do
-    {:noreply,
-      role_assign(socket, params: params["params"], page_size: count, page_number: 1)
-    }
-  end
+  delete_list_item(:roles, DeleteErrorComponent, false, do: fn x ->
+    # TODO: this is a good job to use notif or etc
+    IO.inspect(x)
+  end, before: fn x -> MishkaUser.Acl.AclTask.delete_role(x) end)
 
-  @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminUserRolesLive")
 
-  @impl true
-  def handle_event("search", params, socket) do
-    socket =
-      push_patch(socket,
-        to:
-          Routes.live_path(
-            socket,
-            __MODULE__,
-            params: role_filter(params),
-            count: params["count"],
-          )
-      )
-    {:noreply, socket}
-  end
+  update_list(:roles, false)
 
-  @impl true
-  def handle_event("reset", _params, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, __MODULE__))}
-  end
-
-  @impl true
-  def handle_event("open_modal", _params, socket) do
-    {:noreply, assign(socket, [open_modal: true])}
-  end
-
-  @impl true
-  def handle_event("close_modal", _params, socket) do
-    {:noreply, assign(socket, [open_modal: false, component: nil])}
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id} = _params, socket) do
-    MishkaUser.Acl.AclTask.delete_role(id)
-    socket = case Role.delete(id) do
-      {:ok, :delete, :role, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "نقش: %{title} حذف شده است.", title: MishkaHtml.full_name_sanitize(repo_data.name))})
-        role_assign(
-          socket,
-          params: socket.assigns.filters,
-          page_size: socket.assigns.page_size,
-          page_number: socket.assigns.page,
-        )
-
-      {:error, :delete, :forced_to_delete, :role} ->
-        socket
-        |> assign([
-          open_modal: true,
-          component: MishkaHtmlWeb.Admin.Role.DeleteErrorComponent
-        ])
-
-      {:error, :delete, type, :role} when type in [:uuid, :get_record_by_id] ->
-        socket
-        |> put_flash(:warning,  MishkaTranslator.Gettext.dgettext("html_live", "چنین نقشی برای دسترسی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
-
-      {:error, :delete, :role, _repo_error} ->
-        socket
-        |> put_flash(:error,  MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف نقش برای دسترسی اتفاق افتاده است."))
-    end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserRolesLive"})
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info({:role, :ok, repo_record}, socket) do
-    socket = case repo_record.__meta__.state do
-      :loaded ->
-        role_assign(
-          socket,
-          params: socket.assigns.filters,
-          page_size: socket.assigns.page_size,
-          page_number: socket.assigns.page,
-        )
-
-       _ ->  socket
-    end
-
-    {:noreply, socket}
-  end
-
-  defp role_filter(params) when is_map(params) do
-    Map.take(params, Role.allowed_fields(:string))
-    |> Enum.reject(fn {_key, value} -> value == "" end)
-    |> Map.new()
-    |> MishkaDatabase.convert_string_map_to_atom_map()
-  end
-
-  defp role_filter(_params), do: %{}
-
-  defp role_assign(socket, params: params, page_size: count, page_number: page) do
-    assign(socket,
-        [
-          roles: Role.roles(conditions: {page, count}, filters: role_filter(params)),
-          page_size: count,
-          filters: params,
-          page: page
-        ]
-      )
-  end
 end

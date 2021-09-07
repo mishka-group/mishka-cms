@@ -3,6 +3,12 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   alias MishkaUser.Acl.Permission
 
+  # TODO: change module
+  use MishkaHtml.Helpers.LiveCRUD,
+    module: MishkaUser.Acl.Permission,
+    redirect: __MODULE__,
+    router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminUserView, "admin_user_role_permissions_live.html", assigns)
@@ -68,11 +74,8 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminUserRolePermissionsLive"})
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminUserRolePermissionsLive")
+
 
   @impl true
   def handle_info({:permission, :ok, repo_record}, socket) do
@@ -80,7 +83,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
       :loaded ->
         socket
         |> assign(permissions: Permission.permissions(socket.assigns.id))
-       _ ->  {:noreply, socket}
+       _ ->  socket
     end
     {:noreply, socket}
   end

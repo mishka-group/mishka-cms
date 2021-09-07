@@ -4,6 +4,12 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
   alias MishkaContent.General.Subscription
   alias MishkaUser.User
 
+  # TODO: change module
+  use MishkaHtml.Helpers.LiveCRUD,
+    module: MishkaContent.General.Subscription,
+    redirect: __MODULE__,
+    router: Routes
+
   @error_atom :subscription
 
   @impl true
@@ -58,67 +64,15 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
-    new_socket = case check_type_in_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
-      {:ok, :add_new_item_to_list, _new_item} ->
+  # Live CRUD
+  basic_menu()
 
-        assign(socket, [
-          basic_menu: !socket.assigns.basic_menu,
-          dynamic_form:  socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
-        ])
+  make_all_basic_menu()
 
-      {:error, :add_new_item_to_list, _new_item} ->
-        assign(socket, [
-          basic_menu: !socket.assigns.basic_menu,
-          options_menu: false
-        ])
-    end
+  delete_form()
 
-    {:noreply, new_socket}
-  end
+  clear_all_field(subscription_changeset())
 
-  @impl true
-  def handle_event("basic_menu", _params, socket) do
-    {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu, options_menu: false])}
-  end
-
-  @impl true
-  def handle_event("make_all_basic_menu", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        dynamic_form: socket.assigns.dynamic_form ++ create_menu_list(basic_menu_list(), socket.assigns.dynamic_form)
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("delete_form", %{"type" => type}, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        dynamic_form: Enum.reject(socket.assigns.dynamic_form, fn x -> x.type == type end)
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("clear_all_field", _, socket) do
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        changeset: subscription_changeset(),
-        dynamic_form: []
-      ])
-
-    {:noreply, socket}
-  end
 
   @impl true
   def handle_event("draft", %{"_target" => ["subscription", type], "subscription" => params}, socket) do
@@ -224,24 +178,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminSubscriptionLive"})
-    {:noreply, socket}
-  end
-
-  defp create_menu_list(menus_list, dynamic_form) do
-    Enum.map(menus_list, fn menu ->
-      case check_type_in_list(dynamic_form, %{type: menu.type, value: nil, class: menu.class}, menu.type) do
-        {:ok, :add_new_item_to_list, _new_item} ->
-
-          %{type: menu.type, value: nil, class: menu.class}
-
-        {:error, :add_new_item_to_list, _new_item} -> nil
-      end
-    end)
-    |> Enum.reject(fn x -> x == nil end)
-  end
+  selected_menue("MishkaHtmlWeb.AdminSubscriptionLive")
 
   defp creata_subscription_state(repo_data) do
     Map.drop(repo_data, [:__struct__, :__meta__, :users, :id, :updated_at, :inserted_at, :extra, :expire_time])
@@ -256,25 +193,10 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
     |> Enum.reject(fn x -> x.value == nil end)
   end
 
-  defp check_type_in_list(dynamic_form, new_item, type) do
-    case Enum.any?(dynamic_form, fn x -> x.type == type end) do
-      true ->
-
-        {:error, :add_new_item_to_list, new_item}
-      false ->
-
-        {:ok, :add_new_item_to_list, add_new_item_to_list(dynamic_form, new_item)}
-    end
-  end
-
   defp subscription_changeset(params \\ %{}) do
     MishkaDatabase.Schema.MishkaContent.Subscription.changeset(
       %MishkaDatabase.Schema.MishkaContent.Subscription{}, params
     )
-  end
-
-  defp add_new_item_to_list(dynamic_form, new_item) do
-    List.insert_at(dynamic_form, -1, new_item)
   end
 
   def search_fields(type) do

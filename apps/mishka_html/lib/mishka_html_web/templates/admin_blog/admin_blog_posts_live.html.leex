@@ -48,4 +48,13 @@
     </div>
     <div class="clearfix"></div>
 </div>
+
+<%= if @open_modal do %>
+    <%= live_component @socket, MishkaHtmlWeb.Admin.Public.ModalComponent,
+                            msg: "test",
+                            id: :modal_live,
+                            component: @component
+    %>
+<% end %>
+
 <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

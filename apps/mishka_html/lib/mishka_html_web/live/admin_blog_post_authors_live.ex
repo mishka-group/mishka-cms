@@ -2,6 +2,10 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.Blog.Author
+  use MishkaHtml.Helpers.LiveCRUD,
+    module: MishkaContent.Blog.Author,
+    redirect: __MODULE__,
+    router: Routes
 
   @impl true
   def render(assigns) do
@@ -81,9 +85,5 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
   end
 
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogPostAuthorsLive"})
-    {:noreply, socket}
-  end
+  selected_menue("MishkaHtmlWeb.AdminBlogPostAuthorsLive")
 end

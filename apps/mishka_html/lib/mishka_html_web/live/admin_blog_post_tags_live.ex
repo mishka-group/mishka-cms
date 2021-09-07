@@ -5,6 +5,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   alias MishkaContent.Blog.TagMapper
   alias MishkaContent.Blog.Post
 
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.TagMapper,
+      redirect: __MODULE__,
+      router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_post_tags_live.html", assigns)
@@ -83,9 +88,5 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
     {:noreply, socket}
   end
 
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminBlogPostTagsLive"})
-    {:noreply, socket}
-  end
-
+  selected_menue("MishkaHtmlWeb.AdminBlogPostTagsLive")
 end

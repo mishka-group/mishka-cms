@@ -3,6 +3,11 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
   alias MishkaContent.Blog.BlogLink
   alias MishkaContent.Blog.Post
 
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: MishkaContent.Blog.BlogLink,
+      redirect: __MODULE__,
+      router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_links_live.html", assigns)
@@ -69,9 +74,6 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info(:menu, socket) do
-    AdminMenu.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.AdminPostLinksLive"})
-    {:noreply, socket}
-  end
+
+  selected_menue("MishkaHtmlWeb.AdminPostLinksLive")
 end

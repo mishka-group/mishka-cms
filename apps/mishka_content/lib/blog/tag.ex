@@ -57,7 +57,7 @@ defmodule MishkaContent.Blog.Tag do
 
   @spec tags([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
   def tags(conditions: {page, page_size}, filters: filters) do
-    query = from(tag in BlogTag) |> convert_filters_to_where(filters)
+    query = from(tag in BlogTag) |> convert_filters_to_where_tag(filters)
     from([tag] in query,
     select: %{
       id: tag.id,
@@ -74,6 +74,22 @@ defmodule MishkaContent.Blog.Tag do
   rescue
     Ecto.Query.CastError ->
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+  end
+
+  defp convert_filters_to_where_tag(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      case key do
+        :title ->
+          like = "%#{value}%"
+          from([tag,] in query, where: like(tag.title, ^like))
+
+        :custom_title ->
+          like = "%#{value}%"
+          from([tag] in query, where: like(tag.custom_title, ^like))
+
+        _ -> from([tag] in query, where: field(tag, ^key) == ^value)
+      end
+    end)
   end
 
   @spec post_tags(data_uuid()) :: list()

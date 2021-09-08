@@ -97,7 +97,7 @@ defmodule MishkaDatabase.Public.Setting do
     # send stop and re-create
     Task.Supervisor.async_nolink(MishkaDatabase.Public.ReStartSettingAgentTaskSupervisor, fn ->
       :timer.sleep(10000)
-      MishkaDatabase.Public.SettingAgent.update()
+      MishkaDatabase.Cache.SettingCache.stop()
     end)
 
 

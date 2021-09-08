@@ -11,7 +11,7 @@ defmodule MishkaDatabase.Application do
       {MishkaDatabase.Cache.MnesiaToken, []},
       {MishkaDatabase.Cache.RandomCode, []},
       MishkaDatabase.Repo,
-      MishkaDatabase.Public.SettingAgent,
+      {MishkaDatabase.Cache.SettingCache, []},
       {Task.Supervisor, name: MishkaDatabase.Public.ReStartSettingAgentTaskSupervisor}
     ]
 

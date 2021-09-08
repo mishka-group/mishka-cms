@@ -42,9 +42,9 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
   selected_menue("MishkaHtmlWeb.AdminSettingsLive")
 
   update_list(:settings, false)
+
   @impl true
-  def handle_info(params, socket) do
-    IO.inspect(params)
+  def handle_info(_params, socket) do
     {:noreply, socket}
   end
 end

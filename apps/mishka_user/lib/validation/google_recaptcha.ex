@@ -1,6 +1,6 @@
 defmodule MishkaUser.Validation.GoogleRecaptcha do
   # TODO: next version should have remoteip checker
-  alias MishkaDatabase.Public.SettingAgent
+  alias MishkaDatabase.Cache.SettingCache
   require MishkaTranslator.Gettext
 
   @url "https://www.google.com/recaptcha/api/siteverify"
@@ -8,7 +8,7 @@ defmodule MishkaUser.Validation.GoogleRecaptcha do
 
   @spec verify(binary) :: {:error, :verify, String.t()} | {:ok, :verify, map()}
   def verify(token) do
-    with {:captcha_status, "production"} <- {:captcha_status, SettingAgent.get_config(:public, "captcha_status")},
+    with {:captcha_status, "production"} <- {:captcha_status, SettingCache.get_config(:public, "captcha_status")},
          {:finch, {:ok, response}} <- {:finch, send_token(token)} do
 
       response.body |> Jason.decode!() |> error_handler()
@@ -25,7 +25,7 @@ defmodule MishkaUser.Validation.GoogleRecaptcha do
   def send_token(token) do
     body = %{
       response: token,
-      secret: SettingAgent.get_config(:public, "google_recaptcha_server_side_code")
+      secret: SettingCache.get_config(:public, "google_recaptcha_server_side_code")
     } |> URI.encode_query()
 
     headers = [

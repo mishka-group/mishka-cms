@@ -8,16 +8,16 @@ defmodule MishkaDatabase.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      MishkaDatabase.Repo,
       {MishkaDatabase.Cache.MnesiaToken, []},
       {MishkaDatabase.Cache.RandomCode, []},
-      MishkaDatabase.Repo,
       {MishkaDatabase.Cache.SettingCache, []},
       {Task.Supervisor, name: MishkaDatabase.Public.ReStartSettingAgentTaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: MishkaDatabase.Supervisor]
+    opts = [strategy: :one_for_one, name: MishkaDatabase.Supervisor, max_restarts: 100]
     Supervisor.start_link(children, opts)
   end
 end

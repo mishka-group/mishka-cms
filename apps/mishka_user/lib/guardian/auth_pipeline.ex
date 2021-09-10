@@ -4,7 +4,7 @@ defmodule MishkaUser.AuthPipeline do
   use Guardian.Plug.Pipeline, otp_app: :mishka_user, module: MishkaUser.Guardian, error_handler: MishkaUser.AuthErrorHandler
 
   # plug Guardian.Plug.VerifySession, claims: @claims
-  plug Guardian.Plug.VerifyHeader, claims: @claims, realm: "Bearer"
+  plug Guardian.Plug.VerifyHeader, claims: @claims, scheme: "Bearer"
   plug Guardian.Plug.EnsureAuthenticated
   plug Guardian.Plug.LoadResource, ensure: true
 

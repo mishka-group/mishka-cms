@@ -95,11 +95,7 @@ defmodule MishkaDatabase.Public.Setting do
 
   def notify_subscribers({:ok, _, :setting, repo_data} = params, type_send) do
     # send stop and re-create
-    Task.Supervisor.async_nolink(MishkaDatabase.Public.ReStartSettingAgentTaskSupervisor, fn ->
-      :timer.sleep(10000)
-      MishkaDatabase.Cache.SettingCache.stop()
-    end)
-
+    MishkaDatabase.Cache.SettingCache.stop()
 
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "setting", {type_send, :ok, repo_data})
     params

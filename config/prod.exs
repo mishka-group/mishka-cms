@@ -15,8 +15,7 @@ config :mishka_html, MishkaHtmlWeb.Endpoint,
 
 
 config :mishka_api, MishkaApiWeb.Endpoint,
-  url: [host: System.get_env("DOMAIN_NAME"), port: 4001],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [host: System.get_env("DOMAIN_NAME"), port: 4001]
 
 # ## SSL Support
 #

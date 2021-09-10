@@ -24,7 +24,7 @@ defmodule MishkaHtml.MixProject do
   def application do
     [
       mod: {MishkaHtml.Application, []},
-      extra_applications: [:logger, :runtime_tools, :mishka_user, :mishka_content, :mishka_translator]
+      extra_applications: [:logger, :runtime_tools, :os_mon, :mishka_user, :mishka_content, :mishka_translator]
     ]
   end
 

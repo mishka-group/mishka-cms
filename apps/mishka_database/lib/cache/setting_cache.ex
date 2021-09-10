@@ -2,7 +2,7 @@ defmodule MishkaDatabase.Cache.SettingCache do
   use GenServer
   require Logger
 
-  alias alias MishkaDatabase.Public.Setting
+  alias MishkaDatabase.Public.Setting
 
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
@@ -34,7 +34,8 @@ defmodule MishkaDatabase.Cache.SettingCache do
 
   @impl true
   def handle_continue(:start_storing_setting, _state) do
-    {:noreply, start_setting()}
+    create_basic_setting()
+    {:noreply, Setting.settings(filters: %{})}
   end
 
   @impl true
@@ -68,21 +69,6 @@ defmodule MishkaDatabase.Cache.SettingCache do
     case Enum.find(state, fn x -> x.section == section end) do
       nil -> ""
       record -> record
-    end
-  end
-
-  defp start_setting() do
-    case Setting.settings(filters: %{}) do
-      [] ->
-        create_basic_setting()
-        start_setting()
-      record ->
-        if is_nil(Enum.find(record, fn x -> x.section == :public end)) do
-          create_basic_setting()
-          start_setting()
-        else
-          record
-        end
     end
   end
 

@@ -17,6 +17,10 @@ defmodule MishkaApiWeb.Router do
     plug MishkaApi.Plug.AclCheckPlug
   end
 
+  pipeline :access_authorized do
+    plug MishkaUser.AuthPipeline
+  end
+
   scope "/api/auth/v1", MishkaApiWeb do
     pipe_through [:api, :acl_check]
 
@@ -33,7 +37,7 @@ defmodule MishkaApiWeb.Router do
   end
 
   scope "/api/auth/v1", MishkaApiWeb do
-    pipe_through [:api, :access_token, :acl_check]
+    pipe_through [:api, :access_authorized, :access_token, :acl_check]
 
     post "/delete-tokens", AuthController, :delete_tokens
     post "/delete-token", AuthController, :delete_token
@@ -48,7 +52,7 @@ defmodule MishkaApiWeb.Router do
   end
 
   scope "/api/content/v1", MishkaApiWeb do
-    pipe_through [:api, :access_token, :acl_check]
+    pipe_through [:api, :access_authorized, :access_token, :acl_check]
 
     post "/create-category", ContentController, :create_category
     post "/edit-category", ContentController, :edit_category

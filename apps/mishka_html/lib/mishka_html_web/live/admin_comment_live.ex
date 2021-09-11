@@ -78,33 +78,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
 
   clear_all_field(comment_changeset())
 
-  @impl true
-  def handle_event("draft", %{"_target" => ["user", type], "user" => params}, socket) do
-    # save in genserver
-
-    {_key, value} = Map.take(params, [type])
-    |> Map.to_list()
-    |> List.first()
-
-
-    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
-      if x.type == type, do: Map.merge(x, %{value: value}), else: x
-    end)
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        dynamic_form: new_dynamic_form,
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("draft", _params, socket) do
-    {:noreply, socket}
-  end
+  editor_draft("comment", false, [], when_not: [])
 
   @impl true
   def handle_event("save", %{"comment" => params}, socket) do

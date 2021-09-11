@@ -220,6 +220,22 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
+  # TODO: check is there draft html editor in dynamic form params
+  # TODO: call on GenServer if is there a record for this section
+  defmacro editor_draft(key, options_menu, extra_params, when_not: list_of_key)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("draft", %{"_target" => ["#{unquote(key)}", type], "#{unquote(key)}" => params}, socket) when type not in unquote(list_of_key) do
+        draft(socket, type, params, unquote(options_menu), unquote(extra_params))
+      end
+
+      def handle_event("draft", params, socket) do
+        {:noreply, socket}
+      end
+    end
+  end
+
+
   defmacro delete_form()  do
     quote do
       @impl Phoenix.LiveView
@@ -282,6 +298,35 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
+
+  def draft(socket, type, params, options_menu, extra_params) do
+    {_key, value} = Map.take(params, [type])
+    |> Map.to_list()
+    |> List.first()
+
+    alias_link = if(type == "title", do: MishkaHtml.create_alias_link(params["title"]), else: Map.get(socket.assigns, :alias_link))
+
+    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x -> if x.type == type, do: Map.merge(x, %{value: value}), else: x end)
+    dynamic_form = if(options_menu, do: [options_menu: false, dynamic_form: new_dynamic_form], else: [dynamic_form: new_dynamic_form])
+
+    extra_params = Enum.map(extra_params, fn item ->
+      case item do
+        {list_key, module, function, param_key, extra_input} ->
+          [{list_key, apply(module, function, [params["#{param_key}"], extra_input])}]
+        {list_key, module, function, param_key} ->
+          [{list_key, apply(module, function, [params["#{param_key}"]])}]
+        {list_key, :return_params, function} ->
+          [{list_key, function.(type, params)}]
+        {_list_key, _value} = record ->
+          Map.new([record]) |> Map.to_list()
+      end
+    end)
+    |> Enum.concat()
+
+    assign_params = [basic_menu: false, alias_link: alias_link] ++ dynamic_form ++ extra_params
+
+    {:noreply, assign(socket, assign_params)}
+  end
   def check_type_list(dynamic_form, new_item, type) do
     case Enum.any?(dynamic_form, fn x -> x.type == type end) do
       true ->

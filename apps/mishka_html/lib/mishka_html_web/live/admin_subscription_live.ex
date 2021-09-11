@@ -73,40 +73,16 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
 
   clear_all_field(subscription_changeset())
 
-
-  @impl true
-  def handle_event("draft", %{"_target" => ["subscription", type], "subscription" => params}, socket) do
-    # save in genserver
-
-    {_key, value} = Map.take(params, [type])
-    |> Map.to_list()
-    |> List.first()
-
-
-    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
-      if x.type == type, do: Map.merge(x, %{value: value}), else: x
-    end)
-
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        dynamic_form: new_dynamic_form,
-        user_search: if(type != "user_id", do: [], else: User.users(conditions: {1, 5}, filters: %{full_name: params["user_id"]}))
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("draft", _params, socket) do
-    {:noreply, socket}
-  end
+  editor_draft("subscription", true, [
+    {:user_search, :return_params,
+      fn type, params  ->
+        if(type != "user_id", do: [], else: User.users(conditions: {1, 5}, filters: %{full_name: Map.get(params, ["user_id"])}))
+      end
+    }
+  ], when_not: [])
 
   @impl true
   def handle_event("save", %{"subscription" => params}, socket) do
-    # TODO: put flash msg should be imported to gettext
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
       [] -> socket
       fields_list ->
@@ -129,7 +105,6 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
 
   @impl true
   def handle_event("save", _params, socket) do
-    # TODO: put flash msg should be imported to gettext
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
       [] -> socket
       fields_list ->

@@ -113,30 +113,8 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("draft", %{"_target" => ["blog_tag", type], "blog_tag" => params}, socket) when type not in ["main_image", "main_image"] do
-    # save in genserver
+  editor_draft("blog_tag", true, [], when_not: ["main_image", "main_image"])
 
-    {_key, value} = Map.take(params, [type])
-    |> Map.to_list()
-    |> List.first()
-
-
-    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
-      if x.type == type, do: Map.merge(x, %{value: value}), else: x
-    end)
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        alias_link: if(type == "title", do: MishkaHtml.create_alias_link(params["title"]), else: socket.assigns.alias_link),
-        dynamic_form: new_dynamic_form
-      ])
-
-    {:noreply, socket}
-  end
 
   @impl true
   def handle_event("set_link", %{"key" => "Enter", "value" => value}, socket) do
@@ -144,11 +122,6 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
     socket =
       socket
       |> assign(:alias_link, alias_link)
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("draft", _params, socket) do
     {:noreply, socket}
   end
 

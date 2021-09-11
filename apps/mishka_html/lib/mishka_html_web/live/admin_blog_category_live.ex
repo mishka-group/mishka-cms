@@ -189,36 +189,9 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("draft", %{"_target" => ["category", type], "category" => params}, socket) when type not in ["main_image", "main_image"] do
-    # save in genserver
-
-    {_key, value} = Map.take(params, [type])
-    |> Map.to_list()
-    |> List.first()
-
-
-    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
-      if x.type == type, do: Map.merge(x, %{value: value}), else: x
-    end)
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: new_dynamic_form,
-        alias_link: if(type == "title", do: MishkaHtml.create_alias_link(params["title"]), else: socket.assigns.alias_link),
-        category_search: Category.search_category_title(params["sub"], 5)
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("draft", _params, socket) do
-    {:noreply, socket}
-  end
+  editor_draft("category", true, [
+    {:category_search, Category, :search_category_title, "sub", 5}
+  ], when_not: ["main_image", "main_image"])
 
   @impl true
   def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = _params, socket) do

@@ -12,10 +12,17 @@ defmodule MishkaContent.Application do
       name: MishkaContent.Cache.BookmarkOtpRunner
     ]
 
+    content_draft_runner_config = [
+      strategy: :one_for_one,
+      name: MishkaContent.Cache.ContentDraftOtpRunner
+    ]
+
     children = [
       {Task.Supervisor, name: MishkaContent.Email.EmailHelperTaskSupervisor},
       {Registry, keys: :unique, name: MishkaContent.Cache.BookmarkRegistry},
+      {Registry, keys: :unique, name: MishkaContent.Cache.ContentDraftRegistry},
       {DynamicSupervisor, bookmark_runner_config},
+      {DynamicSupervisor, content_draft_runner_config},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -27,6 +27,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         tags: [],
         editor: nil,
         id: nil,
+        user_id: Map.get(session, "user_id"),
+        draft_id: nil,
         category_id: nil,
         images: {nil, nil},
         alias_link: nil,

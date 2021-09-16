@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
   end
 
   @impl true
-  def mount(%{"post_id" => post_id}, _session, socket) do
+  def mount(%{"post_id" => post_id}, session, socket) do
     socket = case Post.show_by_id(post_id) do
       {:ok, :get_record_by_id, _error_tag, record} ->
         Process.send_after(self(), :menu, 100)
@@ -28,6 +28,8 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
           editor: nil,
           post_id: post_id,
           id: nil,
+          user_id: Map.get(session, "user_id"),
+          draft_id: nil,
           changeset: link_changeset()
         )
 

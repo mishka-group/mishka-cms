@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -27,10 +27,12 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         tags: [],
         editor: nil,
         id: nil,
+        user_id: Map.get(session, "user_id"),
         images: {nil, nil},
         alias_link: nil,
         category_search: [],
         sub: nil,
+        draft_id: nil,
         changeset: category_changeset())
         |> assign(:uploaded_files, [])
         |> allow_upload(:main_image_upload, accept: ~w(.jpg .jpeg .png), max_entries: 1, max_file_size: 10_000_000, auto_upload: true)
@@ -168,6 +170,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   make_all_menu()
 
+  editor_draft("category", true, [
+    {:category_search, Category, :search_category_title, "sub", 5}
+  ], when_not: ["main_image", "main_image"])
+
   @impl true
   def handle_event("text_search_click", %{"id" => id}, socket) do
     socket =
@@ -188,10 +194,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
       |> assign([category_search: []])
     {:noreply, socket}
   end
-
-  editor_draft("category", true, [
-    {:category_search, Category, :search_category_title, "sub", 5}
-  ], when_not: ["main_image", "main_image"])
 
   @impl true
   def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = _params, socket) do

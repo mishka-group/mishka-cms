@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -24,6 +24,8 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
         body_color: "#a29ac3cf",
         basic_menu: false,
         id: nil,
+        user_id: Map.get(session, "user_id"),
+        draft_id: nil,
         user_search: [],
         changeset: comment_changeset())
     {:ok, socket}

@@ -22,9 +22,12 @@ defmodule MishkaContent.Cache.ContentDraftManagement do
     %{id: id, section: section, dynamic_form: dynamic_form, user_id: user_id, section_id: section_id}
   end
 
-
   def save(user_id, section, section_id, dynamic_form \\ []) do
     ContentDraftDynamicSupervisor.start_job([user_id: user_id, section: section, section_id: section_id, dynamic_form: dynamic_form])
+  end
+
+  def save_by_id(id, user_id, section, section_id, dynamic_form \\ []) do
+    ContentDraftDynamicSupervisor.start_job([id: id, user_id: user_id, section: section, section_id: section_id, dynamic_form: dynamic_form])
   end
 
   def get_draft_by_id(id: id) do

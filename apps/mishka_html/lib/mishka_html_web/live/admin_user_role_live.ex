@@ -14,7 +14,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -22,6 +22,8 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "ساخت نقش"),
         body_color: "#a29ac3cf",
         basic_menu: false,
+        user_id: Map.get(session, "user_id"),
+        draft_id: nil,
         changeset: role_changeset())
     {:ok, socket}
   end

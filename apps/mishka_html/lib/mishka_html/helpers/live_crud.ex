@@ -222,11 +222,13 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
   # TODO: check is there draft html editor in dynamic form params
   # TODO: call on GenServer if is there a record for this section
+  # TODO: update Draft created or selected every action
+  # TODO: create liveview events to implemnt select and search and binde draft id
   defmacro editor_draft(key, options_menu, extra_params, when_not: list_of_key)  do
     quote do
       @impl Phoenix.LiveView
       def handle_event("draft", %{"_target" => ["#{unquote(key)}", type], "#{unquote(key)}" => params}, socket) when type not in unquote(list_of_key) do
-        draft(socket, type, params, unquote(options_menu), unquote(extra_params))
+        draft(socket, type, params, unquote(options_menu), unquote(extra_params), unquote(key))
       end
 
       def handle_event("draft", params, socket) do
@@ -299,7 +301,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   end
 
 
-  def draft(socket, type, params, options_menu, extra_params) do
+  def draft(socket, type, params, options_menu, extra_params, key) do
     {_key, value} = Map.take(params, [type])
     |> Map.to_list()
     |> List.first()
@@ -323,10 +325,27 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end)
     |> Enum.concat()
 
-    assign_params = [basic_menu: false, alias_link: alias_link] ++ dynamic_form ++ extra_params
+
+    # save dynamic_form on Draft State
+    draft_id = create_and_update_draft_state(socket, Keyword.get(dynamic_form, :dynamic_form), key)
+
+    assign_params = [basic_menu: false, alias_link: alias_link, draft_id: draft_id] ++ dynamic_form ++ extra_params
 
     {:noreply, assign(socket, assign_params)}
   end
+
+  def create_and_update_draft_state(socket, dynamic_form, key) do
+    case {:draft_id, is_nil(socket.assigns.draft_id)} do
+      {:draft_id, true} ->
+        id = Ecto.UUID.generate
+        MishkaContent.Cache.ContentDraftManagement.save_by_id(id, socket.assigns.user_id, key, socket.assigns.id || :public, dynamic_form)
+        id
+      {:draft_id, false} ->
+        MishkaContent.Cache.ContentDraftManagement.update_record(id: socket.assigns.draft_id, dynamic_form: dynamic_form)
+        socket.assigns.draft_id
+    end
+  end
+
   def check_type_list(dynamic_form, new_item, type) do
     case Enum.any?(dynamic_form, fn x -> x.type == type end) do
       true ->

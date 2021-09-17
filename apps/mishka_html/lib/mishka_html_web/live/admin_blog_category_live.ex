@@ -1,6 +1,7 @@
 defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
   use MishkaHtmlWeb, :live_view
 
+  alias MishkaContent.Cache.ContentDraftManagement
   alias MishkaContent.Blog.Category
   @error_atom :category
 
@@ -32,6 +33,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         alias_link: nil,
         category_search: [],
         sub: nil,
+        drafts: ContentDraftManagement.drafts_by_section(section: "category"),
         draft_id: nil,
         changeset: category_changeset())
         |> assign(:uploaded_files, [])

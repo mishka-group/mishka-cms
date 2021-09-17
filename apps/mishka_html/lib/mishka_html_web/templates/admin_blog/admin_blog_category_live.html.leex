@@ -43,6 +43,35 @@
         <div class="clearfix"></div>
         <div class="space50"></div>
 
+
+
+        <div class="col-sm-12">
+            <%= if @drafts != [] do %>
+                <div class="alert alert-warning vazir draft-alert" role="alert">
+                شما برای این بخش <span class="badge bg-danger"><%= length(@drafts) %></span> پیش نسخه ذخیره شده دارید.
+                لطفا در صورت نیاز هر کدام از آن ها را انتخاب کنید و اگر به آن نیاز ندارید لطفا آن را حذف کنید. لازم به ذکر است گزینه انتخابی بعد از ذخیره سازی موفقیت آمیز خودکار حذف می گردد.
+                </div>
+            <% end%>
+
+            <div class="row">
+                <%= for draft <- @drafts do %>
+                    <%= live_component @socket, MishkaHtmlWeb.Admin.Public.DrfatBlockComponent,
+                        section_id: @id,
+                        draft: draft,
+                        id: draft.id %>
+                <% end %>
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="space30"></div>
+        </div>
+
+
+
+
+
+
+
         <div class="col admin-create-category">
 
             <a phx-click="basic_menu" class="btn btn-info admin-create-category-tools" >

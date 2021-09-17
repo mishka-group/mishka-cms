@@ -19,7 +19,15 @@ defmodule MishkaContent.Cache.ContentDraftManagement do
   end
 
   defp default(id, section, user_id, section_id, dynamic_form) do
-    %{id: id, section: section, dynamic_form: dynamic_form, user_id: user_id, section_id: section_id}
+    user_full_name = case user_id do
+      nil -> "نا مشخص"
+      user_id ->
+
+        {:ok, :get_record_by_id, _error_atom, user_info} = MishkaUser.User.show_by_id(user_id)
+        user_info.full_name
+    end
+
+    %{id: id, section: section, dynamic_form: dynamic_form, user_id: user_id, user_full_name: user_full_name, section_id: section_id, inserted_at: DateTime.utc_now()}
   end
 
   def save(user_id, section, section_id, dynamic_form \\ []) do
@@ -35,6 +43,11 @@ defmodule MishkaContent.Cache.ContentDraftManagement do
       {:ok, :get_draft_pid, pid} -> GenServer.call(pid, :pop)
       {:error, :get_draft_pid} -> {:error, :get_draft_by_id, :not_found}
     end
+  end
+
+  def drafts_by_section(section: section) do
+    get_records_ids(section: section)
+    |> Enum.map(fn id -> get_draft_by_id(id: id) end)
   end
 
   def get_records_ids(section: section, user_id: user_id) do

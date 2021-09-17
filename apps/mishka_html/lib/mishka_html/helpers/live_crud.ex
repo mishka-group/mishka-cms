@@ -221,9 +221,6 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   end
 
   # TODO: check is there draft html editor in dynamic form params
-  # TODO: call on GenServer if is there a record for this section
-  # TODO: update Draft created or selected every action
-  # TODO: create liveview events to implemnt select and search and binde draft id
   defmacro editor_draft(key, options_menu, extra_params, when_not: list_of_key)  do
     quote do
       @impl Phoenix.LiveView
@@ -233,6 +230,14 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
       def handle_event("draft", params, socket) do
         {:noreply, socket}
+      end
+
+      def handle_event("delete_draft", %{"draft-id" => draft_id}, socket) do
+        delete_draft(socket, draft_id)
+      end
+
+      def handle_event("select_draft", %{"draft-id" => draft_id}, socket) do
+        select_draft(socket, draft_id)
       end
     end
   end
@@ -300,6 +305,29 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
+
+  def delete_draft(socket, draft_id) do
+    MishkaContent.Cache.ContentDraftManagement.delete_record(id: draft_id)
+    drafts = Enum.reject(socket.assigns.drafts, fn x -> x.id == draft_id end)
+
+    socket =
+      socket
+      |> assign(drafts: drafts)
+
+    {:noreply, socket}
+  end
+
+  def select_draft(socket, draft_id) do
+    socket = case MishkaContent.Cache.ContentDraftManagement.get_draft_by_id(id: draft_id) do
+      {:error, :get_draft_by_id, :not_found} -> socket
+
+      record ->
+        socket
+        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id)
+    end
+
+    {:noreply, socket}
+  end
 
   def draft(socket, type, params, options_menu, extra_params, key) do
     {_key, value} = Map.take(params, [type])

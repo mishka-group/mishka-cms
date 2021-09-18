@@ -131,8 +131,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/mishka_html_web/live/components/admin/comment/list_component.ex:14
-#: lib/mishka_html_web/live/components/admin/comment/search_component.ex:47 lib/mishka_html_web/live/components/admin/setting/search_component.ex:24
-#: lib/mishka_html_web/live/components/admin/subscription/list_component.ex:12 lib/mishka_html_web/live/components/admin/subscription/search_component.ex:34
+#: lib/mishka_html_web/live/components/admin/comment/search_component.ex:47 lib/mishka_html_web/live/components/admin/subscription/list_component.ex:12
+#: lib/mishka_html_web/live/components/admin/subscription/search_component.ex:34
 msgid "بخش"
 msgstr ""
 
@@ -148,7 +148,7 @@ msgid "بدون دسترسی"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:73
+#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:70
 msgid "برچسب ها"
 msgstr ""
 
@@ -255,9 +255,8 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/components/admin/blog/category/search_component.ex:13 lib/mishka_html_web/live/components/admin/blog/post/search_component .ex:13
 #: lib/mishka_html_web/live/components/admin/comment/search_component.ex:13 lib/mishka_html_web/live/components/admin/role/search_component.ex:13
-#: lib/mishka_html_web/live/components/admin/setting/search_component.ex:13 lib/mishka_html_web/live/components/admin/subscription/search_component.ex:13
-#: lib/mishka_html_web/live/components/admin/tag/search_component.ex:13 lib/mishka_html_web/live/components/admin/user/list_component.ex:71
-#: lib/mishka_html_web/live/components/admin/user/search_component.ex:13
+#: lib/mishka_html_web/live/components/admin/subscription/search_component.ex:13 lib/mishka_html_web/live/components/admin/tag/search_component.ex:13
+#: lib/mishka_html_web/live/components/admin/user/list_component.ex:71 lib/mishka_html_web/live/components/admin/user/search_component.ex:13
 msgid "جستجوی پیشرفته"
 msgstr ""
 
@@ -280,12 +279,6 @@ msgstr ""
 #: lib/mishka_html_web/live/components/admin/blog/category/delete_error_component.ex:23
 #: lib/mishka_html_web/live/components/admin/blog/post/delete_error_component.ex:34
 msgid "حذف همه"
-msgstr ""
-
-#, elixir-format
-#: lib/mishka_html_web/live/components/admin/blog/category/list_component.ex:59
-#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:63
-msgid "حذف کامل"
 msgstr ""
 
 #, elixir-format
@@ -334,8 +327,8 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/components/admin/blog/category/search_component.ex:77 lib/mishka_html_web/live/components/admin/blog/post/search_component .ex:98
 #: lib/mishka_html_web/live/components/admin/comment/search_component.ex:82 lib/mishka_html_web/live/components/admin/role/search_component.ex:39
-#: lib/mishka_html_web/live/components/admin/setting/search_component.ex:34 lib/mishka_html_web/live/components/admin/subscription/search_component.ex:70
-#: lib/mishka_html_web/live/components/admin/tag/search_component.ex:51 lib/mishka_html_web/live/components/admin/user/search_component.ex:78
+#: lib/mishka_html_web/live/components/admin/subscription/search_component.ex:70 lib/mishka_html_web/live/components/admin/tag/search_component.ex:51
+#: lib/mishka_html_web/live/components/admin/user/search_component.ex:78
 msgid "ریست"
 msgstr ""
 
@@ -403,8 +396,8 @@ msgstr ""
 #, elixir-format
 #: lib/mishka_html_web/live/components/admin/blog/category/search_component.ex:75 lib/mishka_html_web/live/components/admin/blog/post/search_component .ex:96
 #: lib/mishka_html_web/live/components/admin/comment/search_component.ex:80 lib/mishka_html_web/live/components/admin/role/search_component.ex:37
-#: lib/mishka_html_web/live/components/admin/setting/search_component.ex:32 lib/mishka_html_web/live/components/admin/subscription/search_component.ex:68
-#: lib/mishka_html_web/live/components/admin/tag/search_component.ex:49 lib/mishka_html_web/live/components/admin/user/search_component.ex:76
+#: lib/mishka_html_web/live/components/admin/subscription/search_component.ex:68 lib/mishka_html_web/live/components/admin/tag/search_component.ex:49
+#: lib/mishka_html_web/live/components/admin/user/search_component.ex:76
 msgid "عملیات سریع"
 msgstr ""
 
@@ -606,7 +599,7 @@ msgid "نظر ها"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:59
+#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:60
 msgid "نظرات"
 msgstr ""
 
@@ -626,7 +619,7 @@ msgid "نمایش تست"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:69
+#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:66
 msgid "نویسندگان"
 msgstr ""
 
@@ -713,7 +706,7 @@ msgid "یک دقیقه پیش"
 msgstr ""
 
 #, elixir-format
-#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:78
+#: lib/mishka_html_web/live/components/admin/blog/post/lists_component.ex:75
 msgid "لینک ها"
 msgstr ""
 
@@ -732,7 +725,7 @@ msgstr ""
 msgid "تیتر فیلد:"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/mishka_html_web/live/components/admin/setting/list_component.ex:14
 msgid "نام بخش"
 msgstr ""

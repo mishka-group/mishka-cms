@@ -10,12 +10,12 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :mishka_html, MishkaHtmlWeb.Endpoint,
-  url: [host: System.get_env("DOMAIN_NAME"), port: 4000],
+  url: [host: System.get_env("CMS_DOMAIN_NAME"), port: System.get_env("CMS_PORT")],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 
 config :mishka_api, MishkaApiWeb.Endpoint,
-  url: [host: System.get_env("DOMAIN_NAME"), port: 4001]
+  url: [host: System.get_env("API_DOMAIN_NAME"), port: System.get_env("API_PORT")]
 
 # ## SSL Support
 #

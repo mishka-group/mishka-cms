@@ -3,8 +3,8 @@ defmodule MishkaHtmlWeb.AdminUserLive do
 
   alias MishkaUser.User
   @error_atom :user
+  alias MishkaContent.Cache.ContentDraftManagement
 
-  # TODO: change module
   use MishkaHtml.Helpers.LiveCRUD,
     module: MishkaUser.User,
     redirect: __MODULE__,
@@ -26,6 +26,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         basic_menu: false,
         id: nil,
         user_id: Map.get(session, "user_id"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "user"),
         draft_id: nil,
         changeset: user_changeset())
     {:ok, socket}

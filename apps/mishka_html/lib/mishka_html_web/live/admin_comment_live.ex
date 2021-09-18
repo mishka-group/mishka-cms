@@ -1,6 +1,6 @@
 defmodule MishkaHtmlWeb.AdminCommentLive do
   use MishkaHtmlWeb, :live_view
-
+  alias MishkaContent.Cache.ContentDraftManagement
   alias MishkaContent.General.Comment
   @error_atom :comment
 
@@ -25,6 +25,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
         basic_menu: false,
         id: nil,
         user_id: Map.get(session, "user_id"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "comment"),
         draft_id: nil,
         user_search: [],
         changeset: comment_changeset())

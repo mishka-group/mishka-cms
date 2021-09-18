@@ -1,6 +1,6 @@
 defmodule MishkaHtmlWeb.AdminBlogPostLive do
   use MishkaHtmlWeb, :live_view
-
+  alias MishkaContent.Cache.ContentDraftManagement
   alias MishkaContent.Blog.{Post, Category}
   @error_atom :post
 
@@ -28,6 +28,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         editor: nil,
         id: nil,
         user_id: Map.get(session, "user_id"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "post"),
         draft_id: nil,
         category_id: nil,
         images: {nil, nil},
@@ -89,7 +90,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
   options_menu()
 
-  save_editor()
+  save_editor("post")
 
   delete_form()
 

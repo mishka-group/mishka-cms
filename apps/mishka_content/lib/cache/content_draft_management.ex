@@ -76,6 +76,13 @@ defmodule MishkaContent.Cache.ContentDraftManagement do
     end
   end
 
+  def update_state(id: id, elements: elements) do
+    case ContentDraftDynamicSupervisor.get_draft_pid(id) do
+      {:error, :get_draft_pid} -> {:error, :update_record, :not_found}
+      {:ok, :get_draft_pid, pid} -> GenServer.cast(pid, {:push, :state, elements})
+    end
+  end
+
   def delete_record(id: id) do
     case ContentDraftDynamicSupervisor.get_draft_pid(id) do
       {:error, :get_draft_pid} -> {:error, :delete_record, :not_found}
@@ -120,7 +127,12 @@ defmodule MishkaContent.Cache.ContentDraftManagement do
 
   @impl true
   def handle_cast({:push, dynamic_form}, state) do
-    {:noreply, default(state.id, state.section, state.user_id, state.section_id, dynamic_form)}
+    {:noreply, Map.merge(state, default(state.id, state.section, state.user_id, state.section_id, dynamic_form))}
+  end
+
+  @impl true
+  def handle_cast({:push, :state, elements}, state) do
+    {:noreply, Map.merge(state, elements)}
   end
 
   @impl true

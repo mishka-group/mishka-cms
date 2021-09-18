@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do:  Permission.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
@@ -26,6 +26,8 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
         basic_menu: false,
         changeset: permission_changeset(),
         id: nil,
+        user_id: Map.get(session, "user_id"),
+        draft_id: nil,
         permissions: []
       )
       {:ok, socket}

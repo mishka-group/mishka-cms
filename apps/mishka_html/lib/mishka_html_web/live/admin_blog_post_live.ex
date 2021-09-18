@@ -1,6 +1,6 @@
 defmodule MishkaHtmlWeb.AdminBlogPostLive do
   use MishkaHtmlWeb, :live_view
-
+  alias MishkaContent.Cache.ContentDraftManagement
   alias MishkaContent.Blog.{Post, Category}
   @error_atom :post
 
@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -27,6 +27,9 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         tags: [],
         editor: nil,
         id: nil,
+        user_id: Map.get(session, "user_id"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "post"),
+        draft_id: nil,
         category_id: nil,
         images: {nil, nil},
         alias_link: nil,
@@ -87,7 +90,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
   options_menu()
 
-  save_editor()
+  save_editor("post")
 
   delete_form()
 
@@ -97,35 +100,10 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
   make_all_menu()
 
-  @impl true
-  def handle_event("draft", %{"_target" => ["post", type], "post" => params}, socket) when type not in ["main_image", "main_image"] do
-    # save in genserver
-    {_key, value} = Map.take(params, [type])
-    |> Map.to_list()
-    |> List.first()
+  editor_draft("post", true, [
+    {:category_search, Category, :search_category_title, "category_id", 5}
+  ], when_not: ["main_image", "main_image"])
 
-
-    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
-      if x.type == type, do: Map.merge(x, %{value: value}), else: x
-    end)
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        dynamic_form: new_dynamic_form,
-        alias_link: if(type == "title", do: MishkaHtml.create_alias_link(params["title"]), else: socket.assigns.alias_link),
-        category_search: Category.search_category_title(params["category_id"], 5)
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("draft", _params, socket) do
-    {:noreply, socket}
-  end
 
   @impl true
   def handle_event("cancel-upload", %{"ref" => ref, "upload_field" => field} = _params, socket) do

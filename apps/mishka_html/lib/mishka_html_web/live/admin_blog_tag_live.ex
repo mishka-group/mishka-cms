@@ -1,6 +1,6 @@
 defmodule MishkaHtmlWeb.AdminBlogTagLive do
   use MishkaHtmlWeb, :live_view
-
+  alias MishkaContent.Cache.ContentDraftManagement
   alias MishkaContent.Blog.Tag
   @error_atom :blog_tag
 
@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -27,6 +27,9 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
         tags: [],
         editor: nil,
         id: nil,
+        user_id: Map.get(session, "user_id"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "blog_tag"),
+        draft_id: nil,
         alias_link: nil,
         changeset: tag_changeset())
     {:ok, socket}
@@ -113,30 +116,8 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("draft", %{"_target" => ["blog_tag", type], "blog_tag" => params}, socket) when type not in ["main_image", "main_image"] do
-    # save in genserver
+  editor_draft("blog_tag", true, [], when_not: ["main_image", "main_image"])
 
-    {_key, value} = Map.take(params, [type])
-    |> Map.to_list()
-    |> List.first()
-
-
-    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
-      if x.type == type, do: Map.merge(x, %{value: value}), else: x
-    end)
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        options_menu: false,
-        alias_link: if(type == "title", do: MishkaHtml.create_alias_link(params["title"]), else: socket.assigns.alias_link),
-        dynamic_form: new_dynamic_form
-      ])
-
-    {:noreply, socket}
-  end
 
   @impl true
   def handle_event("set_link", %{"key" => "Enter", "value" => value}, socket) do
@@ -144,11 +125,6 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
     socket =
       socket
       |> assign(:alias_link, alias_link)
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("draft", _params, socket) do
     {:noreply, socket}
   end
 

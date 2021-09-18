@@ -1,9 +1,17 @@
 defmodule MishkaUser.AuthErrorHandler do
   import Plug.Conn
+  @behaviour Guardian.Plug.ErrorHandler
 
-  @spec auth_error(Plug.Conn.t(), {any, any}, any) :: Plug.Conn.t()
+  @impl Guardian.Plug.ErrorHandler
   def auth_error(conn, {type, _reason}, _opts) do
-    body = Jason.encode!(%{message: to_string(type)})
-    send_resp(conn, 401, body)
+    body = Jason.encode!(%{
+      action: :access_token,
+      system: :user,
+      message: to_string(type)
+    })
+
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(401, body)
   end
 end

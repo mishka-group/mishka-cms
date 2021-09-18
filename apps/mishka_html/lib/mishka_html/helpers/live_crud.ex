@@ -208,17 +208,54 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-  defmacro save_editor()  do
+  defmacro save_editor(section)  do
     quote do
       @impl Phoenix.LiveView
       def handle_event("save-editor", %{"html" => params}, socket) do
-        socket =
-          socket
-          |> assign([editor: params])
+        draft_id = Ecto.UUID.generate
+        socket = case socket.assigns.draft_id do
+          nil ->
+            MishkaContent.Cache.ContentDraftManagement.save_by_id(draft_id, socket.assigns.user_id, unquote(section), :public, [])
+            MishkaContent.Cache.ContentDraftManagement.update_state(id: draft_id, elements: %{editor: params, dynamic_form: [
+              %{class: "col-sm-1", type: "status", value: nil},
+              %{class: "col-sm-12", type: "description", value: params}
+            ]})
+
+            socket
+            |> assign([editor: params, draft_id: draft_id])
+
+          record ->
+            MishkaContent.Cache.ContentDraftManagement.update_state(id: record, elements: %{editor: params})
+            socket
+            |> assign([editor: params])
+        end
+
         {:noreply, socket}
       end
     end
   end
+
+  defmacro editor_draft(key, options_menu, extra_params, when_not: list_of_key)  do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("draft", %{"_target" => ["#{unquote(key)}", type], "#{unquote(key)}" => params}, socket) when type not in unquote(list_of_key) do
+        draft(socket, type, params, unquote(options_menu), unquote(extra_params), unquote(key))
+      end
+
+      def handle_event("draft", params, socket) do
+        {:noreply, socket}
+      end
+
+      def handle_event("delete_draft", %{"draft-id" => draft_id}, socket) do
+        delete_draft(socket, draft_id)
+      end
+
+      def handle_event("select_draft", %{"draft-id" => draft_id}, socket) do
+        select_draft(socket, draft_id)
+      end
+    end
+  end
+
 
   defmacro delete_form()  do
     quote do
@@ -241,7 +278,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     quote do
       @impl Phoenix.LiveView
       def handle_event("clear_all_field", _, socket) do
-        {:noreply, assign(socket, [basic_menu: false, changeset: unquote(changeset), options_menu: false, dynamic_form: []])}
+        {:noreply, assign(socket, [basic_menu: false, changeset: unquote(changeset), options_menu: false, draft_id: nil, dynamic_form: []])}
       end
     end
   end
@@ -279,6 +316,78 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
         {:noreply, socket}
       end
+    end
+  end
+
+
+  def delete_draft(socket, draft_id) do
+    MishkaContent.Cache.ContentDraftManagement.delete_record(id: draft_id)
+    drafts = Enum.reject(socket.assigns.drafts, fn x -> x.id == draft_id end)
+
+    draft_id = if(draft_id == socket.assigns.draft_id, do: nil, else: socket.assigns.draft_id)
+
+    socket =
+      socket
+      |> assign(drafts: drafts, draft_id: draft_id)
+
+    {:noreply, socket}
+  end
+
+  def select_draft(socket, draft_id) do
+    socket = case MishkaContent.Cache.ContentDraftManagement.get_draft_by_id(id: draft_id) do
+      {:error, :get_draft_by_id, :not_found} -> socket
+
+      record ->
+        socket
+        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id)
+        |> push_event("update-editor-html", %{html: Map.get(record, :editor) || ""})
+    end
+
+    {:noreply, socket}
+  end
+
+  def draft(socket, type, params, options_menu, extra_params, key) do
+    {_key, value} = Map.take(params, [type])
+    |> Map.to_list()
+    |> List.first()
+
+    alias_link = if(type == "title", do: MishkaHtml.create_alias_link(params["title"]), else: Map.get(socket.assigns, :alias_link))
+
+    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x -> if x.type == type, do: Map.merge(x, %{value: value}), else: x end)
+    dynamic_form = if(options_menu, do: [options_menu: false, dynamic_form: new_dynamic_form], else: [dynamic_form: new_dynamic_form])
+
+    extra_params = Enum.map(extra_params, fn item ->
+      case item do
+        {list_key, module, function, param_key, extra_input} ->
+          [{list_key, apply(module, function, [params["#{param_key}"], extra_input])}]
+        {list_key, module, function, param_key} ->
+          [{list_key, apply(module, function, [params["#{param_key}"]])}]
+        {list_key, :return_params, function} ->
+          [{list_key, function.(type, params)}]
+        {_list_key, _value} = record ->
+          Map.new([record]) |> Map.to_list()
+      end
+    end)
+    |> Enum.concat()
+
+
+    # save dynamic_form on Draft State
+    draft_id = create_and_update_draft_state(socket, Keyword.get(dynamic_form, :dynamic_form), key)
+
+    assign_params = [basic_menu: false, alias_link: alias_link, draft_id: draft_id] ++ dynamic_form ++ extra_params
+
+    {:noreply, assign(socket, assign_params)}
+  end
+
+  def create_and_update_draft_state(socket, dynamic_form, key) do
+    case {:draft_id, is_nil(socket.assigns.draft_id)} do
+      {:draft_id, true} ->
+        id = Ecto.UUID.generate
+        MishkaContent.Cache.ContentDraftManagement.save_by_id(id, socket.assigns.user_id, key, socket.assigns.id || :public, dynamic_form)
+        id
+      {:draft_id, false} ->
+        MishkaContent.Cache.ContentDraftManagement.update_record(id: socket.assigns.draft_id, dynamic_form: dynamic_form)
+        socket.assigns.draft_id
     end
   end
 

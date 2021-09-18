@@ -124,3 +124,20 @@
   display: block;
   margin: -1rem 0 2rem;
 }
+
+.draft-box {
+  padding: 20px;
+  border-radius: 3px;
+  margin: 5px;
+  max-width: 415px;
+}
+
+.draft-alert {
+  font-size: 18px;
+}
+.draft-block-info span {
+  padding: 8px 3px;
+}
+.draft-block-info {
+  font-size: 15px;
+}

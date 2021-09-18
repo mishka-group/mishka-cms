@@ -1,8 +1,8 @@
 defmodule MishkaHtmlWeb.AdminUserRoleLive do
   use MishkaHtmlWeb, :live_view
   alias MishkaUser.Acl.Role
+  alias MishkaContent.Cache.ContentDraftManagement
 
-  # TODO: change module
   use MishkaHtml.Helpers.LiveCRUD,
     module: MishkaUser.Acl.Role,
     redirect: __MODULE__,
@@ -14,7 +14,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -22,6 +22,9 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "ساخت نقش"),
         body_color: "#a29ac3cf",
         basic_menu: false,
+        user_id: Map.get(session, "user_id"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "role"),
+        draft_id: nil,
         changeset: role_changeset())
     {:ok, socket}
   end
@@ -31,33 +34,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
 
   delete_form()
 
-  @impl true
-  def handle_event("draft", %{"_target" => ["role", type], "role" => params}, socket) do
-    # save in genserver
-
-    {_key, value} = Map.take(params, [type])
-    |> Map.to_list()
-    |> List.first()
-
-
-    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
-      if x.type == type, do: Map.merge(x, %{value: value}), else: x
-    end)
-
-    socket =
-      socket
-      |> assign([
-        basic_menu: false,
-        dynamic_form: new_dynamic_form,
-      ])
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("draft", _params, socket) do
-    {:noreply, socket}
-  end
+  editor_draft("role", true, [], when_not: [])
 
   @impl true
   def handle_event("save", %{"role" => params}, socket) do

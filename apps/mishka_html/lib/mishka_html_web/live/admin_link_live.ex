@@ -2,7 +2,7 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
   use MishkaHtmlWeb, :live_view
   alias MishkaContent.Blog.BlogLink
   alias MishkaContent.Blog.Post
-
+  alias MishkaContent.Cache.ContentDraftManagement
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.BlogLink,
       redirect: __MODULE__,
@@ -29,6 +29,7 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
           post_id: post_id,
           id: nil,
           user_id: Map.get(session, "user_id"),
+          drafts: ContentDraftManagement.drafts_by_section(section: "blog_link"),
           draft_id: nil,
           changeset: link_changeset()
         )
@@ -81,7 +82,7 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
   end
 
   # Live CRUD
-  save_editor()
+  save_editor("blog_link")
 
   make_all_basic_menu()
 

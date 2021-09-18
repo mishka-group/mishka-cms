@@ -162,7 +162,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   options_menu()
 
-  save_editor()
+  save_editor("category")
 
   delete_form()
 

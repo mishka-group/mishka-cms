@@ -208,19 +208,33 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-  defmacro save_editor()  do
+  defmacro save_editor(section)  do
     quote do
       @impl Phoenix.LiveView
       def handle_event("save-editor", %{"html" => params}, socket) do
-        socket =
-          socket
-          |> assign([editor: params])
+        draft_id = Ecto.UUID.generate
+        socket = case socket.assigns.draft_id do
+          nil ->
+            MishkaContent.Cache.ContentDraftManagement.save_by_id(draft_id, socket.assigns.user_id, unquote(section), :public, [])
+            MishkaContent.Cache.ContentDraftManagement.update_state(id: draft_id, elements: %{editor: params, dynamic_form: [
+              %{class: "col-sm-1", type: "status", value: nil},
+              %{class: "col-sm-12", type: "description", value: params}
+            ]})
+
+            socket
+            |> assign([editor: params, draft_id: draft_id])
+
+          record ->
+            MishkaContent.Cache.ContentDraftManagement.update_state(id: record, elements: %{editor: params})
+            socket
+            |> assign([editor: params])
+        end
+
         {:noreply, socket}
       end
     end
   end
 
-  # TODO: check is there draft html editor in dynamic form params
   defmacro editor_draft(key, options_menu, extra_params, when_not: list_of_key)  do
     quote do
       @impl Phoenix.LiveView
@@ -264,7 +278,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     quote do
       @impl Phoenix.LiveView
       def handle_event("clear_all_field", _, socket) do
-        {:noreply, assign(socket, [basic_menu: false, changeset: unquote(changeset), options_menu: false, dynamic_form: []])}
+        {:noreply, assign(socket, [basic_menu: false, changeset: unquote(changeset), options_menu: false, draft_id: nil, dynamic_form: []])}
       end
     end
   end
@@ -310,9 +324,11 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     MishkaContent.Cache.ContentDraftManagement.delete_record(id: draft_id)
     drafts = Enum.reject(socket.assigns.drafts, fn x -> x.id == draft_id end)
 
+    draft_id = if(draft_id == socket.assigns.draft_id, do: nil, else: socket.assigns.draft_id)
+
     socket =
       socket
-      |> assign(drafts: drafts)
+      |> assign(drafts: drafts, draft_id: draft_id)
 
     {:noreply, socket}
   end
@@ -324,6 +340,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       record ->
         socket
         |> assign(dynamic_form: record.dynamic_form, draft_id: record.id)
+        |> push_event("update-editor-html", %{html: Map.get(record, :editor) || ""})
     end
 
     {:noreply, socket}

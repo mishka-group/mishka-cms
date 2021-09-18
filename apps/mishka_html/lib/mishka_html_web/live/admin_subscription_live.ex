@@ -3,8 +3,8 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
 
   alias MishkaContent.General.Subscription
   alias MishkaUser.User
+  alias MishkaContent.Cache.ContentDraftManagement
 
-  # TODO: change module
   use MishkaHtml.Helpers.LiveCRUD,
     module: MishkaContent.General.Subscription,
     redirect: __MODULE__,
@@ -28,6 +28,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
         basic_menu: false,
         id: nil,
         user_id: Map.get(session, "user_id"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "subscription"),
         draft_id: nil,
         user_search: [],
         changeset: subscription_changeset())

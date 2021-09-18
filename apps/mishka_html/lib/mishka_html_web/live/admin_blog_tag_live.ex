@@ -1,6 +1,6 @@
 defmodule MishkaHtmlWeb.AdminBlogTagLive do
   use MishkaHtmlWeb, :live_view
-
+  alias MishkaContent.Cache.ContentDraftManagement
   alias MishkaContent.Blog.Tag
   @error_atom :blog_tag
 
@@ -28,6 +28,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
         editor: nil,
         id: nil,
         user_id: Map.get(session, "user_id"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "blog_tag"),
         draft_id: nil,
         alias_link: nil,
         changeset: tag_changeset())

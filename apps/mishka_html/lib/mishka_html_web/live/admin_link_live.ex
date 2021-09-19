@@ -169,6 +169,7 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :blog_link, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "لینک: %{title} درست شده است.", title: repo_data.title)})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "لینک مورد نظر ساخته شد."))

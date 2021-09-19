@@ -288,6 +288,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
 
       {:ok, :add, :post, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
         socket
         |> assign(
@@ -338,6 +339,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         ])
 
       {:ok, :edit, :post, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "مطلب به روز رسانی شد"))

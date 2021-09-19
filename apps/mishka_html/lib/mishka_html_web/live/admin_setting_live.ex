@@ -213,6 +213,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :setting, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات بخش: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.section))})
 
         socket

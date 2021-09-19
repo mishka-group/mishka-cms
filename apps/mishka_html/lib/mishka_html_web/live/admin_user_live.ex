@@ -134,6 +134,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :user, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
         MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
         socket
@@ -154,6 +155,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         ])
 
       {:ok, :edit, :user, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} به روز شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "کاربر به روز رسانی شد"))

@@ -188,6 +188,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :subscription, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک برای بخش: %{title} درست شده است.", title: repo_data.section)})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "اشتراک مورد نظر ساخته شد."))
@@ -206,6 +207,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
         ])
 
       {:ok, :edit, :subscription, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک از بهش: %{title} به روز شده است.", title: repo_data.section)})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "اشتراک کاربر مورد نظر به روز رسانی شد"))

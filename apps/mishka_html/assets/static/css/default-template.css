@@ -11,6 +11,16 @@
   font-display: block;
 } */
 
+#editor-main-dive {
+  max-height: 400px;
+}
+.form-error-tag {
+  clear: both;
+  padding: 15px 0;
+  max-height: 20px;
+  font-size: 18px;
+}
+
 .click-cursor {
   cursor: pointer;
 }

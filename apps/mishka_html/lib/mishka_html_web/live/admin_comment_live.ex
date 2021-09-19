@@ -111,6 +111,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
         {:noreply, socket}
 
       {:ok, :edit, @error_atom, _repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         socket =
           socket
           |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نظر به روز رسانی شد"))

@@ -302,6 +302,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         ])
 
       {:ok, :add, :category, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} درست شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "مجموعه با موفقیت ایجاد شد"))
@@ -343,6 +344,8 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         ])
 
       {:ok, :edit, :category, repo_data} ->
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
+
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} به روز شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "مجموعه به روز رسانی شد"))

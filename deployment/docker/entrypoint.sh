@@ -30,7 +30,7 @@ if [[ print_db_name ]]; then
   mix run /app/apps/mishka_database/priv/repo/seeds.exs
 fi
 
-
+export MIX_ENV=prod
 
 # Start the server.
 exec mix phx.server

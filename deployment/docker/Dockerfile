@@ -14,7 +14,10 @@ ARG SECRET_KEY_BASE \
     SECRET_CURRENT_TOKEN_SALT \
     SECRET_REFRESH_TOKEN_SALT \
     SECRET_ACCESS_TOKEN_SALT \
-    DOMAIN_NAME
+    CMS_DOMAIN_NAME \
+    API_DOMAIN_NAME \
+    CMS_PORT \
+    API_PORT
 
 ENV MIX_ENV=prod \
     SECRET_KEY_BASE=$SECRET_KEY_BASE \
@@ -25,7 +28,10 @@ ENV MIX_ENV=prod \
     SECRET_CURRENT_TOKEN_SALT=$SECRET_CURRENT_TOKEN_SALT \
     SECRET_REFRESH_TOKEN_SALT=$SECRET_REFRESH_TOKEN_SALT \
     SECRET_ACCESS_TOKEN_SALT=$SECRET_ACCESS_TOKEN_SALT \
-    DOMAIN_NAME=$DOMAIN_NAME
+    CMS_DOMAIN_NAME=$CMS_DOMAIN_NAME \
+    API_DOMAIN_NAME=$API_DOMAIN_NAME \
+    CMS_PORT=$CMS_PORT \
+    API_PORT=$API_PORT
 
 # Copy all application files
 COPY . /app
@@ -33,22 +39,17 @@ COPY . /app
 RUN apk add --no-cache --virtual .build-deps git inotify-tools make python2 erlang-dev  alpine-sdk
 
 # Install and compile production dependecies
-RUN if [[ "$MIX_ENV" == "prod" ]]; then \
-        cd /app && \
+RUN  cd /app && \
         mix local.hex --force && \
         mix local.rebar --force && \
-        mix deps.get --only prod; \
-    else \
-        cd /app && \
-        mix deps.get; \
-    fi
-
-RUN cd /app &&  mix deps.compile &&  mix assets.deploy
+        mix deps.get --only prod && \
+        MIX_ENV=prod mix do deps.compile, assets.deploy, phx.digest
 
 
 # Clean Up
-RUN apk del .build-deps
+RUN apk del .build-deps && rm -rf deployment
 
 # Run entrypoint.sh script
-RUN chmod +x entrypoint.sh
+COPY deployment/docker/entrypoint.sh /app
+RUN chmod +x /app/entrypoint.sh
 CMD ["/app/entrypoint.sh"]

@@ -1,6 +1,6 @@
 version: "3.9"
 
-services:     
+services:    
   mishka_cms:
     image: mishak_app:latest
     container_name: mishka_cms
@@ -53,6 +53,7 @@ services:
 
 networks:
   netowrk:
+  
 
 volumes:
   cms:

@@ -16,29 +16,38 @@ defmodule MishkaContent.General.Activity do
 
   @behaviour MishkaDatabase.CRUD
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "activity")
+  end
+
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_add, 1}
   def create(attrs) do
     crud_add(attrs)
+    |> notify_subscribers(:activity)
   end
 
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_add, 1}
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
+    |> notify_subscribers(:activity)
   end
 
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_edit, 1}
   def edit(attrs) do
     crud_edit(attrs)
+    |> notify_subscribers(:activity)
   end
 
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_edit, 1}
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
+    |> notify_subscribers(:activity)
   end
 
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_delete, 1}
   def delete(id) do
     crud_delete(id)
+    |> notify_subscribers(:activity)
   end
 
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_get_record, 1}
@@ -72,7 +81,36 @@ defmodule MishkaContent.General.Activity do
       priority: activity.priority,
       status: activity.status,
       action: activity.action,
+      user_id: activity.user_id,
       extra: activity.extra,
     }
   end
+
+  # TODO: we need a function to store log with queue , rabitMQ or GenStage
+  @spec create_activity_by_task(map(), map()) :: Task.t()
+  def create_activity_by_task(params, extra \\ %{}) do
+    Task.Supervisor.async_nolink(MishkaContent.General.ActivityTaskSupervisor, fn ->
+      create(
+        type: params.type,
+        user_id: params.user_id,
+        section: params.section,
+        section_id: params.section_id,
+        priority: params.priority,
+        status: params.status,
+        action: params.action,
+        extra: extra
+      )
+    end)
+  end
+
+  @spec allowed_fields(:atom | :string) :: nil | list
+  def allowed_fields(:atom), do: Activity.__schema__(:fields)
+  def allowed_fields(:string), do: Activity.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
+
+  def notify_subscribers({:ok, _, :activity, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "activity", {type_send, :ok, repo_data})
+    params
+  end
+
+  def notify_subscribers(params, _), do: params
 end

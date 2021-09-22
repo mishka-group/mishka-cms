@@ -34,6 +34,8 @@ defmodule MishkaDatabase.Cache.SettingCache do
 
   @impl true
   def handle_continue(:start_storing_setting, _state) do
+    # w8 for starting phoenix pubsub
+    :timer.sleep(4000)
     create_basic_setting()
     {:noreply, Setting.settings(filters: %{})}
   end

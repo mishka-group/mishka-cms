@@ -32,7 +32,7 @@ defmodule MishkaUser.MixProject do
       {:mishka_translator, in_umbrella: true},
       {:plug, "~> 1.12"},
       {:guardian, "~> 2.2"},
-      {:phoenix, "~> 1.6.0-rc.0", override: true},
+      {:phoenix, "~> 1.6", override: true},
       {:jose, "~> 1.11"},
       {:finch, "~> 0.8.1"}
     ]

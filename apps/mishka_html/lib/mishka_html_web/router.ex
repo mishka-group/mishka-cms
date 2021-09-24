@@ -84,7 +84,8 @@ defmodule MishkaHtmlWeb.Router do
     live "/comment", AdminCommentLive
     live "/users", AdminUsersLive
     live "/user", AdminUserLive
-    live "/logs", AdminLogsLive
+    live "/activities", AdminActivitiesLive
+    live "/activity/:id", AdminActivityLive
     live "/seo", AdminSeoLive
     live "/roles", AdminUserRolesLive
     live "/role", AdminUserRoleLive

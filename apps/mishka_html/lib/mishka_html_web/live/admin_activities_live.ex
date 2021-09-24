@@ -16,6 +16,7 @@ defmodule MishkaHtmlWeb.AdminActivitiesLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket), do: Activity.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,

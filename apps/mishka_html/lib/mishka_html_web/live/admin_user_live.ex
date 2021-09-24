@@ -172,9 +172,10 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   end
 
   defp creata_user_state(repo_data) do
-    Map.drop(repo_data, [:__struct__, :__meta__, :blog_likes, :bookmarks, :comments, :identities, :inserted_at, :updated_at, :notifs, :password_hash, :roles, :subscriptions, :users_roles, :id])
+    Map.drop(repo_data, [:__struct__, :__meta__, :activities, :blog_likes, :bookmarks, :comments, :identities, :inserted_at, :updated_at, :notifs, :password_hash, :roles, :subscriptions, :users_roles, :id])
     |> Map.to_list()
     |> Enum.map(fn {key, value} ->
+      IO.inspect(key)
       %{
         class: "#{search_fields(Atom.to_string(key)).class}",
         type: "#{Atom.to_string(key)}",

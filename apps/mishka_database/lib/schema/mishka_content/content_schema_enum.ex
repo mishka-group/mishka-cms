@@ -10,6 +10,6 @@ defenum BlogLinkType, bottom: 0, inside: 1, featured: 2
 defenum ActivitiesStatusEnum, error: 0, info: 1, warning: 2, report: 3
 defenum ActivitiesTypeEnum, section: 0, email: 1, internal_api: 2, external_api: 3
 defenum ActivitiesSection, blog_post: 0, blog_category: 1, comment: 2, tag: 3, other: 4
-defenum ActivitiesAction, create: 0, edit: 1, delete: 2, destroy: 3, read: 4, send_request: 5, receive_request: 6, other: 7
+defenum ActivitiesAction, add: 0, edit: 1, delete: 2, destroy: 3, read: 4, send_request: 5, receive_request: 6, other: 7
 defenum BookmarkSection, blog_post: 0
 defenum NotifSection, blog_post: 0, blog_category: 1, blog_comment: 3, admin: 4, user_only: 5, other: 6

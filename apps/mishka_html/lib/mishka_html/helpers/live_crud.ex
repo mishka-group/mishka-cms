@@ -339,7 +339,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
       record ->
         socket
-        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id)
+        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id, editor: Map.get(record, :editor) || "")
         |> push_event("update-editor-html", %{html: Map.get(record, :editor) || ""})
     end
 

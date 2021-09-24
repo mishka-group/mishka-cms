@@ -21,7 +21,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
     timestamps(type: :utc_datetime)
   end
 
-  @all_fields ~w(type section section_id priority status action extra)a
+  @all_fields ~w(type section section_id priority status action extra user_id)a
   @all_required ~w(type section priority status action)a
 
   @spec changeset(struct(), map()) :: Ecto.Changeset.t()

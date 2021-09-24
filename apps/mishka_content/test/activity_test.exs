@@ -43,7 +43,7 @@ defmodule MishkaContentTest.ActivityTest do
     section: :blog_post,
     priority: :high,
     status: :error,
-    action: :create,
+    action: :add,
     extra: %{test_user_uuid: Ecto.UUID.generate}
   }
 

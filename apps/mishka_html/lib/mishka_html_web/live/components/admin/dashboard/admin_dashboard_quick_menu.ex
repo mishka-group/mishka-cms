@@ -215,7 +215,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
   end
 
   def handle_event("activities", _, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminLogsLive))}
+    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminActivitiesLive))}
   end
 
   def handle_event("users", _, socket) do

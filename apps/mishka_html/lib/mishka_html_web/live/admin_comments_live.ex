@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Comment.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
@@ -25,6 +25,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
         filters: %{},
         page: 1,
         open_modal: false,
+        user_id: Map.get(session, "user_id"),
         component: nil,
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت نظرات"),
         body_color: "#a29ac3cf",
@@ -55,7 +56,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
     {:noreply, socket}
   end
 
-  update_list(:comments, true)
-
   selected_menue("MishkaHtmlWeb.AdminCommentsLive")
+
+  update_list(:comments, true)
 end

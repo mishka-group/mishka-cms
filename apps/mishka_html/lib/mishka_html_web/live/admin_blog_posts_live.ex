@@ -27,6 +27,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         user_id: Map.get(session, "user_id"),
         filters: %{},
         page: 1,
+        user_id: Map.get(session, "user_id"),
         open_modal: false,
         component: nil,
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مطالب"),
@@ -52,8 +53,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:noreply, socket}
   end
 
-  update_list(:posts, true)
-
   selected_menue("MishkaHtmlWeb.AdminBlogPostsLive")
+
+  update_list(:posts, true)
 
 end

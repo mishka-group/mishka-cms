@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Tag.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
@@ -26,6 +26,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
         filters: %{},
         page_size: 10,
         filters: %{},
+        user_id: Map.get(session, "user_id"),
         page: 1,
         open_modal: false,
         component: nil,
@@ -42,7 +43,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
 
   delete_list_item(:tags, DeleteErrorComponent, false)
 
-  update_list(:tags, false)
-
   selected_menue("MishkaHtmlWeb.AdminBlogTagsLive")
+
+  update_list(:tags, false)
 end

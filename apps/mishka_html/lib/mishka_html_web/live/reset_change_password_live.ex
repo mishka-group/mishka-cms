@@ -47,6 +47,16 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
 
 
 
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "user",
+          section_id: repo_data.id,
+          action: "edit",
+          priority: "high",
+          status: "info",
+          user_id: repo_data.id
+        }, %{user_action: "change_password"})
+
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(user_info.id)
         # clean all the token on disc

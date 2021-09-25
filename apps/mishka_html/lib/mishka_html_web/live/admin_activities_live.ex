@@ -9,13 +9,31 @@ defmodule MishkaHtmlWeb.AdminActivitiesLive do
       redirect: __MODULE__,
       router: Routes
 
+    # Ecto.CastError
+    # Ecto.ChangeError
+    # Ecto.ConstraintError
+    # Ecto.InvalidChangesetError
+    # Ecto.InvalidURLError
+    # Ecto.MigrationError
+    # Ecto.MultiplePrimaryKeyError
+    # Ecto.MultipleResultsError
+    # Ecto.NoPrimaryKeyFieldError
+    # Ecto.NoPrimaryKeyValueError
+    # Ecto.NoResultsError
+    # Ecto.Query.CastError
+    # Ecto.Query.CompileError
+    # Ecto.QueryError
+    # Ecto.StaleEntryError
+    # Ecto.SubQueryError
+
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.AdminActivityView, "admin_activities_live.html", assigns)
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Activity.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
@@ -25,6 +43,7 @@ defmodule MishkaHtmlWeb.AdminActivitiesLive do
       page: 1,
       open_modal: false,
       component: nil,
+      user_id: Map.get(session, "user_id"),
       page_title: MishkaTranslator.Gettext.dgettext("html_live",  "مدیریت فعالیت ها کاربری و لاگ سیستمی"),
       body_color: "#a29ac3cf",
       activities: Activity.activities(conditions: {1, 10}, filters: %{})
@@ -40,7 +59,7 @@ defmodule MishkaHtmlWeb.AdminActivitiesLive do
 
   delete_list_item(:activities, DeleteErrorComponent, false)
 
-  update_list(:activities, false)
-
   selected_menue("MishkaHtmlWeb.AdminLogsLive")
+
+  update_list(:activities, false)
 end

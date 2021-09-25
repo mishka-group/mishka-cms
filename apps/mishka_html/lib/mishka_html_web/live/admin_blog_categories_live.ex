@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Category.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
@@ -26,6 +26,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
         page: 1,
         open_modal: false,
         component: nil,
+        user_id: Map.get(session, "user_id"),
         body_color: "#a29ac3cf",
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مجموعه ها"),
         categories: Category.categories(conditions: {1, 10}, filters: %{})
@@ -40,8 +41,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
   delete_list_item(:categories, DeleteErrorComponent, false)
 
-  update_list(:categories, false)
-
   selected_menue("MishkaHtmlWeb.AdminBlogCategoriesLive")
 
+  update_list(:categories, false)
 end

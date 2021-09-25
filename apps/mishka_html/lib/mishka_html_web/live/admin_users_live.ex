@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: User.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
@@ -26,6 +26,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         page: 1,
         open_modal: false,
         component: nil,
+        user_id: Map.get(session, "user_id"),
         page_title:  MishkaTranslator.Gettext.dgettext("html_live", "مدیریت کاربران"),
         body_color: "#a29ac3cf",
         users: User.users(conditions: {1, 10}, filters: %{}),

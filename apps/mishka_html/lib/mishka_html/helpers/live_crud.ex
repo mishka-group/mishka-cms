@@ -135,6 +135,11 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
         {:noreply, socket}
       end
+
+      @impl Phoenix.LiveView
+      def handle_info(_, socket) do
+        {:noreply, socket}
+      end
     end
   end
 
@@ -418,7 +423,17 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   def delete_item_of_list(socket, module_selected, function, id,  user_id, component, skip_list, after_condition) do
     require MishkaTranslator.Gettext
     case module_selected.delete(id) do
-      {:ok, :delete, _error_atom, _repo_data} ->
+      {:ok, :delete, error_atom, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: activity_section_by_error_atom(error_atom),
+          section_id: repo_data.id,
+          action: "delete",
+          priority: "medium",
+          status: "info",
+          user_id: Map.get(socket.assigns, :user_id)
+        })
+
         after_condition.(id)
         paginate_assign(socket, module_selected, function, user_id, skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
       {:error, :delete, :forced_to_delete, _error_atom} ->
@@ -486,4 +501,21 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
   defp page_count(_count), do: 10
+
+  def activity_section_by_error_atom(error_atom) do
+    [
+      {:blog_author, "blog_author"}, {:category, "blog_category"}, {:post_like, "blog_post_like"},
+      {:blog_link, "blog_link"}, {:post, "blog_post"}, {:blog_tag_mapper, "blog_tag_mapper"},
+      {:blog_tag, "blog_tag"}, {:activity, "activity"}, {:bookmark, "bookmark"},
+      {:comment_like, "comment_like"}, {:comment, "comment"}, {:notif, "notif"},
+      {:subscription, "subscription"}, {:setting, "setting"}, {:permission, "permission"},
+      {:role, "role"}, {:user_role, "user_role"}, {:identity, "identity"},
+      {:user, "user"}
+    ]
+    |> Enum.find(fn {list_error_atom, _section} -> list_error_atom == error_atom end)
+    |> case do
+      nil -> "other"
+      {_error_atom, section} -> section
+    end
+  end
 end

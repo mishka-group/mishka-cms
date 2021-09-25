@@ -169,6 +169,16 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :blog_link, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_link",
+          section_id: repo_data.id,
+          action: "add",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{post_id: socket.assigns.post_id})
+
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "لینک: %{title} درست شده است.", title: repo_data.title)})
         socket
@@ -185,6 +195,16 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
         |> assign([changeset: repo_error])
 
       {:ok, :edit, :blog_link, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_link",
+          section_id: repo_data.id,
+          action: "edit",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{post_id: socket.assigns.post_id})
+
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "لینک: %{title} به روز رسانی شده است.", title: repo_data.title)})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نقش مورد نظر به روز رسانی شد."))

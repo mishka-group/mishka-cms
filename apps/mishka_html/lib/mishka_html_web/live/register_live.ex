@@ -52,6 +52,16 @@ defmodule MishkaHtmlWeb.RegisterLive do
 
           MishkaContent.Email.EmailHelper.send(:verify_email, {repo_data.email, site_link})
 
+          MishkaContent.General.Activity.create_activity_by_task(%{
+            type: "section",
+            section: "user",
+            section_id: repo_data.id,
+            action: "add",
+            priority: "low",
+            status: "info",
+            user_id: repo_data.id
+          }, %{user_action: "register"})
+
           socket
           |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."))
           |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.LoginLive))

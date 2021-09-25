@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   end
 
   @impl true
-  def mount(%{"id" => post_id}, _session, socket) do
+  def mount(%{"id" => post_id}, session, socket) do
 
     if connected?(socket) do
       Tag.subscribe()
@@ -36,6 +36,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
           post_id: post_id,
           page_title: "#{repo_data.title}",
           body_color: "#a29ac3cf",
+          user_id: Map.get(session, "user_id"),
           id: nil,
           tags: Tag.post_tags(post_id),
           search: []
@@ -45,9 +46,20 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
       {:ok, socket}
   end
 
+  # TODO: replace with CRUD LIVE
   @impl true
   def handle_event("delete", %{"id" => tag_id} = _params, socket) do
     TagMapper.delete(socket.assigns.post_id, tag_id)
+    MishkaContent.General.Activity.create_activity_by_task(%{
+      type: "section",
+      section: "blog_tag",
+      section_id: tag_id,
+      action: "delete",
+      priority: "low",
+      status: "info",
+      user_id: socket.assigns.user_id
+    }, %{post_id: socket.assigns.post_id})
+
     {:noreply, socket}
   end
 
@@ -66,7 +78,21 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   end
 
   def handle_event("add_tag", %{"id" => tag_id}, socket) do
-    TagMapper.create(%{post_id: socket.assigns.post_id, tag_id: tag_id})
+    socket = case TagMapper.create(%{post_id: socket.assigns.post_id, tag_id: tag_id}) do
+      {:error, :add, _error_tag, _repo_error} -> socket
+
+      {:ok, :add, _error_tag, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_tag",
+          section_id: repo_data.id,
+          action: "add",
+          priority: "low",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{post_id: socket.assigns.post_id})
+        socket
+    end
     {:noreply, socket}
   end
 

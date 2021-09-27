@@ -23,7 +23,11 @@
         </div>
 
 
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.Post.FpostComponent , id: :admin_post_info, fpost: @fpost %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.Post.FpostComponent ,
+                           id: :admin_post_info,
+                           fpost: @fpost,
+                           activities: @activities
+        %>
 
         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
                             id: :live_flash,

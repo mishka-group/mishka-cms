@@ -36,7 +36,11 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.FpostComponent do
           </div>
 
 
-          <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.ActivitiesComponent , id: :admin_last_actiities %>
+          <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.ActivitiesComponent ,
+                             id: :admin_last_actiities,
+                             activities: @activities,
+                             type: "blog_post"
+          %>
 
       </div>
     """

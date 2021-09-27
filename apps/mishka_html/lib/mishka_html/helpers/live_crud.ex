@@ -432,7 +432,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           priority: "medium",
           status: "info",
           user_id: Map.get(socket.assigns, :user_id)
-        })
+        }, %{title: Map.get(repo_data, :title)})
 
         after_condition.(id)
         paginate_assign(socket, module_selected, function, user_id, skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)

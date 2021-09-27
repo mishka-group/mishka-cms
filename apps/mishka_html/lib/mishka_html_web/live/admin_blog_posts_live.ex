@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   alias MishkaContent.Blog.Post
   alias MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent
+  alias MishkaContent.General.Activity
 
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.Post,
@@ -34,6 +35,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         body_color: "#a29ac3cf",
         posts: Post.posts(conditions: {1, 10}, filters: %{}, user_id: user_id),
         fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}, user_id: user_id),
+        activities: Activity.activities(conditions: {1, 5}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [posts: []]}
   end

@@ -35,7 +35,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         body_color: "#a29ac3cf",
         posts: Post.posts(conditions: {1, 10}, filters: %{}, user_id: user_id),
         fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}, user_id: user_id),
-        activities: Activity.activities(conditions: {1, 5}, filters: %{})
+        activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_post"})
       )
     {:ok, socket, temporary_assigns: [posts: []]}
   end

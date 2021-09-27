@@ -22,7 +22,8 @@ defmodule MishkaHtmlWeb.RegisterLive do
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
         changeset: changeset,
-        user_id: Map.get(session, "user_id")
+        user_id: Map.get(session, "user_id"),
+        self_pid: self()
       )
     {:ok, socket}
   end
@@ -100,7 +101,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.RegisterLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.RegisterLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

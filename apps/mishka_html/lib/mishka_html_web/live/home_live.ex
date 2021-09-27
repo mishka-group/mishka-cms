@@ -21,7 +21,8 @@ defmodule MishkaHtmlWeb.HomeLive do
         filters: %{},
         page: 1,
         posts: Post.posts(conditions: {1, 12}, filters: %{}, user_id: Map.get(session, "user_id")),
-        featured_posts: Post.posts(conditions: {1, 5}, filters: %{priority: "featured"}, user_id: Map.get(session, "user_id"))
+        featured_posts: Post.posts(conditions: {1, 5}, filters: %{priority: "featured"}, user_id: Map.get(session, "user_id")),
+        self_pid: self()
       )
 
     {:ok, socket, temporary_assigns: [posts: [], featured_posts: []]}
@@ -29,7 +30,7 @@ defmodule MishkaHtmlWeb.HomeLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.HomeLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.HomeLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

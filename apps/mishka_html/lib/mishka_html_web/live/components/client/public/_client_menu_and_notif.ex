@@ -139,8 +139,12 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   end
 
   @impl true
-  def handle_info({:menu, name}, socket) do
+  def handle_info({:menu, name, self_pid}, socket) do
+    if socket.parent_pid == self_pid do
      {:noreply, assign(socket, :menu_name, name)}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
@@ -207,6 +211,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   end
 
   def notify_subscribers(notif) when is_tuple(notif) do
+    IO.inspect(notif)
      Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_menu_and_notif", notif)
   end
 end

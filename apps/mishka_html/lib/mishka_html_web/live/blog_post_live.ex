@@ -68,7 +68,8 @@ defmodule MishkaHtmlWeb.BlogPostLive do
             like: Like.count_post_likes(post.id, Map.get(session, "user_id")),
             sub_comment: %{},
             bookmark: !is_nil(MishkaContent.Cache.BookmarkManagement.get_record(Map.get(session, "user_id"), post.id)),
-            links: []
+            links: [],
+            self_pid: self()
           )
 
         {:ok, socket, temporary_assigns: [comments: []]}
@@ -328,7 +329,7 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

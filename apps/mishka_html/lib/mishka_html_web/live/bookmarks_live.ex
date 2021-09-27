@@ -26,7 +26,8 @@ defmodule MishkaHtmlWeb.BookmarksLive do
         page: 1,
         bookmarks: bookmarks,
         next_page: if(length(bookmarks) < 2, do: false, else: true),
-        previous_page: false
+        previous_page: false,
+        self_pid: self()
       )
       {:ok, socket, temporary_assigns: [bookmarks: []]}
   end

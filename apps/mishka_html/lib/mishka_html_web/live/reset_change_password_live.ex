@@ -25,7 +25,8 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
             user_id: Map.get(session, "user_id"),
             random_link: record.code,
             user_email: record.email,
-            errors: %{}
+            errors: %{},
+            self_pid: self()
           )
     else
       _ ->
@@ -116,7 +117,7 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

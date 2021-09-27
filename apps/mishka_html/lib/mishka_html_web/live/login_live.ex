@@ -20,7 +20,8 @@ defmodule MishkaHtmlWeb.LoginLive do
         body_color: "#40485d",
         trigger_submit: false,
         changeset: user_changeset,
-        user_id: Map.get(session, "user_id")
+        user_id: Map.get(session, "user_id"),
+        self_pid: self()
       )
     {:ok, socket}
   end
@@ -54,7 +55,7 @@ defmodule MishkaHtmlWeb.LoginLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

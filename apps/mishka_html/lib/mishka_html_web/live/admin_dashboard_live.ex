@@ -17,7 +17,7 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
   @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
-    if connected?(socket), do: MishkaUser.User.subscribe(); Post.subscribe()
+    if connected?(socket), do: MishkaUser.User.subscribe(); Post.subscribe(); Activity.subscribe()
     user_id = Map.get(session, "user_id")
     socket =
       socket
@@ -53,6 +53,18 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
       :loaded ->
         socket
         |> assign(users: Post.posts(conditions: {1, 3}, filters: %{}, user_id: socket.assigns.user_id))
+       _ ->  socket
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:activity, :ok, repo_record}, socket) do
+    socket = case repo_record.__meta__.state do
+      :loaded ->
+        socket
+        |> assign(users: Activity.activities(conditions: {1, 5}, filters: %{}))
        _ ->  socket
     end
 

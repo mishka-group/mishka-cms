@@ -474,7 +474,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   def paginate_assign_filter(_params, _module, _skip_list), do: %{}
 
   def paginate_assign(socket, module, function, user_id, skip_list, params: params, page_size: count, page_number: page) do
-
+    IO.inspect(user_id)
     load_record = if user_id do
       [conditions: {page, count}, filters: paginate_assign_filter(params, module, skip_list), user_id: Map.get(socket.assigns, :auser_id)]
     else

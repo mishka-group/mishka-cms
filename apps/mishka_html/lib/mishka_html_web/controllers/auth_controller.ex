@@ -111,7 +111,7 @@ defmodule MishkaHtmlWeb.AuthController do
         RandomCode.delete_code(code, user_info.email)
 
         MishkaContent.General.Activity.create_activity_by_task(%{
-          type: "section",
+          type: "internal_api",
           section: "user",
           section_id: repo_data.id,
           action: "auth",
@@ -156,7 +156,7 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :edit, :user, user_info} <- MishkaUser.User.edit(%{id: repo_data.id, status: "inactive"}) do
 
         MishkaContent.General.Activity.create_activity_by_task(%{
-          type: "section",
+          type: "internal_api",
           section: "user",
           section_id: repo_data.id,
           action: "auth",
@@ -223,7 +223,7 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(random_link_user_info.email) do
 
         MishkaContent.General.Activity.create_activity_by_task(%{
-          type: "section",
+          type: "internal_api",
           section: "user",
           section_id: repo_data.id,
           action: "auth",

@@ -9,23 +9,6 @@ defmodule MishkaHtmlWeb.AdminActivitiesLive do
       redirect: __MODULE__,
       router: Routes
 
-    # Ecto.CastError
-    # Ecto.ChangeError
-    # Ecto.ConstraintError
-    # Ecto.InvalidChangesetError
-    # Ecto.InvalidURLError
-    # Ecto.MigrationError
-    # Ecto.MultiplePrimaryKeyError
-    # Ecto.MultipleResultsError
-    # Ecto.NoPrimaryKeyFieldError
-    # Ecto.NoPrimaryKeyValueError
-    # Ecto.NoResultsError
-    # Ecto.Query.CastError
-    # Ecto.Query.CompileError
-    # Ecto.QueryError
-    # Ecto.StaleEntryError
-    # Ecto.SubQueryError
-
 
   @impl true
   def render(assigns) do

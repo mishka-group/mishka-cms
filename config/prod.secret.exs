@@ -19,6 +19,7 @@ secret_key_base_api =
     """
 
 config :mishka_html, MishkaHtmlWeb.Endpoint,
+    url: [scheme: "https", host: System.get_env("CMS_DOMAIN_NAME"), port: 443],
     http: [
       port: String.to_integer(System.get_env("PORT") || "4000"),
       transport_options: [socket_opts: [:inet6]]
@@ -27,6 +28,7 @@ config :mishka_html, MishkaHtmlWeb.Endpoint,
 
 
 config :mishka_api, MishkaApiWeb.Endpoint,
+    url: [scheme: "https", host: System.get_env("API_DOMAIN_NAME"), port: 443],
     http: [
       port: String.to_integer(System.get_env("PORT") || "4001"),
       transport_options: [socket_opts: [:inet6]]

@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
   alias MishkaContent.Blog.Category
   alias MishkaHtmlWeb.Admin.Blog.Category.DeleteErrorComponent
+  alias MishkaContent.General.Activity
 
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.Category,
@@ -29,7 +30,8 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
         user_id: Map.get(session, "user_id"),
         body_color: "#a29ac3cf",
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مجموعه ها"),
-        categories: Category.categories(conditions: {1, 10}, filters: %{})
+        categories: Category.categories(conditions: {1, 10}, filters: %{}),
+        activities: Activity.activities(conditions: {1, 5}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [categories: []]}
   end

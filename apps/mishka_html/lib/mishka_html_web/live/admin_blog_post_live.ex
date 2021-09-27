@@ -297,7 +297,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{title: repo_data.title})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
@@ -359,7 +359,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{title: repo_data.title})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})

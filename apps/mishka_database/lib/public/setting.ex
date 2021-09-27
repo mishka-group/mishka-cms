@@ -27,6 +27,10 @@ defmodule MishkaDatabase.Public.Setting do
     |> notify_subscribers(:setting)
   end
 
+  def create(attrs, :no_pubsub) do
+    crud_add(attrs)
+  end
+
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_edit, 1}
   def edit(attrs) do
     crud_edit(attrs)

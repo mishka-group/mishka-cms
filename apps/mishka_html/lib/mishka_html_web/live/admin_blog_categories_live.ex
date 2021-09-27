@@ -31,7 +31,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
         body_color: "#a29ac3cf",
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مجموعه ها"),
         categories: Category.categories(conditions: {1, 10}, filters: %{}),
-        activities: Activity.activities(conditions: {1, 5}, filters: %{})
+        activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_category"})
       )
     {:ok, socket, temporary_assigns: [categories: []]}
   end

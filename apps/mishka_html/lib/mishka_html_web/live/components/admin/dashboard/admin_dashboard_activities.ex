@@ -31,12 +31,12 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.ActivitiesComponent do
   defp error_status(status, inserted_at) do
     time = MishkaHtmlWeb.Public.TimeConverterComponent.jalali_create(inserted_at)
     case status do
-      :error -> %{color: "danger", msg: "خطای سیستمی #{time.day_number} #{time.month_name} ساعت #{time.hour}:#{time.minute}"}
-      :info -> %{color: "secondary", msg: "اطلاعات عمومی #{time.day_number} #{time.month_name} ساعت #{time.hour}:#{time.minute}"}
-      :warning -> %{color: "warning", msg: "هشدار سیستمی #{time.day_number} #{time.month_name} ساعت #{time.hour}:#{time.minute}"}
-      :report -> %{color: "primary", msg: "گزارش کاربری #{time.day_number} #{time.month_name} ساعت #{time.hour}:#{time.minute}"}
-      :throw -> %{color: "danger", msg: "خطای سیستمی #{time.day_number} #{time.month_name} ساعت #{time.hour}:#{time.minute}"}
-      :exit -> %{color: "danger", msg: "توقف سیستم #{time.day_number} #{time.month_name} ساعت #{time.hour}:#{time.minute}"}
+      :error -> %{color: "danger", msg: MishkaTranslator.Gettext.dgettext("html_live_templates", "خطای سیستمی %{day_number} %{month_name} ساعت %{hour}:%{minute}:%{second}", day_number: time.day_number, month_name: time.month_name, hour: time.hour, minute: time.minute, second: time.second)}
+      :info -> %{color: "info", msg: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاعات عمومی %{day_number} %{month_name} ساعت %{hour}:%{minute}:%{second}", day_number: time.day_number, month_name: time.month_name, hour: time.hour, minute: time.minute, second: time.second)}
+      :warning -> %{color: "warning", msg: MishkaTranslator.Gettext.dgettext("html_live_templates", "هشدار سیستمی %{day_number} %{month_name} ساعت %{hour}:%{minute}:%{second}", day_number: time.day_number, month_name: time.month_name, hour: time.hour, minute: time.minute, second: time.second)}
+      :report -> %{color: "primary", msg: MishkaTranslator.Gettext.dgettext("html_live_templates", "گزارش کاربری %{day_number} %{month_name} ساعت %{hour}:%{minute}:%{second}", day_number: time.day_number, month_name: time.month_name, hour: time.hour, minute: time.minute, second: time.second)}
+      :throw -> %{color: "dark", msg: MishkaTranslator.Gettext.dgettext("html_live_templates", "خطای سیستمی %{day_number} %{month_name} ساعت %{hour}:%{minute}:%{second}", day_number: time.day_number, month_name: time.month_name, hour: time.hour, minute: time.minute, second: time.second)}
+      :exit -> %{color: "secondary", msg: MishkaTranslator.Gettext.dgettext("html_live_templates", "توقف سیستم %{day_number} %{month_name} ساعت %{hour}:%{minute}:%{second}", day_number: time.day_number, month_name: time.month_name, hour: time.hour, minute: time.minute, second: time.second)}
     end
   end
 end

@@ -94,13 +94,16 @@
                     </h2>
                     <hr>
                     <div class="space20"></div>
-
-                    <% extra = Map.to_list(@activity.extra) %>
-                    <%= for {{key, value}, color} <- Enum.zip(extra, Stream.cycle(["primary", "secondary", "success", "danger", "warning", "info", "dark"])) do %>
-                        <span class="badge bg-<%= color %>"><%= key %></span>
-                        <%= value %>
-                        <div class="space20"></div>
-                    <% end %>
+                    <div class="row">
+                        <% extra = Map.to_list(@activity.extra) %>
+                        <%= for {{key, value}, color} <- Enum.zip(extra, Stream.cycle(["primary", "secondary", "success", "danger", "warning", "info", "dark"])) do %>
+                            <div class="col-sm-6">
+                                <span class="badge bg-<%= color %>"><%= key %></span>
+                                <%= Jason.encode!(value)%>
+                                <div class="space20"></div>
+                            </div>
+                        <% end %>
+                    </div>
                 <% end %>
             </div>
 

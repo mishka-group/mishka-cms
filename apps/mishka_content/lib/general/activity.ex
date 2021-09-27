@@ -119,4 +119,35 @@ defmodule MishkaContent.General.Activity do
   end
 
   def notify_subscribers(params, _), do: params
+
+  def router_catch(conn, kind, reason) do
+    create_activity_by_task(%{
+      type: "html_router",
+      section: "other",
+      section_id: nil,
+      action: "other",
+      priority: create_activity_router_priority(Map.get(reason, :plug_status)),
+      status: Atom.to_string(kind),
+      user_id: Map.get(conn.assigns, :user_id)
+    }, %{
+      kind: kind,
+      plug_status: Map.get(reason, :plug_status),
+      params: Map.get(reason.conn, :params),
+      path_info: Map.get(reason.conn, :path_info),
+      path_params: Map.get(reason.conn, :path_params),
+      message: Map.get(reason, :message),
+      port: Map.get(reason.conn, :port),
+      router: Map.get(reason, :router),
+      sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))
+    })
+  end
+
+  defp create_activity_router_priority(plug_status) do
+    case plug_status do
+      500 -> "high"
+      401 -> "medium"
+      404 -> "low"
+      _ -> "medium"
+    end
+  end
 end

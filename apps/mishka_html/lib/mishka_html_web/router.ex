@@ -1,5 +1,7 @@
 defmodule MishkaHtmlWeb.Router do
   use MishkaHtmlWeb, :router
+  use Plug.ErrorHandler
+
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -93,6 +95,14 @@ defmodule MishkaHtmlWeb.Router do
     live "/blog-authors/:post_id", AdminBlogPostAuthorsLive
     live "/settings", AdminSettingsLive
     live "/setting", AdminSettingLive
+  end
+
+  @impl Plug.ErrorHandler
+  def handle_errors(conn, %{kind: kind, reason: reason, stack: _stack}) do
+    if !is_nil(Map.get(reason, :conn)), do:
+        MishkaContent.General.Activity.router_catch(conn, kind, reason)
+  after
+    conn
   end
 
   if Mix.env == :dev do

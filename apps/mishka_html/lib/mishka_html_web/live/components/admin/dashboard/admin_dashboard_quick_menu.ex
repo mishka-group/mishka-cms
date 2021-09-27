@@ -92,39 +92,10 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
 
           </div>
 
-          <div class="col-sm-5 cms-block-menu-center">
-            <%# activity %>
-            <div class="col activity-menu vazir">
-              <h3 class="text-center activities-title-admin-home"  phx-click="activities" phx-target="<%= @myself %>">
-                <span class="activities-title-admin-home-text"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "لاگ لحظه ای") %></span>
-
-                <a class="iconly-bulkArrow---Right-Square"><span class="path1"></span><span class="path2"></span></a>
-              </h3>
-              <div class="space20"></div>
-              <div class="alert alert-primary" role="alert">
-                خطای سیستمی در ساعت ۱۲
-                <button type="button" class="btn-close float-left" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="alert alert-secondary" role="alert">
-                اطلاع رسانی ساخت محتوا
-                <button type="button" class="btn-close float-left" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="alert alert-success" role="alert">
-                خطای ساخت کاربر
-                <button type="button" class="btn-close float-left" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="alert alert-danger" role="alert">
-                خطای امنیتی
-                <button type="button" class="btn-close float-left" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-
-              <div class="alert alert-warning" role="alert">
-                ورود کاربر ادمین
-                <button type="button" class="btn-close float-left" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            </div>
-
-          </div>
+          <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.ActivitiesComponent,
+                             id: :admin_activities,
+                             activities: @activities
+          %>
 
 
           <div class="col cms-block-menu-left">
@@ -212,10 +183,6 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
 
   def handle_event("seo-setting", _, socket) do
     {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminSeoLive))}
-  end
-
-  def handle_event("activities", _, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminActivitiesLive))}
   end
 
   def handle_event("users", _, socket) do

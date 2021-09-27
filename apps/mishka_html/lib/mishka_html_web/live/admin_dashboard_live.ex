@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.Blog.Post
+  alias MishkaContent.General.Activity
 
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.Post,
@@ -25,9 +26,10 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
         body_color: "#a29ac3cf",
         user_id: user_id,
         users: MishkaUser.User.users(conditions: {1, 4}, filters: %{}),
-        posts: Post.posts(conditions: {1, 3}, filters: %{}, user_id: user_id)
+        posts: Post.posts(conditions: {1, 3}, filters: %{}, user_id: user_id),
+        activities: Activity.activities(conditions: {1, 5}, filters: %{})
       )
-      {:ok, socket, temporary_assigns: [posts: [], users: []]}
+      {:ok, socket, temporary_assigns: [activities: [], posts: [], users: []]}
   end
 
   selected_menue("MishkaHtmlWeb.AdminDashboardLive")

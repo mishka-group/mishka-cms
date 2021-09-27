@@ -18,7 +18,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do: Category.subscribe()
+    if connected?(socket), do: Category.subscribe(); Activity.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -44,6 +44,18 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
   delete_list_item(:categories, DeleteErrorComponent, false)
 
   selected_menue("MishkaHtmlWeb.AdminBlogCategoriesLive")
+
+  @impl true
+  def handle_info({:activity, :ok, repo_record}, socket) do
+    socket = case repo_record.__meta__.state do
+      :loaded ->
+        socket
+        |> assign(activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_category"}))
+       _ ->  socket
+    end
+
+    {:noreply, socket}
+  end
 
   update_list(:categories, false)
 end

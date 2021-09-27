@@ -64,7 +64,7 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
     socket = case repo_record.__meta__.state do
       :loaded ->
         socket
-        |> assign(users: Activity.activities(conditions: {1, 5}, filters: %{}))
+        |> assign(activities: Activity.activities(conditions: {1, 5}, filters: %{}))
        _ ->  socket
     end
 

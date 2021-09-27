@@ -19,7 +19,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do: Post.subscribe()
+    if connected?(socket), do: Post.subscribe(); Activity.subscribe()
     Process.send_after(self(), :menu, 100)
     user_id = Map.get(session, "user_id")
     socket =
@@ -28,7 +28,6 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         user_id: Map.get(session, "user_id"),
         filters: %{},
         page: 1,
-        user_id: Map.get(session, "user_id"),
         open_modal: false,
         component: nil,
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مطالب"),
@@ -45,7 +44,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   list_search_and_action()
 
-  delete_list_item(:posts, DeleteErrorComponent, false)
+  delete_list_item(:posts, DeleteErrorComponent, true)
 
   @impl true
   def handle_event("featured_post", %{"id" => id} = _params, socket) do
@@ -56,6 +55,18 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   end
 
   selected_menue("MishkaHtmlWeb.AdminBlogPostsLive")
+
+  @impl true
+  def handle_info({:activity, :ok, repo_record}, socket) do
+    socket = case repo_record.__meta__.state do
+      :loaded ->
+        socket
+        |> assign(activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_post"}))
+       _ ->  socket
+    end
+
+    {:noreply, socket}
+  end
 
   update_list(:posts, true)
 

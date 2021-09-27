@@ -37,7 +37,8 @@ defmodule MishkaHtmlWeb.Public.TimeConverterComponent do
       month_name: get_month(jalaali_date.month),
       year_number: jalaali_date.year,
       hour: jalaali_date.hour,
-      minute: jalaali_date.minute
+      minute: jalaali_date.minute,
+      second: jalaali_date.second
     }
   end
 

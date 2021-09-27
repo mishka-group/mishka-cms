@@ -84,6 +84,7 @@ defmodule MishkaContent.General.Activity do
       action: activity.action,
       user_id: activity.user_id,
       username: user.username,
+      username: user.full_name,
       extra: activity.extra,
       updated_at: activity.updated_at,
       inserted_at: activity.inserted_at,

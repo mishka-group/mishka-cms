@@ -11,6 +11,10 @@
   font-display: block;
 } */
 
+.admin-home-activities-link {
+  text-decoration: none;
+}
+
 .admin-show-log {
   font-size: 20px;
 }

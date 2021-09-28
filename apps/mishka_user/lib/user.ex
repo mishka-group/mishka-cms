@@ -134,7 +134,9 @@ defmodule MishkaUser.User do
       }
     MishkaDatabase.Repo.all(query)
   rescue
-    Ecto.Query.CastError -> []
+    db_error ->
+      MishkaContent.db_content_activity_error("user", "read", db_error)
+      []
   end
 
   @spec users([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
@@ -143,7 +145,8 @@ defmodule MishkaUser.User do
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
-    Ecto.Query.CastError ->
+    db_error ->
+      MishkaContent.db_content_activity_error("user", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 

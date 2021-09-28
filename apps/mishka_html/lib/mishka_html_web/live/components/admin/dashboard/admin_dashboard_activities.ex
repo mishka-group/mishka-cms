@@ -12,13 +12,13 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.ActivitiesComponent do
           <a class="iconly-bulkArrow---Right-Square"><span class="path1"></span><span class="path2"></span></a>
         </h3>
         <div class="space20"></div>
-        <%= for {item, color} <- Enum.zip(@activities, Stream.cycle(["primary", "secondary", "success", "danger", "warning"])) do %>
+        <%= for item <- @activities do %>
           <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.AdminActivityLive, item.id), class: "admin-home-activities-link", replace: false do %>
             <div class="alert alert-<%= error_status(item.status, item.inserted_at).color %>" role="alert">
               <%= error_status(item.status, item.inserted_at).msg %>
             </div>
           <% end %>
-        <%= end %>
+        <% end %>
       </div>
     </div>
     """

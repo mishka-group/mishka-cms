@@ -78,7 +78,9 @@ defmodule MishkaContent.Blog.Category do
       })
       |> MishkaDatabase.Repo.all()
     rescue
-      _e -> []
+      db_error ->
+        MishkaContent.db_content_activity_error("blog_category", "read", db_error)
+        []
     end
   end
 
@@ -102,7 +104,8 @@ defmodule MishkaContent.Blog.Category do
       })
       |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
     rescue
-      Ecto.Query.CastError ->
+      db_error ->
+        MishkaContent.db_content_activity_error("blog_category", "read", db_error)
         %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
     end
   end
@@ -126,7 +129,9 @@ defmodule MishkaContent.Blog.Category do
       })
       |> MishkaDatabase.Repo.all()
     rescue
-      _e -> []
+      db_error ->
+        MishkaContent.db_content_activity_error("blog_category", "read", db_error)
+        []
     end
   end
 
@@ -140,7 +145,8 @@ defmodule MishkaContent.Blog.Category do
     |> fields(type)
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
-    Ecto.Query.CastError ->
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_category", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 

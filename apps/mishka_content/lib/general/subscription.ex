@@ -66,7 +66,9 @@ defmodule MishkaContent.General.Subscription do
       comment -> delete(comment.id)
     end
   rescue
-    Ecto.Query.CastError -> {:error, :delete, :subscription, :not_found}
+    db_error ->
+      MishkaContent.db_content_activity_error("subscription", "delete", db_error)
+      {:error, :delete, :subscription, :not_found}
   end
 
   @spec subscriptions([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
@@ -75,7 +77,8 @@ defmodule MishkaContent.General.Subscription do
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
-    Ecto.Query.CastError ->
+    db_error ->
+      MishkaContent.db_content_activity_error("subscription", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 

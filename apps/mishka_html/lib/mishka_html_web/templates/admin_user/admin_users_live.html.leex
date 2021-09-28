@@ -32,7 +32,10 @@
               <div class="space20"></div>
             </div>
 
-            <%= live_component @socket, MishkaHtmlWeb.Admin.User.ActivitiesComponent, id: :last_activities %>
+            <%= live_component @socket, MishkaHtmlWeb.Admin.User.ActivitiesComponent,
+                               id: :last_activities,
+                               activities: @activities
+            %>
         </div>
 
         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,

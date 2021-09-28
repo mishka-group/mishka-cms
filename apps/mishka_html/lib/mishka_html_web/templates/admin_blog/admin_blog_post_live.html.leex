@@ -125,7 +125,6 @@
                             <p class="pb-3 mb-0 small lh-sm border-bottom">
                                 <strong class="d-block text-gray-dark">
                                     <%= item.title %>
-                                    <% IO.inspect item %>
                                     <%= for x <- item.status do %>
                                         <span class="<%= x.class  %>"><%= x.title  %></span>
                                     <% end %>

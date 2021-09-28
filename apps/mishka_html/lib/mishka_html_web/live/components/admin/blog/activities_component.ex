@@ -20,7 +20,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.ActivitiesComponent do
               <span class="badge bg-warning text-dark"><%= Map.get(item.extra, :title) || Map.get(item.extra, "title") || MishkaTranslator.Gettext.dgettext("html_live_component", "بدون تیتر") %></span>
               <%= MishkaTranslator.Gettext.dgettext("html_live_component", "به وسیله کاربر:") %>
               <%= item.full_name %>
-              <span class="badge bg-<%= create_action_msg(item.action).color %>"><%= create_action_msg(item.action).msg %></span>
+              <span class="badge bg-<%= MishkaHtml.create_action_msg(item.action).color %>"><%= MishkaHtml.create_action_msg(item.action).msg %></span>
               شد.
             </li>
           <%= end %>
@@ -34,19 +34,6 @@ defmodule MishkaHtmlWeb.Admin.Blog.ActivitiesComponent do
     """
   end
 
-  defp create_action_msg(action) do
-    case action do
-      :add -> %{color: "success", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "درست")}
-      :edit -> %{color: "primary", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش")}
-      :delete -> %{color: "danger", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "حذف با پرچم")}
-      :destroy -> %{color: "dark", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "حذف کامل")}
-      :read -> %{color: "info", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "خوانده")}
-      :send_request -> %{color: "light", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ارسال درخواست")}
-      :receive_request -> %{color: "light", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "دریافت درخواست")}
-      :other -> %{color: "warning", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "مورد عملیات دیگر")}
-      :auth -> %{color: "secondary", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "مدیریت دسترسی")}
-    end
-  end
   defp create_insterted_at_time_string(inserted_at) do
     time = MishkaHtmlWeb.Public.TimeConverterComponent.jalali_create(inserted_at)
     MishkaTranslator.Gettext.dgettext("html_live_component", "%{day_number} %{month_name} ساعت %{hour}:%{minute}:%{second}", day_number: time.day_number, month_name: time.month_name, hour: time.hour, minute: time.minute, second: time.second)

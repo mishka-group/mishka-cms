@@ -142,7 +142,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{full_name: Map.get(repo_data, :full_name)})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
@@ -173,7 +173,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{full_name: Map.get(repo_data, :full_name)})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} به روز شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
@@ -195,7 +195,6 @@ defmodule MishkaHtmlWeb.AdminUserLive do
     Map.drop(repo_data, [:__struct__, :__meta__, :activities, :blog_likes, :bookmarks, :comments, :identities, :inserted_at, :updated_at, :notifs, :password_hash, :roles, :subscriptions, :users_roles, :id])
     |> Map.to_list()
     |> Enum.map(fn {key, value} ->
-      IO.inspect(key)
       %{
         class: "#{search_fields(Atom.to_string(key)).class}",
         type: "#{Atom.to_string(key)}",

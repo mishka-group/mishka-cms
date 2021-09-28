@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
   alias MishkaUser.User
   alias MishkaHtmlWeb.Admin.User.DeleteErrorComponent
+  alias MishkaContent.General.Activity
 
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaUser.User,
@@ -17,7 +18,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do: User.subscribe()
+    if connected?(socket), do: User.subscribe(); Activity.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -30,17 +31,14 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         page_title:  MishkaTranslator.Gettext.dgettext("html_live", "مدیریت کاربران"),
         body_color: "#a29ac3cf",
         users: User.users(conditions: {1, 10}, filters: %{}),
-        roles: MishkaUser.Acl.Role.roles(conditions: {1, 10}, filters: %{})
+        roles: MishkaUser.Acl.Role.roles(conditions: {1, 10}, filters: %{}),
+        activities: Activity.activities(conditions: {1, 5}, filters: %{section: "user"})
       )
     {:ok, socket, temporary_assigns: [users: []]}
   end
 
   # Live CRUD
   paginate(:users, user_id: false)
-
-  list_search_and_action()
-
-  delete_list_item(:users, DeleteErrorComponent, false)
 
   @impl true
   def handle_event("search_role", params, socket) do
@@ -52,14 +50,40 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
     {:noreply, socket}
   end
 
+  list_search_and_action()
+
+  delete_list_item(:users, DeleteErrorComponent, true)
+
   @impl true
   def handle_event("user_role", %{"role" => role_id, "user_id" => user_id}, socket) do
     case role_id do
       "delete_user_role" ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "user",
+          section_id: user_id,
+          action: "auth",
+          priority: "medium",
+          status: "info",
+          user_id: Map.get(socket.assigns, :user_id)
+        })
+
         MishkaUser.Acl.UserRole.delete_user_role(user_id)
         MishkaUser.Acl.AclManagement.stop(user_id)
       _record ->
-        create_or_edit_user_role(user_id, role_id)
+        create_or_edit_user_role(user_id, role_id, socket)
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:activity, :ok, repo_record}, socket) do
+    socket = case repo_record.__meta__.state do
+      :loaded ->
+        socket
+        |> assign(activities: Activity.activities(conditions: {1, 5}, filters: %{section: "user"}))
+       _ ->  socket
     end
 
     {:noreply, socket}
@@ -79,12 +103,23 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   defp user_filter(_params), do: %{}
 
 
-  defp create_or_edit_user_role(user_id, role_id) do
+  defp create_or_edit_user_role(user_id, role_id, socket) do
     case MishkaUser.Acl.UserRole.show_by_user_id(user_id) do
-      {:error, _, _} ->
+      {:error, _, _repo_error} ->
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "user",
+          section_id: user_id,
+          action: "auth",
+          priority: "medium",
+          status: "info",
+          user_id: Map.get(socket.assigns, :user_id)
+        })
+
         MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
 
-      {:ok, _, _, repo_data} ->
+      {:ok, _error_atom, _, repo_data} ->
         MishkaUser.Acl.AclManagement.stop(user_id)
         MishkaUser.Acl.UserRole.edit(%{id: repo_data.id, user_id: user_id, role_id: role_id})
     end

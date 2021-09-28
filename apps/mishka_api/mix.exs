@@ -37,7 +37,7 @@ defmodule MishkaApi.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.0-rc.0", override: true},
+      {:phoenix, "~> 1.6", override: true},
       {:phoenix_live_dashboard, "~> 0.5"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 0.5"},

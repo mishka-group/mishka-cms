@@ -33,7 +33,11 @@
             </div>
 
 
-          <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.ActivitiesComponent , id: :admin_last_activities %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Blog.ActivitiesComponent ,
+                            id: :admin_last_activities,
+                            activities: @activities,
+                            type: "blog_category"
+        %>
 
       </div>
 

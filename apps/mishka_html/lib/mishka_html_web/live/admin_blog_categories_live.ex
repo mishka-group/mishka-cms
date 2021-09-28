@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
 
   alias MishkaContent.Blog.Category
   alias MishkaHtmlWeb.Admin.Blog.Category.DeleteErrorComponent
+  alias MishkaContent.General.Activity
 
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.Category,
@@ -16,8 +17,8 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
-    if connected?(socket), do: Category.subscribe()
+  def mount(_params, session, socket) do
+    if connected?(socket), do: Category.subscribe(); Activity.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -26,22 +27,35 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
         page: 1,
         open_modal: false,
         component: nil,
+        user_id: Map.get(session, "user_id"),
         body_color: "#a29ac3cf",
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مجموعه ها"),
-        categories: Category.categories(conditions: {1, 10}, filters: %{})
+        categories: Category.categories(conditions: {1, 10}, filters: %{}),
+        activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_category"})
       )
     {:ok, socket, temporary_assigns: [categories: []]}
   end
 
   # Live CRUD and Paginate
-  paginate(:categories, user_id: false)
+  paginate(:categories, user_id: true)
 
   list_search_and_action()
 
   delete_list_item(:categories, DeleteErrorComponent, false)
 
-  update_list(:categories, false)
-
   selected_menue("MishkaHtmlWeb.AdminBlogCategoriesLive")
 
+  @impl true
+  def handle_info({:activity, :ok, repo_record}, socket) do
+    socket = case repo_record.__meta__.state do
+      :loaded ->
+        socket
+        |> assign(activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_category"}))
+       _ ->  socket
+    end
+
+    {:noreply, socket}
+  end
+
+  update_list(:categories, false)
 end

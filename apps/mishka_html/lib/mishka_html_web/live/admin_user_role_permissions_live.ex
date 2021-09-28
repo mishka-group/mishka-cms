@@ -57,6 +57,16 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :permission, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "permission",
+          section_id: repo_data.id,
+          action: "add",
+          priority: "high",
+          status: "info",
+          user_id: socket.assigns.user_id
+        })
+
         MishkaUser.Acl.AclTask.update_role(repo_data.role_id)
         socket
     end
@@ -87,6 +97,11 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
         |> assign(permissions: Permission.permissions(socket.assigns.id))
        _ ->  socket
     end
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_params, socket) do
     {:noreply, socket}
   end
 

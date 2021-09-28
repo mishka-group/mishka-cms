@@ -1,0 +1,59 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row admin-top-page-navigate">
+            <div class="col-sm-5 top-back-admin-menue">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "آمار و گزارش ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive), class: "btn btn-outline-danger" %>
+            </div>
+        </div>
+
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+        %>
+
+        <div class="space20"></div>
+
+        <div class="col">
+            <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "فعالیت ها کاربری و لاگ سیستمی") %></h3>
+            <span class="admin-dashbord-right-side-text vazir">
+            <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید فعالیت های مهم کاربری و همینطور لاگ های سیستمی از جمله ارور ها ناخواسته یا موارد امنیتی را مدیریت و مانیتور نمایید.") %>
+            <br>
+            <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "لطفا از حذف لاگ خوداری فرمایید. در صورت حذف لاگ بلافاصله فعالیت حذف نیز ذخیره سیستم می شود.") %>
+            </span>
+            <div class="space20"></div>
+        </div>
+
+    <%=  live_component @socket, MishkaHtmlWeb.Admin.Activity.SearchComponent, id: :admin_activity_search %>
+
+
+
+        <div class="clearfix"></div>
+        <div class="col space30"> </div>
+
+      <%= live_component @socket, MishkaHtmlWeb.Admin.Activity.ListComponent,
+                           id: :admin_last_activities,
+                           activities: @activities,
+                           filters: @filters,
+                           count: @page_size,
+                           pagination_url: MishkaHtmlWeb.AdminActivitiesLive
+        %>
+
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<%= if @open_modal do %>
+    <%= live_component @socket, MishkaHtmlWeb.Admin.Public.ModalComponent,
+                            msg: "test",
+                            id: :modal_live,
+                            component: @component
+    %>
+<% end %>
+
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

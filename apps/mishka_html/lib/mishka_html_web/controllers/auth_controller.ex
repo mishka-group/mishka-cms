@@ -21,6 +21,16 @@ defmodule MishkaHtmlWeb.AuthController do
           user_info.id
         )
 
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "user",
+          section_id: user_info.id,
+          action: "auth",
+          priority: "high",
+          status: "info",
+          user_id: user_info.id
+        }, %{user_action: "login", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+
         Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
           MishkaContent.Cache.BookmarkDynamicSupervisor.start_job([id: user_info.id, type: "user_bookmarks"])
         end)
@@ -74,6 +84,16 @@ defmodule MishkaHtmlWeb.AuthController do
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end
 
+    MishkaContent.General.Activity.create_activity_by_task(%{
+      type: "section",
+      section: "user",
+      section_id: nil,
+      action: "auth",
+      priority: "high",
+      status: "info",
+      user_id: get_session(conn, :user_id)
+    }, %{user_action: "log_out", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+
     conn
     |> configure_session(drop: true)
     |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
@@ -89,6 +109,16 @@ defmodule MishkaHtmlWeb.AuthController do
 
         # delete all randome codes of user
         RandomCode.delete_code(code, user_info.email)
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "internal_api",
+          section: "user",
+          section_id: repo_data.id,
+          action: "auth",
+          priority: "high",
+          status: "info",
+          user_id: repo_data.id
+        }, %{user_action: "verify_email", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
         conn
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_auth", "ایمیل حساب کاربری شما با موفقیت تایید گردید."))
@@ -124,6 +154,16 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(random_link_user_info.email),
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, repo_data.status == :inactive},
          {:ok, :edit, :user, user_info} <- MishkaUser.User.edit(%{id: repo_data.id, status: "inactive"}) do
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "internal_api",
+          section: "user",
+          section_id: repo_data.id,
+          action: "auth",
+          priority: "high",
+          status: "info",
+          user_id: repo_data.id
+        }, %{user_action: "deactive_account", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(user_info.id)
@@ -181,6 +221,16 @@ defmodule MishkaHtmlWeb.AuthController do
     with {:random_link, false, random_link_user_info} <- {:random_link, is_nil(random_link), random_link},
          {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, "#{random_link.code}", [max_age: MishkaHtmlWeb.ResetChangePasswordLive.random_link_expire_time().age])},
          {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(random_link_user_info.email) do
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "internal_api",
+          section: "user",
+          section_id: repo_data.id,
+          action: "auth",
+          priority: "high",
+          status: "info",
+          user_id: repo_data.id
+        }, %{user_action: "delete_tokens", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(repo_data.id)

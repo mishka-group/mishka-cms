@@ -16,7 +16,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Subscription.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
@@ -26,6 +26,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
         page: 1,
         open_modal: false,
         component: nil,
+        user_id: Map.get(session, "user_id"),
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت اشتراک ها"),
         body_color: "#a29ac3cf",
         subscriptions: Subscription.subscriptions(conditions: {1, 10}, filters: %{})
@@ -41,8 +42,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
 
   delete_list_item(:subscriptions, DeleteErrorComponent, false)
 
-  update_list(:subscriptions, false)
-
   selected_menue("MishkaHtmlWeb.AdminSubscriptionsLive")
 
+  update_list(:subscriptions, false)
 end

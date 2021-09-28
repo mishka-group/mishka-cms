@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Setting.subscribe()
     Process.send_after(self(), :menu, 100)
     socket =
@@ -23,6 +23,7 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
         page_size: 10,
         filters: %{},
         page: 1,
+        user_id: Map.get(session, "user_id"),
         open_modal: false,
         component: nil,
         body_color: "#a29ac3cf",
@@ -42,9 +43,4 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
   selected_menue("MishkaHtmlWeb.AdminSettingsLive")
 
   update_list(:settings, false)
-
-  @impl true
-  def handle_info(_params, socket) do
-    {:noreply, socket}
-  end
 end

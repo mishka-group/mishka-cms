@@ -23,6 +23,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         body_color: "#a29ac3cf",
         basic_menu: false,
         user_id: Map.get(session, "user_id"),
+        id: nil,
         drafts: ContentDraftManagement.drafts_by_section(section: "role"),
         draft_id: nil,
         changeset: role_changeset())
@@ -59,6 +60,16 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :role, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "role",
+          section_id: repo_data.id,
+          action: "add",
+          priority: "high",
+          status: "info",
+          user_id: socket.assigns.user_id
+        })
+
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "نقش: %{title} درست شده است.", title: repo_data.name)})
         socket

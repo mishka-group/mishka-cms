@@ -1,5 +1,6 @@
 defmodule MishkaApiWeb.Router do
   use MishkaApiWeb, :router
+  use Plug.ErrorHandler
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -125,6 +126,14 @@ defmodule MishkaApiWeb.Router do
     post "/create-author", ContentController, :create_author
     post "/delete-author", ContentController, :delete_author
 
+  end
+
+  @impl Plug.ErrorHandler
+  def handle_errors(conn, %{kind: kind, reason: reason, stack: _stack}) do
+    if !is_nil(Map.get(reason, :conn)), do:
+        MishkaContent.General.Activity.router_catch(conn, kind, reason)
+  after
+    conn
   end
 
   # Enables LiveDashboard only for development

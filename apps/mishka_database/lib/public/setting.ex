@@ -27,6 +27,10 @@ defmodule MishkaDatabase.Public.Setting do
     |> notify_subscribers(:setting)
   end
 
+  def create(attrs, :no_pubsub) do
+    crud_add(attrs)
+  end
+
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_edit, 1}
   def edit(attrs) do
     crud_edit(attrs)
@@ -60,7 +64,7 @@ defmodule MishkaDatabase.Public.Setting do
       })
       |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
     rescue
-      Ecto.Query.CastError ->
+      _db_error ->
         %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
     end
   end
@@ -79,7 +83,7 @@ defmodule MishkaDatabase.Public.Setting do
       })
       |> MishkaDatabase.Repo.all()
     rescue
-      Ecto.Query.CastError -> []
+      _db_error -> []
     end
   end
 

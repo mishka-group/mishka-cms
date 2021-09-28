@@ -22,7 +22,8 @@ defmodule MishkaHtmlWeb.RegisterLive do
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
         changeset: changeset,
-        user_id: Map.get(session, "user_id")
+        user_id: Map.get(session, "user_id"),
+        self_pid: self()
       )
     {:ok, socket}
   end
@@ -51,6 +52,16 @@ defmodule MishkaHtmlWeb.RegisterLive do
         )
 
           MishkaContent.Email.EmailHelper.send(:verify_email, {repo_data.email, site_link})
+
+          MishkaContent.General.Activity.create_activity_by_task(%{
+            type: "section",
+            section: "user",
+            section_id: repo_data.id,
+            action: "add",
+            priority: "low",
+            status: "info",
+            user_id: repo_data.id
+          }, %{user_action: "register", identity_provider: "self"})
 
           socket
           |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."))
@@ -90,7 +101,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.RegisterLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.RegisterLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

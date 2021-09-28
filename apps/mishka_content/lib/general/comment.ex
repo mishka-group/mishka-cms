@@ -68,7 +68,9 @@ defmodule MishkaContent.General.Comment do
       comment -> edit(%{id: comment.id, status: :soft_delete})
     end
   rescue
-    Ecto.Query.CastError -> {:error, :edit, :comment, :not_found}
+    db_error ->
+      MishkaContent.db_content_activity_error("comment", "delete", db_error)
+      {:error, :edit, :comment, :not_found}
   end
 
   @spec show_by_user_id(data_uuid()) ::
@@ -92,7 +94,8 @@ defmodule MishkaContent.General.Comment do
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
-    _ ->
+    db_error ->
+      MishkaContent.db_content_activity_error("comment", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
@@ -110,7 +113,9 @@ defmodule MishkaContent.General.Comment do
     |> fields()
     |> MishkaDatabase.Repo.one()
   rescue
-    Ecto.Query.CastError -> nil
+    db_error ->
+      MishkaContent.db_content_activity_error("comment", "read", db_error)
+      nil
   end
 
   defp convert_filters_to_where(query, filters) do

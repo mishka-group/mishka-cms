@@ -67,7 +67,8 @@ defmodule MishkaContent.Blog.BlogLink do
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
-    Ecto.Query.CastError ->
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_link", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
@@ -76,7 +77,9 @@ defmodule MishkaContent.Blog.BlogLink do
     |> fields()
     |> MishkaDatabase.Repo.all()
   rescue
-    Ecto.Query.CastError -> []
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_link", "read", db_error)
+      []
   end
 
   defp convert_filters_to_where(query, filters) do

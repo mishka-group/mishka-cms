@@ -2,7 +2,11 @@
   <div class="row admin-main-block-dashboard">
     <div class="col admin-home-quickmenu">
         <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
-        <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent, id: :admin_quickmenu %>
+        <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent,
+                           id: :admin_quickmenu,
+                           activities: @activities
+        %>
+
       <div class="container admin-home-main-cms-block-tools-bottom">
         <div class="row">
             <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent, id: :admin_last_users, users: @users %>

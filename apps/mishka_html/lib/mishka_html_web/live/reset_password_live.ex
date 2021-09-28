@@ -20,7 +20,8 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "فراموشی پسورد"),
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
-        user_id: Map.get(session, "user_id")
+        user_id: Map.get(session, "user_id"),
+        self_pid: self()
       )
     {:ok, socket}
   end
@@ -72,6 +73,16 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
           MishkaContent.Email.EmailHelper.send(:forget_password, {repo_data.email, site_link})
 
+          MishkaContent.General.Activity.create_activity_by_task(%{
+            type: "email",
+            section: "user",
+            section_id: repo_data.id,
+            action: "send_request",
+            priority: "high",
+            status: "info",
+            user_id: repo_data.id
+          }, %{user_action: "send_reset_password"})
+
           socket
           |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."))
           |> push_redirect(to: Routes.live_path(socket, __MODULE__))
@@ -98,7 +109,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

@@ -23,7 +23,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.ActivitiesComponent do
               <span class="badge bg-<%= MishkaHtml.create_action_msg(item.action).color %>"><%= MishkaHtml.create_action_msg(item.action).msg %></span>
               شد.
             </li>
-          <%= end %>
+          <% end %>
         </ul>
         <div class="clearfix"></div>
         <div class="space40"></div>

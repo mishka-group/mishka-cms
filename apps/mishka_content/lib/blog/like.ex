@@ -69,7 +69,9 @@ defmodule MishkaContent.Blog.Like do
       liked_record -> delete(liked_record.id)
     end
   rescue
-    Ecto.Query.CastError -> {:error, :delete, :post_like, :not_found}
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_post_like", "delete", db_error)
+      {:error, :delete, :post_like, :not_found}
   end
 
   @spec show_by_user_and_post_id(data_uuid(), data_uuid()) ::
@@ -83,7 +85,9 @@ defmodule MishkaContent.Blog.Like do
       liked_record -> {:ok, :show_by_user_and_post_id, liked_record}
     end
   rescue
-    Ecto.Query.CastError -> {:error, :show_by_user_and_post_id, :cast_error}
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_post_like", "read", db_error)
+      {:error, :show_by_user_and_post_id, :cast_error}
   end
 
   @spec count_post_likes(data_uuid(), data_uuid()) :: map()

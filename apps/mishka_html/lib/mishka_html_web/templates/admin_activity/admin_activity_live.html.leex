@@ -73,7 +73,9 @@
                         <div class="space20"></div>
                         <span class="badge bg-dark">اکشن</span> <%= @activity.action %>
                         <div class="space20"></div>
-                        <span class="badge bg-danger">تاریخ ثبت</span> <%= @activity.inserted_at %>
+                        <span class="badge bg-danger">تاریخ ثبت</span>
+                        <% time = MishkaHtmlWeb.Public.TimeConverterComponent.jalali_create(@activity.inserted_at) %>
+                            <%= "#{time.day_number} #{time.month_name} سال #{time.year_number} در ساعت #{time.hour}:#{time.minute}:#{time.second}" %>
                         <div class="space20"></div>
                         <span class="badge bg-primary">کاربر ثبت کننده</span>
                         <%= if is_nil(@activity.user_id) do %>

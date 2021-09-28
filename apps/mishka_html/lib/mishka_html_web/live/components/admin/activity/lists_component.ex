@@ -23,7 +23,8 @@ defmodule MishkaHtmlWeb.Admin.Activity.ListComponent do
                     <%= for {item, color} <- Enum.zip(@activities, Stream.cycle(["wlist", "glist"])) do %>
                     <tr class="blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
                         <td class="align-middle text-center">
-                            <%= item.inserted_at %>
+                            <% time = MishkaHtmlWeb.Public.TimeConverterComponent.jalali_create(item.inserted_at) %>
+                            <%= "#{time.day_number} #{time.month_name} سال #{time.year_number} در ساعت #{time.hour}:#{time.minute}:#{time.second}" %>
                         </td>
                         <td class="align-middle text-center" id="<%= "title-#{item.id}" %>">
                             <%= item.section %>

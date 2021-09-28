@@ -37,8 +37,8 @@ defmodule MishkaHtml.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.0-rc.0", override: true},
-      {:phoenix_live_view, "~> 0.16.3"},
+      {:phoenix, "~> 1.6", override: true},
+      {:phoenix_live_view, "~> 0.16.4"},
       {:phoenix_ecto, "~> 4.4"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_html, "~> 3.0"},
@@ -50,7 +50,8 @@ defmodule MishkaHtml.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:mishka_user, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
-      {:jalaali, "~> 0.3.0"},
+      # {:jalaali, "~> 0.3.0"},
+      {:jalaali, git: "https://github.com/jalaali/elixir-jalaali.git"},
       {:slugify, "~> 1.3"},
       {:html_sanitize_ex, "~> 1.4"},
       {:mishka_translator, in_umbrella: true},

@@ -80,6 +80,6 @@ defmodule MishkaDatabase.Cache.SettingCache do
         "google_recaptcha_server_side_code" => "PLEASE PUT YOUR CODE",
         "captcha_status" => "developer",
       }
-    })
+    }, :no_pubsub)
   end
 end

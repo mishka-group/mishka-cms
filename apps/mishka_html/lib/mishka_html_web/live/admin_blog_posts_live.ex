@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   alias MishkaContent.Blog.Post
   alias MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent
+  alias MishkaContent.General.Activity
 
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.Post,
@@ -18,7 +19,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do: Post.subscribe()
+    if connected?(socket), do: Post.subscribe(); Activity.subscribe()
     Process.send_after(self(), :menu, 100)
     user_id = Map.get(session, "user_id")
     socket =
@@ -33,6 +34,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         body_color: "#a29ac3cf",
         posts: Post.posts(conditions: {1, 10}, filters: %{}, user_id: user_id),
         fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}, user_id: user_id),
+        activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_post"})
       )
     {:ok, socket, temporary_assigns: [posts: []]}
   end
@@ -42,7 +44,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   list_search_and_action()
 
-  delete_list_item(:posts, DeleteErrorComponent, false)
+  delete_list_item(:posts, DeleteErrorComponent, true)
 
   @impl true
   def handle_event("featured_post", %{"id" => id} = _params, socket) do
@@ -52,8 +54,20 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     {:noreply, socket}
   end
 
-  update_list(:posts, true)
-
   selected_menue("MishkaHtmlWeb.AdminBlogPostsLive")
+
+  @impl true
+  def handle_info({:activity, :ok, repo_record}, socket) do
+    socket = case repo_record.__meta__.state do
+      :loaded ->
+        socket
+        |> assign(activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_post"}))
+       _ ->  socket
+    end
+
+    {:noreply, socket}
+  end
+
+  update_list(:posts, true)
 
 end

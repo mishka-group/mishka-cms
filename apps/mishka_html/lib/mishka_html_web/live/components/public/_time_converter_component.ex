@@ -26,13 +26,20 @@ defmodule MishkaHtmlWeb.Public.TimeConverterComponent do
   end
 
   def jalali_create(time_need, "number") do
-    {:ok, jalaali_date} = Date.convert(time_need, Jalaali.Calendar)
+    {:ok, jalaali_date} = DateTime.convert(time_need, Jalaali.Calendar)
     %{day_number: jalaali_date.day, month_name: jalaali_date.month, year_number: jalaali_date.year}
   end
 
   def jalali_create(time_need) do
-    {:ok, jalaali_date} = Date.convert(time_need, Jalaali.Calendar)
-    %{day_number: jalaali_date.day, month_name: get_month(jalaali_date.month), year_number: jalaali_date.year}
+    {:ok, jalaali_date} = DateTime.convert(time_need, Jalaali.Calendar)
+    %{
+      day_number: jalaali_date.day,
+      month_name: get_month(jalaali_date.month),
+      year_number: jalaali_date.year,
+      hour: jalaali_date.hour,
+      minute: jalaali_date.minute,
+      second: jalaali_date.second
+    }
   end
 
   def get_month(id) do

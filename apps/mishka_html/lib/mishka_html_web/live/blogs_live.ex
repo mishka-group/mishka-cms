@@ -29,7 +29,8 @@ defmodule MishkaHtmlWeb.BlogsLive do
         page: 1,
         user_id: Map.get(session, "user_id"),
         posts: Post.posts(conditions: {1, 20}, filters: %{}, user_id: user_id),
-        categories: Category.categories(filters: %{})
+        categories: Category.categories(filters: %{}),
+        self_pid: self()
       )
       {:ok, socket, temporary_assigns: [posts: [], categories: []]}
   end
@@ -95,7 +96,7 @@ defmodule MishkaHtmlWeb.BlogsLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

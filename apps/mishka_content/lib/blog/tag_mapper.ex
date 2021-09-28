@@ -67,7 +67,9 @@ defmodule MishkaContent.Blog.TagMapper  do
       tag_record -> delete(tag_record.id)
     end
   rescue
-    Ecto.Query.CastError -> {:error, :delete, :blog_tag_mapper, :not_found}
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_tag_mapper", "delete", db_error)
+      {:error, :delete, :blog_tag_mapper, :not_found}
   end
 
   @spec tags([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
@@ -79,7 +81,8 @@ defmodule MishkaContent.Blog.TagMapper  do
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
-    Ecto.Query.CastError ->
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_tag_mapper", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 

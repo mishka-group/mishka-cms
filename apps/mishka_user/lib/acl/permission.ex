@@ -74,7 +74,9 @@ defmodule MishkaUser.Acl.Permission do
       })
     |> MishkaDatabase.Repo.all()
   rescue
-    Ecto.Query.CastError -> []
+    db_error ->
+      MishkaContent.db_content_activity_error("permission", "read", db_error)
+      []
   end
 
   @spec notify_subscribers(tuple(), atom() | String.t()) :: tuple() | map()

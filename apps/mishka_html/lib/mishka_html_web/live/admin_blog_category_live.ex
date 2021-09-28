@@ -302,6 +302,16 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         ])
 
       {:ok, :add, :category, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_category",
+          section_id: repo_data.id,
+          action: "add",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{title: repo_data.title})
+
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} درست شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket
@@ -344,6 +354,16 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
         ])
 
       {:ok, :edit, :category, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_category",
+          section_id: repo_data.id,
+          action: "edit",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{title: repo_data.title})
+
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
 
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} به روز شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})

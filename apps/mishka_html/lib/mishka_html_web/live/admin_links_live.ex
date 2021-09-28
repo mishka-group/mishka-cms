@@ -14,7 +14,7 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
   end
 
   @impl true
-  def mount(%{"id" => post_id}, _session, socket) do
+  def mount(%{"id" => post_id}, session, socket) do
     socket = case Post.show_by_id(post_id) do
       {:ok, :get_record_by_id, _error_tag, record} ->
         if connected?(socket), do: BlogLink.subscribe()
@@ -22,6 +22,7 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
         assign(socket,
           page_title: MishkaTranslator.Gettext.dgettext("html_live", "مطلب %{title}", title: record.title),
           body_color: "#a29ac3cf",
+          user_id: Map.get(session, "user_id"),
           post_links: BlogLink.links(filters: %{section_id: post_id}),
           post_id: post_id,
           link_id: nil
@@ -40,6 +41,16 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case BlogLink.delete(id) do
       {:ok, :delete, :blog_link, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_link",
+          section_id: repo_data.id,
+          action: "delete",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{post_id: socket.assigns.post_id})
+
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "لینک: %{title} حذف شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "لینک با موفقیت حذف شد"))

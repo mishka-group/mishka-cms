@@ -14,7 +14,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -23,6 +23,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
       page: 1,
       open_modal: false,
       component: nil,
+      user_id: Map.get(session, "user_id"),
       page_title: MishkaTranslator.Gettext.dgettext("html_live", "نقش های کاربری"),
       body_color: "#a29ac3cf",
       roles: Role.roles(conditions: {1, 10}, filters: %{})
@@ -35,9 +36,9 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
 
   list_search_and_action()
 
-  delete_list_item(:roles, DeleteErrorComponent, false, do: fn x ->
+  delete_list_item(:roles, DeleteErrorComponent, false, do: fn data ->
     # TODO: this is a good job to use notif or etc
-    IO.inspect(x)
+    data
   end, before: fn x -> MishkaUser.Acl.AclTask.delete_role(x) end)
 
   selected_menue("MishkaHtmlWeb.AdminUserRolesLive")

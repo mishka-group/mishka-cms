@@ -13,6 +13,7 @@ defmodule MishkaDatabase.Repo.Migrations.Activities do
       add(:priority, :integer, null: false)
       add(:status, :integer, null: false)
       add(:extra, :map, null: true)
+      add(:user_id, references(:users, type: :uuid), null: true)
 
       timestamps()
     end

@@ -62,4 +62,18 @@ defmodule MishkaHtml do
   def hello do
     gettext("Here is one string to html render")
   end
+
+  def create_action_msg(action) do
+    case action do
+      :add -> %{color: "success", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "درست")}
+      :edit -> %{color: "primary", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش")}
+      :delete -> %{color: "danger", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "حذف با پرچم")}
+      :destroy -> %{color: "dark", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "حذف کامل")}
+      :read -> %{color: "info", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "خوانده")}
+      :send_request -> %{color: "light", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ارسال درخواست")}
+      :receive_request -> %{color: "light", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "دریافت درخواست")}
+      :other -> %{color: "warning", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "مورد عملیات دیگر")}
+      :auth -> %{color: "secondary", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش دسترسی")}
+    end
+  end
 end

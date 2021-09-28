@@ -288,6 +288,17 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
 
       {:ok, :add, :post, repo_data} ->
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_post",
+          section_id: repo_data.id,
+          action: "add",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{title: repo_data.title})
+
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
         socket
@@ -339,6 +350,17 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         ])
 
       {:ok, :edit, :post, repo_data} ->
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_post",
+          section_id: repo_data.id,
+          action: "edit",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{title: repo_data.title})
+
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})
         socket

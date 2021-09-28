@@ -25,7 +25,8 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
             user_id: Map.get(session, "user_id"),
             random_link: record.code,
             user_email: record.email,
-            errors: %{}
+            errors: %{},
+            self_pid: self()
           )
     else
       _ ->
@@ -46,6 +47,16 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
                   {:ok, :edit, :user, user_info} <- MishkaUser.User.edit(%{id: repo_data.id, password: new_password}) do
 
 
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "user",
+          section_id: repo_data.id,
+          action: "edit",
+          priority: "high",
+          status: "info",
+          user_id: repo_data.id
+        }, %{user_action: "change_password"})
 
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(user_info.id)
@@ -106,7 +117,7 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive"})
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive", socket.assigns.self_pid})
     {:noreply, socket}
   end
 

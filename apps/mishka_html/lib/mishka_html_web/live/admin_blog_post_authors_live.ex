@@ -13,13 +13,14 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
   end
 
   @impl true
-  def mount(%{"post_id" => post_id}, _session, socket) do
+  def mount(%{"post_id" => post_id}, session, socket) do
     socket = case MishkaContent.Blog.Post.show_by_id(post_id) do
       {:ok, :get_record_by_id, _error_tag, _record} ->
         Process.send_after(self(), :menu, 100)
         assign(socket,
           page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت نویسندگان"),
           body_color: "#a29ac3cf",
+          user_id: Map.get(session, "user_id"),
           authors: Author.authors(post_id),
           search_author: [],
           post_id: post_id
@@ -37,7 +38,17 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
   @impl true
   def handle_event("add_author", %{"user-id" => user_id}, socket) do
     socket = case Author.create(%{post_id: socket.assigns.post_id, user_id: user_id}) do
-      {:ok, :add, :blog_author, _record} ->
+      {:ok, :add, :blog_author, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_author",
+          section_id: repo_data.id,
+          action: "add",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        })
+
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت ثبت شد."))
 
@@ -54,6 +65,17 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
   def handle_event("delete", %{"id" => id}, socket) do
     socket = case Author.delete(id) do
       {:ok, :delete, :blog_author, repo_data} ->
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_author",
+          section_id: repo_data.id,
+          action: "delete",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        })
+
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت حذف شد"))
         |> assign(authors: Author.authors(repo_data.post_id))
@@ -86,4 +108,10 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
 
 
   selected_menue("MishkaHtmlWeb.AdminBlogPostAuthorsLive")
+
+  # skip Task info
+  @impl true
+  def handle_info(_, socket) do
+    {:noreply, socket}
+  end
 end

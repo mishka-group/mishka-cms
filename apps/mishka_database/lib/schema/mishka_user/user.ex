@@ -24,6 +24,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
     has_many :subscriptions, MishkaDatabase.Schema.MishkaContent.Subscription, foreign_key: :user_id
     has_many :notifs, MishkaDatabase.Schema.MishkaContent.Notif, foreign_key: :user_id
     has_many :bookmarks, MishkaDatabase.Schema.MishkaContent.Bookmark, foreign_key: :user_id
+    has_many :activities, MishkaDatabase.Schema.MishkaContent.Activity, foreign_key: :user_id
 
     many_to_many :roles, MishkaDatabase.Schema.MishkaUser.Role, join_through: MishkaDatabase.Schema.MishkaUser.UserRole
 

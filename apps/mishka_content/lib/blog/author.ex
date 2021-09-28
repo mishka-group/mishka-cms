@@ -59,7 +59,9 @@ defmodule MishkaContent.Blog.Author do
       author_record -> delete(author_record.id)
     end
   rescue
-    Ecto.Query.CastError -> {:error, :delete, :blog_author, :not_found}
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_author", "delete", db_error)
+      {:error, :delete, :blog_author, :not_found}
   end
 
   @spec authors(data_uuid()) :: list()
@@ -77,7 +79,9 @@ defmodule MishkaContent.Blog.Author do
     })
     |> MishkaDatabase.Repo.all()
   rescue
-    Ecto.Query.CastError -> []
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_author", "read", db_error)
+      []
   end
 
   @spec authors :: Ecto.Query.t()

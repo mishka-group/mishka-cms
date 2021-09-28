@@ -181,6 +181,16 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
         {:noreply, socket}
 
       {:ok, :add, :blog_tag, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_tag",
+          section_id: repo_data.id,
+          action: "add",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        })
+
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "برچسب: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.title))})
         socket =
           socket
@@ -210,6 +220,16 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
         {:noreply, socket}
 
       {:ok, :edit, :blog_tag, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "blog_tag",
+          section_id: repo_data.id,
+          action: "edit",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        })
+
         Notif.notify_subscribers(%{id: repo_data.id, msg: "برچسب: #{MishkaHtml.full_name_sanitize(repo_data.title)} به روز شده است."})
 
         socket =

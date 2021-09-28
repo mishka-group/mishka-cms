@@ -11,8 +11,23 @@
   font-display: block;
 } */
 
+.admin-home-activities-link {
+  text-decoration: none;
+}
+
+.admin-show-log {
+  font-size: 20px;
+}
+
+.admin-main-show-activity .alert {
+  font-size: 16px;
+}
+
+.admin-show-log a {
+  text-decoration: none;
+}
 #editor-main-dive {
-  max-height: 400px;
+  min-height: 400px;
 }
 .form-error-tag {
   clear: both;

@@ -79,7 +79,8 @@ defmodule MishkaContent.Blog.Post do
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
-    Ecto.Query.CastError ->
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_post", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end
 
@@ -169,7 +170,9 @@ defmodule MishkaContent.Blog.Post do
     ))
     |> MishkaDatabase.Repo.one()
   rescue
-    Ecto.Query.CastError -> nil
+    db_error ->
+      MishkaContent.db_content_activity_error("blog_post", "read", db_error)
+      nil
   end
 
   @spec allowed_fields(:atom | :string) :: nil | list

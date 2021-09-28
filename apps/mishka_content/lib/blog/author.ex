@@ -59,7 +59,17 @@ defmodule MishkaContent.Blog.Author do
       author_record -> delete(author_record.id)
     end
   rescue
-    Ecto.Query.CastError -> {:error, :delete, :blog_author, :not_found}
+    e ->
+      MishkaContent.General.Activity.create_activity_by_task(%{
+        type: "db",
+        section: "blog_author",
+        section_id: nil,
+        action: "delete",
+        priority: "high",
+        status: "error",
+        user_id: nil
+      }, %{db_rescue: e})
+      {:error, :delete, :blog_author, :not_found}
   end
 
   @spec authors(data_uuid()) :: list()

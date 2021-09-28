@@ -37,7 +37,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
   end
 
   # Live CRUD and Paginate
-  paginate(:categories, user_id: false)
+  paginate(:categories, user_id: true)
 
   list_search_and_action()
 

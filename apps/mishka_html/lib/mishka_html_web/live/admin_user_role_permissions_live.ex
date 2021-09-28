@@ -100,6 +100,11 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_info(_params, socket) do
+    {:noreply, socket}
+  end
+
   defp permission_changeset(params \\ %{}) do
     MishkaDatabase.Schema.MishkaUser.Permission.changeset(
       %MishkaDatabase.Schema.MishkaUser.Permission{}, params

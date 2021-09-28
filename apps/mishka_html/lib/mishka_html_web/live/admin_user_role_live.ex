@@ -23,6 +23,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         body_color: "#a29ac3cf",
         basic_menu: false,
         user_id: Map.get(session, "user_id"),
+        id: nil,
         drafts: ContentDraftManagement.drafts_by_section(section: "role"),
         draft_id: nil,
         changeset: role_changeset())

@@ -211,7 +211,6 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   end
 
   def notify_subscribers(notif) when is_tuple(notif) do
-    IO.inspect(notif)
      Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_menu_and_notif", notif)
   end
 end

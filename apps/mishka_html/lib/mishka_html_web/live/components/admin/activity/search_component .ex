@@ -26,6 +26,8 @@ defmodule MishkaHtmlWeb.Admin.Activity.SearchComponent do
                   <option value="info"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "مشخصات") %></option>
                   <option value="warning"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "هشدار") %></option>
                   <option value="report"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "گزارش شده") %></option>
+                  <option value="throw"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "خطای سیستمی - قطع") %></option>
+                  <option value="exit"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "قطع کامل سیستم") %></option>
                 </select>
               </div>
 
@@ -54,6 +56,7 @@ defmodule MishkaHtmlWeb.Admin.Activity.SearchComponent do
                   <option value="read"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "خواندن") %></option>
                   <option value="send_request"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ارسال شده") %></option>
                   <option value="receive_request"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "دریافت شده") %></option>
+                  <option value="auth"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "دسترسی") %></option>
                   <option value="other"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "دیگر") %></option>
                 </select>
               </div>
@@ -67,6 +70,22 @@ defmodule MishkaHtmlWeb.Admin.Activity.SearchComponent do
                   <option value="blog_category"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "مجموعه بلاگ") %></option>
                   <option value="comment"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نظرات") %></option>
                   <option value="tag"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "برچسب") %></option>
+                  <option value="blog_author"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نویسنده بلاگ") %></option>
+                  <option value="blog_post_like"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "لایک پست بلاگ") %></option>
+                  <option value="blog_tag_mapper"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "برچسب مطلب") %></option>
+                  <option value="blog_link"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "لینک مطلب") %></option>
+                  <option value="blog_tag"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "برچسب بلاگ") %></option>
+                  <option value="activity"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "فعالیت ها") %></option>
+                  <option value="bookmark"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بوکمارک ها") %></option>
+                  <option value="comment_like"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "لاک کامنت") %></option>
+                  <option value="notif"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "اطلاع رسانی") %></option>
+                  <option value="subscription"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "اشتراک ها") %></option>
+                  <option value="setting"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تنظیمات") %></option>
+                  <option value="permission"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "دسترسی ها") %></option>
+                  <option value="role"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نقش ها") %></option>
+                  <option value="user_role"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "نقش کاربری") %></option>
+                  <option value="identity"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "شناسه اتصال کاربری") %></option>
+                  <option value="user"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "کاربری") %></option>
                   <option value="other"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "دیگر") %></option>
                 </select>
               </div>
@@ -80,6 +99,9 @@ defmodule MishkaHtmlWeb.Admin.Activity.SearchComponent do
                   <option value="email"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ایمیل") %></option>
                   <option value="internal_api"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "API داخلی") %></option>
                   <option value="external_api"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "API خارجی") %></option>
+                  <option value="html_router"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "روتر سایت") %></option>
+                  <option value="api_router"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "روتر API") %></option>
+                  <option value="db"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "دیتابیس") %></option>
                 </select>
               </div>
 

@@ -1,5 +1,5 @@
 # Extend from the official Elixir image
-FROM elixir:1.12.2-alpine
+FROM elixir:1.12.3-alpine
 
 RUN apk update && apk add postgresql-client && rm -rf /var/cache/apk/*
 
@@ -17,7 +17,8 @@ ARG SECRET_KEY_BASE \
     CMS_DOMAIN_NAME \
     API_DOMAIN_NAME \
     CMS_PORT \
-    API_PORT
+    API_PORT \
+    PROTOCOL
 
 ENV MIX_ENV=prod \
     SECRET_KEY_BASE=$SECRET_KEY_BASE \
@@ -31,12 +32,13 @@ ENV MIX_ENV=prod \
     CMS_DOMAIN_NAME=$CMS_DOMAIN_NAME \
     API_DOMAIN_NAME=$API_DOMAIN_NAME \
     CMS_PORT=$CMS_PORT \
-    API_PORT=$API_PORT
+    API_PORT=$API_PORT \
+    PROTOCOL=$PROTOCOL
 
 # Copy all application files
 COPY . /app
 
-RUN apk add --no-cache --virtual .build-deps git inotify-tools make python2 erlang-dev  alpine-sdk
+RUN apk add --no-cache --virtual .build-deps inotify-tools make python2 erlang-dev alpine-sdk && apk add git
 
 # Install and compile production dependecies
 RUN  cd /app && \

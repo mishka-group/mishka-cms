@@ -119,8 +119,6 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
   subscription("blog_category")
 
-  user_subscription_state("blog_category")
-
   @impl true
   def handle_info(:menu, socket) do
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.BlogsLive", socket.assigns.self_pid})
@@ -147,6 +145,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
     {:noreply, socket}
   end
 
+  user_subscription_state("blog_category")
 
   def priority(priority) do
     case priority do

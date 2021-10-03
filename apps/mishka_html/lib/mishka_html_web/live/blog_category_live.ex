@@ -24,7 +24,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
         end
 
         Process.send_after(self(), :menu, 100)
-        Process.send_after(self(), {:subscription, self()}, 100)
+        Process.send_after(self(), {:subscription, self()}, 1000)
 
         user_id = Map.get(session, "user_id")
         socket =

@@ -71,6 +71,12 @@ defmodule MishkaContent.General.Subscription do
       {:error, :delete, :subscription, :not_found}
   end
 
+  @spec show_by_section_id(String.t()) ::
+          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+  def show_by_section_id(section_id) do
+    crud_get_by_field("section_id", section_id)
+  end
+
   @spec subscriptions([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
   def subscriptions(conditions: {page, page_size}, filters: filters) do
     from(sub in Subscription, join: user in assoc(sub, :users)) |> convert_filters_to_where(filters)

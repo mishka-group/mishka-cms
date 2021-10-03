@@ -605,7 +605,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: "add",
       priority: "low",
       status: "info",
-      user_id: repo_data.id
+      user_id: Map.get(conn.assigns, :user_id)
     }, %{post_id: repo_data.post_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     conn
@@ -638,7 +638,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: "delete",
       priority: "low",
       status: "info",
-      user_id: repo_data.id
+      user_id: Map.get(conn.assigns, :user_id)
     }, %{post_id: repo_data.post_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     conn
@@ -768,8 +768,8 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: "add",
       priority: "medium",
       status: "info",
-      user_id: repo_data.user_id
-    }, %{post_id: repo_data.post_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+      user_id: Map.get(conn.assigns, :user_id)
+    }, %{post_id: repo_data.section_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_blog_link, output_name: "blog_link_info")
@@ -788,8 +788,8 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: "edit",
       priority: "medium",
       status: "info",
-      user_id: repo_data.user_id
-    }, %{post_id: repo_data.post_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+      user_id: Map.get(conn.assigns, :user_id)
+    }, %{post_id: repo_data.section_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :edit_blog_link, output_name: "blog_link_info")
@@ -821,8 +821,8 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: "delete",
       priority: "medium",
       status: "info",
-      user_id: repo_data.user_id
-    }, %{post_id: repo_data.post_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+      user_id: Map.get(conn.assigns, :user_id)
+    }, %{post_id: repo_data.section_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_blog_link, output_name: "blog_link_info")
@@ -840,7 +840,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: "add",
       priority: "medium",
       status: "info",
-      user_id: repo_data.user_id
+      user_id: Map.get(conn.assigns, :user_id)
     }, %{section: repo_data.section, section_id: repo_data.section_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     conn
@@ -875,7 +875,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: "add",
       priority: "medium",
       status: "info",
-      user_id: repo_data.user_id
+      user_id: Map.get(conn.assigns, :user_id)
     }, %{user_id: repo_data.user_id, post_id: repo_data.post_id, sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     conn
@@ -908,7 +908,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
       action: "delete",
       priority: "medium",
       status: "info",
-      user_id: repo_data.user_id
+      user_id: Map.get(conn.assigns, :user_id)
     }, %{user_id: repo_data.user_id, post_id: repo_data.post_id})
 
     conn

@@ -69,8 +69,8 @@ defmodule MishkaContentTest.ActivityTest do
 
     test "activities", context do
       {:ok, :add, :activity, _activity_info} = assert Activity.create(Map.merge(@activity_info, %{section_id: context.post_info.id}))
-      1 = assert length Activity.activities(conditions: {1, 10}, filters: %{}).entries
-      1 = assert length Activity.activities(conditions: {1, 10}, filters: %{type: :section, action: :add}).entries
+      1 = assert length Activity.activities(conditions: {1, 1}, filters: %{}).entries
+      1 = assert length Activity.activities(conditions: {1, 1}, filters: %{type: :section, action: :add}).entries
     end
   end
 

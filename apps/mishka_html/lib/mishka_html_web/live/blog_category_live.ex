@@ -3,6 +3,11 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
   alias MishkaContent.Blog.{Category, Post, Like}
 
+  use MishkaHtml.Helpers.LiveCRUD,
+      module: Category,
+      redirect: __MODULE__,
+      router: Routes
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.ClientBlogView, "blog_category_live.html", assigns)
@@ -19,10 +24,13 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
         end
 
         Process.send_after(self(), :menu, 100)
+        Process.send_after(self(), {:subscription, self()}, 100)
+
         user_id = Map.get(session, "user_id")
         socket =
           assign(socket,
-            category_id: record.id,
+            id: record.id,
+            category_info: record,
             alias_link: record.alias_link,
             page_title: MishkaTranslator.Gettext.dgettext("html_live", "مطالب مجموعه %{title}", title: MishkaHtml.title_sanitize(record.title)),
             seo_tags: seo_tags(socket, record),
@@ -34,7 +42,8 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
             user_id: Map.get(session, "user_id"),
             posts: Post.posts(conditions: {1, 12}, filters: %{category_id: record.id}, user_id: user_id),
             categories: Category.categories(filters: %{}),
-            self_pid: self()
+            self_pid: self(),
+            subscrip: false
           )
         {:ok, socket, temporary_assigns: [posts: [], categories: []]}
 
@@ -107,6 +116,10 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
     {:noreply, socket}
   end
+
+  subscription("blog_category")
+
+  user_subscription_state("blog_category")
 
   @impl true
   def handle_info(:menu, socket) do

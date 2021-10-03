@@ -1,5 +1,6 @@
 defmodule MishkaHtml.Helpers.LiveCRUD do
   import Phoenix.LiveView
+  require MishkaTranslator.Gettext
 
   defmacro __using__(opts) do
     quote(bind_quoted: [opts: opts]) do
@@ -324,6 +325,86 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
+  defmacro subscription(section) do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_event("subscription", _params, socket) do
+        {:noreply, subscription(unquote(section), socket.assigns.id, socket.assigns.user_id, socket)}
+      end
+    end
+  end
+
+  defmacro user_subscription_state(section) do
+    quote do
+      @impl Phoenix.LiveView
+      def handle_info({:subscription, self_pid}, socket) do
+        socket =
+          create_user_subscription_state(socket, unquote(section), self_pid)
+        {:noreply, socket}
+      end
+    end
+  end
+
+  def create_user_subscription_state(socket, section, self_pid) do
+    if socket.parent_pid == self_pid do
+      case socket.assigns.user_id do
+        nil -> socket |> assign(subscrip: false)
+
+        user_id ->
+          record = MishkaContent.General.Subscription.subscriptions(conditions: {1, 1}, filters: %{
+            section: section,
+            user_id: user_id,
+            section_id: socket.assigns.section_id
+          }).entries
+
+          if(length(record) == 0, do: socket |> assign(subscrip: false), else: socket |> assign(subscrip: true))
+      end
+    else
+      socket
+    end
+  end
+
+  def subscription(_section, section_id, user_id, socket) when is_nil(section_id) or is_nil(user_id) do
+    require MishkaTranslator.Gettext
+    socket
+    |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "برای اشتراک در این بخش لطفا وارد سایت شوید."))
+  end
+
+  def subscription(section, section_id, user_id, socket) do
+    require MishkaTranslator.Gettext
+    with {:error, :get_record_by_field, _error_tag} <- MishkaContent.General.Subscription.show_by_section_id(section_id),
+         {:ok, :add, _error_tag, _repo_data} <- MishkaContent.General.Subscription.create(%{
+           section: section, section_id: section_id, user_id: user_id
+         }) do
+
+        socket
+        |> assign(subscrip: true)
+        |> put_flash(:success, MishkaTranslator.Gettext.dgettext("macro_live", "شما با موفقیت مشترک این بخش شدید. لطفا برای دیدن تاریخ انقضای اشتراک در صورت وجود داشتن یا همینطور غیر فعال سازی اشتراک وارد تنظیمات پروفایل خود شوید."))
+
+    else
+      {:error, :add, _error_tag, repo_error} ->
+        IO.inspect(repo_error)
+        socket
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطایی در ثبت اشتراک پیش آماده است.لطفا در صورت تکرار با پشتیبانی در ارتباط باشید."))
+
+      {:ok, :get_record_by_field, _error_tag, repo_data} ->
+        delete_subscription(user_id, repo_data.section_id, socket)
+    end
+  end
+
+  def delete_subscription(user_id, section_id, socket) do
+    require MishkaTranslator.Gettext
+    case MishkaContent.General.Subscription.delete(user_id, section_id) do
+      {:error, :delete, _error_tag, _repo_error} ->
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "خطای در حذف اشتراک شما پیش آماده است لطفا صفحه را رفرش کنید و در صورت تکرار با پشتیبانی در تماس باشید."))
+
+      {:ok, :delete, :subscription, _repo_data} ->
+        socket
+        |> assign(subscrip: false)
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("macro_live", "اشتراک شما با موفقیت لغو شد."))
+    end
+  end
 
   def delete_draft(socket, draft_id) do
     MishkaContent.Cache.ContentDraftManagement.delete_record(id: draft_id)
@@ -440,10 +521,10 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         assign(socket, [open_modal: true, component: component])
       {:error, :delete, type, _error_atom} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
       {:error, :delete, _error_atom, _repo_error} ->
         socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف رکورد اتفاق افتاده است."))
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطا در حذف رکورد اتفاق افتاده است."))
     end
   end
 
@@ -456,10 +537,10 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         assign(socket, authors: new_assign)
       {:error, :delete, type, _error_atom} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
       {:error, :delete, _error_atom, _repo_error} ->
         socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "خطا در حذف رکورد اتفاق افتاده است."))
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطا در حذف رکورد اتفاق افتاده است."))
     end
   end
 

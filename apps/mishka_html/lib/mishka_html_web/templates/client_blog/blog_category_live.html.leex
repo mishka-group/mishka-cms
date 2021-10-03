@@ -5,6 +5,28 @@
     @user_id %>
 
     <section class="col mx-auto client-content vazir" id="blog-posts-main-section">
+
+      <aside class="col-sm-12">
+        <h1 class="vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مجموعه") %>: <%= MishkaHtml.title_sanitize(@category_info.title) %></h1>
+        <div class="space20"></div>
+        <p class="category-side-short_description vazir">
+          <%= HtmlSanitizeEx.basic_html(@category_info.short_description) %>
+        </p>
+        <div class="space20"></div>
+
+        <a class="btn btn-outline-secondary btn-lg" phx-click="subscription">
+          <%= if @subscrip == false do %>
+            <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مشترک شوید") %>
+          <% else %>
+            <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "لغو اشتراک") %>
+          <% end %>
+        </a>
+      </aside>
+
+      <div class="space20"></div>
+
+
+
       <div class="row ltr">
         <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
                             id: :live_flash,

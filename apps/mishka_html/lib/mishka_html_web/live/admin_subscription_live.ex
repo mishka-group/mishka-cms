@@ -262,7 +262,8 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
       options: [
-        {MishkaTranslator.Gettext.dgettext("html_live", "مطالب"), :blog_post},
+        {MishkaTranslator.Gettext.dgettext("html_live", "مطلب بلاگ"), :blog_post},
+        {MishkaTranslator.Gettext.dgettext("html_live", "مجموعه بلاگ"), :blog_category},
       ],
       form: "select",
       class: "col-sm-4",

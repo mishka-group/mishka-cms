@@ -11,6 +11,11 @@
   font-display: block;
 } */
 
+.admin-home-activities-link .alert {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
 .category-side-short_description {
   font-size: 12px;
 }

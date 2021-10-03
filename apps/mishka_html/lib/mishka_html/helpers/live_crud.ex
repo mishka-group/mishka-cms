@@ -346,7 +346,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   end
 
   def create_user_subscription_state(socket, section, self_pid) do
-    if socket.parent_pid == self_pid do
+    if socket.root_pid == self_pid do
       case socket.assigns.user_id do
         nil -> socket |> assign(subscrip: false)
 
@@ -354,7 +354,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           record = MishkaContent.General.Subscription.subscriptions(conditions: {1, 1}, filters: %{
             section: section,
             user_id: user_id,
-            section_id: socket.assigns.section_id
+            section_id: socket.assigns.id
           }).entries
 
           if(length(record) == 0, do: socket |> assign(subscrip: false), else: socket |> assign(subscrip: true))

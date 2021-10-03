@@ -342,6 +342,12 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           create_user_subscription_state(socket, unquote(section), self_pid)
         {:noreply, socket}
       end
+
+      # skip activities
+      @impl Phoenix.LiveView
+      def handle_info(_, socket) do
+        {:noreply, socket}
+      end
     end
   end
 
@@ -373,17 +379,36 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   def subscription(section, section_id, user_id, socket) do
     require MishkaTranslator.Gettext
     with {:error, :get_record_by_field, _error_tag} <- MishkaContent.General.Subscription.show_by_section_id(section_id),
-         {:ok, :add, _error_tag, _repo_data} <- MishkaContent.General.Subscription.create(%{
+         {:ok, :add, error_atom, _repo_data} <- MishkaContent.General.Subscription.create(%{
            section: section, section_id: section_id, user_id: user_id
          }) do
+
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: activity_section_by_error_atom(error_atom),
+          section_id: section_id,
+          action: "add",
+          priority: "low",
+          status: "info",
+          user_id: user_id
+        })
 
         socket
         |> assign(subscrip: true)
         |> put_flash(:success, MishkaTranslator.Gettext.dgettext("macro_live", "شما با موفقیت مشترک این بخش شدید. لطفا برای دیدن تاریخ انقضای اشتراک در صورت وجود داشتن یا همینطور غیر فعال سازی اشتراک وارد تنظیمات پروفایل خود شوید."))
 
     else
-      {:error, :add, _error_tag, repo_error} ->
-        IO.inspect(repo_error)
+      {:error, :add, error_atom, repo_error} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: activity_section_by_error_atom(error_atom),
+          section_id: section_id,
+          action: "add",
+          priority: "medium",
+          status: "error",
+          user_id: user_id
+        }, %{errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params)})
+
         socket
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطایی در ثبت اشتراک پیش آماده است.لطفا در صورت تکرار با پشتیبانی در ارتباط باشید."))
 
@@ -395,11 +420,31 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   def delete_subscription(user_id, section_id, socket) do
     require MishkaTranslator.Gettext
     case MishkaContent.General.Subscription.delete(user_id, section_id) do
-      {:error, :delete, _error_tag, _repo_error} ->
+      {:error, :delete, error_atom, repo_error} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: activity_section_by_error_atom(error_atom),
+          section_id: section_id,
+          action: "delete",
+          priority: "medium",
+          status: "error",
+          user_id: user_id
+        }, %{errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params)})
+
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "خطای در حذف اشتراک شما پیش آماده است لطفا صفحه را رفرش کنید و در صورت تکرار با پشتیبانی در تماس باشید."))
 
-      {:ok, :delete, :subscription, _repo_data} ->
+      {:ok, :delete, error_atom, _repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: activity_section_by_error_atom(error_atom),
+          section_id: section_id,
+          action: "delete",
+          priority: "low",
+          status: "info",
+          user_id: user_id
+        })
+
         socket
         |> assign(subscrip: false)
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("macro_live", "اشتراک شما با موفقیت لغو شد."))

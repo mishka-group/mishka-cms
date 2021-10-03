@@ -5,7 +5,7 @@ defenum ContentRobotsEnum, IndexFollow: 0, IndexNoFollow: 1, NoIndexFollow: 2, N
 defenum CategoryVisibility, show: 0, invisibel: 1, test_show: 2, test_invisibel: 3
 defenum PostVisibility, show: 0, invisibel: 1, test_show: 2, test_invisibel: 3
 defenum CommentSection, blog_post: 0
-defenum SubscriptionSection, blog_post: 0
+defenum SubscriptionSection, blog_post: 0, blog_category: 1
 defenum BlogLinkType, bottom: 0, inside: 1, featured: 2
 defenum ActivitiesStatusEnum, error: 0, info: 1, warning: 2, report: 3, throw: 4, exit: 5
 defenum ActivitiesTypeEnum, section: 0, email: 1, internal_api: 2, external_api: 3, html_router: 4, api_router: 5, db: 6

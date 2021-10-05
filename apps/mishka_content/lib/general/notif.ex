@@ -110,4 +110,8 @@ defmodule MishkaContent.General.Notif do
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: Notif.__schema__(:fields)
   def allowed_fields(:string), do: Notif.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
+
+
+  # TODO: Create a link creator for navigating to page concerned
+  # TODO: top list should create a link when user clicks on a notification
 end

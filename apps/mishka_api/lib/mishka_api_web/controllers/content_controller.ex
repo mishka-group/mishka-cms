@@ -1,9 +1,6 @@
 defmodule MishkaApiWeb.ContentController do
   use MishkaApiWeb, :controller
 
-  # TODO: add ip limitter and os info
-  # TODO: handel cache of contents
-
   alias MishkaContent.Blog.{Category, Post, Like, Tag, TagMapper, BlogLink, Author}
   alias MishkaContent.General.{Comment, CommentLike, Bookmark, Notif, Subscription}
 

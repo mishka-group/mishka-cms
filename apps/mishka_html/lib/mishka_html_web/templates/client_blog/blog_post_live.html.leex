@@ -61,7 +61,6 @@
               نویسندگان:
                <%= for auther <- @post.blog_authors do %>
                 <span> <%= MishkaHtml.full_name_sanitize(auther.users.full_name) %> \</span>
-                <%# TODO: create user profile picture %>
                <% end %>
               </span>
               <% end %>

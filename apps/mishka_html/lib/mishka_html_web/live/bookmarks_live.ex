@@ -34,7 +34,6 @@ defmodule MishkaHtmlWeb.BookmarksLive do
 
   @impl true
   def handle_event("navigate_to_page", %{"section-id" => section_id}, socket) do
-    # TODO: it should be changed when we have more section than now
     socket = case MishkaContent.Cache.BookmarkManagement.get_record(socket.assigns.user_id, section_id) do
       nil ->
         socket
@@ -118,7 +117,6 @@ defmodule MishkaHtmlWeb.BookmarksLive do
   end
 
   defp seo_tags(socket) do
-    # TODO: should change with site address
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{
       image: "#{site_link}/images/mylogo.png",

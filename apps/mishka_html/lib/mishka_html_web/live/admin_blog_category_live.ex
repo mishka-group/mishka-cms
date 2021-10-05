@@ -88,7 +88,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   @impl true
   def handle_event("save", %{"category" => params}, socket) do
-    # TODO: put flash msg should be imported to gettext
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
       [] -> socket
       fields_list ->
@@ -140,7 +139,6 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
 
   @impl true
   def handle_event("save", _params, socket) do
-    # TODO: put flash msg should be imported to gettext
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
       [] -> socket
       fields_list ->

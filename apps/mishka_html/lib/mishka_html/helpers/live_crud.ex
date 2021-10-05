@@ -71,7 +71,6 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-  # TODO: we delete Notif to improve it on new version of the project
   defmacro delete_list_item(function, component, user_id, do: after_condition, before: before_condition)  do
     quote do
       @impl Phoenix.LiveView

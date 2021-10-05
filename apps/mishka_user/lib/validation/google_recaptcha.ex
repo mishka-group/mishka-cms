@@ -1,5 +1,4 @@
 defmodule MishkaUser.Validation.GoogleRecaptcha do
-  # TODO: next version should have remoteip checker
   alias MishkaDatabase.Cache.SettingCache
   require MishkaTranslator.Gettext
 
@@ -13,7 +12,7 @@ defmodule MishkaUser.Validation.GoogleRecaptcha do
 
       response.body |> Jason.decode!() |> error_handler()
     else
-      {:finch, {:error, _error}} -> {:error, :verify, "This is a server-side error, if you see it again please contact support"} # TODO: should save on log activity
+      {:finch, {:error, _error}} -> {:error, :verify, "This is a server-side error, if you see it again please contact support"}
 
       {:captcha_status, developer} ->
         challenge_ts = DateTime.utc_now() |> DateTime.add(1124000, :second) |> DateTime.to_unix()

@@ -35,7 +35,6 @@ defmodule MishkaHtmlWeb.HomeLive do
   end
 
   defp seo_tags(socket) do
-    # TODO: should change with site address
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{
       image: "#{site_link}/images/mylogo.png",

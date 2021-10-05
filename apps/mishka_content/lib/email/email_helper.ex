@@ -2,11 +2,7 @@ defmodule MishkaContent.Email.EmailHelper do
   alias MishkaContent.Email.{Email, Mailer}
   require MishkaTranslator.Gettext
 
-  # TODO: shluod be in config file or agent on ram
-  # TODO: create type space for this file
-
   def send(type, params) do
-    # TODO: we should have some config to let admin user select how to send emails when he has many request, queue or send immediately
     Task.Supervisor.async_nolink(MishkaContent.Email.EmailHelperTaskSupervisor, fn ->
       type
       |> create_email_info(params)

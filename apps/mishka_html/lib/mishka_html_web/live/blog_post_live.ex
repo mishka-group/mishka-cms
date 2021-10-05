@@ -7,20 +7,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   alias MishkaContent.General.{Comment, CommentLike, Bookmark}
   alias MishkaContent.Blog.BlogLink
 
-
-  # TODO: sharing to social media sites
-  # TODO: show Options of a post on page
-  # TODO: create AMP page
-  # TODO: create Print page
-  # TODO: add subscription for user
-  # TODO: show coustom title in post and header
-  # TODO: show unpublish time if exists and counter
-  # TODO: create reporting popup and db for administartor or editor
-  # TODO: show hits and update it
-  # TODO: show post links with a html box
-  # TODO: show short link to share, this should be event base if exist load on db and copy on clipboard if not create
-  # TODO: Create user profile picture after creating media manager
-
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.ClientBlogView, "blog_post_live.html", assigns)
@@ -284,7 +270,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
   @impl true
   def handle_event("send_comment", %{"comment" => %{"description" => description}}, socket) do
-    # TODO: check what comment status dose admin need?
     socket = with {:post, false} <- {:post, is_nil(Post.post(socket.assigns.alias_link, "active"))},
          {:ok, :add, :comment, _repo_data} <- Comment.create(%{description: description, sub: socket.assigns.sub, section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
           notify_subscribers({:comment, socket.assigns.page})
@@ -418,7 +403,6 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   defp seo_tags(socket, post) do
-    # TODO: should change with site address
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{
       image: "#{site_link}/#{post.main_image}",

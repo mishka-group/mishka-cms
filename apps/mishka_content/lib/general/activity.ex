@@ -92,7 +92,6 @@ defmodule MishkaContent.General.Activity do
     }
   end
 
-  # TODO: we need a function to store log with queue , rabitMQ or GenStage
   @spec create_activity_by_task(map(), map()) :: Task.t()
   def create_activity_by_task(params, extra \\ %{}) do
     Task.Supervisor.async_nolink(MishkaContent.General.ActivityTaskSupervisor, fn ->

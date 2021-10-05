@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.AdminSeoLive do
   use MishkaHtmlWeb, :live_view
 
-  # TODO: change module
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.BlogLink,
       redirect: __MODULE__,

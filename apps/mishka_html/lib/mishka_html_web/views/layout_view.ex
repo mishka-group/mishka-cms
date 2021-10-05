@@ -1,13 +1,6 @@
 defmodule MishkaHtmlWeb.LayoutView do
   use MishkaHtmlWeb, :view
 
-  # TODO: we should create a seprate project for seo
-  # TODO: add Json LD
-  # TODO: add Breadcrumb
-  # TODO: it should be editable
-  # TODO: image:width and image:height of Open Graph protocol should be dynamic
-  # TODO: these references should be implemented [https://ogp.me/, https://schema.org/]
-
   # SEO tags function should have all required fields
   def seo_tags(%{image: _image, title: _title, description: _description, type: _type, keywords: _keywords, link: _link} = tags) do
     raw ("#{seo_tags_converter(tags, :basic_tag)} #{seo_tags_converter(tags, :social_tag)} ")

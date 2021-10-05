@@ -3,7 +3,6 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   alias MishkaUser.Acl.Permission
 
-  # TODO: change module
   use MishkaHtml.Helpers.LiveCRUD,
     module: MishkaUser.Acl.Permission,
     redirect: __MODULE__,

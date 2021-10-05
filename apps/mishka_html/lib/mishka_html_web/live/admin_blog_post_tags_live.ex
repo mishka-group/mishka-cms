@@ -46,7 +46,6 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
       {:ok, socket}
   end
 
-  # TODO: replace with CRUD LIVE
   @impl true
   def handle_event("delete", %{"id" => tag_id} = _params, socket) do
     TagMapper.delete(socket.assigns.post_id, tag_id)

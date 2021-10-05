@@ -37,7 +37,6 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   list_search_and_action()
 
   delete_list_item(:roles, DeleteErrorComponent, false, do: fn data ->
-    # TODO: this is a good job to use notif or etc
     data
   end, before: fn x -> MishkaUser.Acl.AclTask.delete_role(x) end)
 

@@ -178,7 +178,6 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
   end
 
   defp seo_tags(socket, category) do
-    # TODO: should change with site address
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{
       image: "#{site_link}/#{category.main_image}",

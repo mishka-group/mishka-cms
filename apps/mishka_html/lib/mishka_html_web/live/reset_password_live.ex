@@ -57,7 +57,6 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
   @impl true
   def handle_event("save", %{"email" => email} = params, socket) do
-    # TODO: should save ip and email on state ro rate limit
     token = params["g-recaptcha-response"]
     socket = with {:ok, :verify, _token_info} <- MishkaUser.Validation.GoogleRecaptcha.verify(token),
          {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
@@ -114,7 +113,6 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
   end
 
   defp seo_tags(socket) do
-    # TODO: should change with site address
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{
       image: "#{site_link}/images/mylogo.png",

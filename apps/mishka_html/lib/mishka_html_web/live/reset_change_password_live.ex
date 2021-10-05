@@ -122,7 +122,6 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
   end
 
   defp seo_tags(socket, random_link) do
-    # TODO: should change with site address
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{
       image: "#{site_link}/images/mylogo.png",

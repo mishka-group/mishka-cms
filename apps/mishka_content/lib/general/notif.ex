@@ -110,7 +110,7 @@ defmodule MishkaContent.General.Notif do
       extra: notif.extra,
       user_id: notif.user_id,
       type: notif.type,
-      target: notif.target,
+      target: notif.target
     }
   end
 
@@ -121,5 +121,20 @@ defmodule MishkaContent.General.Notif do
 
   # TODO: Create a link creator for navigating to page concerned
   # TODO: top list should create a link when user clicks on a notification
-  # TODO: Create user_notif_statuses migration {user_id, notif_id, inserted_at, status_type}
+
+  def count_un_read(user_id) do
+    from(
+      notif in Notif,
+      left_join: status in assoc(notif, :user_notif_statuses),
+      where: notif.user_id == ^user_id,
+      or_where: is_nil(notif.user_id),
+      where: is_nil(status.type),
+      select: count(notif.id)
+    )
+    |> MishkaDatabase.Repo.one()
+  rescue
+    db_error ->
+      MishkaContent.db_content_activity_error("notif", "read", db_error)
+      0
+  end
 end

@@ -283,6 +283,23 @@ header {
     top: 9px;
 }
 
+.notif-drop {
+  position: absolute;
+  z-index: 10000;
+  top:60px;
+  min-height: 200px;
+  background: #161d20;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 1px 1px 13px 1px #787878;
+  text-align: justify;
+}
+
+span.d-inline-block.bg-danger.rounded-circle {
+  width: .5em; 
+  height: .5em;
+}
+
 .client-notif a {
   color: #ffffff !important;
   text-decoration: none;

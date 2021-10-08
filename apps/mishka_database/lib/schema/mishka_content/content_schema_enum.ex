@@ -12,7 +12,7 @@ defenum ActivitiesTypeEnum, section: 0, email: 1, internal_api: 2, external_api:
 defenum ActivitiesSection, blog_post: 0, blog_category: 1, comment: 2, tag: 3, other: 4, blog_author: 5, blog_post_like: 6, blog_tag_mapper: 7, blog_link: 8, blog_tag: 9, activity: 10, bookmark: 11, comment_like: 12, notif: 13, subscription: 14, setting: 15, permission: 16, role: 17, user_role: 18, identity: 19, user: 20
 defenum ActivitiesAction, add: 0, edit: 1, delete: 2, destroy: 3, read: 4, send_request: 5, receive_request: 6, other: 7, auth: 8
 defenum BookmarkSection, blog_post: 0
-defenum NotifSection, blog_post: 0, blog_category: 1, blog_comment: 3, admin: 4, user_only: 5, other: 6
+defenum NotifSection, blog_post: 0, admin: 1, user_only: 3, public: 4
 defenum NotifStatusType, read: 0, skipped: 1
 defenum NotifType, client: 0, admin: 1
-defenum NotifTarget, website: 0, mobile: 1, android: 2, ios: 3, cli: 4, all: 5
+defenum NotifTarget, all: 0, mobile: 1, android: 2, ios: 3, cli: 4

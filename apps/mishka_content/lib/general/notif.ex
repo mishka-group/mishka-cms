@@ -45,7 +45,6 @@ defmodule MishkaContent.General.Notif do
     crud_get_record(id)
   end
 
-
   @spec notifs([{:conditions, {integer() | String.t(), integer() | String.t()} | {integer() | String.t(), integer() | String.t(), :client}} | {:filters, map()}, ...]) ::
           Scrivener.Page.t()
   def notifs(conditions: {page, page_size, :client}, filters: filters) do
@@ -77,6 +76,7 @@ defmodule MishkaContent.General.Notif do
   defp fields(query, :client) do
     from [notif] in query,
     left_join: user in assoc(notif, :users),
+    left_join: status in assoc(notif, :user_notif_statuses),
     or_where: is_nil(notif.user_id),
     order_by: [desc: notif.inserted_at, desc: notif.id],
     select: %{
@@ -87,7 +87,10 @@ defmodule MishkaContent.General.Notif do
       short_description: notif.short_description,
       expire_time: notif.expire_time,
       extra: notif.extra,
-      user_id: notif.user_id
+      user_id: notif.user_id,
+      type: notif.type,
+      target: notif.target,
+      status_type: status.type
     }
   end
 
@@ -103,7 +106,9 @@ defmodule MishkaContent.General.Notif do
       short_description: notif.short_description,
       expire_time: notif.expire_time,
       extra: notif.extra,
-      user_id: notif.user_id
+      user_id: notif.user_id,
+      type: notif.type,
+      target: notif.target,
     }
   end
 
@@ -114,4 +119,5 @@ defmodule MishkaContent.General.Notif do
 
   # TODO: Create a link creator for navigating to page concerned
   # TODO: top list should create a link when user clicks on a notification
+  # TODO: Create user_notif_statuses migration {user_id, notif_id, inserted_at, status_type}
 end

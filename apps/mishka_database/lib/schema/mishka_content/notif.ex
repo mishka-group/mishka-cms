@@ -9,19 +9,22 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
   schema "notifs" do
 
     field(:status, ContentStatusEnum, null: false)
-    field(:section, NotifSection, size: 100, null: false)
+    field(:section, NotifSection, null: false)
     field(:section_id, :binary_id, primary_key: false, null: true)
+    field(:type, NotifType, null: false)
+    field(:target, NotifTarget, null: false)
     field(:short_description, :string, size: 350, null: true)
     field(:expire_time, :utc_datetime, null: true)
     field(:extra, :map, null: true)
 
     belongs_to :users, MishkaDatabase.Schema.MishkaUser.User, foreign_key: :user_id, type: :binary_id
+    has_many :user_notif_statuses, MishkaDatabase.Schema.MishkaContent.UserNotifStatus, foreign_key: :notif_id
 
     timestamps(type: :utc_datetime)
   end
 
-  @all_fields ~w(status section section_id short_description expire_time extra user_id)a
-  @all_required ~w(status section)a
+  @all_fields ~w(status section section_id short_description expire_time extra user_id type target)a
+  @all_required ~w(status section type target)a
 
   @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do

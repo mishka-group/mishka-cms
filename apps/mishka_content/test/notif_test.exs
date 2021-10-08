@@ -19,6 +19,8 @@ defmodule MishkaContentTest.NotifTest do
     section_id: Ecto.UUID.generate,
     short_description: "this is a test of notif",
     expire_time: DateTime.utc_now(),
+    type: :client,
+    target: :all,
     extra: %{test: "this is a test of notif"},
   }
 

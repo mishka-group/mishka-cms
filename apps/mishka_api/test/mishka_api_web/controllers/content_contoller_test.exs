@@ -76,6 +76,8 @@ defmodule MishkaApiWeb.ContentControllerTest do
     section_id: Ecto.UUID.generate,
     short_description: "this is a test of notif",
     expire_time: DateTime.utc_now(),
+    type: :client,
+    target: :all,
     extra: %{test: "this is a test of notif"},
   }
 
@@ -1071,7 +1073,6 @@ defmodule MishkaApiWeb.ContentControllerTest do
       {:ok, :add, :notif, _notif_info} = assert Notif.create(@notif_info)
       {:ok, :add, :notif, _notif_info} = assert Notif.create(Map.merge(@notif_info, %{user_id: user_info1.id}))
 
-
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
@@ -1118,6 +1119,8 @@ defmodule MishkaApiWeb.ContentControllerTest do
         section_id: Ecto.UUID.generate,
         short_description: "this is a test of notif",
         expire_time: DateTime.utc_now(),
+        type: :client,
+        target: :all,
         extra: %{test: "this is a test of notif"},
       }
 

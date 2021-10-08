@@ -14,6 +14,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
     field(:type, NotifType, null: false)
     field(:target, NotifTarget, null: false)
     field(:short_description, :string, size: 350, null: true)
+    field(:description, :string, null: true)
     field(:expire_time, :utc_datetime, null: true)
     field(:extra, :map, null: true)
 
@@ -23,7 +24,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
     timestamps(type: :utc_datetime)
   end
 
-  @all_fields ~w(status section section_id short_description expire_time extra user_id type target)a
+  @all_fields ~w(status section section_id short_description description expire_time extra user_id type target)a
   @all_required ~w(status section type target)a
 
   @spec changeset(struct(), map()) :: Ecto.Changeset.t()

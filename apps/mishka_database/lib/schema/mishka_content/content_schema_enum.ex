@@ -13,3 +13,6 @@ defenum ActivitiesSection, blog_post: 0, blog_category: 1, comment: 2, tag: 3, o
 defenum ActivitiesAction, add: 0, edit: 1, delete: 2, destroy: 3, read: 4, send_request: 5, receive_request: 6, other: 7, auth: 8
 defenum BookmarkSection, blog_post: 0
 defenum NotifSection, blog_post: 0, blog_category: 1, blog_comment: 3, admin: 4, user_only: 5, other: 6
+defenum NotifStatusType, read: 0, skipped: 1
+defenum NotifType, client: 0, admin: 1
+defenum NotifTarget, website: 0, mobile: 1, android: 2, ios: 3, cli: 4, all: 5

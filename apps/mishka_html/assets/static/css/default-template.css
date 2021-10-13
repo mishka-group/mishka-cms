@@ -11,6 +11,42 @@
   font-display: block;
 } */
 
+.admin-notif-list {
+  padding: 0;
+}
+
+.admin-notif-short-dis {
+  font-size: 16px;
+}
+
+.odd-list-of-admin-notif {
+  background-color: #929090;
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+
+.notif-admin-list-badge {
+  font-size: 15px !important;
+}
+
+.admin-notif-section {
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.admin-notif-section {
+  color: #000000;
+}
+
+.admin-notif-list {
+  margin: 15px 0;
+}
+
+.col-sm-12.admin-notif-short-dis {
+  padding: 10px;
+  font-size: 16px;
+}
+
 .admin-home-activities-link .alert {
   padding-left: 5px !important;
   padding-right: 5px !important;

@@ -95,6 +95,8 @@ defmodule MishkaHtmlWeb.Router do
     live "/blog-authors/:post_id", AdminBlogPostAuthorsLive
     live "/settings", AdminSettingsLive
     live "/setting", AdminSettingLive
+    live "/notifs", AdminBlogNotifsLive
+    live "/notif", AdminBlogNotifLive
   end
 
   @impl Plug.ErrorHandler

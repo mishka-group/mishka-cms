@@ -11,6 +11,7 @@ defmodule MishkaHtmlWeb.HomeLive do
   @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
+    IO.inspect(socket)
     socket =
       assign(socket,
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "صفحه اصلی وب سایت تگرگ"),

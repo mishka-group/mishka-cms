@@ -122,7 +122,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                           <span class="badge bg-primary"><%= @notif_count %></span>
                       </div>
 
-                      <%= if @show_notif do %>
+                      <%= if @show_notif and !is_nil(@notifs) and @notifs != [] do %>
                         <div class="col-sm-3 notif-drop vazir rtl">
                           <%= for notif <- @notifs do %>
                             <p>
@@ -134,7 +134,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                               <span><%= notif.short_description %></span>
                               <div class="space10"> </div>
                               <small class="d-block text-muted">
-                                <%= get_size_of_words(notif.description, 10)  %> ... برای ادامه کلیک کنید ...
+                                <%= if get_size_of_words(notif.description, 10) != "", do: get_size_of_words(notif.description, 10) <> " ... برای ادامه کلیک کنید ..." %>
                               </small>
                             </p>
                           <% end %>
@@ -264,7 +264,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   end
 
   defp show_or_close_notif(notif, _show_notif, socket) when is_nil(notif) do
-    notifs = MishkaContent.General.Notif.notifs(conditions: {1, 14, :client}, filters: %{
+    notifs = MishkaContent.General.Notif.notifs(conditions: {1, 6, :client}, filters: %{
       user_id: socket.assigns.user_id,
       target: :all,
       type: :client,
@@ -283,7 +283,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
      Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_menu_and_notif", notif)
   end
 
-  def get_size_of_words(string, count) do
+  def get_size_of_words(string, count) when not is_nil(string) do
     string
     |> String.split(" ")
     |> Enum.with_index(fn element, index -> if index <= count, do: element end)
@@ -291,4 +291,5 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
     |> Enum.join(" ")
   end
 
+  def get_size_of_words(_string, _count), do: ""
 end

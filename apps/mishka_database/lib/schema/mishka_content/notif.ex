@@ -10,9 +10,9 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
 
     field(:status, ContentStatusEnum, null: false)
     field(:section, NotifSection, null: false)
-    field(:section_id, :binary_id, primary_key: false, null: true)
     field(:type, NotifType, null: false)
     field(:target, NotifTarget, null: false)
+    field(:section_id, :binary_id, primary_key: false, null: true)
     field(:short_description, :string, size: 350, null: true)
     field(:description, :string, null: true)
     field(:expire_time, :utc_datetime, null: true)

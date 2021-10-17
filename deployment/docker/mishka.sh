@@ -31,10 +31,10 @@ LIVE_VIEW_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 32 | tr -
 
 
 function update_config() {        
-    local CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/.secret` 
-    local API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/.secret` 
-    local SSL=`jq '.ssl' $PWD/.secret`
-    local CMS_PORT=`jq '.cms_port' $PWD/.secret`
+    local CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/etc/.secret` 
+    local API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/etc/.secret` 
+    local SSL=`jq '.ssl' $PWD/etc/.secret`
+    local CMS_PORT=`jq '.cms_port' $PWD/etc/.secret`
 
     local CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
     local API_DOMAIN_NAME=${API_DOMAIN_NAME//[ #\"-%\"]}
@@ -42,36 +42,36 @@ function update_config() {
     local CMS_PORT=${CMS_PORT//[ #\"-%\"]}
     
     if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
-        cp --force docker-compose_with_nginx.yml docker-compose.yml
+        cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
         # change domains 
-        sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./nginx/conf/conf.d/mishka_cms.conf
-        sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./nginx/conf/conf.d/mishka_api.conf
+        sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+        sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
         # change ports
-        sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./nginx/conf/conf.d/mishka_cms.conf 
-        sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./nginx/conf/conf.d/mishka_api.conf
+        sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+        sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
         # enable ssl 
-        sed -i 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./nginx/conf/ssl.conf
-        sed -i 's~#include~include~' ./nginx/conf/conf.d/mishka_api.conf 
-        sed -i 's~#include~include~' ./nginx/conf/conf.d/mishka_cms.conf 
+        sed -i 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
+        sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+        sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
     elif [[ $CMS_PORT == "80" ]]; then 
-        cp --force docker-compose_with_nginx.yml docker-compose.yml
+        cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
         # change domains
-        sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./nginx/conf/conf.d/mishka_cms.conf
-        sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./nginx/conf/conf.d/mishka_api.conf
+        sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+        sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
         # change ports
-        sed -i 's~MISHKA_CMS_PORT~80~' ./nginx/conf/conf.d/mishka_cms.conf 
-        sed -i 's~MISHKA_API_PORT~80~' ./nginx/conf/conf.d/mishka_api.conf 
+        sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+        sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
     else 
-        cp --force docker-compose_without_nginx.yml docker-compose.yml
+        cp --force dockers/docker-compose_without_nginx.yml dockers/docker-compose.yml
     fi
 
     # change value in docker-compose.yml
-    if [ -f $PWD/.secret ]; then 
-        local DATABASE_USER=`jq '.database_user' $PWD/.secret`
-        local DATABASE_PASSWORD=`jq '.database_password' $PWD/.secret`
-        local DATABASE_NAME=`jq '.database_name' $PWD/.secret`
-        local POSTGRES_USER=`jq '.postgres_user' $PWD/.secret`
-        local POSTGRES_PASSWORD=`jq '.postgres_password' $PWD/.secret`  
+    if [ -f $PWD/etc/.secret ]; then 
+        local DATABASE_USER=`jq '.database_user' $PWD/etc/.secret`
+        local DATABASE_PASSWORD=`jq '.database_password' $PWD/etc/.secret`
+        local DATABASE_NAME=`jq '.database_name' $PWD/etc/.secret`
+        local POSTGRES_USER=`jq '.postgres_user' $PWD/etc/.secret`
+        local POSTGRES_PASSWORD=`jq '.postgres_password' $PWD/etc/.secret`  
 
         # remove double qoutaion
         local DATABASE_USER=${DATABASE_USER//[ #\"-%\"]}
@@ -80,11 +80,11 @@ function update_config() {
         local POSTGRES_USER=${POSTGRES_USER//[ #\"-%\"]}
         local POSTGRES_PASSWORD=${POSTGRES_PASSWORD//[ #\"-%\"]}
 
-        sed -i 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' docker-compose.yml 
-        sed -i 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' docker-compose.yml 
-        sed -i 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' docker-compose.yml 
-        sed -i 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' docker-compose.yml 
-        sed -i 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' docker-compose.yml 
+        sed -i 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
+        sed -i 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
+        sed -i 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
+        sed -i 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
+        sed -i 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
     else 
         echo -e "${Red}.secret file not found, Operation cenceled, Please use 'mishka.sh --build' for install app${NC}"
         exit 1
@@ -94,12 +94,12 @@ function update_config() {
 
 
 function cleanup() {
-    if [ -f docker-compose.yml ] && [ -f .secret ]; then 
-        CMS_PORT=`jq '.cms_port' $PWD/.secret`
+    if [ -f dockers/docker-compose.yml ] && [ -f etc/.secret ]; then 
+        CMS_PORT=`jq '.cms_port' $PWD/etc/.secret`
         CMS_PORT=${CMS_PORT//[ #\"-%\"]}
 
         # Stop Services and Delete Networks
-        docker-compose -p mishka_cms down
+        docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
         
         # Delete Images
         if [[ $CMS_PORT == "80" ]] || [[ $CMS_PORT == "443" ]]; then 
@@ -111,14 +111,14 @@ function cleanup() {
         fi
 
         # Delete SSL certificate 
-        if [ -f certbot/letsencrypt ]; then 
-            rm -r certbot/letsencrypt
+        if [ -f etc/certbot/letsencrypt ]; then 
+            rm -r etc/certbot/letsencrypt
             echo -e "${Red} mishka ssl deleted..${NC}"
         fi
 
         # Delete temp Files
         if [ -f ../../Dockerfile ]; then
-            rm docker-compose.yml ../../Dockerfile
+            rm dockers/docker-compose.yml ../../Dockerfile
             echo -e "${Green} mishka Temp Files deleted..${NC}"
         fi
 
@@ -127,13 +127,13 @@ function cleanup() {
         echo -e "${Green} mishka volumes deleted..${NC}"
 
         # Delete Secrets
-        if [ -f $PWD/.secret ]; then 
-            rm $PWD/.secret
+        if [ -f $PWD/etc/.secret ]; then 
+            rm $PWD/etc/.secret
             echo -e "${Green} mishka secret file deleted..${NC}"
         fi 
 
         # Fresh nginx conf
-        cp --force nginx/conf/sample_conf/mishka_* nginx/conf/conf.d
+        cp --force etc/nginx/conf/sample_conf/mishka_* etc/nginx/conf/conf.d
        
         
     else 
@@ -148,20 +148,20 @@ function ssl_generator() {
     local API_DOMAIN_NAME=$3
 
     # create dhparam2048
-    if [ ! -f certbot/master_certificates/dhparam2048.pem ]; then 
-        openssl dhparam -out certbot/master_certificates/dhparam2048.pem 2048
+    if [ ! -f etc/certbot/master_certificates/dhparam2048.pem ]; then 
+        openssl dhparam -out etc/certbot/master_certificates/dhparam2048.pem 2048
     fi
 
     # remove old certs
-    if [ -d ./certbot/letsencrypt ]; then 
-        rm -rf ./certbot/letsencrypt
+    if [ -d etc/certbot/letsencrypt ]; then 
+        rm -rf etc/certbot/letsencrypt
     fi
 
     # create ssl for domains
     docker run -it --rm --name certbot  \
     -p 80:80 \
     -p 443:443 \
-    -v "$PWD/certbot/letsencrypt:/etc/letsencrypt"  \
+    -v "$PWD/etc/certbot/letsencrypt:/etc/letsencrypt"  \
     certbot/certbot certonly -q \
     --standalone \
     --agree-tos \
@@ -228,12 +228,12 @@ fi
 
 case $1 in 
     "--build")
-        if [ ! -f $PWD/.secret ]; then 
+        if [ ! -f $PWD/etc/.secret ]; then 
             if [ -d .git ];then 
                 git pull
             fi 
 
-            cp Dockerfile ../../
+            cp dockers/Dockerfile ../../
 
             read -p $'\e[32mChoose Environment Type [\'prod or dev, defualt is dev\']\e[0m: ' ENV_TYPE
 
@@ -336,7 +336,7 @@ case $1 in
             "admin_email": "'$ADMIN_EMAIL'",
             "ssl": "'$SSL'",
             "protocol": "'$PROTOCOL'"
-            }' > $PWD/.secret
+            }' > $PWD/etc/.secret
 
             
             # build image
@@ -361,7 +361,7 @@ case $1 in
                 update_config
 
                 # start containers 
-                docker-compose -p mishka_cms up -d 
+                docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
 
                 # remove double qoutaion
                 CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
@@ -415,16 +415,16 @@ case $1 in
             git pull
         fi 
 
-        cp Dockerfile ../../
+        cp dockers/Dockerfile ../../
         # using old value
-        TOKEN_JWT_KEY=`jq '.token_jwt_key' $PWD/.secret` 
-        SECRET_CURRENT_TOKEN_SALT=`jq '.secret_current_token_salt' $PWD/.secret` 
-        SECRET_REFRESH_TOKEN_SALT=`jq '.secret_refresh_token_salt' $PWD/.secret` 
-        SECRET_ACCESS_TOKEN_SALT=`jq '.secret_access_token_salt' $PWD/.secret` 
-        CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/.secret` 
-        API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/.secret` 
-        CMS_PORT=`jq '.cms_port' $PWD/.secret` 
-        API_PORT=`jq '.api_port' $PWD/.secret` 
+        TOKEN_JWT_KEY=`jq '.token_jwt_key' $PWD/etc/.secret` 
+        SECRET_CURRENT_TOKEN_SALT=`jq '.secret_current_token_salt' $PWD/etc/.secret` 
+        SECRET_REFRESH_TOKEN_SALT=`jq '.secret_refresh_token_salt' $PWD/etc/.secret` 
+        SECRET_ACCESS_TOKEN_SALT=`jq '.secret_access_token_salt' $PWD/etc/.secret` 
+        CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/etc/.secret` 
+        API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/etc/.secret` 
+        CMS_PORT=`jq '.cms_port' $PWD/etc/.secret` 
+        API_PORT=`jq '.api_port' $PWD/etc/.secret` 
 
         if [[ $TOKEN_JWT_KEY != "" ]]; then 
             docker build -t mishak_app:latest -f ../../Dockerfile \
@@ -449,7 +449,7 @@ case $1 in
             echo -e "${Green}Your App updated Successfully${NC}"
 
             # recreate containers
-            docker-compose -p mishka_cms up -d 
+            docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
             rm ../../Dockerfile
         else 
             echo -e "${Red}secret file does not exist in $PWD/ ${Green} Please use 'mishka.sh --build' for fresh install ${NC}"
@@ -457,13 +457,13 @@ case $1 in
     ;;
 
     "--start")
-        if [ -f $PWD/.secret ]; then 
-            docker-compose -p mishka_cms up -d 
-            CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/.secret` 
-            API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/.secret` 
-            CMS_PORT=`jq '.cms_port' $PWD/.secret` 
-            API_PORT=`jq '.api_port' $PWD/.secret` 
-            ADMIN_EMAIL=`jq '.admin_email' $PWD/.secret`
+        if [ -f $PWD/etc/.secret ]; then 
+            docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
+            CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/etc/.secret` 
+            API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/etc/.secret` 
+            CMS_PORT=`jq '.cms_port' $PWD/etc/.secret` 
+            API_PORT=`jq '.api_port' $PWD/etc/.secret` 
+            ADMIN_EMAIL=`jq '.admin_email' $PWD/etc/.secret`
 
             # remove double qoutaion
             CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
@@ -479,7 +479,7 @@ case $1 in
                 echo -e "${Green}Mishka Api Available on    --> $SPACE http://$API_DOMAIN_NAME:$API_PORT $END_SPACE ${NC}"
             fi
         else 
-            echo -e "${Red}secret file does not exist in $PWD/ ${Green} Please use 'mishka.sh --build' for install ${NC}"
+            echo -e "${Red}secret file does not exist in $PWD/etc ${Green} Please use 'mishka.sh --build' for install ${NC}"
         fi
     ;;
 
@@ -492,7 +492,7 @@ case $1 in
     ;;
 
     "--remove")
-        docker-compose -p mishka_cms down
+        docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
     ;;
 
     "--destroy")
@@ -504,15 +504,12 @@ case $1 in
         fi
     ;;
 
-    "--backup")
-       echo "this is backup"
-    ;;
 
     "--logs")
         if [[ $2 != "" ]]; then 
             docker logs -f $2
         else 
-            docker-compose -p mishka_cms logs -f 
+            docker-compose -f dockers/docker-compose.yml  -p mishka_cms logs -f 
         fi
     ;;
 
@@ -525,8 +522,7 @@ case $1 in
             --remove    stop and remove all containers plus network
             --destroy   stop and remove all containers plus netwok also remove docker images, volume
             --ssl       this flag detect your domains and create ssl certificate or renew ssl certificate if time near to expire
-            --logs      show log of specific container of all containers
-            --backup    create database dump and dynamic files${NC}"
+            --logs      show log of specific container of all containers${NC}"
     ;;
 
     *)

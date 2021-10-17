@@ -94,15 +94,12 @@ function update_config() {
 
 
 function cleanup() {
-    if [ -f dockers/docker-compose.yml ] && [ -f etc/.secret ]; then 
-        CMS_PORT=`jq '.cms_port' $PWD/etc/.secret`
-        CMS_PORT=${CMS_PORT//[ #\"-%\"]}
-
+    if [ -f dockers/docker-compose.yml ] || [ -f etc/.secret ]; then 
         # Stop Services and Delete Networks
         docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
         
         # Delete Images
-        if [[ $CMS_PORT == "80" ]] || [[ $CMS_PORT == "443" ]]; then 
+        if [ -f etc/certbot/letsencrypt ]; then 
             docker image rm nginx:1.20.1-alpine mishak_app:latest mishkagroup/postgresql:3.14
             echo -e "${Red} mishka images deleted..${NC}"
         else 
@@ -135,6 +132,7 @@ function cleanup() {
         # Fresh nginx conf
         cp --force etc/nginx/conf/sample_conf/mishka_* etc/nginx/conf/conf.d
        
+        echo -e "${Green}Clenup Process is done.${NC}"
         
     else 
         echo -e "${Red}NOTHING EXIST FOR CELAN !${NC}"
@@ -401,7 +399,6 @@ case $1 in
             else # if docker image was not build, we do cleanup
                 echo -e "${Red}we can't make docker image, Cleanup Process is running.....${NC}" 
                 cleanup
-                echo -e "${Green}Clenup Process is done.${NC}"
             fi
         else 
             echo -e "${Red}your previously build exist, Operation cenceled, Please use 'mishka.sh --update' for update you app${NC}"

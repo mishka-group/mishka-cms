@@ -52,6 +52,6 @@ RUN  cd /app && \
 RUN apk del .build-deps && rm -rf deployment
 
 # Run entrypoint.sh script
-COPY deployment/docker/entrypoint.sh /app
+COPY deployment/docker/dockers/entrypoint.sh /app
 RUN chmod +x /app/entrypoint.sh
 CMD ["/app/entrypoint.sh"]

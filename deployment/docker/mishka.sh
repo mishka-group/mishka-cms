@@ -1,225 +1,20 @@
 #!/bin/bash
 # set -e -x
+
 # color variables
-Red='\033[0;31m'
-Black='\033[0;30m'
-Dark_Gray='\033[1;30m'
-Light_Red='\033[1;31m'
-Green='\033[0;32m'  
-Light_Green='\033[1;32m'
-Brown_Orange='\033[0;33m'  
-Yellow='\033[1;33m'
-Blue='\033[0;34m' 
-Light_Blue='\033[1;34m'
-Purple='\033[0;35m'
-Light_Purple='\033[1;35m'
-Cyan='\033[0;36m'
-Light_Cyan='\033[1;36m'
-Light_Gray='\033[0;37m'  
-White='\033[1;37m'
-NC='\033[0m' # No Color
-SPACE=`tput setab 7`
-END_SPACE=`tput sgr 0`
+source src/variables.sh 
 
 # variables for build
-SECRET_KEY_BASE=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-SECRET_KEY_BASE_HTML=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-SECRET_KEY_BASE_API=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-LIVE_VIEW_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 32 | tr -d '\n'; echo`
+source src/functions.sh 
 
 
-
-
-function update_config() {        
-    local CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/etc/.secret` 
-    local API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/etc/.secret` 
-    local SSL=`jq '.ssl' $PWD/etc/.secret`
-    local CMS_PORT=`jq '.cms_port' $PWD/etc/.secret`
-
-    local CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
-    local API_DOMAIN_NAME=${API_DOMAIN_NAME//[ #\"-%\"]}
-    local SSL=${SSL//[ #\"-%\"]}
-    local CMS_PORT=${CMS_PORT//[ #\"-%\"]}
-    
-    if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
-        cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
-        # change domains 
-        sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-        sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
-        # change ports
-        sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-        sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
-        # enable ssl 
-        sed -i 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
-        sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
-        sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-    elif [[ $CMS_PORT == "80" ]]; then 
-        cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
-        # change domains
-        sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-        sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
-        # change ports
-        sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-        sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
-    else 
-        cp --force dockers/docker-compose_without_nginx.yml dockers/docker-compose.yml
-    fi
-
-    # change value in docker-compose.yml
-    if [ -f $PWD/etc/.secret ]; then 
-        local DATABASE_USER=`jq '.database_user' $PWD/etc/.secret`
-        local DATABASE_PASSWORD=`jq '.database_password' $PWD/etc/.secret`
-        local DATABASE_NAME=`jq '.database_name' $PWD/etc/.secret`
-        local POSTGRES_USER=`jq '.postgres_user' $PWD/etc/.secret`
-        local POSTGRES_PASSWORD=`jq '.postgres_password' $PWD/etc/.secret`  
-
-        # remove double qoutaion
-        local DATABASE_USER=${DATABASE_USER//[ #\"-%\"]}
-        local DATABASE_PASSWORD=${DATABASE_PASSWORD//[ #\"-%\"]}
-        local DATABASE_NAME=${DATABASE_NAME//[ #\"-%\"]}
-        local POSTGRES_USER=${POSTGRES_USER//[ #\"-%\"]}
-        local POSTGRES_PASSWORD=${POSTGRES_PASSWORD//[ #\"-%\"]}
-
-        sed -i 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
-        sed -i 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
-        sed -i 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
-        sed -i 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
-        sed -i 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
-    else 
-        echo -e "${Red}.secret file not found, Operation cenceled, Please use 'mishka.sh --build' for install app${NC}"
-        exit 1
-    fi
-   
-}
-
-
-function cleanup() {
-    if [ -f dockers/docker-compose.yml ] || [ -f etc/.secret ]; then 
-        # Stop Services and Delete Networks
-        docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
-        
-        # Delete Images
-        if [ -f etc/certbot/letsencrypt ]; then 
-            docker image rm nginx:1.20.1-alpine mishak_app:latest mishkagroup/postgresql:3.14
-            echo -e "${Red} mishka images deleted..${NC}"
-        else 
-            docker image rm mishak_app:latest mishkagroup/postgresql:3.14
-            echo -e "${Red} mishka images deleted..${NC}"
-        fi
-
-        # Delete SSL certificate 
-        if [ -f etc/certbot/letsencrypt ]; then 
-            rm -r etc/certbot/letsencrypt
-            echo -e "${Red} mishka ssl deleted..${NC}"
-        fi
-
-        # Delete temp Files
-        if [ -f ../../Dockerfile ]; then
-            rm dockers/docker-compose.yml ../../Dockerfile
-            echo -e "${Green} mishka Temp Files deleted..${NC}"
-        fi
-
-        # Delete Volumes
-        docker volume rm mishka_cms_database mishka_cms_cms
-        echo -e "${Green} mishka volumes deleted..${NC}"
-
-        # Delete Secrets
-        if [ -f $PWD/etc/.secret ]; then 
-            rm $PWD/etc/.secret
-            echo -e "${Green} mishka secret file deleted..${NC}"
-        fi 
-
-        # Fresh nginx conf
-        cp --force etc/nginx/conf/sample_conf/mishka_* etc/nginx/conf/conf.d
-       
-        echo -e "${Green}Clenup Process is done.${NC}"
-        
-    else 
-        echo -e "${Red}NOTHING EXIST FOR CELAN !${NC}"
-    fi
-}
-
-
-function ssl_generator() {
-    local ADMIN_EMAIL=$1
-    local CMS_DOMAIN_NAME=$2
-    local API_DOMAIN_NAME=$3
-
-    # create dhparam2048
-    if [ ! -f etc/certbot/master_certificates/dhparam2048.pem ]; then 
-        openssl dhparam -out etc/certbot/master_certificates/dhparam2048.pem 2048
-    fi
-
-    # remove old certs
-    if [ -d etc/certbot/letsencrypt ]; then 
-        rm -rf etc/certbot/letsencrypt
-    fi
-
-    # create ssl for domains
-    docker run -it --rm --name certbot  \
-    -p 80:80 \
-    -p 443:443 \
-    -v "$PWD/etc/certbot/letsencrypt:/etc/letsencrypt"  \
-    certbot/certbot certonly -q \
-    --standalone \
-    --agree-tos \
-    --must-staple  \
-    --rsa-key-size 4096   \
-    --email $ADMIN_EMAIL  \
-    -d $CMS_DOMAIN_NAME \
-    -d $API_DOMAIN_NAME
-
-}
-
-# check validity of domain ( test.example.com or example.com )
-function domain_checker() {
-    local INPUT=$1
-    if [[ $INPUT =~ ^[a-z|A-Z|0-9]+\.+[a-z|A-Z]+$ ]] || [[ $INPUT =~ ^[a-z|A-Z|0-9]+\.+[a-z|A-Z|0-9]+\.[a-z|A-A]+$ ]]; then 
-        return 0
-    else 
-        return 1
-    fi 
-}
-
-# check validity of ip ( x.x.x.x )
-function ip_checker() {
-    local INPUT=$1
-    if [[ $INPUT =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        return 0
-    else 
-        return 1
-    fi  
-}
-
-# check validity of email ( test@example.com )
-function email_checker() {
-    local INPUT=$1
-    if [[ $INPUT =~ ^[a-z|A-Z|0-9]+\@+[a-z|A-Z|0-9]+\.[a-z|A-Z]+$ ]] || [[ $INPUT =~ ^[a-z|A-Z|0-9|\.]+\@+[a-z|A-Z|0-9]+\.[a-z|A-Z]+$ ]]; then 
-        return 0
-    else 
-        return 1
-    fi  
-}
 
 #=============================================================
 
-# check root user
-if [[ $EUID -ne 0 ]]; then 
-    echo -e "${Red}This script must be run as root${NC}"
-    exit 1
-fi
+# check requirments before run shell
+check_requirements
 
-# check command git install on system
-if ! command -v git $>/dev/null; then 
-    echo -e "${Red}git Command Not Found, ${Green}Please Install with 'sudo apt install git -y'${NC}"
-    exit 1
-fi
 
-# check command git install on system
-if ! command -v jq $>/dev/null; then 
-    echo -e "${Red}jq Command Not Found, ${Green}Please Install with 'sudo apt install jq -y'${NC}"
-    exit 1
-fi
 
 
 
@@ -297,45 +92,16 @@ case $1 in
                 fi
             fi
             
+
             # set default value for variables
-            DATABASE_USER=${DATABASE_USER:-"mishka_user"}
-            DATABASE_NAME=${DATABASE_NAME:-"mishka_database"}
-            DATABASE_PASSWORD=${DATABASE_PASSWORD:-"mishka_password"}
-            POSTGRES_USER=${POSTGRES_USER:-"postgres"}
-            POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-"postgres"}
-            CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME:-"127.0.0.1"}
-            API_DOMAIN_NAME=${API_DOMAIN_NAME:-"127.0.0.1"}
-            CMS_PORT=${CMS_PORT:-"4000"}
-            API_PORT=${API_PORT:-"4001"}
-            ADMIN_EMAIL=${ADMIN_EMAIL:-"example@example.com"}
-            PROTOCOL=${PROTOCOL:-"http"}
-
+            default_values
+            
             # create new token
-            TOKEN_JWT_KEY=`dd if=/dev/urandom bs=32 count=1 | base64 | sed 's/+/-/g; s/\//_/g; s/=//g'`
-            SECRET_CURRENT_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo` 
-            SECRET_REFRESH_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo`
-            SECRET_ACCESS_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo`
+            token_generators
 
-            # store data in file
-            echo  '{
-            "database_user": "'$DATABASE_USER'",
-            "database_password": "'$DATABASE_PASSWORD'",
-            "database_name": "'$DATABASE_NAME'",
-            "postgres_user": "'$POSTGRES_USER'",
-            "postgres_password": "'$POSTGRES_PASSWORD'",
-            "token_jwt_key": "'$TOKEN_JWT_KEY'",
-            "secret_current_token_salt": "'$SECRET_CURRENT_TOKEN_SALT'",
-            "secret_refresh_token_salt": "'$SECRET_REFRESH_TOKEN_SALT'",
-            "secret_access_token_salt": "'$SECRET_ACCESS_TOKEN_SALT'",
-            "cms_domain_name": "'$CMS_DOMAIN_NAME'",
-            "api_domain_name": "'$API_DOMAIN_NAME'",
-            "cms_port": "'$CMS_PORT'",
-            "api_port": "'$API_PORT'",
-            "admin_email": "'$ADMIN_EMAIL'",
-            "ssl": "'$SSL'",
-            "protocol": "'$PROTOCOL'"
-            }' > $PWD/etc/.secret
-
+            # store configs
+            store_configs
+            
             
             # build image
             docker build -t mishak_app:latest -f ../../Dockerfile \
@@ -367,34 +133,10 @@ case $1 in
                 CMS_PORT=${CMS_PORT//[ #\"-%\"]}
                 API_PORT=${API_PORT//[ #\"-%\"]}
 
-                echo -e "${Green}=======================================================================================================${NC}"
-                if [[ ${SSL,,} =~ ^yes$ ]]; then # convert user input to lowercase then check it
-                    echo -e "${Green}Mishka Cms Available on    --> $SPACE https://$CMS_DOMAIN_NAME $END_SPACE ${NC}"
-                    echo -e "${Green}Mishka Api Available on    --> $SPACE https://$API_DOMAIN_NAME $END_SPACE ${NC}" 
-                else 
-                    echo -e "${Green}Mishka Cms Available on    --> $SPACE http://$CMS_DOMAIN_NAME:$CMS_PORT $END_SPACE ${NC}"
-                    echo -e "${Green}Mishka Api Available on    --> $SPACE http://$API_DOMAIN_NAME:$API_PORT $END_SPACE ${NC}"  
-                fi
-                echo -e "${Green}==================================================================================================${NC}"
-
-                echo -e
-                echo -e "${Yellow}=======================================================================================================${NC}"
-                echo -e "${Yellow}Your Database User is         --> $SPACE $DATABASE_USER $END_SPACE ${NC}"
-                echo -e "${Yellow}Your Database Name is         --> $SPACE $DATABASE_NAME $END_SPACE ${NC}"
-                echo -e "${Yellow}Your Database Password is:    --> $SPACE $DATABASE_PASSWORD $END_SPACE ${NC}"
-                echo -e "${Yellow}Your Postgres User is:        --> $SPACE $POSTGRES_USER $END_SPACE ${NC}"
-                echo -e "${Yellow}Your Postgres Password is:    --> $SPACE $POSTGRES_PASSWORD $END_SPACE ${NC}"
-                echo -e "${Yellow}==================================================================================================${NC}"
-                 
-                echo -e 
-                echo -e "${Red}=======================================================================================================${NC}"
-                echo -e "${Red}KEEP THIS VALUE IN SECRET, IF YOU LOSS THEM YOUR USERS CAN'T LOGIN INTO MISHKA CMS AFTER UPDATE:"     
-                echo -e "${Red}token_jwt_key:                   --> $SPACE $TOKEN_JWT_KEY $END_SPACE ${NC}"                                                                              
-                echo -e "${Red}secret_current_token_salt:       --> $SPACE $SECRET_CURRENT_TOKEN_SALT $END_SPACE ${NC}"                                                      
-                echo -e "${Red}secret_refresh_token_salt:       --> $SPACE $SECRET_REFRESH_TOKEN_SALT $END_SPACE ${NC}"                                                       
-                echo -e "${Red}secret_access_token_salt:        --> $SPACE $SECRET_ACCESS_TOKEN_SALT $END_SPACE ${NC}"                                                           
-                echo -e "${Red}==================================================================================================${NC}"
-
+                # print build output
+                print_build_output
+               
+                
                 rm ../../Dockerfile
             else # if docker image was not build, we do cleanup
                 echo -e "${Red}we can't make docker image, Cleanup Process is running.....${NC}" 
@@ -413,15 +155,8 @@ case $1 in
         fi 
 
         cp dockers/Dockerfile ../../
-        # using old value
-        TOKEN_JWT_KEY=`jq '.token_jwt_key' $PWD/etc/.secret` 
-        SECRET_CURRENT_TOKEN_SALT=`jq '.secret_current_token_salt' $PWD/etc/.secret` 
-        SECRET_REFRESH_TOKEN_SALT=`jq '.secret_refresh_token_salt' $PWD/etc/.secret` 
-        SECRET_ACCESS_TOKEN_SALT=`jq '.secret_access_token_salt' $PWD/etc/.secret` 
-        CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/etc/.secret` 
-        API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/etc/.secret` 
-        CMS_PORT=`jq '.cms_port' $PWD/etc/.secret` 
-        API_PORT=`jq '.api_port' $PWD/etc/.secret` 
+        # load configs
+        load_configs
 
         if [[ $TOKEN_JWT_KEY != "" ]]; then 
             docker build -t mishak_app:latest -f ../../Dockerfile \
@@ -456,11 +191,9 @@ case $1 in
     "--start")
         if [ -f $PWD/etc/.secret ]; then 
             docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
-            CMS_DOMAIN_NAME=`jq '.cms_domain_name' $PWD/etc/.secret` 
-            API_DOMAIN_NAME=`jq '.api_domain_name' $PWD/etc/.secret` 
-            CMS_PORT=`jq '.cms_port' $PWD/etc/.secret` 
-            API_PORT=`jq '.api_port' $PWD/etc/.secret` 
-            ADMIN_EMAIL=`jq '.admin_email' $PWD/etc/.secret`
+
+            # load configs
+            load_configs
 
             # remove double qoutaion
             CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}

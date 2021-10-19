@@ -82,6 +82,13 @@ defmodule MishkaContent.General.Notif do
       cond do
         is_list(value) ->
           from notif in query, where: field(notif, ^key) in ^value
+        key == :title ->
+            like = "%#{value}%"
+            from(notif in query, where: like(notif.title, ^like))
+
+        key == :user_id ->
+            from notif in query, where: field(notif, ^key) == ^value  or is_nil(notif.user_id)
+
         true -> from notif in query, where: field(notif, ^key) == ^value
       end
     end)
@@ -91,14 +98,13 @@ defmodule MishkaContent.General.Notif do
     from [notif] in query,
     left_join: user in assoc(notif, :users),
     left_join: status in assoc(notif, :user_notif_statuses),
-    or_where: is_nil(notif.user_id),
     order_by: [desc: notif.inserted_at, desc: notif.id],
     select: %{
       id: notif.id,
       status: notif.status,
       section: notif.section,
       section_id: notif.section_id,
-      short_description: notif.short_description,
+      title: notif.title,
       description: notif.description,
       expire_time: notif.expire_time,
       extra: notif.extra,
@@ -120,7 +126,7 @@ defmodule MishkaContent.General.Notif do
       status: notif.status,
       section: notif.section,
       section_id: notif.section_id,
-      short_description: notif.short_description,
+      title: notif.title,
       description: notif.description,
       expire_time: notif.expire_time,
       extra: notif.extra,
@@ -139,8 +145,7 @@ defmodule MishkaContent.General.Notif do
     from(
       notif in Notif,
       left_join: status in assoc(notif, :user_notif_statuses),
-      where: notif.user_id == ^user_id,
-      or_where: is_nil(notif.user_id),
+      where: notif.user_id == ^user_id or is_nil(notif.user_id),
       where: is_nil(status.type),
       select: count(notif.id)
     )

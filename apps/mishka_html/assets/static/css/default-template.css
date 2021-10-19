@@ -11,6 +11,11 @@
   font-display: block;
 } */
 
+.admin-notif-title-link {
+  color: #000;
+  text-decoration: none;
+}
+
 .admin-notif-list {
   padding: 0;
 }
@@ -315,8 +320,13 @@ header {
 .client-notif-icon span {
     position: absolute;
     font-size: 10px;
-    left: 42px;
-    top: 9px;
+    left: 47px;
+    top: 8px;
+}
+
+.admin-notif-user-link {
+  color: #ffffff;
+  text-decoration: none;
 }
 
 .notif-drop {
@@ -342,8 +352,8 @@ span.d-inline-block.bg-danger.rounded-circle {
 }
 
 .client-notif-icon svg {
-  width: 60%;
-  height: 60%;
+  width: 45%;
+  height: 45%;
 }
 
 .client-menu-nav-item{

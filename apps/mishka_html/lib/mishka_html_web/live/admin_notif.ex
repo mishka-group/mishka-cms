@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
 
   alias MishkaContent.General.Notif, as: NotifSystem
   @error_atom :notif
+  alias MishkaUser.User
   alias MishkaContent.Cache.ContentDraftManagement
 
   use MishkaHtml.Helpers.LiveCRUD,
@@ -12,7 +13,10 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
 
   @impl true
   def render(assigns) do
-    Phoenix.View.render(MishkaHtmlWeb.AdminNotifView, "admin_notif_live.html", assigns)
+    case assigns.render_type do
+      :show -> Phoenix.View.render(MishkaHtmlWeb.AdminNotifView, "admin_notif_show_live.html", assigns)
+      _ -> Phoenix.View.render(MishkaHtmlWeb.AdminNotifView, "admin_notif_live.html", assigns)
+    end
   end
 
   @impl true
@@ -20,31 +24,66 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
+        render_type: :create,
         dynamic_form: [],
         body_color: "#a29ac3cf",
         basic_menu: false,
         options_menu: false,
         id: nil,
+        editor: nil,
         user_id: Map.get(session, "user_id"),
-        drafts: ContentDraftManagement.drafts_by_section(section: "user"),
+        drafts: ContentDraftManagement.drafts_by_section(section: "notif"),
         draft_id: nil,
+        user_search: [],
         changeset: notif_changeset(),
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت اعلانات")
       )
     {:ok, socket}
   end
 
-  def handle_params(%{"id" => id}, _url, socket) do
+  def handle_params(%{"id" => id, "type" => "edit"}, _url, socket) do
+    all_field = create_menu_list(basic_menu_list() ++ more_options_menu_list(), [])
+
     socket = case NotifSystem.show_by_id(id) do
       {:error, :get_record_by_id, @error_atom} ->
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین اعلانی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifsLive))
+
+      {:ok, :get_record_by_id, @error_atom, repo_data} ->
+
+        notif_forms = Enum.map(all_field, fn field ->
+          record = Enum.find(creata_notif_state(repo_data), fn notif -> notif.type == field.type end)
+          Map.merge(field, %{value: if(is_nil(record), do: nil, else: record.value)})
+         end)
+         |> Enum.reject(fn x -> x.value == nil end)
+
+         description =
+          Enum.find(notif_forms, fn notif -> notif.type == "description" end) || %{value: ""}
+
+         socket
+         |> assign([
+           dynamic_form: notif_forms,
+           id: repo_data.id,
+           render_type: :edit
+         ])
+         |> push_event("update-editor-html", %{html: description.value})
+    end
+
+    {:noreply, socket}
+  end
+
+  def handle_params(%{"id" => id, "type" => "show"}, _url, socket) do
+    socket = case NotifSystem.show_by_id(id) do
+      {:error, :get_record_by_id, @error_atom} ->
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین اعلانی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifsLive))
 
       {:ok, :get_record_by_id, @error_atom, _repo_data} ->
 
         # TODO: show data with extra in a page like activity admin show
-        socket
+        assign(socket, render_type: :show)
     end
 
     {:noreply, socket}
@@ -70,10 +109,16 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
 
   make_all_menu()
 
-  editor_draft("notif", false, [], when_not: [])
+  editor_draft("notif", true, [
+    {:user_search, :return_params,
+      fn type, params  ->
+        if(type != "user_id", do: [], else: User.users(conditions: {1, 5}, filters: %{full_name: Map.get(params, ["user_id"])}))
+      end
+    }
+  ], when_not: [])
 
   @impl true
-  def handle_event("save", %{"user" => params}, socket) do
+  def handle_event("save", %{"notif" => params}, socket) do
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
       [] -> socket
       fields_list ->
@@ -88,7 +133,11 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
          ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
     end
 
-    create_notif(socket, params: {params})
+    case socket.assigns.id do
+      nil -> create_notif(socket, params: {params})
+      id -> edit_category(socket, params: {Map.merge(params, %{"id" => id, "description" => socket.assigns.editor})})
+    end
+
   end
 
   @impl true
@@ -109,7 +158,50 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("text_search_click", %{"id" => id}, socket) do
+    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x ->
+      case x.type do
+        "user_id" -> Map.merge(x, %{value: id})
+        _ -> x
+      end
+    end)
+
+    socket =
+      socket
+      |> assign([
+        dynamic_form: new_dynamic_form,
+        user_search: []
+      ])
+      |> push_event("update_text_search", %{value: id})
+
+
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("close_text_search", _, socket) do
+    socket =
+      socket
+      |> assign([user_search: []])
+    {:noreply, socket}
+  end
+
   selected_menue("MishkaHtmlWeb.AdminBlogNotifLive")
+
+  defp creata_notif_state(repo_data) do
+    Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :users, :id, :extra, :user_notif_statuses])
+    |> Map.to_list()
+    |> Enum.map(fn {key, value} ->
+      %{
+        class: "#{search_fields(Atom.to_string(key)).class}",
+        type: "#{Atom.to_string(key)}",
+        value: value
+      }
+    end)
+    |> Enum.reject(fn x -> x.value == nil end)
+  end
 
   defp notif_changeset(params \\ %{}) do
     MishkaDatabase.Schema.MishkaContent.Notif.changeset(
@@ -118,15 +210,15 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
   end
 
   defp create_notif(socket, params: {params}) do
-    socket = case NotifSystem.create(params) do
-      {:error, :add, :user, repo_error} ->
+    socket = case NotifSystem.create(Map.merge(params, %{"description" => socket.assigns.editor})) do
+      {:error, :add, :notif, repo_error} ->
         socket
         |> assign([changeset: repo_error])
 
-      {:ok, :add, :user, repo_data} ->
+      {:ok, :add, :notif, repo_data} ->
         MishkaContent.General.Activity.create_activity_by_task(%{
           type: "section",
-          section: "user",
+          section: "notif",
           section_id: repo_data.id,
           action: "add",
           priority: "medium",
@@ -135,16 +227,54 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
         }, %{full_name: Map.get(repo_data, :full_name)})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
-        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
-        MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "اعلان: %{title} درست شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
+
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "اعلان مورد نظر ارسال شد."))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifsLive))
 
     end
 
     {:noreply, socket}
   end
+
+
+  def edit_category(socket, params: {params}) do
+    case NotifSystem.edit(params) do
+      {:error, :edit, @error_atom, repo_error} ->
+        socket
+        |> assign([
+          changeset: repo_error,
+        ])
+
+      {:ok, :edit, @error_atom, repo_data} ->
+        MishkaContent.General.Activity.create_activity_by_task(%{
+          type: "section",
+          section: "notif",
+          section_id: repo_data.id,
+          action: "edit",
+          priority: "medium",
+          status: "info",
+          user_id: socket.assigns.user_id
+        }, %{})
+
+        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
+
+        socket
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "اعلان به روز رسانی شد"))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifsLive))
+
+      {:error, :edit, :uuid, _error_tag} ->
+
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین اعلان وجود ندارد یا ممکن است از قبل حذف شده باشد."))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifsLive))
+
+    end
+
+    {:noreply, socket}
+  end
+
 
   def search_fields(type) do
     Enum.find(basic_menu_list() ++ more_options_menu_list(), fn x -> x.type == type end)
@@ -247,9 +377,17 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
       title: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات کامل"),
       description: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات کامل اعلان")},
 
+      %{type: "user_id", status: [
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"}
+      ],
+      form: "text_search",
+      class: "col-sm-3",
+      title: MishkaTranslator.Gettext.dgettext("html_live", "نام کاربری"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "به واسطه این فیلد می توانید کاربر مورد نظر خود را به یک اعلان تخصیص بدهید")},
+
       # TODO: add extra like dynamic form
-      # TODO: add user search field
       # TODO: create a time form
+      # TODO: fix mobile css for client notif
     ]
   end
 end

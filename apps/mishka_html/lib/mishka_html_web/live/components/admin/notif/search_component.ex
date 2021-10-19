@@ -17,7 +17,16 @@ defmodule MishkaHtmlWeb.Admin.Notif.SearchComponent do
       <div class="col space10"> </div>
       <form  phx-change="search">
         <div class="row vazir admin-list-search-form">
-              <div class="col-md-2">
+
+              <div class="col-md-3">
+                <label for="country" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "تیتر") %></label>
+                <div class="space10"> </div>
+                <input type="text" class="title-input-text form-control" name="title" id="title">
+                <div class="col space10"> </div>
+              </div>
+
+
+              <div class="col-md-1">
                 <label for="country" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "وضعیت") %></label>
                 <div class="col space10"> </div>
                 <select class="form-select" name="status" id="ContentStatus">
@@ -29,7 +38,7 @@ defmodule MishkaHtmlWeb.Admin.Notif.SearchComponent do
                 </select>
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <label for="country" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بخش") %></label>
                 <div class="col space10"> </div>
                 <select class="form-select" name="section" id="Section">

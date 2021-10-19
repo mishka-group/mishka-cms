@@ -113,7 +113,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
 
               <%= if !is_nil(@user_id) do %>
-                <div class="col-sm-3 client-notif">
+                <div class="col-sm client-notif text-start">
                     <div class="row ltr">
                       <div class="col-sm-3 client-notif-icon" phx-click="show_notif">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
@@ -131,10 +131,11 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                             <% else %>
                               <span class="d-inline-block bg-secondary rounded-circle"></span>
                             <% end %>
-                              <span><%= notif.short_description %></span>
+                              <span><%= notif.title %></span>
                               <div class="space10"> </div>
                               <small class="d-block text-muted">
-                                <%= if get_size_of_words(notif.description, 10) != "", do: get_size_of_words(notif.description, 10) <> " ... برای ادامه کلیک کنید ..." %>
+                                <% des = if get_size_of_words(notif.description, 10) != "", do: get_size_of_words(notif.description, 10) <> " ... برای ادامه کلیک کنید ..." %>
+                                <%= HtmlSanitizeEx.strip_tags(des) %>
                               </small>
                             </p>
                           <% end %>

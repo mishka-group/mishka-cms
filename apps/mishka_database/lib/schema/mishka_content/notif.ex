@@ -13,7 +13,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
     field(:type, NotifType, null: false)
     field(:target, NotifTarget, null: false)
     field(:section_id, :binary_id, primary_key: false, null: true)
-    field(:short_description, :string, size: 350, null: true)
+    field(:title, :string, size: 350, null: false)
     field(:description, :string, null: true)
     field(:expire_time, :utc_datetime, null: true)
     field(:extra, :map, null: true)
@@ -24,14 +24,15 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
     timestamps(type: :utc_datetime)
   end
 
-  @all_fields ~w(status section section_id short_description description expire_time extra user_id type target)a
-  @all_required ~w(status section type target)a
+  @all_fields ~w(status section section_id title description expire_time extra user_id type target)a
+  @all_required ~w(status section type target title)a
 
   @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_length(:title, max: 350, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 350))
     |> MishkaDatabase.validate_binary_id(:section_id)
     |> MishkaDatabase.validate_binary_id(:user_id)
     |> foreign_key_constraint(:user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))

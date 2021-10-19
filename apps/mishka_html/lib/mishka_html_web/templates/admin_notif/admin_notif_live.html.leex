@@ -27,9 +27,9 @@
         <div class="space50"></div>
         <h2 class="vazir">
             <%= if is_nil(@id) do %>
-                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "ساخت کاربر جدید") %>
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "ساخت اعلان جدید") %>
             <% else %>
-                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "ویرایش اطلاعات کاربر") %>
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش اعلان") %>
             <% end %>
         </h2>
         <div class="space20"></div>
@@ -156,12 +156,28 @@
                                         id: String.to_atom("admin_form_text_#{form.type}"),
                                         form: form,
                                         f: f,
-                                        search: @category_search,
+                                        search: @user_search,
+                                        search_fields: MishkaHtmlWeb.AdminBlogNotifLive.search_fields(form.type),
+                                        title_field: :full_name
+                                %>
+
+
+                        <% "textarea" -> %>
+                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextAreaComponent,
+                                        id: String.to_atom("admin_form_#{form.type}"),
+                                        form: form,
+                                        f: f,
                                         search_fields: MishkaHtmlWeb.AdminBlogNotifLive.search_fields(form.type)
                                 %>
 
 
-
+                        <% "editor" -> %>
+                            <%= live_component @socket, MishkaHtmlWeb.Admin.Form.EditorComponent,
+                                    id: String.to_atom("admin_form_#{form.type}"),
+                                    form: form,
+                                    f: f,
+                                    search_fields: MishkaHtmlWeb.AdminBlogNotifLive.search_fields(form.type)
+                            %>
 
 
                            <% _ -> %>

@@ -12,13 +12,13 @@ defmodule MishkaHtmlWeb.Admin.Notif.ListComponent do
               <h3>توضیحات کوتاه:</h3>
               <div class="row">
                 <div class="col-sm-10 admin-notif-short-dis">
-                    <%= item.short_description %>
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "%{title}", title: item.title), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogNotifLive, id: item.id, type: "show"), class: "admin-notif-title-link" %>
                 </div>
 
                 <div class="col-sm">
-                  <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "دیدن اعلان"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogNotifLive, id: item.id), class: "btn btn-outline-secondary vazir" %>
-                  <div class="space10"></div>
-                  <a class="btn btn-outline-primary vazir" phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف اعلان") %></a>
+                  <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "ویرایش"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogNotifLive, id: item.id, type: "edit"), class: "btn btn-outline-secondary mb-2 vazir" %>
+
+                  <a class="btn btn-outline-primary mb-2 vazir" phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
                 </div>
               </div>
               <div class="space10"></div>
@@ -29,7 +29,7 @@ defmodule MishkaHtmlWeb.Admin.Notif.ListComponent do
               <span class="notif-admin-list-badge badge bg-primary">هدف: <%= item.target %></span>
               <%= if !is_nil(item.user_id) do %>
                 <span class="notif-admin-list-badge badge bg-danger">
-                  <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "دیدن کاربر"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, item.user_id) %>
+                  <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "دیدن کاربر"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: item.user_id), class: "admin-notif-user-link" %>
                 </span>
               <% end %>
               <hr>

@@ -26,121 +26,142 @@ case $1 in
                 git pull
             fi 
 
-            cp dockers/Dockerfile ../../
 
             read -p $'\e[32mChoose Environment Type [\'prod or dev, defualt is dev\']\e[0m: ' ENV_TYPE
 
             if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then # convert user input to lowercase then check it
+                cp dockers/Dockerfile ../../
+
                 # check web server ports to close
                 if netstat -nultp | egrep -w '80|443' > /dev/null; then
                         echo -e "${Red}another apps using port 80 or 443, please kill the apps and rerun mishka.sh --build !${NC}"
                         exit 1
-                else
-                    # get data from user
-                    read -p $'\e[32mEnter Your Database User [default is \'mishka_user\']\e[0m: ' DATABASE_USER
-                    read -s -p $'\e[32mEnter Your Database Password [default is \'mishka_password\']\e[0m: ' DATABASE_PASSWORD
-                    echo
-                    read -p $'\e[32mEnter Your Database Name [default is \'mishka_database\']\e[0m: ' DATABASE_NAME
-                    read -p $'\e[32mEnter Your Postgres User [default is \'postgres\']\e[0m: ' POSTGRES_USER
-                    read -s -p $'\e[32mEnter Your Postgres Password [default is \'postgres\']\e[0m: ' POSTGRES_PASSWORD
-                    echo
-                    read -p $'\e[32mEnter Your CMS address (Domain or IP)  [default is \'127.0.0.1\']\e[0m: ' CMS_DOMAIN_NAME
-                    if ip_checker $CMS_DOMAIN_NAME; then
-                        CMS_DOMAIN_NAME=$CMS_DOMAIN_NAME
-                        API_DOMAIN_NAME=$CMS_DOMAIN_NAME
-                        CMS_PORT="4000"
-                        API_PORT="4001"
-                    elif domain_checker $CMS_DOMAIN_NAME; then
+                fi 
+              
+                # get data from user
+                read -p $'\e[32mEnter Your Database User [default is \'mishka_user\']\e[0m: ' DATABASE_USER
+                read -s -p $'\e[32mEnter Your Database Password [default is \'mishka_password\']\e[0m: ' DATABASE_PASSWORD
+                echo
+                read -p $'\e[32mEnter Your Database Name [default is \'mishka_database\']\e[0m: ' DATABASE_NAME
+                read -p $'\e[32mEnter Your Postgres User [default is \'postgres\']\e[0m: ' POSTGRES_USER
+                read -s -p $'\e[32mEnter Your Postgres Password [default is \'postgres\']\e[0m: ' POSTGRES_PASSWORD
+                echo
+                read -p $'\e[32mEnter Your CMS address (Domain or IP)  [default is \'localhost\']\e[0m: ' CMS_DOMAIN_NAME
+                if ip_checker $CMS_DOMAIN_NAME; then
+                    CMS_DOMAIN_NAME=$CMS_DOMAIN_NAME
+                    API_DOMAIN_NAME=$CMS_DOMAIN_NAME
+                    CMS_PORT="4000"
+                    API_PORT="4001"
+                elif domain_checker $CMS_DOMAIN_NAME; then
+                    while true; do 
+                        read -p $'\e[32mEnter Your API address \e[0m: ' API_DOMAIN_NAME
+                        if [[ $CMS_DOMAIN_NAME =~ $API_DOMAIN_NAME ]]; then 
+                            echo -e "${Red}address for api must be diffrent than address for cms !${NC}"
+                        elif ip_checker $API_DOMAIN_NAME; then
+                            echo -e "${Red}address for api must be domain or sub-domain name!${NC}"
+                        elif domain_checker $API_DOMAIN_NAME || domain_checker $API_DOMAIN_NAME; then  
+                            break
+                        fi
+                    done 
+
+                    read -p $'\e[32mDo You Want to Enable SSL ? (YES/NO)  [default is YES]\e[0m: ' SSL
+                    SSL=${SSL:-"YES"}
+                    if [[ ${SSL,,} =~ ^yes$ ]]; then # convert user input to lowercase then check it
                         while true; do 
-                            read -p $'\e[32mEnter Your API address \e[0m: ' API_DOMAIN_NAME
-                            if [[ $CMS_DOMAIN_NAME =~ $API_DOMAIN_NAME ]]; then 
-                                echo -e "${Red}address for api must be diffrent than address for cms !${NC}"
-                            elif ip_checker $API_DOMAIN_NAME; then
-                                echo -e "${Red}address for api must be domain or sub-domain name!${NC}"
-                            elif domain_checker $API_DOMAIN_NAME || domain_checker $API_DOMAIN_NAME; then  
-                                break
+                            read -p $'\e[32mEnter Your Email Address:\e[0m: ' ADMIN_EMAIL
+                            if email_checker $ADMIN_EMAIL; then
+                                ssl_generator $ADMIN_EMAIL $CMS_DOMAIN_NAME $API_DOMAIN_NAME
+                                if [[ $? == "0" ]]; then
+                                    break
+                                else
+                                    echo -e "${Red}certbot can't create ssl because port is already allocated or image can not download!${NC}"
+                                    exit 1
+                                fi 
+                            else 
+                                echo -e "${Red}email address invalid please enter correct email address!${NC}"
                             fi
-                        done 
+                        done
 
-                        read -p $'\e[32mDo You Want to Enable SSL ? (YES/NO)  [default is YES]\e[0m: ' SSL
-                        SSL=${SSL:-"YES"}
-                        if [[ ${SSL,,} =~ ^yes$ ]]; then # convert user input to lowercase then check it
-                            while true; do 
-                                read -p $'\e[32mEnter Your Email Address:\e[0m: ' ADMIN_EMAIL
-                                if email_checker $ADMIN_EMAIL; then
-                                    ssl_generator $ADMIN_EMAIL $CMS_DOMAIN_NAME $API_DOMAIN_NAME
-                                    if [[ $? == "0" ]]; then
-                                        break
-                                    else
-                                        echo -e "${Red}certbot can't create ssl because port is already allocated or image can not download!${NC}"
-                                        exit 1
-                                    fi 
-                                else 
-                                    echo -e "${Red}email address invalid please enter correct email address!${NC}"
-                                fi
-                            done
-
-                            CMS_PORT="443"
-                            API_PORT="443" 
-                            PROTOCOL="https" 
-                        else
-                            CMS_PORT="80"
-                            API_PORT="80" 
-                            PROTOCOL="http"
-                        fi 
+                        CMS_PORT="443"
+                        API_PORT="443" 
+                        PROTOCOL="https" 
+                    else
+                        CMS_PORT="80"
+                        API_PORT="80" 
+                        PROTOCOL="http"
                     fi 
+                fi 
+                
+
+                # set default value for variables
+                default_values
+                
+                # create new secrets
+                secret_generators
+
+                # store configs
+                store_configs
+                
+                
+                # build image
+                docker build -t mishak_app:latest -f ../../Dockerfile \
+                    --build-arg SECRET_KEY_BASE=$SECRET_KEY_BASE \
+                    --build-arg SECRET_KEY_BASE_HTML=$SECRET_KEY_BASE_HTML \
+                    --build-arg SECRET_KEY_BASE_API=$SECRET_KEY_BASE_API \
+                    --build-arg LIVE_VIEW_SALT=$LIVE_VIEW_SALT \
+                    --build-arg TOKEN_JWT_KEY=$TOKEN_JWT_KEY \
+                    --build-arg SECRET_CURRENT_TOKEN_SALT=$SECRET_CURRENT_TOKEN_SALT \
+                    --build-arg SECRET_REFRESH_TOKEN_SALT=$SECRET_REFRESH_TOKEN_SALT \
+                    --build-arg SECRET_ACCESS_TOKEN_SALT=$SECRET_ACCESS_TOKEN_SALT \
+                    --build-arg CMS_DOMAIN_NAME=$CMS_DOMAIN_NAME \
+                    --build-arg API_DOMAIN_NAME=$API_DOMAIN_NAME \
+                    --build-arg CMS_PORT=$CMS_PORT \
+                    --build-arg API_PORT=$API_PORT \
+                    --build-arg PROTOCOL=$PROTOCOL \
+                    ../../ --no-cache
+                
+                if [[ $? == 0 ]]; then # if docker image was build
+                    # update docker-compose file with values
+                    update_config
+
+                    # start containers 
+                    docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
+
+                    # remove double qoutaion
+                    CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
+                    API_DOMAIN_NAME=${API_DOMAIN_NAME//[ #\"-%\"]}
+                    CMS_PORT=${CMS_PORT//[ #\"-%\"]}
+                    API_PORT=${API_PORT//[ #\"-%\"]}
+
+                    # print build output
+                    print_build_output
+                
+                    
+                    rm ../../Dockerfile
+                else # if docker image was not build, we do cleanup
+                    echo -e "${Red}we can't make docker image, Cleanup Process is running.....${NC}" 
+                    cleanup
                 fi
-            fi
-            
+            else # dev
+                ENV_TYPE="dev"
+                
+                # set default value for variables
+                default_values
 
-            # set default value for variables
-            default_values
-            
-            # create new token
-            token_generators
+                # create new secrets
+                secret_generators
 
-            # store configs
-            store_configs
-            
-            
-            # build image
-            docker build -t mishak_app:latest -f ../../Dockerfile \
-                --build-arg SECRET_KEY_BASE=$SECRET_KEY_BASE \
-                --build-arg SECRET_KEY_BASE_HTML=$SECRET_KEY_BASE_HTML \
-                --build-arg SECRET_KEY_BASE_API=$SECRET_KEY_BASE_API \
-                --build-arg LIVE_VIEW_SALT=$LIVE_VIEW_SALT \
-                --build-arg TOKEN_JWT_KEY=$TOKEN_JWT_KEY \
-                --build-arg SECRET_CURRENT_TOKEN_SALT=$SECRET_CURRENT_TOKEN_SALT \
-                --build-arg SECRET_REFRESH_TOKEN_SALT=$SECRET_REFRESH_TOKEN_SALT \
-                --build-arg SECRET_ACCESS_TOKEN_SALT=$SECRET_ACCESS_TOKEN_SALT \
-                --build-arg CMS_DOMAIN_NAME=$CMS_DOMAIN_NAME \
-                --build-arg API_DOMAIN_NAME=$API_DOMAIN_NAME \
-                --build-arg CMS_PORT=$CMS_PORT \
-                --build-arg API_PORT=$API_PORT \
-                --build-arg PROTOCOL=$PROTOCOL \
-                ../../ --no-cache
-            
-            if [[ $? == 0 ]]; then # if docker image was build
+                # store configs
+                store_configs
+
+                # create env file
+                env_generator
+
                 # update docker-compose file with values
                 update_config
 
-                # start containers 
-                docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
+                docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d
 
-                # remove double qoutaion
-                CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
-                API_DOMAIN_NAME=${API_DOMAIN_NAME//[ #\"-%\"]}
-                CMS_PORT=${CMS_PORT//[ #\"-%\"]}
-                API_PORT=${API_PORT//[ #\"-%\"]}
-
-                # print build output
-                print_build_output
-               
-                
-                rm ../../Dockerfile
-            else # if docker image was not build, we do cleanup
-                echo -e "${Red}we can't make docker image, Cleanup Process is running.....${NC}" 
-                cleanup
             fi
         else 
             echo -e "${Red}your previously build exist, Operation cenceled, Please use 'mishka.sh --update' for update you app${NC}"

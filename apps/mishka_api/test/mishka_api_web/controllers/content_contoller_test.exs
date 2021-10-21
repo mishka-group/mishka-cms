@@ -72,9 +72,10 @@ defmodule MishkaApiWeb.ContentControllerTest do
 
   @notif_info %{
     status: :active,
-    section: :other,
+    section: :public,
     section_id: Ecto.UUID.generate,
-    short_description: "this is a test of notif",
+    title: "test for title",
+    description: "this is a test of notif",
     expire_time: DateTime.utc_now(),
     type: :client,
     target: :all,
@@ -1113,21 +1114,10 @@ defmodule MishkaApiWeb.ContentControllerTest do
     end
 
     test "send notif" , %{user_info: _user_info, conn: conn, auth: auth} do
-      notif_info = %{
-        status: :active,
-        section: :other,
-        section_id: Ecto.UUID.generate,
-        short_description: "this is a test of notif",
-        expire_time: DateTime.utc_now(),
-        type: :client,
-        target: :all,
-        extra: %{test: "this is a test of notif"},
-      }
-
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :send_notif), notif_info)
+        |> post(Routes.content_path(conn, :send_notif), @notif_info)
 
       assert %{
         "action" => "send_notif",

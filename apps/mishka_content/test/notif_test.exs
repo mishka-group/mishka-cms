@@ -21,6 +21,7 @@ defmodule MishkaContentTest.NotifTest do
     expire_time: DateTime.utc_now(),
     type: :client,
     target: :all,
+    description: "<p> this is a test more than 10</p>",
     extra: %{test: "this is a test of notif"},
   }
 

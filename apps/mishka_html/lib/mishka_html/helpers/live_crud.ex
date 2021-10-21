@@ -468,9 +468,12 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       {:error, :get_draft_by_id, :not_found} -> socket
 
       record ->
+        editor =
+          Map.get(record, :editor) || Enum.find(record.dynamic_form, fn x -> x.type == "description" end).value || ""
+
         socket
-        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id, editor: Map.get(record, :editor) || "")
-        |> push_event("update-editor-html", %{html: Map.get(record, :editor) || ""})
+        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id, editor: editor)
+        |> push_event("update-editor-html", %{html: editor})
     end
 
     {:noreply, socket}

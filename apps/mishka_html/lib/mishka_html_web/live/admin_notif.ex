@@ -190,6 +190,11 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
 
   selected_menue("MishkaHtmlWeb.AdminBlogNotifLive")
 
+  @impl true
+  def handle_info(_, socket) do
+    {:noreply, socket}
+  end
+
   defp creata_notif_state(repo_data) do
     Map.drop(repo_data, [:inserted_at, :updated_at, :__meta__, :__struct__, :users, :id, :extra, :user_notif_statuses])
     |> Map.to_list()
@@ -240,7 +245,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
 
 
   def edit_category(socket, params: {params}) do
-    case NotifSystem.edit(params) do
+    socket = case NotifSystem.edit(params) do
       {:error, :edit, @error_atom, repo_error} ->
         socket
         |> assign([
@@ -345,6 +350,14 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
       class: "col-sm-2",
       title: MishkaTranslator.Gettext.dgettext("html_live", "هدف"),
       description: MishkaTranslator.Gettext.dgettext("html_live", "هدف اعلان")},
+
+      %{type: "description", status: [
+        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
+      ],
+      form: "editor",
+      class: "col-sm-12",
+      title: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات کامل"),
+      description: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات کامل اعلان")},
     ]
   end
 
@@ -367,15 +380,6 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
       class: "col-sm-3",
       title: MishkaTranslator.Gettext.dgettext("html_live", "تاریخ انقضا"),
       description: MishkaTranslator.Gettext.dgettext("html_live", "شما به واسطه این فیلد می توانید تاریخ انقضا برای یک اعلان را مشخص کنید.")},
-
-      %{type: "description", status: [
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "پیشنهادی"), class: "badge bg-dark"}
-      ],
-      form: "editor",
-      class: "col-sm-12",
-      title: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات کامل"),
-      description: MishkaTranslator.Gettext.dgettext("html_live", "توضیحات کامل اعلان")},
 
       %{type: "user_id", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"}

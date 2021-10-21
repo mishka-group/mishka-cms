@@ -11,6 +11,12 @@
   font-display: block;
 } */
 
+.show-admin-notif-description {
+  text-align: justify;
+  font-size: 14px;
+  line-height: 30px;
+}
+
 .admin-notif-title-link {
   color: #000;
   text-decoration: none;

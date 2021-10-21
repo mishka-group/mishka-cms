@@ -36,9 +36,10 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
         draft_id: nil,
         user_search: [],
         changeset: notif_changeset(),
-        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت اعلانات")
+        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت اعلانات"),
+        notif: nil
       )
-    {:ok, socket}
+      {:ok, socket}
   end
 
   def handle_params(%{"id" => id, "type" => "edit"}, _url, socket) do
@@ -65,7 +66,8 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
          |> assign([
            dynamic_form: notif_forms,
            id: repo_data.id,
-           render_type: :edit
+           render_type: :edit,
+           editor: repo_data.description
          ])
          |> push_event("update-editor-html", %{html: description.value})
     end
@@ -80,10 +82,13 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین اعلانی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifsLive))
 
-      {:ok, :get_record_by_id, @error_atom, _repo_data} ->
+      {:ok, :get_record_by_id, @error_atom, repo_data} ->
 
-        # TODO: show data with extra in a page like activity admin show
-        assign(socket, render_type: :show)
+        socket
+        |> assign(
+          render_type: :show,
+          notif: repo_data
+        )
     end
 
     {:noreply, socket}
@@ -134,7 +139,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
     end
 
     case socket.assigns.id do
-      nil -> create_notif(socket, params: {params})
+      nil -> create_notif(socket, params: {Map.merge(params, %{"description" => socket.assigns.editor})})
       id -> edit_category(socket, params: {Map.merge(params, %{"id" => id, "description" => socket.assigns.editor})})
     end
 
@@ -215,7 +220,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
   end
 
   defp create_notif(socket, params: {params}) do
-    socket = case NotifSystem.create(Map.merge(params, %{"description" => socket.assigns.editor})) do
+    socket = case NotifSystem.create(params) do
       {:error, :add, :notif, repo_error} ->
         socket
         |> assign([changeset: repo_error])

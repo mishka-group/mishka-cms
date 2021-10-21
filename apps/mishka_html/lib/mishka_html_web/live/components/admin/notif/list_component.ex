@@ -7,7 +7,7 @@ defmodule MishkaHtmlWeb.Admin.Notif.ListComponent do
       <div class="col bw admin-notif-section">
       <div class="space20"></div>
       <div class="row">
-          <%= for {item, color} <- Enum.zip(@notifs, Stream.cycle(["wlist", "glist"])) do %>
+          <%= for item <- @notifs do %>
             <div class="col-sm-6 admin-notif-list vazir">
               <h3>توضیحات کوتاه:</h3>
               <div class="row">

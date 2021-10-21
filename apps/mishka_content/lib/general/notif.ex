@@ -72,7 +72,6 @@ defmodule MishkaContent.General.Notif do
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
     db_error ->
-      IO.inspect(db_error)
       MishkaContent.db_content_activity_error("notif", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
   end

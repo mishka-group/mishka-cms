@@ -12,7 +12,7 @@ defmodule MishkaDatabase.Repo.Migrations.Notifs do
       add(:type, :integer, null: false)
       add(:target, :integer, null: false)
       add(:title, :string, size: 350, null: false)
-      add(:description, :text, null: true)
+      add(:description, :text, null: false)
       add(:expire_time, :utc_datetime, null: true)
       add(:extra, :map, null: true)
 

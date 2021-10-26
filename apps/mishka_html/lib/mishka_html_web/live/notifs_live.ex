@@ -47,7 +47,29 @@ defmodule MishkaHtmlWeb.NotifsLive do
   def handle_event("show_notif_navigate", %{"id" => id}, socket) do
     notif =
       Notif.notifs(conditions: {1, 1, :client}, filters: %{id: id, user_id: socket.assigns.user_id, target: :all, type: :client, status: :active})
+    {:noreply, notif_link(socket, notif)}
+  end
 
+  @impl true
+  def handle_info(:menu, socket) do
+    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.NotifsLive", socket.assigns.self_pid})
+    {:noreply, socket}
+  end
+
+  defp seo_tags(socket) do
+    site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+    %{
+      image: "#{site_link}/images/mylogo.png",
+      title: "اطلاع رسانی ها",
+      description: "در این بخش می توانید اطلاع رسانی های مربوط به خود را بررسی کنید",
+      type: "website",
+      keywords: "اطلاع رسانی ها",
+      link: site_link <> Routes.live_path(socket, __MODULE__)
+    }
+  end
+
+
+  def notif_link(socket, notif) do
     socket =
       with {:notification, true, notif_entry} <- {:notification, length(notif.entries) == 1, notif.entries},
            {:notif_section, true, _section, _notif_info} <- {:notif_section, List.first(notif_entry).section in [:user_only, :public], List.first(notif_entry).section, notif_entry} do
@@ -81,27 +103,8 @@ defmodule MishkaHtmlWeb.NotifsLive do
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifLive, id: List.first(notif_info).id, type: "show"))
       end
 
-    {:noreply, socket}
+      socket
   end
-
-  @impl true
-  def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.NotifsLive", socket.assigns.self_pid})
-    {:noreply, socket}
-  end
-
-  defp seo_tags(socket) do
-    site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
-    %{
-      image: "#{site_link}/images/mylogo.png",
-      title: "اطلاع رسانی ها",
-      description: "در این بخش می توانید اطلاع رسانی های مربوط به خود را بررسی کنید",
-      type: "website",
-      keywords: "اطلاع رسانی ها",
-      link: site_link <> Routes.live_path(socket, __MODULE__)
-    }
-  end
-
   def notif_read_status(status) do
     case status do
       nil -> MishkaTranslator.Gettext.dgettext("html_live", "خوانده نشده")

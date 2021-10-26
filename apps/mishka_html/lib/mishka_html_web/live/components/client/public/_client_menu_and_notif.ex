@@ -125,7 +125,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                       <%= if @show_notif and !is_nil(@notifs) and @notifs != [] do %>
                         <div class="col-sm-3 notif-drop vazir rtl">
                           <%= for notif <- @notifs do %>
-                            <p>
+                            <p phx-click="show_notif_navigate" phx-value-id="<%= notif.id %>">
                             <%= if is_nil(notif.status_type) do %>
                               <span class="d-inline-block bg-danger rounded-circle"></span>
                             <% else %>
@@ -173,6 +173,13 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
       show_or_close_notif(socket.assigns.notifs, socket.assigns.show_notif, socket)
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show_notif_navigate", %{"id" => id}, socket) do
+    notif =
+      Notif.notifs(conditions: {1, 1, :client}, filters: %{id: id, user_id: socket.assigns.user_id, target: :all, type: :client, status: :active})
+    {:noreply, MishkaHtmlWeb.NotifsLive.notif_link(socket, notif)}
   end
 
   @impl true

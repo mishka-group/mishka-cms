@@ -1,0 +1,47 @@
+<div class="space30"></div>
+<div class="container rtl client-main-container">
+
+    <%= live_component @socket, MishkaHtmlWeb.Client.Public.HeaderComponent, id: :client_header, notifs: 14, user_id: @user_id %>
+
+    <%= live_component @socket, MishkaHtmlWeb.Admin.Public.LiveFlashComponent,
+                            id: :live_flash,
+                            flash: @flash
+    %>
+
+    <section class="col mx-auto client-content vazir">
+
+
+        <div class="space30"></div>
+        <h1><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی ها") %></h1>
+
+        <div class="space20"></div>
+        <hr>
+        <div class="space20"></div>
+
+        <%= for item <- @notifs do %>
+            <div class="col-sm-12 list-group user-bookmarks-list vazir">
+                <div class="list-group-item list-group-item-action d-flex gap-3 py-3 list-of-client-notifs">
+                    <div class="col-sm-12" phx-click="show_notif_navigate" phx-value-id="<%= item.id %>">
+                        <h2 class="mb-0">
+                            <%= MishkaHtml.title_sanitize(item.title) %>
+                            &nbsp;&nbsp;
+                            <span class="badge bg-info vazir">خوانده شده</span>
+                            <span class="badge bg-success vazir">منقضی شده</span>
+                            <span class="badge bg-danger vazir">ارسال همگانی</span>
+                            <span class="badge bg-secondary vazir">نمایش کامل</span>
+                        </h2>
+                        <div class="space20"></div>
+                        <div class="col-sm-12 client-notif-description-list">
+                            <% des = if MishkaHtml.get_size_of_words(item.description, 50) != "", do: MishkaHtml.get_size_of_words(item.description, 50) <> MishkaTranslator.Gettext.dgettext("html_live_templates", "... برای ادامه کلیک کنید ...") %>
+                            <%= HtmlSanitizeEx.strip_tags(des) %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="space10"></div>
+        <% end %>
+
+        <div class="clearfix"> </div>
+    </section>
+</div>
+<%= live_component @socket, MishkaHtmlWeb.Client.Public.CrightComponent , id: :cright %>

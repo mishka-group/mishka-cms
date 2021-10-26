@@ -56,13 +56,14 @@ defmodule MishkaHtmlWeb.Router do
     pipe_through [:browser, :user_logined]
 
     get "/auth/log-out", AuthController, :log_out
-    live "/auth/notifications", NotificationsLive
   end
 
   scope "/user", MishkaHtmlWeb do
     pipe_through [:browser, :user_logined]
 
     live "/bookmarks", BookmarksLive
+    live "/notifications", NotifsLive
+    live "/notification/:id", NotifLive
   end
 
 

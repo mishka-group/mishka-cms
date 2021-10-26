@@ -134,14 +134,14 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                               <span><%= notif.title %></span>
                               <div class="space10"> </div>
                               <small class="d-block text-muted">
-                                <% des = if get_size_of_words(notif.description, 10) != "", do: get_size_of_words(notif.description, 10) <> " ... برای ادامه کلیک کنید ..." %>
+                                <% des = if MishkaHtml.get_size_of_words(notif.description, 10) != "", do: MishkaHtml.get_size_of_words(notif.description, 10) <> " ... برای ادامه کلیک کنید ..." %>
                                 <%= HtmlSanitizeEx.strip_tags(des) %>
                               </small>
                             </p>
                           <% end %>
                           <div class="space30"> </div>
                           <p class="text-center">
-                            <a class="btn btn-outline-secondary btn-lg" phx-click="subscription">نمایش تمامی اعلانات</a>
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش تمامی اعلانات"), to: Routes.live_path(@socket, MishkaHtmlWeb.NotifsLive), class: "btn btn-outline-secondary btn-lg" %>
                           </p>
                         </div>
                       <% end %>
@@ -283,14 +283,4 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   def notify_subscribers(notif) when is_tuple(notif) do
      Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_menu_and_notif", notif)
   end
-
-  def get_size_of_words(string, count) when not is_nil(string) do
-    string
-    |> String.split(" ")
-    |> Enum.with_index(fn element, index -> if index <= count, do: element end)
-    |> Enum.reject(fn item -> is_nil(item) end)
-    |> Enum.join(" ")
-  end
-
-  def get_size_of_words(_string, _count), do: ""
 end

@@ -76,4 +76,14 @@ defmodule MishkaHtml do
       :auth -> %{color: "secondary", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش دسترسی")}
     end
   end
+
+  def get_size_of_words(string, count) when not is_nil(string) do
+    string
+    |> String.split(" ")
+    |> Enum.with_index(fn element, index -> if index <= count, do: element end)
+    |> Enum.reject(fn item -> is_nil(item) end)
+    |> Enum.join(" ")
+  end
+
+  def get_size_of_words(_string, _count), do: ""
 end

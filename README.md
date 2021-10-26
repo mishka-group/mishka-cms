@@ -9,7 +9,7 @@ Mishka CMS is made in form of Domain-driven design (DDD) which has got 6 sub-sys
 
 #### 1. API sub-system: 
 
-This section is to provide `API `for external software and includes almost all the developed sections. This section uses Token in most “endpoints” to connect, and data send and receive are based on JSON. Soon, the APIs related to real-time connection will be added.
+This section is to provide `API`for external software and includes almost all the developed sections. This section uses Token in most “endpoints” to connect, and data send and receive are based on JSON. Soon, the APIs related to real-time connection will be added.
 
 #### 2. HTML sub-system: 
 

@@ -11,6 +11,13 @@
   font-display: block;
 } */
 
+.client-notif-description-list {
+  font-size: 14px;
+}
+.list-of-client-notifs {
+  line-height: 25px;
+  text-align: justify;
+}
 .show-admin-notif-description {
   text-align: justify;
   font-size: 14px;

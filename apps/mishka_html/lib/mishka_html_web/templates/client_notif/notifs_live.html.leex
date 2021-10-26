@@ -18,17 +18,22 @@
         <hr>
         <div class="space20"></div>
 
-        <%= for item <- @notifs do %>
+        <%= for item <- @notifs.entries do %>
             <div class="col-sm-12 list-group user-bookmarks-list vazir">
                 <div class="list-group-item list-group-item-action d-flex gap-3 py-3 list-of-client-notifs">
                     <div class="col-sm-12" phx-click="show_notif_navigate" phx-value-id="<%= item.id %>">
                         <h2 class="mb-0">
                             <%= MishkaHtml.title_sanitize(item.title) %>
                             &nbsp;&nbsp;
-                            <span class="badge bg-info vazir">خوانده شده</span>
-                            <span class="badge bg-success vazir">منقضی شده</span>
-                            <span class="badge bg-danger vazir">ارسال همگانی</span>
-                            <span class="badge bg-secondary vazir">نمایش کامل</span>
+                            <span class="badge bg-info vazir"><%= MishkaHtmlWeb.NotifsLive.notif_read_status(item.status_type) %></span>
+
+                            <%= if !is_nil(item.expire_time) and Timex.diff(DateTime.utc_now, item.expire_time, :milliseconds) >= 1 do %>
+                                <span class="badge bg-success vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "منقضی شده") %></span>
+                            <% end %>
+
+                            <span class="badge bg-danger vazir"><%= MishkaHtmlWeb.NotifsLive.notif_section(item.section) %></span>
+
+                            <span class="badge bg-secondary vazir"><%= MishkaHtmlWeb.NotifsLive.notif_type(item.type) %></span>
                         </h2>
                         <div class="space20"></div>
                         <div class="col-sm-12 client-notif-description-list">
@@ -40,6 +45,20 @@
             </div>
             <div class="space10"></div>
         <% end %>
+
+
+        <div class="space30"></div>
+        <div class="client-paginate">
+        <%= if @notifs.entries != [] do %>
+        <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
+                        id: :pagination,
+                        pagination_url: MishkaHtmlWeb.NotifsLive,
+                        data: @notifs,
+                        filters: %{},
+                        count: 20
+        %>
+        <% end %>
+        </div>
 
         <div class="clearfix"> </div>
     </section>

@@ -381,7 +381,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر ضروری"), class: "badge bg-info"},
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "غیر پیشنهادی"), class: "badge bg-warning"}
       ],
-      form: "text",
+      form: "time",
       class: "col-sm-3",
       title: MishkaTranslator.Gettext.dgettext("html_live", "تاریخ انقضا"),
       description: MishkaTranslator.Gettext.dgettext("html_live", "شما به واسطه این فیلد می توانید تاریخ انقضا برای یک اعلان را مشخص کنید.")},
@@ -394,7 +394,6 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
       title: MishkaTranslator.Gettext.dgettext("html_live", "نام کاربری"),
       description: MishkaTranslator.Gettext.dgettext("html_live", "به واسطه این فیلد می توانید کاربر مورد نظر خود را به یک اعلان تخصیص بدهید")},
 
-      # TODO: add extra like dynamic form
       # TODO: create a time form
       # TODO: fix mobile css for client notif
     ]

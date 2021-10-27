@@ -23,9 +23,14 @@
                 <div class="list-group-item list-group-item-action d-flex gap-3 py-3 list-of-client-notifs">
                     <div class="col-sm-12" phx-click="show_notif_navigate" phx-value-id="<%= item.id %>">
                         <h2 class="mb-0">
+                            <%= if is_nil(item.user_notif_status.status_type) do %>
+                              <span class="d-inline-block bg-danger rounded-circle"></span>
+                            <% else %>
+                              <span class="d-inline-block bg-secondary rounded-circle"></span>
+                            <% end %>
                             <%= MishkaHtml.title_sanitize(item.title) %>
                             &nbsp;&nbsp;
-                            <span class="badge bg-info vazir"><%= MishkaHtmlWeb.NotifsLive.notif_read_status(item.status_type) %></span>
+                            <span class="badge bg-info vazir"><%= MishkaHtmlWeb.NotifsLive.notif_read_status(item.user_notif_status.status_type) %></span>
 
                             <%= if !is_nil(item.expire_time) and Timex.diff(DateTime.utc_now, item.expire_time, :milliseconds) >= 1 do %>
                                 <span class="badge bg-success vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "منقضی شده") %></span>

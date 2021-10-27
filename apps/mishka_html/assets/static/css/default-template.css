@@ -11,6 +11,11 @@
   font-display: block;
 } */
 
+span.d-inline-block.bg-secondary.rounded-circle {
+  width: 0.5em;
+  height: 0.5em;
+}
+
 .client-notif-description-list {
   font-size: 14px;
 }

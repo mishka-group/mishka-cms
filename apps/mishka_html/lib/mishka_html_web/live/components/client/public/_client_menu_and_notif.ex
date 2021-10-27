@@ -126,7 +126,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                         <div class="col-sm-3 notif-drop vazir rtl">
                           <%= for notif <- @notifs do %>
                             <p phx-click="show_notif_navigate" phx-value-id="<%= notif.id %>">
-                            <%= if is_nil(notif.status_type) do %>
+                            <%= if is_nil(notif.user_notif_status.status_type) do %>
                               <span class="d-inline-block bg-danger rounded-circle"></span>
                             <% else %>
                               <span class="d-inline-block bg-secondary rounded-circle"></span>

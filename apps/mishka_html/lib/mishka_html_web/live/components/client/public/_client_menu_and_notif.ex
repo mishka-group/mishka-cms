@@ -179,7 +179,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   def handle_event("show_notif_navigate", %{"id" => id}, socket) do
     notif =
       Notif.notifs(conditions: {1, 1, :client}, filters: %{id: id, user_id: socket.assigns.user_id, target: :all, type: :client, status: :active})
-    {:noreply, MishkaHtmlWeb.NotifsLive.notif_link(socket, notif)}
+    {:noreply, MishkaHtmlWeb.NotifsLive.notif_link(socket, notif, socket.assigns.user_id)}
   end
 
   @impl true

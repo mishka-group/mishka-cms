@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.NotifsLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.General.Notif
+  alias MishkaContent.General.UserNotifStatus
 
   @impl true
   def render(assigns) do
@@ -47,7 +48,7 @@ defmodule MishkaHtmlWeb.NotifsLive do
   def handle_event("show_notif_navigate", %{"id" => id}, socket) do
     notif =
       Notif.notifs(conditions: {1, 1, :client}, filters: %{id: id, user_id: socket.assigns.user_id, target: :all, type: :client, status: :active})
-    {:noreply, notif_link(socket, notif)}
+    {:noreply, notif_link(socket, notif, socket.assigns.user_id)}
   end
 
   @impl true
@@ -69,10 +70,15 @@ defmodule MishkaHtmlWeb.NotifsLive do
   end
 
 
-  def notif_link(socket, notif) do
+  def notif_link(socket, notif, user_id) do
     socket =
       with {:notification, true, notif_entry} <- {:notification, length(notif.entries) == 1, notif.entries},
            {:notif_section, true, _section, _notif_info} <- {:notif_section, List.first(notif_entry).section in [:user_only, :public], List.first(notif_entry).section, notif_entry} do
+
+        record = List.first(notif_entry)
+        if is_nil(record.user_notif_status.status_type) do
+          UserNotifStatus.create(%{type: :read, notif_id: record.id, user_id: user_id})
+        end
 
         socket
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.NotifLive, List.first(notif_entry).id))
@@ -86,6 +92,12 @@ defmodule MishkaHtmlWeb.NotifsLive do
         {:notif_section, false, :blog_post, notif_info} ->
           socket = case MishkaContent.Blog.Post.show_by_id(List.first(notif_info).section_id) do
             {:ok, :get_record_by_id, _error_tag, repo_data} ->
+
+              record = List.first(notif.entries)
+              if is_nil(record.user_notif_status.status_type) do
+                UserNotifStatus.create(%{type: :read, notif_id: record.id, user_id: user_id})
+              end
+
               socket
               |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogPostLive, repo_data.alias_link))
 

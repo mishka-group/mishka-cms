@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.NotifLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaContent.General.Notif
+
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.ClientNotifView, "notif_live.html", assigns)

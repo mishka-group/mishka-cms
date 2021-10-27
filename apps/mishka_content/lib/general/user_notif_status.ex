@@ -2,6 +2,7 @@ defmodule MishkaContent.General.UserNotifStatus do
 
   alias MishkaDatabase.Schema.MishkaContent.UserNotifStatus
 
+  import Ecto.Query
   use MishkaDatabase.CRUD,
           module: UserNotifStatus,
           error_atom: :user_notif_status,
@@ -43,5 +44,11 @@ defmodule MishkaContent.General.UserNotifStatus do
   @doc delegate_to: {MishkaDatabase.CRUD, :crud_get_record, 1}
   def show_by_id(id) do
     crud_get_record(id)
+  end
+
+  @spec user_read_or_skipped :: Ecto.Query.t()
+  def user_read_or_skipped() do
+    from(status in UserNotifStatus,
+    select: %{notif_id: status.notif_id, user_id: status.user_id, status_type: status.type})
   end
 end

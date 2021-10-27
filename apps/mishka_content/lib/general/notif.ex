@@ -1,6 +1,6 @@
 defmodule MishkaContent.General.Notif do
   alias MishkaDatabase.Schema.MishkaContent.Notif
-
+  alias MishkaContent.General.UserNotifStatus
   import Ecto.Query
   use MishkaDatabase.CRUD,
           module: Notif,
@@ -58,7 +58,7 @@ defmodule MishkaContent.General.Notif do
           Scrivener.Page.t()
   def notifs(conditions: {page, page_size, :client}, filters: filters) do
     from(notif in Notif) |> convert_filters_to_where(filters)
-    |> fields(:client)
+    |> fields(:client, filters.user_id)
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
     db_error ->
@@ -74,6 +74,36 @@ defmodule MishkaContent.General.Notif do
     db_error ->
       MishkaContent.db_content_activity_error("notif", "read", db_error)
       %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+  end
+
+  def notif(id, user_id) do
+    from(notif in Notif,
+      where: notif.id == ^id,
+      where: notif.user_id == ^user_id  or is_nil(notif.user_id),
+      left_join: status in subquery(UserNotifStatus.user_read_or_skipped),
+      on: status.user_id == ^user_id and status.notif_id == notif.id,
+      select: %{
+        id: notif.id,
+        status: notif.status,
+        section: notif.section,
+        section_id: notif.section_id,
+        title: notif.title,
+        description: notif.description,
+        expire_time: notif.expire_time,
+        extra: notif.extra,
+        user_id: notif.user_id,
+        type: notif.type,
+        target: notif.target,
+        user_notif_status: status,
+        inserted_at: notif.inserted_at,
+        updated_at: notif.updated_at
+      }
+    )
+    |> MishkaDatabase.Repo.one()
+  rescue
+    db_error ->
+      MishkaContent.db_content_activity_error("notif", "read", db_error)
+      nil
   end
 
   defp convert_filters_to_where(query, filters) do
@@ -93,10 +123,10 @@ defmodule MishkaContent.General.Notif do
     end)
   end
 
-  defp fields(query, :client) do
+  defp fields(query, :client, user_id) do
     from [notif] in query,
-    left_join: user in assoc(notif, :users),
-    left_join: status in assoc(notif, :user_notif_statuses),
+    left_join: status in subquery(UserNotifStatus.user_read_or_skipped),
+    on: status.user_id == ^user_id and status.notif_id == notif.id,
     order_by: [desc: notif.inserted_at, desc: notif.id],
     select: %{
       id: notif.id,
@@ -110,7 +140,7 @@ defmodule MishkaContent.General.Notif do
       user_id: notif.user_id,
       type: notif.type,
       target: notif.target,
-      status_type: status.type,
+      user_notif_status: status,
       inserted_at: notif.inserted_at,
       updated_at: notif.updated_at
     }
@@ -137,15 +167,13 @@ defmodule MishkaContent.General.Notif do
     }
   end
 
-  # TODO: Create a link creator for navigating to page concerned
-  # TODO: top list should create a link when user clicks on a notification
-
   def count_un_read(user_id) do
     from(
       notif in Notif,
-      left_join: status in assoc(notif, :user_notif_statuses),
       where: notif.user_id == ^user_id or is_nil(notif.user_id),
-      where: is_nil(status.type),
+      left_join: status in subquery(UserNotifStatus.user_read_or_skipped),
+      on: status.user_id == ^user_id and status.notif_id == notif.id,
+      where: is_nil(status.status_type),
       select: count(notif.id)
     )
     |> MishkaDatabase.Repo.one()

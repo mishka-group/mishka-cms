@@ -1,7 +1,7 @@
 defmodule MishkaHtmlWeb.NotifLive do
   use MishkaHtmlWeb, :live_view
 
-
+  alias MishkaContent.General.Notif
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.ClientNotifView, "notif_live.html", assigns)
@@ -9,17 +9,26 @@ defmodule MishkaHtmlWeb.NotifLive do
 
   @impl true
   def mount(%{"id" => notif_id}, session, socket) do
-    Process.send_after(self(), :menu, 100)
-    IO.inspect(notif_id)
-    socket =
-      assign(socket,
-        page_title: MishkaTranslator.Gettext.dgettext("html_live", "اطلاع رسانی"),
-        body_color: "#40485d",
-        seo_tags: seo_tags(socket, notif_id),
-        trigger_submit: false,
-        user_id: Map.get(session, "user_id"),
-        self_pid: self()
-      )
+    socket = case Notif.notif(notif_id, Map.get(session, "user_id")) do
+      nil ->
+        socket
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "چنین صفحه ای وجود ندارد یا از قبل حذف یا شما به آن دسترسی ندارید."))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.NotifsLive))
+
+      record ->
+        Process.send_after(self(), :menu, 100)
+        socket
+        |> assign(
+          page_title: MishkaTranslator.Gettext.dgettext("html_live", "اطلاع رسانی"),
+          body_color: "#40485d",
+          seo_tags: seo_tags(socket, notif_id),
+          trigger_submit: false,
+          user_id: Map.get(session, "user_id"),
+          self_pid: self(),
+          notif: record
+        )
+    end
+
     {:ok, socket}
   end
 

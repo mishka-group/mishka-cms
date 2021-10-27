@@ -357,6 +357,7 @@ header {
   padding: 20px;
   box-shadow: 1px 1px 13px 1px #787878;
   text-align: justify;
+  min-width: 400px;
 }
 
 span.d-inline-block.bg-danger.rounded-circle {
@@ -372,6 +373,8 @@ span.d-inline-block.bg-danger.rounded-circle {
 .client-notif-icon svg {
   width: 45%;
   height: 45%;
+  min-width: 30px;
+  min-height: 30px;
 }
 
 .client-menu-nav-item{
@@ -2634,6 +2637,26 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (max-width: 767.98px) {
+  .col-sm-3.navbar.navbar-dark {
+    width: 70%;
+  }
+
+  .client-notif-icon svg {
+    max-width: 30px;
+    max-height: 30px;
+  }
+
+  .col-sm.client-notif {
+    position: absolute;
+  }
+
+  .col-sm-3.notif-drop {
+    position: relative;
+    min-width: 400px;
+    right: 15px;
+  }
+  /* end of notif */
+
   .col-sm-3.blog-menues {
     width: 100%;
   }

@@ -84,6 +84,14 @@
                             <span class="badge bg-dark">تخصیص به کاربر</span>
                             <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "دیدن کاربر"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: @notif.user_id) %>
                         <% end %>
+
+                        <%= if !is_nil(@notif.expire_time) do %>
+                            <span class="badge bg-dark">انقضا</span>
+                            <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
+                                span_id: "updated_at-#{@notif.id}-component",
+                                time: @notif.expire_time
+                            %>
+                        <% end %>
                     </div>
                 </div>
 

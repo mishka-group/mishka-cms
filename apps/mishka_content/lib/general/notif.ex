@@ -168,12 +168,14 @@ defmodule MishkaContent.General.Notif do
   end
 
   def count_un_read(user_id) do
+    new_time = DateTime.utc_now()
     from(
       notif in Notif,
       where: notif.user_id == ^user_id or is_nil(notif.user_id),
       left_join: status in subquery(UserNotifStatus.user_read_or_skipped),
       on: status.user_id == ^user_id and status.notif_id == notif.id,
       where: is_nil(status.status_type),
+      where: is_nil(notif.expire_time) or notif.expire_time >= ^new_time,
       select: count(notif.id)
     )
     |> MishkaDatabase.Repo.one()

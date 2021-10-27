@@ -179,6 +179,37 @@
                                     search_fields: MishkaHtmlWeb.AdminBlogNotifLive.search_fields(form.type)
                             %>
 
+                        <% "time" -> %>
+                            <%= datetime_select f, :expire_time, builder: fn b -> %>
+                                <%# TODO: it should be replaced with LiveView calendar %>
+                                <div class="row vazir">
+                                    <div class="col-sm-1">
+                                        <label for="day" class="form-label">روز:</label>
+                                        <br>
+                                        <%= b.(:day, []) %>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <label for="day" class="form-label">ماه:</label>
+                                        <br>
+                                        <%= b.(:month, []) %>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <label for="day" class="form-label">سال:</label>
+                                        <br>
+                                        <%= b.(:year, []) %>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <label for="day" class="form-label">ساعت:</label>
+                                        <br>
+                                        <%= b.(:hour, []) %>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <label for="day" class="form-label">دقیقه:</label>
+                                        <br>
+                                        <%= b.(:minute, []) %>
+                                    </div>
+                                </div>
+                             <% end %>
 
                            <% _ -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextComponent,
@@ -191,7 +222,6 @@
 
                         <% end %>
                     <% end %>
-
 
                 </div>
 

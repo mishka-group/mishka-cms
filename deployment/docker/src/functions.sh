@@ -3,35 +3,41 @@
 # store configs
 function store_configs() {
     echo  '{
-    "database_user": "'$DATABASE_USER'",
-    "database_password": "'$DATABASE_PASSWORD'",
-    "database_name": "'$DATABASE_NAME'",
-    "database_host": "mishka_db",
-    "database_port": "5432",
-    "postgres_user": "'$POSTGRES_USER'",
-    "postgres_password": "'$POSTGRES_PASSWORD'",
-    "token_jwt_key": "'$TOKEN_JWT_KEY'",
-    "secret_current_token_salt": "'$SECRET_CURRENT_TOKEN_SALT'",
-    "secret_refresh_token_salt": "'$SECRET_REFRESH_TOKEN_SALT'",
-    "secret_access_token_salt": "'$SECRET_ACCESS_TOKEN_SALT'",
-    "secret_key_base": "'$SECRET_KEY_BASE'",
-    "secret_key_base_html": "'$SECRET_KEY_BASE_HTML'",
-    "secret_key_base_api": "'$SECRET_KEY_BASE_API'",
-    "live_view_salt": "'$LIVE_VIEW_SALT'",
-    "cms_domain_name": "'$CMS_DOMAIN_NAME'",
-    "api_domain_name": "'$API_DOMAIN_NAME'",
-    "cms_port": "'$CMS_PORT'",
-    "api_port": "'$API_PORT'",
-    "admin_email": "'$ADMIN_EMAIL'",
-    "ssl": "'$SSL'",
-    "protocol": "'$PROTOCOL'",
-    "env_type": "'$ENV_TYPE'"
+    "database": {
+        "database_user": "'$DATABASE_USER'",
+        "database_password": "'$DATABASE_PASSWORD'",
+        "database_name": "'$DATABASE_NAME'",
+        "database_host": "mishka_db",
+        "database_port": "5432",
+        "postgres_user": "'$POSTGRES_USER'",
+        "postgres_password": "'$POSTGRES_PASSWORD'" 
+    },
+    "tokens": {
+        "token_jwt_key": "'$TOKEN_JWT_KEY'",
+        "secret_current_token_salt": "'$SECRET_CURRENT_TOKEN_SALT'",
+        "secret_refresh_token_salt": "'$SECRET_REFRESH_TOKEN_SALT'",
+        "secret_access_token_salt": "'$SECRET_ACCESS_TOKEN_SALT'",
+        "secret_key_base": "'$SECRET_KEY_BASE'",
+        "secret_key_base_html": "'$SECRET_KEY_BASE_HTML'",
+        "secret_key_base_api": "'$SECRET_KEY_BASE_API'",
+        "live_view_salt": "'$LIVE_VIEW_SALT'" 
+    },
+    "etc": {
+        "cms_domain_name": "'$CMS_DOMAIN_NAME'",
+        "api_domain_name": "'$API_DOMAIN_NAME'",
+        "cms_port": "'$CMS_PORT'",
+        "api_port": "'$API_PORT'",
+        "admin_email": "'$ADMIN_EMAIL'",
+        "ssl": "'$SSL'",
+        "protocol": "'$PROTOCOL'",
+        "env_type": "'$ENV_TYPE'"
+    }
     }' > $PWD/etc/.secret
 }
 
 # load configs
 function load_configs() {
-    constants=$(cat $PWD/etc/.secret | jq '.' | jq -r "to_entries|map(\"\(.key|ascii_upcase)=\(.value|tostring)\")|.[]")
+    constants=$(cat $PWD/etc/.secret | jq '.[]' | jq -r "to_entries|map(\"\(.key|ascii_upcase)=\(.value|tostring)\")|.[]")
     for key in ${constants}; do
         eval ${key}
     done
@@ -40,7 +46,7 @@ function load_configs() {
 
 # env generator
 function env_generator() {
-    constants=$(cat $PWD/etc/.secret | jq '.' | jq -r "to_entries|map(\"\(.key|ascii_upcase)=\(.value|tostring)\")|.[]")
+    constants=$(cat $PWD/etc/.secret | jq '.[]' | jq -r "to_entries|map(\"\(.key|ascii_upcase)=\(.value|tostring)\")|.[]")
     for key in ${constants}; do
         eval ${key}
         echo ${key} >> $PWD/etc/.mishka_cms_env

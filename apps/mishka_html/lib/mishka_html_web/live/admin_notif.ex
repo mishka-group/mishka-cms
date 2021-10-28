@@ -392,10 +392,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
       form: "text_search",
       class: "col-sm-3",
       title: MishkaTranslator.Gettext.dgettext("html_live", "نام کاربری"),
-      description: MishkaTranslator.Gettext.dgettext("html_live", "به واسطه این فیلد می توانید کاربر مورد نظر خود را به یک اعلان تخصیص بدهید")},
-
-      # TODO: create a time form
-      # TODO: fix mobile css for client notif
+      description: MishkaTranslator.Gettext.dgettext("html_live", "به واسطه این فیلد می توانید کاربر مورد نظر خود را به یک اعلان تخصیص بدهید")}
     ]
   end
 end

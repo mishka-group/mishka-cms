@@ -34,12 +34,8 @@ services:
     restart: always
     networks:
       netowrk:
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - DATABASE_USER=mishka_user
-      - DATABASE_PASSWORD=mishka_password
-      - DATABASE_NAME=mishka_database
+    env_file:
+      - ../etc/.mishka_cms_env
     volumes:
       - database:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro

@@ -39,7 +39,11 @@ function store_configs() {
 function load_configs() {
     constants=$(cat $PWD/etc/.secret | jq '.[]' | jq -r "to_entries|map(\"\(.key|ascii_upcase)=\(.value|tostring)\")|.[]")
     for key in ${constants}; do
-        eval ${key}
+        # remove double qoutaion
+        local VALUE=`echo ${key} | sed 's/"//g'`
+
+        # set variable
+        eval ${VALUE}
     done
 }
 
@@ -58,17 +62,6 @@ function update_config() {
     # load configs
     load_configs
 
-    # remove double qoutaion
-    local CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
-    local API_DOMAIN_NAME=${API_DOMAIN_NAME//[ #\"-%\"]}
-    local SSL=${SSL//[ #\"-%\"]}
-    local CMS_PORT=${CMS_PORT//[ #\"-%\"]}
-    local ENV_TYPE=${ENV_TYPE//[ #\"-%\"]}
-    local DATABASE_USER=${DATABASE_USER//[ #\"-%\"]}
-    local DATABASE_PASSWORD=${DATABASE_PASSWORD//[ #\"-%\"]}
-    local DATABASE_NAME=${DATABASE_NAME//[ #\"-%\"]}
-    local POSTGRES_USER=${POSTGRES_USER//[ #\"-%\"]}
-    local POSTGRES_PASSWORD=${POSTGRES_PASSWORD//[ #\"-%\"]}
     
     if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then 
         if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 

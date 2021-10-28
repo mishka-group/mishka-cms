@@ -121,11 +121,6 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             # start containers 
             docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
 
-            # remove double qoutaion
-            CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
-            API_DOMAIN_NAME=${API_DOMAIN_NAME//[ #\"-%\"]}
-            CMS_PORT=${CMS_PORT//[ #\"-%\"]}
-            API_PORT=${API_PORT//[ #\"-%\"]}
 
             # print build output
             print_build_output
@@ -205,11 +200,6 @@ else
                 # load configs
                 load_configs
 
-                # remove double qoutaion
-                CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
-                API_DOMAIN_NAME=${API_DOMAIN_NAME//[ #\"-%\"]}
-                CMS_PORT=${CMS_PORT//[ #\"-%\"]}
-                API_PORT=${API_PORT//[ #\"-%\"]}
 
                 if domain_checker $CMS_DOMAIN_NAME && domain_checker $API_DOMAIN_NAME && [[ $ADMIN_EMAIL != "example@example.com" ]]; then 
                     echo -e "${Green}Mishka Cms Available on    --> $SPACE https://$CMS_DOMAIN_NAME $END_SPACE ${NC}"
@@ -280,11 +270,6 @@ else
                     # load configs
                     load_configs
 
-                    # remove double qoutaion
-                    CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME//[ #\"-%\"]}
-                    API_DOMAIN_NAME=${API_DOMAIN_NAME//[ #\"-%\"]}
-                    CMS_PORT=${CMS_PORT//[ #\"-%\"]}
-                    API_PORT=${API_PORT//[ #\"-%\"]}
 
                     if domain_checker $CMS_DOMAIN_NAME && domain_checker $API_DOMAIN_NAME && [[ $ADMIN_EMAIL != "example@example.com" ]]; then 
                         echo -e "${Green}Mishka Cms Available on    --> $SPACE https://$CMS_DOMAIN_NAME $END_SPACE ${NC}"

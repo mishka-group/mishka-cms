@@ -12,6 +12,7 @@ defmodule MishkaHtmlWeb.NotifsLive do
   @impl true
   def mount(_params, session, socket) do
     user_id = Map.get(session, "user_id")
+    Notif.subscribe()
 
     socket =
       assign(socket,
@@ -54,6 +55,20 @@ defmodule MishkaHtmlWeb.NotifsLive do
   @impl true
   def handle_info(:menu, socket) do
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.NotifsLive", socket.assigns.self_pid})
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:notif, :ok, repo_record}, socket) do
+    socket = if repo_record.user_id == socket.assigns.user_id or is_nil(repo_record.user_id) do
+      update(socket, :notifs, fn _notif ->
+        socket
+        |> assign(notifs: Notif.notifs(conditions: {socket.assigns.page, 20, :client}, filters: %{user_id: socket.assigns.user_id, target: :all, type: :client, status: :active}))
+      end)
+    else
+      socket
+    end
+
     {:noreply, socket}
   end
 

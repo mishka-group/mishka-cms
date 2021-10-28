@@ -6,7 +6,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do: subscribe()
+    if connected?(socket), do: subscribe(); Notif.subscribe()
     Process.send_after(self(), :update, 10)
     user_id = Map.get(session, "user_id")
     if !is_nil(user_id), do: Process.send_after(self(), {:count_notif, user_id}, 1000)
@@ -202,6 +202,25 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   @impl true
   def handle_info({:count_notif, user_id}, socket) do
     socket = if(socket.assigns.user_id == user_id, do: assign(socket, notif_count: Notif.count_un_read(socket.assigns.user_id)), else: socket)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:notif, :ok, repo_record}, socket) do
+    socket = if repo_record.user_id == socket.assigns.user_id or is_nil(repo_record.user_id) do
+      notifs = MishkaContent.General.Notif.notifs(conditions: {1, 6, :client}, filters: %{
+        user_id: socket.assigns.user_id,
+        target: :all,
+        type: :client,
+        status: :active
+      })
+
+      socket
+      |> assign(notifs: notifs.entries, notif_count: Notif.count_un_read(socket.assigns.user_id))
+    else
+      socket
+    end
+
     {:noreply, socket}
   end
 

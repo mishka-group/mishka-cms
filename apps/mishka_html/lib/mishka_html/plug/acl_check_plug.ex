@@ -12,9 +12,10 @@ defmodule MishkaHtml.Plug.AclCheckPlug do
       module -> module  |> elem(0)
     end
 
-    acl_got = Map.get(MishkaUser.Acl.Action.actions, module |> to_string())
+    acl_got = Map.get(MishkaUser.Acl.Action.actions, module |> to_string() |> String.replace("Elixir.", ""))
 
     get_user_id = get_session(conn, :user_id)
+
 
     with {:acl_check, false, action} <- {:acl_check, is_nil(acl_got), acl_got},
          {:user_id_check, false, user_id} <- {:user_id_check, is_nil(get_user_id), get_user_id},

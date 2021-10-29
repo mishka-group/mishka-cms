@@ -34,6 +34,8 @@ services:
     restart: always
     networks:
       netowrk:
+    ports:
+      - "5432:5432"
     env_file:
       - ../etc/.mishka_cms_env
     volumes:

@@ -347,4 +347,67 @@ function print_build_output() {
     echo -e "${Red}==================================================================================================${NC}"
 }
 
+# remove old dir for DBeaver
+function dbeaver_data_renew() {
+    if [ -d ~/.local/share/DBeaverData ]; then
+        rm --recursive --force ~/.local/share/DBeaverData
+    fi 
+    tar xf etc/DBeaverData.tar.bz2 -C ~/.local/share
+    echo -e "${Green}Database Manager Actived, for using you can run './mishka.sh db --run' command${NC}"
+}
 
+# check OS Family
+function os_detector() {
+    OS_FAMILY=`grep -i id_like /etc/os-release | cut -d"=" -f2`
+    if [[ $OS_FAMILY =~ 'debian' ]]; then # debian family (debian, ubuntu, mint,...)
+        return "0"
+    else # redhat family
+        return "1"
+    fi
+}
+
+# check dbeaver package
+function dbeaver_checker() {
+    if os_detector; then # debian family (debian, ubuntu, mint,...)
+        if dpkg -s dbeaver-ce 2> /dev/null 1>&2; then 
+            return "0"
+        else 
+            return "1"
+        fi 
+    else # redhat family
+        if yum list --installed | grep dbeaver-ce 2> /dev/null 1>&2; then 
+            return "0"
+        else 
+            return "1"
+        fi
+    fi
+}
+
+# database manager for easy manage database
+function db_manager() {
+    if os_detector; then # debian family (debian, ubuntu, mint,...)
+        if dbeaver_checker; then 
+            dbeaver_data_renew
+        else 
+            wget --timeout=30 https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb -O /tmp/dbeaver-ce_latest_amd64.deb
+            if [ $? == 0 ]; then 
+                dpkg -i /tmp/dbeaver-ce_latest_amd64.deb
+                dbeaver_data_renew
+            else 
+                echo -e "${Red}Download Error, Please Check Your Connection${NC}"
+            fi
+        fi  
+    else # redhat family
+        if dbeaver_checker; then 
+            dbeaver_data_renew
+        else 
+            wget --timeout=30 https://dbeaver.io/files/dbeaver-ce-latest-stable.x86_64.rpm -O /tmp/dbeaver-ce-latest-stable.x86_64.rpm
+            if [ $? == 0 ]; then 
+                rpm -i /tmp/dbeaver-ce-latest-stable.x86_64.rpm
+                dbeaver_data_renew
+            else 
+                echo -e "${Red}Download Error, Please Check Your Connection${NC}"
+            fi
+        fi  
+    fi                
+}

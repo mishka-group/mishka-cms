@@ -358,6 +358,32 @@ else
                 fi
             ;;
 
+            "db")
+                case $2 in
+                        "--install")
+                            db_manager
+                        ;;
+
+                        "--run")
+                            if netstat -nultp | egrep -w '5432' > /dev/null; then
+                                if dbeaver_checker; then 
+                                   dbeaver
+                                else 
+                                    echo -e "${Red}DBeaver is Not Installed Please Install it with './mishka.sh db --install' ${NC}" 
+                                fi
+                            else 
+                                echo -e "${Red}Your Database is Not Running, Please Using './mishka.sh start' ${NC}" 
+                            fi 
+                        ;;
+
+                        *)
+                            echo -e "${Green}you have two option to use:${NC}" 
+                            echo -e "${Green}   --install${NC}" 
+                            echo -e "${Green}   --run${NC}"
+                        ;;
+                esac
+            ;;
+
             "help")
                 echo -e "${Green}Below Options is Available:
                     start          all containers
@@ -370,7 +396,10 @@ else
                       --deps       Clean dependency
                       --compiled   Clean old compiled files
                       --all        Clean disk database, dependency, mix.lock file and old compiled files
-                    login     log into mishka_CMS container${NC}"
+                    login          log into mishka_CMS container
+                    db             graphical database manager with dbeaver
+                      --install    install DBeaver Package
+                      --run        run DBeaver${NC}"
             ;;
 
             *)

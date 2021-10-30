@@ -140,7 +140,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
 
     case socket.assigns.id do
       nil -> create_notif(socket, params: {Map.merge(params, %{"description" => socket.assigns.editor})})
-      id -> edit_category(socket, params: {Map.merge(params, %{"id" => id, "description" => socket.assigns.editor})})
+      id -> edit_notif(socket, params: {Map.merge(params, %{"id" => id, "description" => socket.assigns.editor})})
     end
 
   end
@@ -234,7 +234,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{full_name: Map.get(repo_data, :full_name)})
+        }, %{user_action: "live_create_notif", type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "اعلان: %{title} درست شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
@@ -249,7 +249,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
   end
 
 
-  def edit_category(socket, params: {params}) do
+  def edit_notif(socket, params: {params}) do
     socket = case NotifSystem.edit(params) do
       {:error, :edit, @error_atom, repo_error} ->
         socket
@@ -266,7 +266,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{})
+        }, %{user_action: "live_edit_notif", type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
 

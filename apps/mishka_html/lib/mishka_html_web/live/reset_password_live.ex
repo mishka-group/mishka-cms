@@ -80,7 +80,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
             priority: "high",
             status: "info",
             user_id: repo_data.id
-          }, %{user_action: "send_reset_password"})
+          }, %{user_action: "send_reset_password", type: "client"})
 
           socket
           |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."))

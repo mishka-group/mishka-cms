@@ -66,7 +66,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           priority: "medium",
           status: "info",
           user_id: Map.get(socket.assigns, :user_id)
-        })
+        }, %{user_action: "live_delete_user_role", type: "admin"})
 
         MishkaUser.Acl.UserRole.delete_user_role(user_id)
         MishkaUser.Acl.AclManagement.stop(user_id)
@@ -115,7 +115,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           priority: "medium",
           status: "info",
           user_id: Map.get(socket.assigns, :user_id)
-        })
+        }, %{user_action: "live_create_or_edit_user_role", type: "admin"})
 
         MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
 

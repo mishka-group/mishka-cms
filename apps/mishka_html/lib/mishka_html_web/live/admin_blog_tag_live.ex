@@ -187,7 +187,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{user_action: "live_add_tag", type: "admin"})
 
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "برچسب: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.title))})
         socket =
@@ -226,7 +226,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{user_action: "live_edit_tag", type: "admin"})
 
         Notif.notify_subscribers(%{id: repo_data.id, msg: "برچسب: #{MishkaHtml.full_name_sanitize(repo_data.title)} به روز شده است."})
 

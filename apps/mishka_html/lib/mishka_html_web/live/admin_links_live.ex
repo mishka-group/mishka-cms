@@ -49,7 +49,7 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{post_id: socket.assigns.post_id})
+        }, %{user_action: "live_delete_link", post_id: socket.assigns.post_id, type: "admin"})
 
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "لینک: %{title} حذف شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket

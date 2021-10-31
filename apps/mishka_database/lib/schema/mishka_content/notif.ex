@@ -8,7 +8,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
 
   schema "notifs" do
 
-    field(:status, ContentStatusEnum, null: false)
+    field(:status, ContentStatusEnum, null: false, default: :active)
     field(:section, NotifSection, null: false)
     field(:type, NotifType, null: false)
     field(:target, NotifTarget, null: false)

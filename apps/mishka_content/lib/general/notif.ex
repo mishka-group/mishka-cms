@@ -185,6 +185,44 @@ defmodule MishkaContent.General.Notif do
       0
   end
 
+  # Reference code: https://elixirforum.com/t/3766/6
+  def send_notification(notif_info, query, :repo_stream) do
+    stream = MishkaDatabase.Repo.stream(query)
+    MishkaDatabase.Repo.transaction(fn() ->
+      Enum.to_list(stream)
+    end)
+    |> case do
+      {:ok, list} ->
+        list
+        |> Task.async_stream(&deliver(&1, notif_info), max_concurrency: 10)
+        |> Stream.run
+
+      error ->
+        # TODO: Shoule be stored on Activity db
+        IO.inspect(error)
+    end
+  end
+
+  def send_notification(notif_info, user_id, :repo_task) do
+    Task.async(fn() ->
+      deliver(user_id, notif_info)
+    end)
+  end
+
+  defp deliver(user_id, params) do
+    create(%{
+      user_id: user_id,
+      section: Map.get(params, :section),
+      type: Map.get(params, :type),
+      target: Map.get(params, :target),
+      section_id: Map.get(params, :section_id),
+      title: Map.get(params, :title),
+      description: Map.get(params, :description),
+      expire_time: Map.get(params, :expire_time),
+      extra: Map.get(params, :extra),
+    })
+  end
+
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: Notif.__schema__(:fields)
   def allowed_fields(:string), do: Notif.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

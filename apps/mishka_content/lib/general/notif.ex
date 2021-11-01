@@ -204,7 +204,7 @@ defmodule MishkaContent.General.Notif do
   end
 
   def send_notification(notif_info, user_id, :repo_task) do
-    Task.async(fn() ->
+    Task.Supervisor.async_nolink(__MODULE__, fn ->
       deliver(user_id, notif_info)
     end)
   end

@@ -58,6 +58,10 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
           user_id: repo_data.id
         }, %{user_action: "change_password", type: "client"})
 
+        # Send password changed notification to a user
+        title = MishkaTranslator.Gettext.dgettext("html_live", "پسورد حساب کاربری شما تغییر کرد.")
+        description = MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که شما پسورد حساب کاربری خود را تغییر ندادید یا از این موضوع بی اطلاع هستید سریعا پسورد را تغییر داده و همینطور پسورد ایمیل خود برای جلوگیری از اتفاق مجدد. در صورت راهنمایی بیشتر لطفا با پشتیبانی ما در ارتباط باشید")
+        MishkaContent.General.Notif.send_notification(%{section: :user_only, type: :client, target: :all, title: title, description: description}, user_info.id, :repo_task)
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(user_info.id)
         # clean all the token on disc

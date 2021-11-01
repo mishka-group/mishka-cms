@@ -271,8 +271,15 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   @impl true
   def handle_event("send_comment", %{"comment" => %{"description" => description}}, socket) do
     socket = with {:post, false} <- {:post, is_nil(Post.post(socket.assigns.alias_link, "active"))},
-         {:ok, :add, :comment, _repo_data} <- Comment.create(%{description: description, sub: socket.assigns.sub, section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
+         {:ok, :add, :comment, repo_data} <- Comment.create(%{description: description, sub: socket.assigns.sub, section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
           notify_subscribers({:comment, socket.assigns.page})
+
+            if !is_nil(socket.assigns.sub) do
+              title = MishkaTranslator.Gettext.dgettext("html_live", "به نظر شما در مطلب %{title} پاسخ داده شد", title: socket.assigns.page_title)
+              description = MishkaTranslator.Gettext.dgettext("html_live", "به نظر شما در مطلب %{title} پاسخ داده شد.", title: socket.assigns.page_title)
+              Comment.send_notification?(socket.assigns.sub, socket.assigns.user_id, title, description)
+            end
+
             socket
             |> assign(comment_msg: MishkaTranslator.Gettext.dgettext("html_live", "نظر شما با موفقیت ارسال شد!!! برای ارسال نظر جدید کلیک کنید."), send_comment: false, sub: nil)
             |> assign(description: nil)

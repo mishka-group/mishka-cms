@@ -132,7 +132,7 @@ defmodule MishkaHtmlWeb.BlogCategoryLive do
 
   @impl true
   def handle_info({:post, :ok, _repo_record}, socket) do
-    update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)
+    {:noreply, update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)}
   end
 
   @impl true

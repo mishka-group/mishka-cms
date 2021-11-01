@@ -385,6 +385,25 @@ defmodule MishkaHtmlWeb.BlogPostLive do
   end
 
   @impl true
+  def handle_info({:post, :ok, repo_record}, socket) do
+    post = Post.post(repo_record.alias_link, "active")
+    socket = with {:alias_link, true} <- {:alias_link, repo_record.alias_link == socket.assigns.alias_link},
+         {:show_post, post, false} <- {:show_post, post, is_nil(post)} do
+
+        socket
+        |> assign(post: post, page_title: "#{post.title}")
+    else
+      _ ->
+
+        socket
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "چنین محتوایی وجود ندارد یا اخیرا حذف شده است."))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info(_params, socket) do
     {:noreply, socket}
   end

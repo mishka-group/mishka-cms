@@ -105,6 +105,11 @@ defmodule MishkaHtmlWeb.RegisterLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_info(_params, socket) do
+    {:noreply, socket}
+  end
+
   def user_changeset(params) do
     %MishkaDatabase.Schema.MishkaUser.User{}
     |> MishkaDatabase.Schema.MishkaUser.User.changeset(params)

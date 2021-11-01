@@ -384,6 +384,11 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_info(_params, socket) do
+    {:noreply, socket}
+  end
+
   def priority(priority) do
     case priority do
       :none -> MishkaTranslator.Gettext.dgettext("html_live", "ندارد")

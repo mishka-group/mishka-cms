@@ -121,6 +121,11 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_info(_params, socket) do
+    {:noreply, socket}
+  end
+
   defp seo_tags(socket, random_link) do
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{

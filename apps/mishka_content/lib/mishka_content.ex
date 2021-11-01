@@ -16,4 +16,12 @@ defmodule MishkaContent do
       }
     )
   end
+
+  def get_size_of_words(string, count) when not is_nil(string) do
+    string
+    |> String.split(" ")
+    |> Enum.with_index(fn element, index -> if index <= count, do: element end)
+    |> Enum.reject(fn item -> is_nil(item) end)
+    |> Enum.join(" ")
+  end
 end

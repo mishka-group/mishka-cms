@@ -72,6 +72,11 @@ defmodule MishkaHtmlWeb.NotifsLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_info(_params, socket) do
+    {:noreply, socket}
+  end
+
   defp seo_tags(socket) do
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
     %{

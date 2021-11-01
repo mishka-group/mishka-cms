@@ -186,7 +186,7 @@ defmodule MishkaContent.General.Notif do
   end
 
   # Reference code: https://elixirforum.com/t/3766/6
-  def send_notification(notif_info, query, :repo_stream) do
+  def send_notification(query, notif_info, :repo_stream) do
     stream = MishkaDatabase.Repo.stream(query)
     MishkaDatabase.Repo.transaction(fn() ->
       Enum.to_list(stream)

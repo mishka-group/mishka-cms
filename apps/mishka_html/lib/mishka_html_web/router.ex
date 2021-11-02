@@ -40,9 +40,7 @@ defmodule MishkaHtmlWeb.Router do
       get "/auth/deactive-account/:code", AuthController, :deactive_account
       get "/auth/delete-tokens/:code", AuthController, :delete_tokens
     end
-  end
 
-  live_session :client_user_not_login, on_mount: MishkaHtml.Plug.LiveAclCheckPlug do
     scope "/", MishkaHtmlWeb do
       pipe_through [:browser, :not_login]
 
@@ -54,15 +52,12 @@ defmodule MishkaHtmlWeb.Router do
       live "/auth/register", RegisterLive
       live "/auth/reset-change-password/:random_link", ResetChangePasswordLive
     end
-  end
 
-  live_session :client_user_logined, on_mount: MishkaHtml.Plug.LiveAclCheckPlug do
-      scope "/", MishkaHtmlWeb do
-        pipe_through [:browser, :user_logined]
+    scope "/", MishkaHtmlWeb do
+      pipe_through [:browser, :user_logined]
 
-        get "/auth/log-out", AuthController, :log_out
-      end
-
+      get "/auth/log-out", AuthController, :log_out
+    end
 
     scope "/user", MishkaHtmlWeb do
       pipe_through [:browser, :user_logined]

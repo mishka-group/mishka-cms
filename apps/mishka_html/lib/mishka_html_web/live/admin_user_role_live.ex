@@ -67,7 +67,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
           priority: "high",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{user_action: "live_role_create", type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "نقش: %{title} درست شده است.", title: repo_data.name)})

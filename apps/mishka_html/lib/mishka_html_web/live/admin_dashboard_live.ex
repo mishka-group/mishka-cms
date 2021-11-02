@@ -27,9 +27,13 @@ defmodule MishkaHtmlWeb.AdminDashboardLive do
         user_id: user_id,
         users: MishkaUser.User.users(conditions: {1, 4}, filters: %{}),
         posts: Post.posts(conditions: {1, 3}, filters: %{}, user_id: user_id),
-        activities: Activity.activities(conditions: {1, 5}, filters: %{})
+        activities: Activity.activities(conditions: {1, 5}, filters: %{}),
+        notifs: MishkaContent.General.Notif.notifs(conditions: {1, 4}, filters: %{
+          type: :client,
+          status: :active
+        })
       )
-      {:ok, socket, temporary_assigns: [activities: [], posts: [], users: []]}
+      {:ok, socket, temporary_assigns: [notifs: [], activities: [], posts: [], users: []]}
   end
 
   selected_menue("MishkaHtmlWeb.AdminDashboardLive")

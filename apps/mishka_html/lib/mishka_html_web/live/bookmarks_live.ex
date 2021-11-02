@@ -11,7 +11,7 @@ defmodule MishkaHtmlWeb.BookmarksLive do
   @impl true
   def mount(_params, session, socket) do
     user_id = Map.get(session, "user_id")
-      bookmarks = case bookmars_paginate(user_id, 1, 2, socket) do
+      bookmarks = case bookmars_paginate(user_id, 1, 20, socket) do
         nil -> []
         record -> record
       end
@@ -22,7 +22,7 @@ defmodule MishkaHtmlWeb.BookmarksLive do
         user_id: user_id,
         seo_tags: seo_tags(socket),
         body_color: "#40485d",
-        page_size: 2,
+        page_size: 20,
         page: 1,
         bookmarks: bookmarks,
         next_page: if(length(bookmarks) < 2, do: false, else: true),
@@ -113,6 +113,11 @@ defmodule MishkaHtmlWeb.BookmarksLive do
         |> assign(bookmarks: record)
     end
 
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_params, socket) do
     {:noreply, socket}
   end
 

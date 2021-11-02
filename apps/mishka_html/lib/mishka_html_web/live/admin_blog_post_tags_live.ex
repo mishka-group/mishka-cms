@@ -57,7 +57,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
       priority: "low",
       status: "info",
       user_id: socket.assigns.user_id
-    }, %{post_id: socket.assigns.post_id})
+    }, %{user_action: "live_delete_post_tag", post_id: socket.assigns.post_id, type: "admin"})
 
     {:noreply, socket}
   end
@@ -89,7 +89,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
           priority: "low",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{post_id: socket.assigns.post_id})
+        }, %{user_action: "live_add_post_tag", post_id: socket.assigns.post_id, type: "admin"})
         socket
     end
     {:noreply, socket}

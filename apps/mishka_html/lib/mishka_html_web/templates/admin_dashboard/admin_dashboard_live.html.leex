@@ -10,7 +10,7 @@
       <div class="container admin-home-main-cms-block-tools-bottom">
         <div class="row">
             <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent, id: :admin_last_users, users: @users %>
-            <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent, id: :admin_notif %>
+            <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent, id: :admin_notif, notifs: @notifs %>
         </div>
       </div>
     </div>

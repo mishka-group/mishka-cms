@@ -66,7 +66,11 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           priority: "medium",
           status: "info",
           user_id: Map.get(socket.assigns, :user_id)
-        })
+        }, %{user_action: "live_delete_user_role", type: "admin"})
+
+        title = MishkaTranslator.Gettext.dgettext("html_live", "نقش کاربری شما حذف شد")
+        description = MishkaTranslator.Gettext.dgettext("html_live", "دسترسی حساب کاربری شما تغییر کرده است. این به منظور مسدود شدن شما نمی باشد. بلکه نقش کاربری از قبل داده شده پاک گردیده است. لازم به ذکر است این تغییرات به وسیله مدیریت وب سایت انجام شده است.")
+        MishkaContent.General.Notif.send_notification(%{section: :user_only, type: :client, target: :all, title: title, description: description}, user_id, :repo_task)
 
         MishkaUser.Acl.UserRole.delete_user_role(user_id)
         MishkaUser.Acl.AclManagement.stop(user_id)
@@ -115,7 +119,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           priority: "medium",
           status: "info",
           user_id: Map.get(socket.assigns, :user_id)
-        })
+        }, %{user_action: "live_create_or_edit_user_role", type: "admin"})
 
         MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
 
@@ -123,6 +127,10 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         MishkaUser.Acl.AclManagement.stop(user_id)
         MishkaUser.Acl.UserRole.edit(%{id: repo_data.id, user_id: user_id, role_id: role_id})
     end
+
+    title = MishkaTranslator.Gettext.dgettext("html_live", "نقش کاربری شما تغییر داده شد")
+    description = MishkaTranslator.Gettext.dgettext("html_live", "دسترسی کاربری شما به وسیله مدیریت وب سایت تغییر پیدا کرد. در صورت مشکل لطفا با پشتیبان ما در ارتباط باشید")
+    MishkaContent.General.Notif.send_notification(%{section: :user_only, type: :client, target: :all, title: title, description: description}, user_id, :repo_task)
 
     MishkaUser.Acl.AclManagement.save(%{
       id: user_id,

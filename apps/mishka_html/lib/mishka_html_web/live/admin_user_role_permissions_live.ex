@@ -64,7 +64,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
           priority: "high",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{user_action: "live_permission_create", type: "admin"})
 
         MishkaUser.Acl.AclTask.update_role(repo_data.role_id)
         socket

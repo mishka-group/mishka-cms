@@ -22,7 +22,9 @@ defmodule MishkaUser.Acl.Action do
       "MishkaHtmlWeb.AdminUserLive" => "*" ,
       "MishkaHtmlWeb.AdminLogsLive" => "*" ,
       "MishkaHtmlWeb.AdminSeoLive" => "*" ,
-      "MishkaHtmlWeb.AdminBlogPostAuthorsLive" => "admin:edit"
+      "MishkaHtmlWeb.AdminBlogPostAuthorsLive" => "admin:edit",
+      "MishkaHtmlWeb.AdminBlogNotifLive" => "*",
+      "MishkaHtmlWeb.AdminBlogNotifsLive" => "*"
     }
   end
 

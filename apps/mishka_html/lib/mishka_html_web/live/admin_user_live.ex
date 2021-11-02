@@ -140,7 +140,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{full_name: Map.get(repo_data, :full_name)})
+        }, %{user_action: "live_create_user", type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
@@ -171,7 +171,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{full_name: Map.get(repo_data, :full_name)})
+        }, %{user_action: "live_edit_user", type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} به روز شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})

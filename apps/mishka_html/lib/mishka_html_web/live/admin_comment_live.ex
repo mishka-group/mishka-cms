@@ -118,7 +118,7 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{post_id: repo_data.post_id})
+        }, %{user_action: "live_comment_edit", post_id: repo_data.post_id, type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         socket =

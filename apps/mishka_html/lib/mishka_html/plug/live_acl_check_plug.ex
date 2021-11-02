@@ -22,10 +22,9 @@ defmodule MishkaHtml.Plug.LiveAclCheckPlug do
       {:permittes?, false} ->
         socket = socket
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما ویرایش شده باشد. دوباره وارد سایت شوید."))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
+        |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.HomeLive))
 
         {:halt, socket}
-
     end
   end
 

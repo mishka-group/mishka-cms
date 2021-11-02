@@ -175,7 +175,7 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{post_id: socket.assigns.post_id})
+        }, %{user_action: "live_create_link", post_id: socket.assigns.post_id, type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "لینک: %{title} درست شده است.", title: repo_data.title)})
@@ -201,7 +201,7 @@ defmodule MishkaHtmlWeb.AdminLinkLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{post_id: socket.assigns.post_id})
+        }, %{user_action: "live_update_link", post_id: socket.assigns.post_id, type: "admin"})
 
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "لینک: %{title} به روز رسانی شده است.", title: repo_data.title)})
         socket

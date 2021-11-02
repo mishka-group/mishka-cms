@@ -308,7 +308,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{title: repo_data.title})
+        }, %{user_action: "live_create_category", title: repo_data.title, type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "مجموعه: %{title} درست شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
@@ -360,7 +360,7 @@ defmodule MishkaHtmlWeb.AdminBlogCategoryLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{title: repo_data.title})
+        }, %{user_action: "live_edit_category", title: repo_data.title, type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
 

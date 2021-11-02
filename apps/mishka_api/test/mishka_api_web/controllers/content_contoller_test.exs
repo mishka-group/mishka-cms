@@ -72,10 +72,13 @@ defmodule MishkaApiWeb.ContentControllerTest do
 
   @notif_info %{
     status: :active,
-    section: :other,
+    section: :public,
     section_id: Ecto.UUID.generate,
-    short_description: "this is a test of notif",
+    title: "test for title",
+    description: "this is a test of notif",
     expire_time: DateTime.utc_now(),
+    type: :client,
+    target: :all,
     extra: %{test: "this is a test of notif"},
   }
 
@@ -1071,7 +1074,6 @@ defmodule MishkaApiWeb.ContentControllerTest do
       {:ok, :add, :notif, _notif_info} = assert Notif.create(@notif_info)
       {:ok, :add, :notif, _notif_info} = assert Notif.create(Map.merge(@notif_info, %{user_id: user_info1.id}))
 
-
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
@@ -1112,19 +1114,10 @@ defmodule MishkaApiWeb.ContentControllerTest do
     end
 
     test "send notif" , %{user_info: _user_info, conn: conn, auth: auth} do
-      notif_info = %{
-        status: :active,
-        section: :other,
-        section_id: Ecto.UUID.generate,
-        short_description: "this is a test of notif",
-        expire_time: DateTime.utc_now(),
-        extra: %{test: "this is a test of notif"},
-      }
-
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
-        |> post(Routes.content_path(conn, :send_notif), notif_info)
+        |> post(Routes.content_path(conn, :send_notif), @notif_info)
 
       assert %{
         "action" => "send_notif",

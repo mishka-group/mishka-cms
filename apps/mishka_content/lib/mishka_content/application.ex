@@ -19,6 +19,7 @@ defmodule MishkaContent.Application do
 
     children = [
       {Task.Supervisor, name: MishkaContent.Email.EmailHelperTaskSupervisor},
+      {Task.Supervisor, name: MishkaContent.General.Notif},
       {Task.Supervisor, name: MishkaContent.General.ActivityTaskSupervisor},
       {Registry, keys: :unique, name: MishkaContent.Cache.BookmarkRegistry},
       {Registry, keys: :unique, name: MishkaContent.Cache.ContentDraftRegistry},

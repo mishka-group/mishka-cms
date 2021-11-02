@@ -139,7 +139,7 @@ defmodule MishkaContent.General.Activity do
       message: Map.get(reason, :message),
       port: Map.get(reason.conn, :port),
       router: Map.get(reason, :router),
-      sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))
+      cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))
     })
   end
 

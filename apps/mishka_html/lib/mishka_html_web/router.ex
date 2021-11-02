@@ -21,83 +21,86 @@ defmodule MishkaHtmlWeb.Router do
     plug MishkaHtml.Plug.NotLoginPlug
   end
 
-  scope "/", MishkaHtmlWeb do
-    pipe_through :browser
+  live_session :client_default, on_mount: MishkaHtml.Plug.LiveAclCheckPlug do
+    scope "/", MishkaHtmlWeb do
+      pipe_through :browser
 
-    live "/", HomeLive
-    live "/blogs", BlogsLive
-    live "/blog/category/:alias_link", BlogCategoryLive
-    live "/blog/:alias_link", BlogPostLive
-    live "/blog/tags", HomeLive
-    live "/blog/tag", HomeLive
+      live "/", HomeLive
+      live "/blogs", BlogsLive
+      live "/blog/category/:alias_link", BlogCategoryLive
+      live "/blog/:alias_link", BlogPostLive
+      live "/blog/tags", HomeLive
+      live "/blog/tag", HomeLive
+    end
+
+    scope "/", MishkaHtmlWeb do
+      pipe_through :browser
+
+      get "/auth/verify-email/:code", AuthController, :verify_email
+      get "/auth/deactive-account/:code", AuthController, :deactive_account
+      get "/auth/delete-tokens/:code", AuthController, :delete_tokens
+    end
+
+    scope "/", MishkaHtmlWeb do
+      pipe_through [:browser, :not_login]
+
+      # without login and pass Capcha
+      live "/auth/login", LoginLive
+      post "/auth/login", AuthController, :login
+      live "/auth/reset/:random_link", ResetPasswordLive
+      live "/auth/reset", ResetPasswordLive
+      live "/auth/register", RegisterLive
+      live "/auth/reset-change-password/:random_link", ResetChangePasswordLive
+    end
+
+    scope "/", MishkaHtmlWeb do
+      pipe_through [:browser, :user_logined]
+
+      get "/auth/log-out", AuthController, :log_out
+    end
+
+    scope "/user", MishkaHtmlWeb do
+      pipe_through [:browser, :user_logined]
+
+      live "/bookmarks", BookmarksLive
+      live "/notifications", NotifsLive
+      live "/notification/:id", NotifLive
+    end
   end
 
-  scope "/", MishkaHtmlWeb do
-    pipe_through :browser
+  live_session :admin, on_mount: MishkaHtml.Plug.LiveAclCheckPlug do
+    scope "/admin", MishkaHtmlWeb do
+      pipe_through [:browser, :user_logined]
 
-    get "/auth/verify-email/:code", AuthController, :verify_email
-    get "/auth/deactive-account/:code", AuthController, :deactive_account
-    get "/auth/delete-tokens/:code", AuthController, :delete_tokens
-  end
-
-  scope "/", MishkaHtmlWeb do
-    pipe_through [:browser, :not_login]
-
-    # without login and pass Capcha
-    live "/auth/login", LoginLive
-    post "/auth/login", AuthController, :login
-    live "/auth/reset/:random_link", ResetPasswordLive
-    live "/auth/reset", ResetPasswordLive
-    live "/auth/register", RegisterLive
-    live "/auth/reset-change-password/:random_link", ResetChangePasswordLive
-  end
-
-  scope "/", MishkaHtmlWeb do
-    pipe_through [:browser, :user_logined]
-
-    get "/auth/log-out", AuthController, :log_out
-  end
-
-  scope "/user", MishkaHtmlWeb do
-    pipe_through [:browser, :user_logined]
-
-    live "/bookmarks", BookmarksLive
-    live "/notifications", NotifsLive
-    live "/notification/:id", NotifLive
-  end
-
-
-  scope "/admin", MishkaHtmlWeb do
-    pipe_through [:browser, :user_logined]
-
-    live "/", AdminDashboardLive
-    live "/blog-posts", AdminBlogPostsLive
-    live "/blog-post", AdminBlogPostLive
-    live "/blog-categories", AdminBlogCategoriesLive
-    live "/blog-category", AdminBlogCategoryLive
-    live "/blog-tags", AdminBlogTagsLive
-    live "/blog-tag", AdminBlogTagLive
-    live "/blog-post-tags/:id", AdminBlogPostTagsLive
-    live "/blog-links/:id", AdminLinksLive
-    live "/blog-link/:post_id", AdminLinkLive
-    live "/bookmarks", AdminBookmarksLive
-    live "/subscriptions", AdminSubscriptionsLive
-    live "/subscription", AdminSubscriptionLive
-    live "/comments", AdminCommentsLive
-    live "/comment", AdminCommentLive
-    live "/users", AdminUsersLive
-    live "/user", AdminUserLive
-    live "/activities", AdminActivitiesLive
-    live "/activity/:id", AdminActivityLive
-    live "/seo", AdminSeoLive
-    live "/roles", AdminUserRolesLive
-    live "/role", AdminUserRoleLive
-    live "/role-permissions", AdminUserRolePermissionsLive
-    live "/blog-authors/:post_id", AdminBlogPostAuthorsLive
-    live "/settings", AdminSettingsLive
-    live "/setting", AdminSettingLive
-    live "/notifs", AdminBlogNotifsLive
-    live "/notif", AdminBlogNotifLive
+      live "/", AdminDashboardLive
+      live "/blog-posts", AdminBlogPostsLive
+      live "/blog-post", AdminBlogPostLive
+      live "/blog-categories", AdminBlogCategoriesLive
+      live "/blog-category", AdminBlogCategoryLive
+      live "/blog-tags", AdminBlogTagsLive
+      live "/blog-tag", AdminBlogTagLive
+      live "/blog-post-tags/:id", AdminBlogPostTagsLive
+      live "/blog-links/:id", AdminLinksLive
+      live "/blog-link/:post_id", AdminLinkLive
+      live "/bookmarks", AdminBookmarksLive
+      live "/subscriptions", AdminSubscriptionsLive
+      live "/subscription", AdminSubscriptionLive
+      live "/comments", AdminCommentsLive
+      live "/comment", AdminCommentLive
+      live "/users", AdminUsersLive
+      live "/user", AdminUserLive
+      live "/activities", AdminActivitiesLive
+      live "/activity/:id", AdminActivityLive
+      live "/seo", AdminSeoLive
+      live "/roles", AdminUserRolesLive
+      live "/role", AdminUserRoleLive
+      live "/role-permissions", AdminUserRolePermissionsLive
+      live "/blog-authors/:post_id", AdminBlogPostAuthorsLive
+      live "/settings", AdminSettingsLive
+      live "/setting", AdminSettingLive
+      live "/notifs", AdminBlogNotifsLive
+      live "/notif", AdminBlogNotifLive
+    end
   end
 
   @impl Plug.ErrorHandler

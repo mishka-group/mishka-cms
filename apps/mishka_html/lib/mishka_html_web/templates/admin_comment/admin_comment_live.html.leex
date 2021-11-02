@@ -114,19 +114,6 @@
                                 %>
 
 
-
-
-                           <% "text_search" -> %>
-
-                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextSearchComponent,
-                                        id: String.to_atom("admin_form_text_#{form.type}"),
-                                        form: form,
-                                        f: f,
-                                        search: @category_search,
-                                        search_fields: MishkaHtmlWeb.AdminCommentLive.search_fields(form.type)
-                                %>
-
-
                             <% "textarea" -> %>
                                 <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextAreaComponent,
                                         id: String.to_atom("admin_form_#{form.type}"),

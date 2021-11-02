@@ -29,7 +29,7 @@ defmodule MishkaHtmlWeb.AuthController do
           priority: "high",
           status: "info",
           user_id: user_info.id
-        }, %{user_action: "login", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+        }, %{user_action: "login", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
         Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
           MishkaContent.Cache.BookmarkDynamicSupervisor.start_job([id: user_info.id, type: "user_bookmarks"])
@@ -92,7 +92,7 @@ defmodule MishkaHtmlWeb.AuthController do
       priority: "high",
       status: "info",
       user_id: get_session(conn, :user_id)
-    }, %{user_action: "log_out", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "log_out", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     conn
     |> configure_session(drop: true)
@@ -118,7 +118,7 @@ defmodule MishkaHtmlWeb.AuthController do
           priority: "high",
           status: "info",
           user_id: repo_data.id
-        }, %{user_action: "verify_email", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+        }, %{user_action: "verify_email", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
         conn
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_auth", "ایمیل حساب کاربری شما با موفقیت تایید گردید."))
@@ -163,7 +163,7 @@ defmodule MishkaHtmlWeb.AuthController do
           priority: "high",
           status: "info",
           user_id: repo_data.id
-        }, %{user_action: "deactive_account", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+        }, %{user_action: "deactive_account", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(user_info.id)
@@ -230,7 +230,7 @@ defmodule MishkaHtmlWeb.AuthController do
           priority: "high",
           status: "info",
           user_id: repo_data.id
-        }, %{user_action: "delete_tokens", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+        }, %{user_action: "delete_tokens", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(repo_data.id)

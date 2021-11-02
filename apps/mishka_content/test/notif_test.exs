@@ -15,10 +15,13 @@ defmodule MishkaContentTest.NotifTest do
 
   @notif_info %{
     status: :active,
-    section: :other,
+    section: :public,
     section_id: Ecto.UUID.generate,
-    short_description: "this is a test of notif",
+    title: "this is a test of notif",
     expire_time: DateTime.utc_now(),
+    type: :client,
+    target: :all,
+    description: "<p> this is a test more than 10</p>",
     extra: %{test: "this is a test of notif"},
   }
 
@@ -46,7 +49,7 @@ defmodule MishkaContentTest.NotifTest do
       ))
 
       {:ok, :edit, :notif, _notif_info} = assert Notif.edit(
-        Map.merge(@notif_info, %{id: notif_info.id, short_description: "test 2 of this", user_id: context.user_info.id}
+        Map.merge(@notif_info, %{id: notif_info.id, title: "test 2 of this", user_id: context.user_info.id}
       ))
     end
 

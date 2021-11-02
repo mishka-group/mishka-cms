@@ -2,6 +2,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
   use MishkaHtmlWeb, :live_view
   alias MishkaContent.Cache.ContentDraftManagement
   alias MishkaContent.Blog.{Post, Category}
+  alias MishkaContent.General.Subscription
+
   @error_atom :post
 
   use MishkaHtml.Helpers.LiveCRUD,
@@ -287,6 +289,9 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       {:ok, :add, :post, repo_data} ->
 
+        # Send notification to subscribed category users
+        blog_category_post_notification(repo_data, MishkaTranslator.Gettext.dgettext("html_live", "مطلب %{title} منتشر شد", title: repo_data.title))
+
         MishkaContent.General.Activity.create_activity_by_task(%{
           type: "section",
           section: "blog_post",
@@ -295,7 +300,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{title: repo_data.title})
+        }, %{user_action: "live_create_post", title: repo_data.title, type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
@@ -349,6 +354,9 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
 
       {:ok, :edit, :post, repo_data} ->
 
+        # Send notification to subscribed category users
+        blog_category_post_notification(repo_data, MishkaTranslator.Gettext.dgettext("html_live", "مطلب %{title} به روز رسانی مجدد شد", title: repo_data.title))
+
         MishkaContent.General.Activity.create_activity_by_task(%{
           type: "section",
           section: "blog_post",
@@ -357,7 +365,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        }, %{title: repo_data.title})
+        }, %{user_action: "live_edit_post", title: repo_data.title, type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})
@@ -734,5 +742,13 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
       title: MishkaTranslator.Gettext.dgettext("html_live", "لوکیشن"),
       description: MishkaTranslator.Gettext.dgettext("html_live", "مشخص کردن لوکیشن مطلب برای سئو محلی سایت")},
     ]
+  end
+
+  defp blog_category_post_notification(repo_data, title) do
+    description = MishkaHtml.get_size_of_words(repo_data.description, 100)
+    |> HtmlSanitizeEx.strip_tags()
+
+    notif_info = %{section: :blog_post, type: :client, target: :all, section_id: repo_data.id, description: description, title: title}
+    Subscription.send_notif_to_subscribed_users(:blog_category, repo_data.category_id, notif_info)
   end
 end

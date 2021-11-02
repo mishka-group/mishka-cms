@@ -11,6 +11,65 @@
   font-display: block;
 } */
 
+span.d-inline-block.bg-secondary.rounded-circle {
+  width: 0.5em;
+  height: 0.5em;
+}
+
+.client-notif-description-list {
+  font-size: 14px;
+}
+.list-of-client-notifs {
+  line-height: 25px;
+  text-align: justify;
+}
+.show-admin-notif-description {
+  text-align: justify;
+  font-size: 14px;
+  line-height: 30px;
+}
+
+.admin-notif-title-link {
+  color: #000;
+  text-decoration: none;
+}
+
+.admin-notif-list {
+  padding: 0;
+}
+
+.admin-notif-short-dis {
+  font-size: 16px;
+}
+
+.odd-list-of-admin-notif {
+  background-color: #929090;
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+
+.notif-admin-list-badge {
+  font-size: 15px !important;
+}
+
+.admin-notif-section {
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.admin-notif-section {
+  color: #000000;
+}
+
+.admin-notif-list {
+  margin: 15px 0;
+}
+
+.col-sm-12.admin-notif-short-dis {
+  padding: 10px;
+  font-size: 16px;
+}
+
 .admin-home-activities-link .alert {
   padding-left: 5px !important;
   padding-right: 5px !important;
@@ -279,8 +338,31 @@ header {
 .client-notif-icon span {
     position: absolute;
     font-size: 10px;
-    left: 42px;
-    top: 9px;
+    left: 47px;
+    top: 8px;
+}
+
+.admin-notif-user-link {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.notif-drop {
+  position: absolute;
+  z-index: 10000;
+  top:60px;
+  min-height: 200px;
+  background: #161d20;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 1px 1px 13px 1px #787878;
+  text-align: justify;
+  min-width: 400px;
+}
+
+span.d-inline-block.bg-danger.rounded-circle {
+  width: .5em; 
+  height: .5em;
 }
 
 .client-notif a {
@@ -289,8 +371,10 @@ header {
 }
 
 .client-notif-icon svg {
-  width: 60%;
-  height: 60%;
+  width: 45%;
+  height: 45%;
+  min-width: 30px;
+  min-height: 30px;
 }
 
 .client-menu-nav-item{
@@ -2553,6 +2637,26 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (max-width: 767.98px) {
+  .col-sm-3.navbar.navbar-dark {
+    width: 70%;
+  }
+
+  .client-notif-icon svg {
+    max-width: 30px;
+    max-height: 30px;
+  }
+
+  .col-sm.client-notif {
+    position: absolute;
+  }
+
+  .col-sm-3.notif-drop {
+    position: relative;
+    min-width: 400px;
+    right: 15px;
+  }
+  /* end of notif */
+
   .col-sm-3.blog-menues {
     width: 100%;
   }

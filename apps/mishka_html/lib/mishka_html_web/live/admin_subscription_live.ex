@@ -196,7 +196,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{user_action: "live_create_subscription", type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک برای بخش: %{title} درست شده است.", title: repo_data.section)})
@@ -225,7 +225,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{user_action: "live_edit_subscription", type: "admin"})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک از بهش: %{title} به روز شده است.", title: repo_data.section)})

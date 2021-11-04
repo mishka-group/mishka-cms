@@ -3,7 +3,6 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent do
 
 
   def render(assigns) do
-    # MishkaHtml.full_name_sanitize(user_full_name)
     ~L"""
       <div class="col admin-home-toos-right vazir">
         <h3>
@@ -20,6 +19,8 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent do
               <li><%= MishkaHtml.full_name_sanitize(user.full_name) %></li>
             <% end %>
           </ul>
+          <div class="space20"></div>
+          <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش همه کاربران"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUsersLive), class: "col-sm-12 btn btn-outline-secondary btn-lg" %>
       </div>
     """
   end

@@ -118,19 +118,6 @@
                                     search_fields: MishkaHtmlWeb.AdminUserLive.search_fields(form.type)
                                 %>
 
-                            <div class="clearfix"></div>
-
-
-                           <% "text_search" -> %>
-
-                                <%= live_component @socket, MishkaHtmlWeb.Admin.Form.TextSearchComponent,
-                                        id: String.to_atom("admin_form_text_#{form.type}"),
-                                        form: form,
-                                        f: f,
-                                        search: @category_search,
-                                        search_fields: MishkaHtmlWeb.AdminUserLive.search_fields(form.type)
-                                %>
-
 
                             <div class="clearfix"></div>
 

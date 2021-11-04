@@ -118,6 +118,16 @@ defmodule MishkaContent.General.Subscription do
     }
   end
 
+
+  def send_notif_to_subscribed_users(section, section_id, notif_info) do
+    from(sub in Subscription,
+      where: sub.section == ^section and sub.section_id == ^section_id,
+      order_by: [asc: :inserted_at],
+      select: sub.user_id
+    )
+    |> MishkaContent.General.Notif.send_notification(notif_info, :repo_stream)
+  end
+
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: Subscription.__schema__(:fields)
   def allowed_fields(:string), do: Subscription.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

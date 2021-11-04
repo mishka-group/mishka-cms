@@ -73,7 +73,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "medium",
       status: "info",
       user_id: repo_data.id
-    }, %{identity_provider: "self", user_action: "register", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{identity_provider: "self", user_action: "register", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -117,7 +117,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "medium",
       status: "info",
       user_id: user_info.id
-    }, %{user_action: "login", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "login", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -261,7 +261,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "high",
       status: "info",
       user_id: user_info.id
-    }, %{user_action: "refresh_token", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "refresh_token", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -292,7 +292,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "low",
       status: "info",
       user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "logout", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "logout", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -329,7 +329,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "high",
       status: "info",
       user_id: info.id
-    }, %{user_action: "change_password", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "change_password", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -412,7 +412,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "high",
       status: "info",
       user_id: user_info.id
-    }, %{user_action: "user_tokens", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "user_tokens", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -459,7 +459,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "medium",
       status: "info",
       user_id: user_info.id
-    }, %{user_action: "get_token_expire_time", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "get_token_expire_time", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -501,7 +501,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         priority: "high",
         status: "info",
         user_id: user_info.id
-      }, %{user_action: "reset_password", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip)), type: "send_email"})
+      }, %{user_action: "reset_password", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
     end
 
     conn
@@ -556,7 +556,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             priority: "high",
             status: "info",
             user_id: user_info.id
-          }, %{user_action: "reset_password", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip)), type: "active"})
+          }, %{user_action: "reset_password", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "active"})
 
         conn
         |> put_status(200)
@@ -601,7 +601,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "high",
       status: "info",
       user_id: user_id
-    }, %{user_action: "delete_token", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "delete_token", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -622,7 +622,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "high",
       status: "info",
       user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "delete_tokens", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "delete_tokens", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     conn
     |> put_status(200)
@@ -642,7 +642,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "high",
       status: "info",
       user_id: user_info.id
-    }, %{user_action: "edit_profile", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "edit_profile", cowboy_ip: MishkaApi.cowboy_ip(conn)})
     # after we create dynamic profile we can do more than now
     conn
     |> put_status(200)
@@ -684,7 +684,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       priority: "high",
       status: "info",
       user_id: user_info.id
-    }, %{user_action: "deactive_account", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+    }, %{user_action: "deactive_account", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     case user_info.status do
       :inactive  ->
@@ -745,7 +745,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             priority: "high",
             status: "info",
             user_id: repo_data.id
-          }, %{user_action: "deactive_account", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+          }, %{user_action: "deactive_account", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
           conn
           |> put_status(200)
@@ -821,7 +821,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             priority: "low",
             status: "info",
             user_id: user_info.id
-          }, %{user_action: "verify_email", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip))})
+          }, %{user_action: "verify_email", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
           conn
           |> put_status(200)
@@ -908,7 +908,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             priority: "low",
             status: "info",
             user_id: user_info.id
-          }, %{user_action: "verify_email", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip)), type: "send_email"})
+          }, %{user_action: "verify_email", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
         end
 
         conn
@@ -955,7 +955,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             priority: "low",
             status: "info",
             user_id: user_info.id
-          }, %{user_action: "verify_email_by_email_link", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip)), type: "active"})
+          }, %{user_action: "verify_email_by_email_link", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
         end
 
         conn
@@ -1013,7 +1013,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             priority: "high",
             status: "info",
             user_id: user_info.id
-          }, %{user_action: "deactive_account_by_email_link", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip)), type: "send_email"})
+          }, %{user_action: "deactive_account_by_email_link", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
         end
 
         conn
@@ -1058,7 +1058,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         priority: "high",
         status: "info",
         user_id: user_info.id
-      }, %{user_action: "send_delete_tokens_link_by_email", sent_ip_elixir_web_server: to_string(:inet_parse.ntoa(conn.remote_ip)), type: "send_email"})
+      }, %{user_action: "send_delete_tokens_link_by_email", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
     end
 
     conn

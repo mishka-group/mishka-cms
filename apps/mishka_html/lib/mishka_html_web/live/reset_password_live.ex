@@ -80,7 +80,12 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
             priority: "high",
             status: "info",
             user_id: repo_data.id
-          }, %{user_action: "send_reset_password"})
+          }, %{user_action: "send_reset_password", type: "client"})
+
+          # Send change password request notification to a user
+          title = MishkaTranslator.Gettext.dgettext("html_live", "درخواست تغییر پسورد")
+          description = MishkaTranslator.Gettext.dgettext("html_live", "برای حساب کاربری شما درخواست تغییر پسورد ارسال شده است در صورتی که شما این درخواست را انجام ندادید لطفا این پیام را در نظر نگیرید و در صورت تکرار لطفا پسورد قوی تر و همینطور با بخش پشتیبانی در تماس باشید.")
+          MishkaContent.General.Notif.send_notification(%{section: :user_only, type: :client, target: :all, title: title, description: description}, repo_data.id, :repo_task)
 
           socket
           |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "در صورتی که در بانک اطلاعاتی ما حساب کاربری ای داشته باشید یا در ۵ دقیقه اخیر درخواست فراموشی پسورد ارسال نکرده باشید به زودی برای شما یک ایمیل ارسال خواهد شد. لازم به ذکر است در صورت نبودن ایمیل در اینباکس لطفا محتوای اسپم یا جانک میل را نیز چک فرمایید."))
@@ -97,7 +102,6 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
         |> push_redirect(to: Routes.live_path(socket, __MODULE__))
 
       {:error, :verify, msg} ->
-
         socket
         |> put_flash(:error, msg)
         |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
@@ -109,6 +113,11 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
   @impl true
   def handle_info(:menu, socket) do
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive", socket.assigns.self_pid})
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_params, socket) do
     {:noreply, socket}
   end
 

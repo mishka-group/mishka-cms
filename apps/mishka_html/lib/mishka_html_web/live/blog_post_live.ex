@@ -273,6 +273,13 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     socket = with {:post, false} <- {:post, is_nil(Post.post(socket.assigns.alias_link, "active"))},
          {:ok, :add, :comment, _repo_data} <- Comment.create(%{description: description, sub: socket.assigns.sub, section_id: socket.assigns.id, user_id: socket.assigns.user_id}) do
           notify_subscribers({:comment, socket.assigns.page})
+
+            if !is_nil(socket.assigns.sub) do
+              title = MishkaTranslator.Gettext.dgettext("html_live", "به نظر شما در مطلب %{title} پاسخ داده شد", title: socket.assigns.page_title)
+              description = MishkaTranslator.Gettext.dgettext("html_live", "به نظر شما در مطلب %{title} پاسخ داده شد.", title: socket.assigns.page_title)
+              Comment.send_notification?(socket.assigns.sub, socket.assigns.user_id, title, description)
+            end
+
             socket
             |> assign(comment_msg: MishkaTranslator.Gettext.dgettext("html_live", "نظر شما با موفقیت ارسال شد!!! برای ارسال نظر جدید کلیک کنید."), send_comment: false, sub: nil)
             |> assign(description: nil)
@@ -381,6 +388,30 @@ defmodule MishkaHtmlWeb.BlogPostLive do
     else
       socket
     end
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:post, :ok, repo_record}, socket) do
+    post = Post.post(repo_record.alias_link, "active")
+    socket = with {:alias_link, true} <- {:alias_link, repo_record.alias_link == socket.assigns.alias_link},
+         {:show_post, post, false} <- {:show_post, post, is_nil(post)} do
+
+        socket
+        |> assign(post: post, page_title: "#{post.title}")
+    else
+      _ ->
+
+        socket
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "چنین محتوایی وجود ندارد یا اخیرا حذف شده است."))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_params, socket) do
     {:noreply, socket}
   end
 

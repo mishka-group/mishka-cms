@@ -12,4 +12,8 @@ defmodule MishkaApi do
     |> Application.fetch_env!(:auth)
     |> Keyword.fetch!(item)
   end
+
+  def cowboy_ip(conn) do
+    to_string(:inet_parse.ntoa(conn.remote_ip))
+  end
 end

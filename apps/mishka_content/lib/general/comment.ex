@@ -1,6 +1,7 @@
 defmodule MishkaContent.General.Comment do
   alias MishkaDatabase.Schema.MishkaContent.Comment
   alias MishkaContent.General.CommentLike
+  alias MishkaContent.General.Notif
 
   import Ecto.Query
   use MishkaDatabase.CRUD,
@@ -158,4 +159,21 @@ defmodule MishkaContent.General.Comment do
   end
 
   def notify_subscribers(params, _), do: params
+
+  def send_notification?(comment_id, user_id, title, description) do
+    with {:ok, :get_record_by_id, _error_tag, record_info} <- show_by_id(comment_id),
+         {:same_user?, false} <- {:same_user?, record_info.user_id == user_id} do
+
+          Notif.send_notification(%{
+            section: :blog_post,
+            section_id: record_info.section_id,
+            type: :client,
+            target: :all,
+            title: title,
+            description: description
+          }, record_info.user_id, :repo_task)
+    else
+      _ -> {:error, :send_notification?}
+    end
+  end
 end

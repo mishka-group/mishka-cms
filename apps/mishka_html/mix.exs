@@ -50,13 +50,12 @@ defmodule MishkaHtml.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:mishka_user, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
-      # {:jalaali, "~> 0.3.0"},
-      {:jalaali, git: "https://github.com/jalaali/elixir-jalaali.git"},
       {:slugify, "~> 1.3"},
       {:html_sanitize_ex, "~> 1.4"},
       {:mishka_translator, in_umbrella: true},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:sobelow, "~> 0.8", only: :dev}
+      {:sobelow, "~> 0.8", only: :dev},
+      {:jalaali, "~> 0.4.0"}
     ]
   end
 

@@ -61,7 +61,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
             priority: "low",
             status: "info",
             user_id: repo_data.id
-          }, %{user_action: "register", identity_provider: "self"})
+          }, %{user_action: "register", identity_provider: "self", type: "client"})
 
           socket
           |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."))
@@ -102,6 +102,11 @@ defmodule MishkaHtmlWeb.RegisterLive do
   @impl true
   def handle_info(:menu, socket) do
     ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.RegisterLive", socket.assigns.self_pid})
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_params, socket) do
     {:noreply, socket}
   end
 

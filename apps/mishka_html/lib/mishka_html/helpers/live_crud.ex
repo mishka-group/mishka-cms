@@ -390,7 +390,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           priority: "low",
           status: "info",
           user_id: user_id
-        })
+        }, %{user_action: "live_crud_subscription"})
 
         socket
         |> assign(subscrip: true)
@@ -406,7 +406,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           priority: "medium",
           status: "error",
           user_id: user_id
-        }, %{errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params)})
+        }, %{user_action: "live_crud_subscription", errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params)})
 
         socket
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطایی در ثبت اشتراک پیش آماده است.لطفا در صورت تکرار با پشتیبانی در ارتباط باشید."))
@@ -428,7 +428,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           priority: "medium",
           status: "error",
           user_id: user_id
-        }, %{errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params)})
+        }, %{user_action: "delete_subscription", errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params)})
 
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "خطای در حذف اشتراک شما پیش آماده است لطفا صفحه را رفرش کنید و در صورت تکرار با پشتیبانی در تماس باشید."))
@@ -442,7 +442,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           priority: "low",
           status: "info",
           user_id: user_id
-        })
+        }, %{user_action: "delete_subscription"})
 
         socket
         |> assign(subscrip: false)
@@ -468,9 +468,12 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       {:error, :get_draft_by_id, :not_found} -> socket
 
       record ->
+        editor =
+          Map.get(record, :editor) || Enum.find(record.dynamic_form, fn x -> x.type == "description" end).value || ""
+
         socket
-        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id, editor: Map.get(record, :editor) || "")
-        |> push_event("update-editor-html", %{html: Map.get(record, :editor) || ""})
+        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id, editor: editor)
+        |> push_event("update-editor-html", %{html: editor})
     end
 
     {:noreply, socket}
@@ -557,7 +560,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           priority: "medium",
           status: "info",
           user_id: Map.get(socket.assigns, :user_id)
-        }, %{title: Map.get(repo_data, :title), full_name: Map.get(repo_data, :full_name)})
+        }, %{user_action: "delete_item_of_list", title: Map.get(repo_data, :title), full_name: Map.get(repo_data, :full_name)})
 
         after_condition.(id)
         paginate_assign(socket, module_selected, function, user_id, skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)

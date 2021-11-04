@@ -7,17 +7,8 @@ defmodule MishkaHtml.Plug.AclCheckPlug do
   def init(default), do: default
 
   def call(conn, _default) do
-    module = case Map.get(conn.private, :phoenix_live_view) do
-      nil -> "NotFound"
-      module -> module  |> elem(0)
-    end
-
-    acl_got = Map.get(MishkaUser.Acl.Action.actions, module |> to_string())
-
-    get_user_id = get_session(conn, :user_id)
-
-    with {:acl_check, false, action} <- {:acl_check, is_nil(acl_got), acl_got},
-         {:user_id_check, false, user_id} <- {:user_id_check, is_nil(get_user_id), get_user_id},
+    with {:acl_check, false, action} <- {:acl_check, is_nil(get_acl_by_module_path(conn)), get_acl_by_module_path(conn)},
+         {:user_id_check, false, user_id} <- {:user_id_check, is_nil(get_session(conn, :user_id)), get_session(conn, :user_id)},
          {:permittes?, true} <- {:permittes?, MishkaUser.Acl.Access.permittes?(action, user_id)} do
 
           conn
@@ -36,5 +27,14 @@ defmodule MishkaHtml.Plug.AclCheckPlug do
         |> redirect(to: Routes.live_path(conn, MishkaHtmlWeb.HomeLive))
         |> halt()
     end
+  end
+
+  defp get_acl_by_module_path(conn) do
+    module = case Map.get(conn.private, :phoenix_live_view) do
+      nil -> "NotFound"
+      module -> module |> elem(0)
+    end
+    MishkaUser.Acl.Action.actions
+    |> Map.get(module |> to_string() |> String.replace("Elixir.", ""))
   end
 end

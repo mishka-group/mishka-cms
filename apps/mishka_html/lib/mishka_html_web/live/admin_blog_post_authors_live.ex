@@ -47,7 +47,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{user_action: "live_add_author", type: "admin"})
 
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت ثبت شد."))
@@ -74,7 +74,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
           priority: "medium",
           status: "info",
           user_id: socket.assigns.user_id
-        })
+        }, %{user_action: "live_delete_author", type: "admin"})
 
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت حذف شد"))

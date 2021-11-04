@@ -4,18 +4,17 @@ defmodule MishkaContent.Email.Email do
   use Phoenix.HTML
 
   @spec account_email(map()) :: Bamboo.Email.t()
-  def account_email(info) do
+  def account_email(info, from \\ nil) do
     iran_now_time = Timex.now("Iran")
     new_email(
       to: "#{info.email}",
-      from: "system@trangell.com",
+      from: from || System.get_env("EMAIL_SYSTEM"),
       subject: "#{info.subject}",
       headers: %{
-        # "From" => "noreply@sosesh.shop",
-        "Return-Path" => "#{info.email}",
-        "Subject" => "#{info.subject}",
-        "Date" => "#{Timex.format!(iran_now_time, "{WDshort}, {D} {Mshort} {YYYY} {h24}:{0m}:{0s} {Z}")}",
-        "message-id" => "<#{:base64.encode(:crypto.strong_rand_bytes(64))}@trangell.com>"
+        "Return-Path": "#{info.email}",
+        Subject: "#{info.subject}",
+        Date: "#{Timex.format!(iran_now_time, "{WDshort}, {D} {Mshort} {YYYY} {h24}:{0m}:{0s} {Z}")}",
+        "message-id": "<#{:base64.encode(:crypto.strong_rand_bytes(64))}@#{System.get_env("EMAIL_DOMAIN")}>"
       },
       text_body: email_converter(info).text,
       html_body: email_converter(info).html
@@ -69,12 +68,6 @@ defmodule MishkaContent.Email.Email do
       </div>
     """
   end
-
-  # def email_main("reset_password", info) do
-  # end
-
-  # def email_main("verify_email", info) do
-  # end
 
   @spec email_header(map()) :: any()
   def email_header(info) do

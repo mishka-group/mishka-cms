@@ -2,6 +2,7 @@ defmodule MishkaContent.Email.EmailHelper do
   alias MishkaContent.Email.{Email, Mailer}
   require MishkaTranslator.Gettext
 
+  @spec send(map(), map()) :: Task.t()
   def send(type, params) do
     Task.Supervisor.async_nolink(MishkaContent.Email.EmailHelperTaskSupervisor, fn ->
       type
@@ -10,7 +11,6 @@ defmodule MishkaContent.Email.EmailHelper do
       |> Mailer.deliver_later!()
     end)
   end
-
 
   defp create_email_info(:verify_email, {user_email, code_or_link}) do
     %{
@@ -212,6 +212,7 @@ defmodule MishkaContent.Email.EmailHelper do
     }
   end
 
+  @spec send(String.t(), String.t()) :: String.t()
   def email_site_link_creator(site_url, router) do
     """
       <p style="color:#BDBDBD; line-height: 30px">

@@ -66,20 +66,22 @@ config :mishka_user, MishkaUser.Guardian,
   "use" => "sig"
 }
 
-config :mishka_content, MishkaContent.Email.Mailer,
-  adapter: Bamboo.LocalAdapter
-  # server: "",
-  # hostname: "",
-  # port: 587,
-  # username: "",
-  # password: "",
-  # tls: :if_available,
-  # allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
-  # # ssl: true,
-  # retries: 1,
-  # no_mx_lookups: true,
-  # auth: :always
-
+email_config = [
+  adapter: Bamboo.SMTPAdapter,
+  server: System.get_env("EMAIL_SERVER"),
+  hostname: System.get_env("EMAIL_HOSTNAME"),
+  username: System.get_env("EMAIL_USERNAME"),
+  password: System.get_env("EMAIL_PASSWORD"),
+  retries: 1,
+  no_mx_lookups: true,
+  auth: :always
+]
+if System.get_env("EMAIL_PORT") == "587" or is_nil(System.get_env("EMAIL_PORT")) do
+  config :mishka_content, MishkaContent.Email.Mailer,
+    email_config ++ [port: 587, tls: :if_available, allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"]]
+else
+  config :mishka_content, MishkaContent.Email.Mailer, email_config ++ [port: 465, tls: :never, ssl: true,]
+end
 
 # Configures Elixir's Logger
 config :logger, :console,

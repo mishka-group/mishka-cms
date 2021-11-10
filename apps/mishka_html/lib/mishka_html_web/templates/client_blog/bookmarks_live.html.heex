@@ -1,0 +1,68 @@
+<div class="space30"></div>
+<div class="container rtl client-main-container">
+
+    <.live_component module={MishkaHtmlWeb.Client.Public.HeaderComponent} id={:client_header} />
+
+    <.live_component module={MishkaHtmlWeb.Admin.Public.LiveFlashComponent}
+                            id={:live_flash}
+                            flash={@flash}
+    />
+
+    <section class="col mx-auto client-content vazir">
+
+
+        <div class="space30"></div>
+        <h1><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مدیریت بوکمارک ها") %></h1>
+
+        <div class="space20"></div>
+        <hr>
+        <div class="space20"></div>
+        <%= for item <- @bookmarks do %>
+        <div class="row" id={item.id}>
+            <div class="list-group user-bookmarks-list vazir">
+                <div class="list-group-item list-group-item-action d-flex gap-3 py-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-cup" viewBox="0 0 16 16">
+                        <path d="M1 2a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v1h.5A1.5 1.5 0 0 1 16 4.5v7a1.5 1.5 0 0 1-1.5 1.5h-.55a2.5 2.5 0 0 1-2.45 2h-8A2.5 2.5 0 0 1 1 12.5V2zm13 10h.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H14v8zM13 2H2v10.5A1.5 1.5 0 0 0 3.5 14h8a1.5 1.5 0 0 0 1.5-1.5V2z"/>
+                    </svg>
+                    <div class="d-flex gap-2 w-100 justify-content-between">
+                    <div>
+                        <h2 class="mb-0" phx-click="navigate_to_page" phx-value-section-id={item.section_id}>
+                            <%= MishkaHtml.title_sanitize(Map.get(item.extra, :title) || MishkaTranslator.Gettext.dgettext("html_live_templates", "بدون تیتر")) %>
+                        </h2>
+                        <div class="space10"></div>
+                            <%= HtmlSanitizeEx.basic_html("#{Map.get(item.extra, :description) || MishkaTranslator.Gettext.dgettext("html_live_templates", "بدون توضیحات")}") %>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-scissors" viewBox="0 0 16 16" phx-click="remove_bookmark" phx-value-section-id={item.section_id}>
+                        <path d="M3.5 3.5c-.614-.884-.074-1.962.858-2.5L8 7.226 11.642 1c.932.538 1.472 1.616.858 2.5L8.81 8.61l1.556 2.661a2.5 2.5 0 1 1-.794.637L8 9.73l-1.572 2.177a2.5 2.5 0 1 1-.794-.637L7.19 8.61 3.5 3.5zm2.5 10a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0zm7 0a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z"/>
+                    </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="space10"></div>
+        </div>
+        <% end %>
+
+        <div class="space40"></div>
+        <p class="text-center">
+            <%= if @next_page do %>
+                <button class="btn btn-outline-secondary btn-lg" phx-click="next_page">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "صفحه بعدی") %>
+                </button>
+            <% end %>
+
+            <%= if @previous_page do %>
+                <button class="btn btn-outline-secondary btn-lg" phx-click="previous_page">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                </svg>
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "صفحه قبلی") %>
+                </button>
+            <% end %>
+        </p>
+    <div class="clearfix"> </div>
+    </section>
+</div>
+<.live_component module={MishkaHtmlWeb.Client.Public.CrightComponent} id={:cright} />

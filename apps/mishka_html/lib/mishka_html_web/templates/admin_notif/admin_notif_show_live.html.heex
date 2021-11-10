@@ -1,0 +1,132 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row admin-top-page-navigate">
+            <div class="col-sm-5 top-back-admin-menue">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "ویرایش اعلان"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogNotifLive, id: @notif.id, type: "edit"), class: "btn btn-outline-info" %>
+
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به اعلانات"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogNotifsLive), class: "btn btn-outline-danger" %>
+
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "آمار و گزارش ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive), class: "btn btn-outline-warning" %>
+
+            </div>
+        </div>
+
+
+
+
+
+        <.live_component module={MishkaHtmlWeb.Admin.Public.LiveFlashComponent} id={:live_flash} flash={@flash} />
+
+
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+        <h2 class="vazir">
+            <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش اطلاعات فعالیت ثبت شده") %>
+        </h2>
+        <div class="space20"></div>
+        <hr>
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+
+
+        <div class="col admin-create-category admin-main-show-activity">
+
+            <div class="alert alert-warning vazir" role="alert">
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "توجه: آمار ارسال و دریافت اطلاع رسانی ها در بخش ") %>
+                 <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "آمار و گزارش ها"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive), class: "btn btn-outline-danger" %>
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "به صورت کلی ثبت می شود.") %>
+            </div>
+            <div class="space20"></div>
+
+            <div class="col-sm-12 admin-show-log vazir">
+                <h1 class="vazir">
+                    <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "موضوع:") %>
+                    <%= @notif.title %>
+                </h1>
+
+                <div class="space50"></div>
+
+                <h2 class="vazir">
+                    <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاعات پایه:") %>
+                </h2>
+                <hr>
+                <div class="space30"></div>
+
+                <div class="row">
+                    <div class="col">
+                        <span class="badge bg-primary">شناسه</span> <code><%= @notif.id %></code>
+                        <div class="space20"></div>
+                        <span class="badge bg-secondary">نوع</span> <%= @notif.type %>
+                        <div class="space20"></div>
+                        <span class="badge bg-success">بخش</span> <%= @notif.section %>
+                        <div class="space20"></div>
+                    </div>
+
+                    <div class="col">
+                        <%= if !is_nil(@notif.section_id) do %>
+                        <span class="badge bg-danger">شناسه بخش</span> <code><%= @notif.section_id %></code>
+                        <div class="space20"></div>
+                        <% end %>
+                        <span class="badge bg-danger">وضعیت</span> <%= @notif.status %>
+                        <div class="space20"></div>
+
+                        <%= if !is_nil(@notif.user_id) do %>
+                            <span class="badge bg-dark">تخصیص به کاربر</span>
+                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "دیدن کاربر"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: @notif.user_id) %>
+                        <% end %>
+
+                        <%= if !is_nil(@notif.expire_time) do %>
+                            <span class="badge bg-dark">انقضا</span>
+                            <.live_component module={MishkaHtmlWeb.Public.TimeConverterComponent}
+                                span_id={"updated_at-#{@notif.id}-component"}
+                                time={@notif.expire_time}
+                            />
+                        <% end %>
+                    </div>
+                </div>
+
+
+                <div class="space20"></div>
+                <h2 class="vazir">
+                    <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "محتوای اعلان:") %>
+                </h2>
+                <hr>
+                <div class="space20"></div>
+                <div class="col-sm-12 show-admin-notif-description">
+                    <%= raw(HtmlSanitizeEx.html5(@notif.description)) %>
+                </div>
+
+
+                <%= if @notif.extra != %{} and !is_nil(@notif.extra) do %>
+                    <div class="space20"></div>
+                    <h2 class="vazir">
+                        <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاعات اضافه:") %>
+                    </h2>
+                    <hr>
+                    <div class="space20"></div>
+                    <div class="row">
+                        <% extra = Map.to_list(@notif.extra) %>
+                        <%= for {{key, value}, color} <- Enum.zip(extra, Stream.cycle(["primary", "secondary", "success", "danger", "warning", "info", "dark"])) do %>
+                            <div class="col-sm-6">
+                                <span class={"badge bg-#{color}"}><%= key %></span>
+                                <%= Jason.encode!(value)%>
+                                <div class="space20"></div>
+                            </div>
+                        <% end %>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+
+
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+    </div>
+</div>

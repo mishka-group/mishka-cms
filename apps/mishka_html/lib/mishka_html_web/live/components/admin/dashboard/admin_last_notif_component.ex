@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent do
 
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <div class="col admin-home-toos-left vazir">
         <h3>
           <div class="row">

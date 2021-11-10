@@ -25,135 +25,137 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
   @impl true
   def render(assigns) do
-    ~L"""
-      <hr class="menu-space-hr">
-      <nav class="navbar navbar-expand-lg">
-      <div class="container">
+    ~H"""
+      <div>
+        <hr class="menu-space-hr">
+        <nav class="navbar navbar-expand-lg">
+        <div class="container">
 
-          <div class="row">
-              <div class="col navbarNav desc-menu">
-                  <ul class="navbar-nav client-menu-navbar-nav">
+            <div class="row">
+                <div class="col navbarNav desc-menu">
+                    <ul class="navbar-nav client-menu-navbar-nav">
 
-                      <li class="nav-item client-menu-nav-item">
-                          <%=
-                              live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "خانه"),
-                              to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
-                              class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.HomeLive", @menu_name)}"
-                          %>
-                      </li>
+                        <li class="nav-item client-menu-nav-item">
+                            <%=
+                                live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "خانه"),
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
+                                class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.HomeLive", @menu_name)}"
+                            %>
+                        </li>
 
-                      <li class="nav-item client-menu-nav-item">
-                          <%=
-                              live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "بلاگ"),
-                              to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
-                              class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.BlogsLive", @menu_name)}"
-                          %>
-                      </li>
+                        <li class="nav-item client-menu-nav-item">
+                            <%=
+                                live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "بلاگ"),
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
+                                class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.BlogsLive", @menu_name)}"
+                            %>
+                        </li>
 
-                      <li class="nav-item client-menu-nav-item">
-                            <%= if !is_nil(@user_id) do %>
-                                <%= link(MishkaTranslator.Gettext.dgettext("html_live_component", "خروج"), to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
-                            <% else %>
-                                <%=
-                                live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ورود"),
-                                to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
-                                class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.LoginLive", @menu_name)}"
-                                %>
-                            <% end %>
-                      </li>
-                  </ul>
-              </div>
+                        <li class="nav-item client-menu-nav-item">
+                              <%= if !is_nil(@user_id) do %>
+                                  <%= link(MishkaTranslator.Gettext.dgettext("html_live_component", "خروج"), to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
+                              <% else %>
+                                  <%=
+                                  live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ورود"),
+                                  to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
+                                  class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.LoginLive", @menu_name)}"
+                                  %>
+                              <% end %>
+                        </li>
+                    </ul>
+                </div>
 
 
-              <div class="collapse" id="navbarToggleExternalContent">
-              <div class="p-4">
-                <div class="col navbarNav">
-                  <ul class="navbar-nav client-menu-navbar-nav">
+                <div class="collapse" id="navbarToggleExternalContent">
+                <div class="p-4">
+                  <div class="col navbarNav">
+                    <ul class="navbar-nav client-menu-navbar-nav">
 
-                      <li class="nav-item client-menu-nav-item">
-                          <%=
-                              live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "خانه"),
-                              to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
-                              class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.HomeLive", @menu_name)}"
-                          %>
-                      </li>
+                        <li class="nav-item client-menu-nav-item">
+                            <%=
+                                live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "خانه"),
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive),
+                                class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.HomeLive", @menu_name)}"
+                            %>
+                        </li>
 
-                      <li class="nav-item client-menu-nav-item">
-                          <%=
-                              live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "بلاگ"),
-                              to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
-                              class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.BlogsLive", @menu_name)}"
-                          %>
-                      </li>
+                        <li class="nav-item client-menu-nav-item">
+                            <%=
+                                live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "بلاگ"),
+                                to: Routes.live_path(@socket, MishkaHtmlWeb.BlogsLive),
+                                class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.BlogsLive", @menu_name)}"
+                            %>
+                        </li>
 
-                      <li class="nav-item client-menu-nav-item">
-                            <%= if !is_nil(@user_id) do %>
-                                <%= link(MishkaTranslator.Gettext.dgettext("html_live_component", "خروج"), to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
-                            <% else %>
-                                <%=
-                                live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ورود"),
-                                to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
-                                class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.LoginLive", @menu_name)}"
-                                %>
-                            <% end %>
-                      </li>
-                  </ul>
+                        <li class="nav-item client-menu-nav-item">
+                              <%= if !is_nil(@user_id) do %>
+                                  <%= link(MishkaTranslator.Gettext.dgettext("html_live_component", "خروج"), to: "#", class: "nav-link client-menu-nav-link", phx_click: "log_out") %>
+                              <% else %>
+                                  <%=
+                                  live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ورود"),
+                                  to: Routes.live_path(@socket, MishkaHtmlWeb.LoginLive),
+                                  class: "nav-link client-menu-nav-link #{change_menu_name("Elixir.MishkaHtmlWeb.LoginLive", @menu_name)}"
+                                  %>
+                              <% end %>
+                        </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
+
+                <nav class="col-sm-3 navbar navbar-dark text-left">
+                  <div class="container-fluid mobile-menu">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                  </div>
+                </nav>
+
+
+
+                <%= if !is_nil(@user_id) do %>
+                  <div class="col-sm client-notif text-start">
+                      <div class="row ltr">
+                        <div class="col-sm-3 client-notif-icon" phx-click="show_notif">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+                            </svg>
+                            <span class="badge bg-primary"><%= @notif_count %></span>
+                        </div>
+
+                        <%= if @show_notif and !is_nil(@notifs) and @notifs != [] do %>
+                          <div class="col-sm-3 notif-drop vazir rtl">
+                            <%= for notif <- @notifs do %>
+                              <p phx-click="show_notif_navigate" phx-value-id={notif.id}>
+                              <%= if is_nil(notif.user_notif_status.status_type) do %>
+                                <span class="d-inline-block bg-danger rounded-circle"></span>
+                              <% else %>
+                                <span class="d-inline-block bg-secondary rounded-circle"></span>
+                              <% end %>
+                                <span><%= notif.title %></span>
+                                <div class="space10"> </div>
+                                <small class="d-block text-muted">
+                                  <% des = if MishkaHtml.get_size_of_words(notif.description, 10) != "", do: MishkaHtml.get_size_of_words(notif.description, 10) <> " ... برای ادامه کلیک کنید ..." %>
+                                  <%= HtmlSanitizeEx.strip_tags(des) %>
+                                </small>
+                              </p>
+                            <% end %>
+                            <div class="space30"> </div>
+                            <p class="text-center">
+                              <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش تمامی اعلانات"), to: Routes.live_path(@socket, MishkaHtmlWeb.NotifsLive), class: "btn btn-outline-secondary btn-lg" %>
+                            </p>
+                          </div>
+                        <% end %>
+
+                      </div>
+                  </div>
+                <% end %>
             </div>
 
-              <nav class="col-sm-3 navbar navbar-dark text-left">
-                <div class="container-fluid mobile-menu">
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                </div>
-              </nav>
-
-
-
-              <%= if !is_nil(@user_id) do %>
-                <div class="col-sm client-notif text-start">
-                    <div class="row ltr">
-                      <div class="col-sm-3 client-notif-icon" phx-click="show_notif">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
-                              <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
-                          </svg>
-                          <span class="badge bg-primary"><%= @notif_count %></span>
-                      </div>
-
-                      <%= if @show_notif and !is_nil(@notifs) and @notifs != [] do %>
-                        <div class="col-sm-3 notif-drop vazir rtl">
-                          <%= for notif <- @notifs do %>
-                            <p phx-click="show_notif_navigate" phx-value-id="<%= notif.id %>">
-                            <%= if is_nil(notif.user_notif_status.status_type) do %>
-                              <span class="d-inline-block bg-danger rounded-circle"></span>
-                            <% else %>
-                              <span class="d-inline-block bg-secondary rounded-circle"></span>
-                            <% end %>
-                              <span><%= notif.title %></span>
-                              <div class="space10"> </div>
-                              <small class="d-block text-muted">
-                                <% des = if MishkaHtml.get_size_of_words(notif.description, 10) != "", do: MishkaHtml.get_size_of_words(notif.description, 10) <> " ... برای ادامه کلیک کنید ..." %>
-                                <%= HtmlSanitizeEx.strip_tags(des) %>
-                              </small>
-                            </p>
-                          <% end %>
-                          <div class="space30"> </div>
-                          <p class="text-center">
-                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش تمامی اعلانات"), to: Routes.live_path(@socket, MishkaHtmlWeb.NotifsLive), class: "btn btn-outline-secondary btn-lg" %>
-                          </p>
-                        </div>
-                      <% end %>
-
-                    </div>
-                </div>
-              <% end %>
-          </div>
-
+        </div>
+        </nav>
+        <hr class="menu-space-hr">
       </div>
-      </nav>
-      <hr class="menu-space-hr">
     """
   end
 

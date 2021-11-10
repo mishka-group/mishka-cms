@@ -16,43 +16,44 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
    end
 
   def render(assigns) do
-    ~L"""
-      <nav class="col navbar admin-main-menu-top-block">
-        <div class="row">
+    ~H"""
+      <div>
+        <nav class="col navbar admin-main-menu-top-block">
+          <div class="row">
 
-          <div class="col-lg-1 admin-home-quickmenu-navbar-brand" href="#">
-            <span class="iconly-bulkCategory">
-              <span class="path1"></span><span class="path2"></span>
-            </span>
+            <div class="col-lg-1 admin-home-quickmenu-navbar-brand" href="#">
+              <span class="iconly-bulkCategory">
+                <span class="path1"></span><span class="path2"></span>
+              </span>
+            </div>
+
+            <div class="col admin-home-quickmenu-top-menu rtl">
+              <%= live_redirect "داشبورد", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminDashboardLive) %>
+              <%= live_redirect "تنظیمات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSettingsLive) %>
+              <%= live_redirect "سایت", to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive) %>
+            </div>
+
           </div>
+        </nav>
 
-          <div class="col admin-home-quickmenu-top-menu rtl">
-            <%= live_redirect "داشبورد", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminDashboardLive) %>
-            <%= live_redirect "تنظیمات", to: Routes.live_path(@socket, MishkaHtmlWeb.AdminSettingsLive) %>
-            <%= live_redirect "سایت", to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive) %>
+        <div class="collapse" id="navbarToggleExternalContent">
+          <div class="p-4">
+            <div class="col admin-home-quickmenu-top-menu rtl">
+              <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "داشبورد"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminDashboardLive) %>
+              <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "مدیریت فایل"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive) %>
+              <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "سایت"), to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive) %>
+            </div>
           </div>
-
         </div>
-      </nav>
 
-      <div class="collapse" id="navbarToggleExternalContent">
-        <div class="p-4">
-          <div class="col admin-home-quickmenu-top-menu rtl">
-            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "داشبورد"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminDashboardLive) %>
-            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "مدیریت فایل"), to: Routes.live_path(@socket, MishkaHtmlWeb.AdminCommentsLive) %>
-            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "سایت"), to: Routes.live_path(@socket, MishkaHtmlWeb.HomeLive) %>
+        <nav class="col-sm-3 navbar navbar-dark text-right mobile-admin-top-menu">
+          <div class="container-fluid mobile-menu">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
           </div>
-        </div>
+        </nav>
       </div>
-
-      <nav class="col-sm-3 navbar navbar-dark text-right mobile-admin-top-menu">
-        <div class="container-fluid mobile-menu">
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-        </div>
-      </nav>
-
     """
   end
 

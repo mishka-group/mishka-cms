@@ -41,7 +41,7 @@ defmodule MishkaHtmlWeb.BookmarksLive do
 
       record ->
         socket
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogPostLive, record.extra.alias_link))
+        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogPostLive, Map.get(record.extra, "alias_link") || Map.get(record.extra, :alias_link)))
     end
 
     {:noreply, socket}

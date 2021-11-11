@@ -2,7 +2,7 @@ defmodule MishkaHtmlWeb.Admin.Notif.DeleteErrorComponent do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <div class="error-card-modal col">
         <div class="alert alert-danger vazir rtl" role="alert">
         <div class="col-sm-6 svg-div-error-modal">

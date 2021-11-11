@@ -55,7 +55,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   delete_list_item(:users, DeleteErrorComponent, true)
 
   @impl true
-  def handle_event("user_role", %{"role" => role_id, "user_id" => user_id}, socket) do
+  def handle_event("user_role", %{"role" => role_id, "user_id" => user_id, "full_name" => full_name}, socket) do
     case role_id do
       "delete_user_role" ->
         MishkaContent.General.Activity.create_activity_by_task(%{
@@ -66,7 +66,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           priority: "medium",
           status: "info",
           user_id: Map.get(socket.assigns, :user_id)
-        }, %{user_action: "live_delete_user_role", type: "admin"})
+        }, %{user_action: "live_delete_user_role", type: "admin", full_name: full_name})
 
         title = MishkaTranslator.Gettext.dgettext("html_live", "نقش کاربری شما حذف شد")
         description = MishkaTranslator.Gettext.dgettext("html_live", "دسترسی حساب کاربری شما تغییر کرده است. این به منظور مسدود شدن شما نمی باشد. بلکه نقش کاربری از قبل داده شده پاک گردیده است. لازم به ذکر است این تغییرات به وسیله مدیریت وب سایت انجام شده است.")
@@ -75,7 +75,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         MishkaUser.Acl.UserRole.delete_user_role(user_id)
         MishkaUser.Acl.AclManagement.stop(user_id)
       _record ->
-        create_or_edit_user_role(user_id, role_id, socket)
+        create_or_edit_user_role(user_id, role_id, full_name, socket)
     end
 
     {:noreply, socket}
@@ -107,7 +107,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   defp user_filter(_params), do: %{}
 
 
-  defp create_or_edit_user_role(user_id, role_id, socket) do
+  defp create_or_edit_user_role(user_id, role_id, full_name, socket) do
     case MishkaUser.Acl.UserRole.show_by_user_id(user_id) do
       {:error, _, _repo_error} ->
 
@@ -119,7 +119,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           priority: "medium",
           status: "info",
           user_id: Map.get(socket.assigns, :user_id)
-        }, %{user_action: "live_create_or_edit_user_role", type: "admin"})
+        }, %{user_action: "live_create_or_edit_user_role", type: "admin", full_name: full_name})
 
         MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
 

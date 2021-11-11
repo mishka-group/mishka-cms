@@ -38,12 +38,12 @@ defmodule MishkaHtml.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.6", override: true},
-      {:phoenix_live_view, "~> 0.16.4"},
+      {:phoenix_live_view, "~> 0.17.5", override: true},
       {:phoenix_ecto, "~> 4.4"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:phoenix_html, "~> 3.0"},
+      {:floki, ">= 0.32.0", only: :test},
+      {:phoenix_html, "~> 3.1"},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.5"},
+      {:phoenix_live_dashboard, "~> 0.6.1"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 0.5"},
       {:jason, "~> 1.2"},
@@ -53,8 +53,8 @@ defmodule MishkaHtml.MixProject do
       {:slugify, "~> 1.3"},
       {:html_sanitize_ex, "~> 1.4"},
       {:mishka_translator, in_umbrella: true},
-      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:sobelow, "~> 0.8", only: :dev},
+      {:esbuild, "~> 0.3.4", runtime: Mix.env() == :dev},
+      {:sobelow, "~> 0.11.1", only: :dev},
       {:jalaali, "~> 0.4.0"}
     ]
   end

@@ -9,7 +9,7 @@ defmodule MishkaHtmlWeb.Admin.Public.Notif do
    end
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <div class="toast-container" id="admin_notif">
         <%= for notif <- @notifs do %>
           <div class="admin-notif-live p-3 vazir rtl" style="z-index: 5">
@@ -22,7 +22,7 @@ defmodule MishkaHtmlWeb.Admin.Public.Notif do
                 <div class="clearfix"></div>
                 <div class="col space10"> </div>
                 <small><%= MishkaTranslator.Gettext.dgettext("html_live_component", "یک دقیقه پیش") %></small>
-                <button phx-click="close" phx-value-id="<%= notif.id %>" type="button" class="me-auto btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button phx-click="close" phx-value-id={notif.id} type="button" class="me-auto btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
               </div>
               <div class="admin-notif-live-text toast-body vazir">
                 <%= notif.msg %>

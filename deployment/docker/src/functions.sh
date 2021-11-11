@@ -438,14 +438,14 @@ function db_manager() {
 # get email config from user and enable email system
 function email_system() {
     while true; do 
-        read -s -p $'\e[32mEnter Your Email Name [like \'info@example.com\']\e[0m: ' EMAIL_SYSTEM
-        read -s -p $'\e[32mEnter Your Email Domain [like \'example.com\']\e[0m: ' EMAIL_DOMAIN
-        read -s -p $'\e[32mEnter Your Email Port (587 or 25) [Default is \'587\']\e[0m: ' EMAIL_PORT
+        read -p $'\e[32mEnter Your Email Name [like \'info@example.com\']\e[0m: ' EMAIL_SYSTEM
+        read -p $'\e[32mEnter Your Email Domain [like \'example.com\']\e[0m: ' EMAIL_DOMAIN
+        read -p $'\e[32mEnter Your Email Port (587 or 25) [Default is \'587\']\e[0m: ' EMAIL_PORT
         EMAIL_PORT=${EMAIL_PORT:-"587"}
-        read -s -p $'\e[32mEnter Your Email Server [like  \'mail.example.com\']\e[0m: ' EMAIL_SERVER
-        read -s -p $'\e[32mEnter Your Email Hostname [like \'mail.example.com\']\e[0m: ' EMAIL_HOSTNAME
-        read -s -p $'\e[32mEnter Your Email Username [like \'info@example.com\']\e[0m: ' EMAIL_USERNAME
-        read -s -p $'\e[32mEnter Your Email Password \e[0m: ' EMAIL_PASSWORD
+        read -p $'\e[32mEnter Your Email Server [like  \'mail.example.com\']\e[0m: ' EMAIL_SERVER
+        read -p $'\e[32mEnter Your Email Hostname [like \'mail.example.com\']\e[0m: ' EMAIL_HOSTNAME
+        read -p $'\e[32mEnter Your Email Username [like \'info@example.com\']\e[0m: ' EMAIL_USERNAME
+        read -p $'\e[32mEnter Your Email Password \e[0m: ' EMAIL_PASSWORD
         if [[ "$EMAIL_SYSTEM" != "" ]] && [[ "$EMAIL_DOMAIN" != "" ]] && 
             [[ "$EMAIL_PORT" != "" ]] && [[ "$EMAIL_SERVER" != "" ]] && 
             [[ "$EMAIL_HOSTNAME" != "" ]] && [[ "$EMAIL_USERNAME" != "" ]] && 
@@ -457,7 +457,7 @@ function email_system() {
             echo "email hostname: ${EMAIL_HOSTNAME}"
             echo "email username: ${EMAIL_USERNAME}"
             echo "email password: ${EMAIL_PASSWORD}"
-            read -s -p $'\e[32mDo You Want to Proceed (YES/NO) ? [default is YES] \'\']\e[0m: ' EMAIL_CONFIRM
+            read -p $'\e[32mDo You Want to Proceed (YES/NO) ? [default is YES] \'\']\e[0m: ' EMAIL_CONFIRM
             EMAIL_CONFIRM=${EMAIL_CONFIRM:-"YES"}
             if [[ "${EMAIL_CONFIRM,,}" =~ ^yes$ ]]; then
                 break

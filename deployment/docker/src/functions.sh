@@ -22,6 +22,16 @@ function store_configs() {
         "secret_key_base_api": "'$SECRET_KEY_BASE_API'",
         "live_view_salt": "'$LIVE_VIEW_SALT'" 
     },
+    "mail": {
+        "email_system": "'$EMAIL_SYSTEM'",
+        "email_domain": "'$EMAIL_DOMAIN'",
+        "email_port": "'$EMAIL_PORT'",
+        "email_server": "'$EMAIL_SERVER'",
+        "email_hostname": "'$EMAIL_HOSTNAME'",
+        "email_username": "'$EMAIL_USERNAME'",
+        "email_password": "'$EMAIL_PASSWORD'",
+        "email_config": "'$EMAIL_CONFIG'"
+    },
     "etc": {
         "cms_domain_name": "'$CMS_DOMAIN_NAME'",
         "api_domain_name": "'$API_DOMAIN_NAME'",
@@ -286,11 +296,23 @@ function check_requirements() {
 
 # set default value for variables
 function default_values() {
+    # database
     DATABASE_USER=${DATABASE_USER:-"mishka_user"}
     DATABASE_NAME=${DATABASE_NAME:-"mishka_database"}
     DATABASE_PASSWORD=${DATABASE_PASSWORD:-"mishka_password"}
     POSTGRES_USER=${POSTGRES_USER:-"postgres"}
     POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-"postgres"}
+
+    # email
+    EMAIL_SYSTEM=${EMAIL_SYSTEM:-"info@example.com"}
+    EMAIL_DOMAIN=${EMAIL_DOMAIN:-"example.com"}
+    EMAIL_PORT=${EMAIL_PORT:-"587"}
+    EMAIL_SERVER=${EMAIL_SERVER:-"mail.example.com"}
+    EMAIL_HOSTNAME=${EMAIL_HOSTNAME:-"mail.example.com"}
+    EMAIL_USERNAME=${EMAIL_USERNAME:-"info@example.com"}
+    EMAIL_PASSWORD=${EMAIL_PASSWORD:-"SOMEPASSWORD"}
+
+    # etc
     CMS_DOMAIN_NAME=${CMS_DOMAIN_NAME:-"localhost"}
     API_DOMAIN_NAME=${API_DOMAIN_NAME:-"localhost"}
     CMS_PORT=${CMS_PORT:-"4000"}
@@ -410,4 +432,40 @@ function db_manager() {
             fi
         fi  
     fi                
+}
+
+
+# get email config from user and enable email system
+function email_system() {
+    while true; do 
+        read -s -p $'\e[32mEnter Your Email Name [like \'info@example.com\']\e[0m: ' EMAIL_SYSTEM
+        read -s -p $'\e[32mEnter Your Email Domain [like \'example.com\']\e[0m: ' EMAIL_DOMAIN
+        read -s -p $'\e[32mEnter Your Email Port (587 or 25) [Default is \'587\']\e[0m: ' EMAIL_PORT
+        EMAIL_PORT=${EMAIL_PORT:-"587"}
+        read -s -p $'\e[32mEnter Your Email Server [like  \'mail.example.com\']\e[0m: ' EMAIL_SERVER
+        read -s -p $'\e[32mEnter Your Email Hostname [like \'mail.example.com\']\e[0m: ' EMAIL_HOSTNAME
+        read -s -p $'\e[32mEnter Your Email Username [like \'info@example.com\']\e[0m: ' EMAIL_USERNAME
+        read -s -p $'\e[32mEnter Your Email Password \e[0m: ' EMAIL_PASSWORD
+        if [[ "$EMAIL_SYSTEM" != "" ]] && [[ "$EMAIL_DOMAIN" != "" ]] && 
+            [[ "$EMAIL_PORT" != "" ]] && [[ "$EMAIL_SERVER" != "" ]] && 
+            [[ "$EMAIL_HOSTNAME" != "" ]] && [[ "$EMAIL_USERNAME" != "" ]] && 
+            [[ "$EMAIL_PASSWORD" != "" ]]; then 
+            echo "email system: ${EMAIL_SYSTEM}"
+            echo "email domain: ${EMAIL_DOMAIN}"
+            echo "email port: ${EMAIL_PORT}"
+            echo "email server: ${EMAIL_SERVER}"
+            echo "email hostname: ${EMAIL_HOSTNAME}"
+            echo "email username: ${EMAIL_USERNAME}"
+            echo "email password: ${EMAIL_PASSWORD}"
+            read -s -p $'\e[32mDo You Want to Proceed (YES/NO) ? [default is YES] \'\']\e[0m: ' EMAIL_CONFIRM
+            EMAIL_CONFIRM=${EMAIL_CONFIRM:-"YES"}
+            if [[ "${EMAIL_CONFIRM,,}" =~ ^yes$ ]]; then
+                break
+            else 
+                echo -e "${Red}please try again!${NC}"
+            fi 
+        else 
+            echo -e "${Red}You entered some empty values, please try again!${NC}"
+        fi 
+    done 
 }

@@ -39,6 +39,14 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         read -p $'\e[32mEnter Your Database Name [default is \'mishka_database\']\e[0m: ' DATABASE_NAME
         read -p $'\e[32mEnter Your Postgres User [default is \'postgres\']\e[0m: ' POSTGRES_USER
         read -s -p $'\e[32mEnter Your Postgres Password [default is \'postgres\']\e[0m: ' POSTGRES_PASSWORD
+        echo 
+        echo -e "${Red}Please enable the email system for some verification, also, you will need the email server configuration!${NC}"
+        read -s -p $'\e[32mDo You Want Enable Email System (YES/NO) ? [default is YES] \'\']\e[0m: ' EMAIL_CONFIG
+        EMAIL_CONFIG=${EMAIL_CONFIG:-"YES"}
+        if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
+            email_system
+        fi
+
         echo
         read -p $'\e[32mEnter Your CMS address (Domain or IP)  [default is \'localhost\']\e[0m: ' CMS_DOMAIN_NAME
         if ip_checker $CMS_DOMAIN_NAME; then
@@ -112,6 +120,13 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             --build-arg CMS_PORT=$CMS_PORT \
             --build-arg API_PORT=$API_PORT \
             --build-arg PROTOCOL=$PROTOCOL \
+            --build-arg EMAIL_SYSTEM=$EMAIL_SYSTEM \
+            --build-arg EMAIL_DOMAIN=$EMAIL_DOMAIN \
+            --build-arg EMAIL_PORT=$EMAIL_PORT \
+            --build-arg EMAIL_SERVER=$EMAIL_SERVER \
+            --build-arg EMAIL_HOSTNAME=$EMAIL_HOSTNAME \
+            --build-arg EMAIL_USERNAME=$EMAIL_USERNAME \
+            --build-arg EMAIL_PASSWORD=$EMAIL_PASSWORD \
             ../../ --no-cache
         
         if [[ $? == 0 ]]; then # if docker image was build
@@ -179,6 +194,13 @@ else
                         --build-arg CMS_PORT=$CMS_PORT \
                         --build-arg API_PORT=$API_PORT \
                         --build-arg PROTOCOL=$PROTOCOL \
+                        --build-arg EMAIL_SYSTEM=$EMAIL_SYSTEM \
+                        --build-arg EMAIL_DOMAIN=$EMAIL_DOMAIN \
+                        --build-arg EMAIL_PORT=$EMAIL_PORT \
+                        --build-arg EMAIL_SERVER=$EMAIL_SERVER \
+                        --build-arg EMAIL_HOSTNAME=$EMAIL_HOSTNAME \
+                        --build-arg EMAIL_USERNAME=$EMAIL_USERNAME \
+                        --build-arg EMAIL_PASSWORD=$EMAIL_PASSWORD \
                         ../../ --no-cache
                     
                     # update docker-compose file with values
@@ -199,7 +221,6 @@ else
 
                 # load configs
                 load_configs
-
 
                 if domain_checker $CMS_DOMAIN_NAME && domain_checker $API_DOMAIN_NAME && [[ $ADMIN_EMAIL != "example@example.com" ]]; then 
                     echo -e "${Green}Mishka Cms Available on    --> $SPACE https://$CMS_DOMAIN_NAME $END_SPACE ${NC}"
@@ -228,14 +249,31 @@ else
             ;;
 
             "destroy")
-                read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (Y/N)\e[0m: ' INPUT
-                if [[ ${INPUT,,} =~ ^y$ ]]; then 
+                read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (YES/NO)\e[0m: ' INPUT
+                if [[ ${INPUT,,} =~ ^yes$ ]]; then 
                     cleanup
                 else 
                     echo -e "${Red} Your Operation is canceled..${NC}" 
                 fi
             ;;
 
+            "email")
+                # load configs
+                load_configs
+
+                if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
+                    read -s -p $'\e[32mDo You Want OVERWRITE Email System Config ? (YES/NO)\'\']\e[0m: ' EMAIL_CONFIG
+                    if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
+                        email_system
+                        store_configs
+                    else
+                        echo -e "${Red} Your Operation is canceled..${NC}"  
+                    fi 
+                else 
+                    email_system
+                    store_configs
+                fi 
+            ;;
 
             "logs")
                 if [[ $2 != "" ]]; then 
@@ -252,6 +290,7 @@ else
                     stop      stop one or all containers
                     remove    stop and remove all containers plus network
                     destroy   stop and remove all containers plus netwok also remove docker images, volume
+                    email     enable email system for cms
                     logs      show log of specific container of all containers${NC}"
             ;;
 
@@ -296,8 +335,8 @@ else
             ;;
 
             "destroy")
-                read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (Y/N)\e[0m: ' INPUT
-                if [[ ${INPUT,,} =~ ^y$ ]]; then 
+                read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (YES/NO)\e[0m: ' INPUT
+                if [[ ${INPUT,,} =~ ^yes$ ]]; then 
                     cleanup
                 else 
                     echo -e "${Red} Your Operation is canceled..${NC}" 

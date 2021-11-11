@@ -1,0 +1,13 @@
+<div class="space30"></div>
+<div class="container rtl client-main-container">
+
+    <.live_component module={MishkaHtmlWeb.Client.Public.HeaderComponent} id={:client_header} />
+
+    <section class="col mx-auto client-content vazir">
+        <.live_component module={MishkaHtmlWeb.Admin.Public.LiveFlashComponent} id={:live_flash} flash={@flash} />
+        <div class="space40"></div>
+        <.live_component module={MishkaHtmlWeb.Client.Register.RegisterFormComponent} id={:login_form} changeset={@changeset} />
+        <div class="space40"></div>
+    </section>
+</div>
+<.live_component module={MishkaHtmlWeb.Client.Public.CrightComponent} id={:cright} />

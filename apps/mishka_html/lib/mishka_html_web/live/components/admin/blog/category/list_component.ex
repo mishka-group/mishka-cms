@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
 
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <div class="col bw admin-blog-post-list">
         <div class="table-responsive">
             <table class="table vazir">
@@ -19,11 +19,11 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                 </thead>
                 <tbody>
                     <%= for {item, color} <- Enum.zip(@categories, Stream.cycle(["wlist", "glist"])) do %>
-                    <tr class="blog-list vazir <%= if color == "glist", do: "odd-list-of-blog-posts" %>">
+                    <tr class={"blog-list vazir #{if(color == "glist", do: "odd-list-of-blog-posts", else: "")}"}>
                         <td class="col-sm-2 admin-list-img">
-                            <img src="<%= item.main_image %>" alt="<%= item.title %>">
+                            <img src={item.main_image} alt={item.title}>
                         </td>
-                        <td class="align-middle text-center" id="<%= "title-#{item.id}" %>">
+                        <td class="align-middle text-center" id={"title-#{item.id}"}>
                             <%= live_redirect "#{MishkaHtml.title_sanitize(item.title)}",
                             to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id)
                             %>
@@ -43,13 +43,10 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
                             <span class="badge bg-info"><%= title %></span>
                         </td>
                         <td class="align-middle text-center">
-                            <%= live_component @socket, MishkaHtmlWeb.Public.TimeConverterComponent,
-                            span_id: "updated_at-#{item.id}-component",
-                            time: item.updated_at
-                            %>
+                            <.live_component module={MishkaHtmlWeb.Public.TimeConverterComponent} id={"updated_at-#{item.id}-component"} span_id={"updated_at-#{item.id}-component"} time={item.updated_at} />
                         </td>
-                        <td  class="align-middle text-center" id="<%= "opration-#{item.id}" %>">
-                            <a class="btn btn-outline-primary vazir", phx-click="delete" phx-value-id="<%= item.id %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
+                        <td  class="align-middle text-center" id={"opration-#{item.id}"}>
+                            <a class="btn btn-outline-primary vazir", phx-click="delete" phx-value-id={item.id}><%= MishkaTranslator.Gettext.dgettext("html_live_component", "حذف") %></a>
 
                             <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش"),
                                 to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogCategoryLive, id: item.id),
@@ -63,15 +60,9 @@ defmodule MishkaHtmlWeb.Admin.Blog.Category.ListComponent do
             <div class="space20"></div>
             <div class="col-sm-10">
                 <%= if @categories.entries != [] do %>
-                <%= live_component @socket, MishkaHtmlWeb.Public.PaginationComponent ,
-                                id: :pagination,
-                                pagination_url: @pagination_url,
-                                data: @categories,
-                                filters: @filters,
-                                count: @count
-                %>
+                    <.live_component module={MishkaHtmlWeb.Public.PaginationComponent} id={:pagination} pagination_url={@pagination_url} data={@categories} filters={@filters} count={@count} />
+                <% end %>
             </div>
-            <% end %>
         </div>
       </div>
     """

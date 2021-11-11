@@ -11,6 +11,11 @@
   font-display: block;
 } */
 
+select:-internal-list-box option:checked {
+  background-color: -internal-light-dark(rgb(206, 206, 206), rgb(84, 84, 84)) !important;
+  color: -internal-light-dark(rgb(16, 16, 16), rgb(255, 255, 255)) !important;
+}
+
 span.d-inline-block.bg-secondary.rounded-circle {
   width: 0.5em;
   height: 0.5em;
@@ -2777,6 +2782,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (min-width: 576px) and (max-width: 639px) {
+  .dy-title-set, .dy-field-set {
+    min-width: 300px
+  }
+  
   .col-sm-2.admin-featured-post-item {
     width: 100%;
   }

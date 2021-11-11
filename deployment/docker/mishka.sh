@@ -34,20 +34,20 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         
         # get data from user
         read -p $'\e[32mEnter Your Database User [default is \'mishka_user\']\e[0m: ' DATABASE_USER
-        read -s -p $'\e[32mEnter Your Database Password [default is \'mishka_password\']\e[0m: ' DATABASE_PASSWORD
-        echo
+        read -p $'\e[32mEnter Your Database Password [default is \'mishka_password\']\e[0m: ' DATABASE_PASSWORD
+
         read -p $'\e[32mEnter Your Database Name [default is \'mishka_database\']\e[0m: ' DATABASE_NAME
         read -p $'\e[32mEnter Your Postgres User [default is \'postgres\']\e[0m: ' POSTGRES_USER
-        read -s -p $'\e[32mEnter Your Postgres Password [default is \'postgres\']\e[0m: ' POSTGRES_PASSWORD
-        echo 
+        read -p $'\e[32mEnter Your Postgres Password [default is \'postgres\']\e[0m: ' POSTGRES_PASSWORD
+        
         echo -e "${Red}Please enable the email system for some verification, also, you will need the email server configuration!${NC}"
-        read -s -p $'\e[32mDo You Want Enable Email System (YES/NO) ? [default is YES] \'\']\e[0m: ' EMAIL_CONFIG
+        read -p $'\e[32mDo You Want Enable Email System (YES/NO)[default is \'YES\']\e[0m: ' EMAIL_CONFIG
         EMAIL_CONFIG=${EMAIL_CONFIG:-"YES"}
         if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
             email_system
         fi
 
-        echo
+        
         read -p $'\e[32mEnter Your CMS address (Domain or IP)  [default is \'localhost\']\e[0m: ' CMS_DOMAIN_NAME
         if ip_checker $CMS_DOMAIN_NAME; then
             CMS_DOMAIN_NAME=$CMS_DOMAIN_NAME
@@ -262,7 +262,7 @@ else
                 load_configs
 
                 if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
-                    read -s -p $'\e[32mDo You Want OVERWRITE Email System Config ? (YES/NO)\'\']\e[0m: ' EMAIL_CONFIG
+                    read -p $'\e[32mDo You Want OVERWRITE Email System Config ? (YES/NO)\'\']\e[0m: ' EMAIL_CONFIG
                     if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
                         email_system
                         store_configs

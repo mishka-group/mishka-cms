@@ -2782,6 +2782,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (min-width: 576px) and (max-width: 639px) {
+  .dy-title-set, .dy-field-set {
+    min-width: 300px
+  }
+  
   .col-sm-2.admin-featured-post-item {
     width: 100%;
   }

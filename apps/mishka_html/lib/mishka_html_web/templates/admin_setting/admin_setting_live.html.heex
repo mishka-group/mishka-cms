@@ -105,11 +105,13 @@
                         <div class="space30"></div>
 
                         <%= for {item, {field, value}} <- Enum.with_index(@configs, fn element, index -> {index, element} end) do %>
+                            <div class="col-sm-4">
                             <.live_component module={MishkaHtmlWeb.Admin.Setting.AddFieldComponent}
                                 id={"#{item + 1}"}
                                 field={field}
                                 value={value}
                             />
+                            </div>
                         <% end %>
                     <% end %>
 

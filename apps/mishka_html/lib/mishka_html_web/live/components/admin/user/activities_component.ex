@@ -11,6 +11,7 @@ defmodule MishkaHtmlWeb.Admin.User.ActivitiesComponent do
           <div class="space20"></div>
           <div class="clearfix"></div>
           <ul>
+            <% IO.inspect @activities %>
             <%= for item <- @activities do %>
               <li class="vazir">
                 <span class="badge bg-dark">

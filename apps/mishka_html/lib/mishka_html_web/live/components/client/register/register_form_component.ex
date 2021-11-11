@@ -3,16 +3,11 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
 
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <main class="form-signin vazir">
-        <%= f = form_for @changeset, "#",
-            phx_submit: "save",
-            phx_change: "validate",
-            id: "ClientRegisterForm",
-            phx_hook: "GooglereCAPTCHA",
-            onkeydown: "return event.key != 'Enter';" %>
+        <.form let={f} for={@changeset} phx-submit= "save" phx-change= "validate" id= "ClientRegisterForm" phx-hook= "GooglereCAPTCHA" onkeydown= "return event.key != 'Enter';">
 
-          <img class="mb-4" src="<%= Routes.static_path(@socket, "/images/icons8-login-as-user-80.png") %>" alt="" width="80" height="80">
+          <img class="mb-4" src={Routes.static_path(@socket, "/images/icons8-login-as-user-80.png")} alt="" width="80" height="80">
           <div class="space10"></div>
           <h1 class="h3 mb-3 fw-normal"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "ساخت حساب کاربری جدید") %></h1>
 
@@ -85,7 +80,7 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
             to: Routes.live_path(@socket, MishkaHtmlWeb.ResetPasswordLive),
             class: "btn btn-outline-danger"
           %>
-        </form>
+        </.form>
       </main>
     """
   end

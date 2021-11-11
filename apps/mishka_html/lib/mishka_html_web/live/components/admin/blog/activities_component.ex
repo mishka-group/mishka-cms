@@ -2,7 +2,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.ActivitiesComponent do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do
-    ~L"""
+    ~H"""
     <div class="col-sm-5 vazir list-activity-blog-post-and-category">
         <h3 class="admin-dashbord-h3-right-side-title vazir">
         <%= MishkaTranslator.Gettext.dgettext("html_live_component", "آخرین فعالیت ها در تولید محتوا") %>
@@ -20,7 +20,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.ActivitiesComponent do
               <span class="badge bg-warning text-dark"><%= Map.get(item.extra, :title) || Map.get(item.extra, "title") || MishkaTranslator.Gettext.dgettext("html_live_component", "بدون تیتر") %></span>
               <%= MishkaTranslator.Gettext.dgettext("html_live_component", "به وسیله کاربر:") %>
               <%= item.full_name %>
-              <span class="badge bg-<%= MishkaHtml.create_action_msg(item.action).color %>"><%= MishkaHtml.create_action_msg(item.action).msg %></span>
+              <span class={"badge bg-{MishkaHtml.create_action_msg(item.action).color}"}><%= MishkaHtml.create_action_msg(item.action).msg %></span>
               شد.
             </li>
           <% end %>

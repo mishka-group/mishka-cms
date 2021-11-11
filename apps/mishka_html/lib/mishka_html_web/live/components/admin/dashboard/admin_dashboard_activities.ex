@@ -3,10 +3,10 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.ActivitiesComponent do
 
 
   def render(assigns) do
-    ~L"""
+    ~H"""
     <div class="col-sm-5 cms-block-menu-center">
       <div class="col activity-menu vazir">
-        <h3 class="text-center activities-title-admin-home"  phx-click="activities" phx-target="<%= @myself %>">
+        <h3 class="text-center activities-title-admin-home"  phx-click="activities" phx-target={@myself}>
           <span class="activities-title-admin-home-text"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "لاگ لحظه ای") %></span>
 
           <a class="iconly-bulkArrow---Right-Square"><span class="path1"></span><span class="path2"></span></a>
@@ -14,7 +14,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.ActivitiesComponent do
         <div class="space20"></div>
         <%= for item <- @activities do %>
           <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.AdminActivityLive, item.id), class: "admin-home-activities-link", replace: false do %>
-            <div class="alert alert-<%= error_status(item.status, item.inserted_at).color %>" role="alert"><%= error_status(item.status, item.inserted_at).msg %></div>
+            <div class={"alert alert-#{error_status(item.status, item.inserted_at).color}"} role="alert"><%= error_status(item.status, item.inserted_at).msg %></div>
           <% end %>
         <% end %>
       </div>

@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastBlogPostsComponent do
 
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <div class="container rtl">
         <div class="clearfix"></div>
         <h3 class="admin-home-calendar-h3-title-last-post"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "آخرین مطالب منتشر شده:") %></h3>
@@ -12,7 +12,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastBlogPostsComponent do
           <%= for post <- @posts do %>
             <div class="col last-admin-home-posts">
               <%= live_redirect to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostLive, id: post.id), replace: false do %>
-              <img class="img-fluid admin-home-blog-post-img" src="<%= post.main_image %>" alt="<%= post.title %>">
+              <img class="img-fluid admin-home-blog-post-img" src={post.main_image} alt={post.title}>
               <% end %>
             </div>
           <% end %>

@@ -3,7 +3,7 @@ defmodule MishkaHtml.Plug.LiveAclCheckPlug do
   require MishkaTranslator.Gettext
   alias MishkaHtmlWeb.Router.Helpers, as: Routes
 
-  def mount(_params, session, socket) do
+  def on_mount(_section, _params, session, socket) do
     with {:acl_check, false, action} <- {:acl_check, is_nil(get_acl_by_module_path(socket)), get_acl_by_module_path(socket)},
          {:user_id_check, false, user_id} <- {:user_id_check, is_nil(Map.get(session, "user_id")), Map.get(session, "user_id")},
          {:permittes?, true} <- {:permittes?, MishkaUser.Acl.Access.permittes?(action, user_id)} do

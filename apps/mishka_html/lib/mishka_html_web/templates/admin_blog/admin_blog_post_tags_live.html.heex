@@ -1,0 +1,110 @@
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row admin-top-page-navigate">
+            <div class="col-sm-5 top-back-admin-menue">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطالب") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive),
+                    class: "btn btn-outline-primary" %>
+
+                    <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برچسب ها") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogTagsLive),
+                        class: "btn btn-outline-danger" %>
+
+            </div>
+        </div>
+
+        <div class="space20"></div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col">
+                <h3 class="admin-dashbord-h3-right-side-title vazir">
+                    <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "مدیریت برچسب های مطلب") %>
+                    <%= @page_title %>
+                </h3>
+                <div class="space10"></div>
+                <span class="admin-dashbord-right-side-text vazir">
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید به مطلب مورد نظر یک یا چند برچسب تخصیص بدهید یا از لیست برچسب های مطلب
+                    مذکور موردی که نیاز ندارید را حذف کنید.") %>
+                </span>
+                <div class="space20"></div>
+
+                <div class="col-sm-12">
+                    <div class="clearfix"></div>
+                    <div class="space40"></div>
+                    <hr>
+                    <div class="space40"></div>
+
+                    <form phx-change="search_tag" id="tag-form">
+                        <div class="col-md-4 vazir">
+                            <label for="blogPostTags" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "جستجو برچسب و اضافه کردن به مطلب") %></label>
+                            <div class="space10"> </div>
+                            <input type="text" class="title-input-text form-control" name="search-tag-title" id="search-tag">
+                            <div class="col space10"> </div>
+                            <div class="space10"></div>
+                            <div class="col" phx-update="replace" id="search_tags">
+                                <%= for {item, color} <- Enum.zip(@search, Stream.cycle(["warning", "info" , "danger" , "success" , "primary" ])) do %>
+                                    <div class={"list-group-item list-group-item-#{color}"} aria-current="true">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h4 class="mb-1">
+                                                <%= item.title %>
+                                            </h4>
+
+                                            <small class="text-muted">
+                                                <div class="btn btn-outline-primary vazir" phx-click="add_tag" phx-value-id={item.id}>
+                                                   <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "اضافه کردن") %>
+                                                </div>
+                                            </small>
+                                        </div>
+                                    </div>
+                                <% end %>
+                            </div>
+                        </div>
+                    </form>
+                </div>  
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col bw admin-blog-post-list">
+
+
+        <div class="table-responsive">
+            <table class="table vazir">
+                <thead>
+                    <tr>
+                        <th scope="col" id="div-title"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "تیتر") %> </th>
+                        <th scope="col" id="div-category"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "تیتر سفارشی") %> </th>
+                        <th scope="col" id="div-status"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "وضعیت رباط") %> </th>
+                        <th scope="col" id="div-opration"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "عملیات") %> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%= for {item, color} <- Enum.zip(@tags, Stream.cycle(["wlist", "glist"])) do %>
+                    <tr class={"blog-list vazir #{if(color == "glist", do: "odd-list-of-blog-posts", else: "")}"}>
+                        <td class="align-middle text-center">
+                            <%= item.title %>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%= item.custom_title %>
+                        </td>
+                        <td class="align-middle text-center">
+                            <%= item.robots %>
+                        </td>
+                        <td  class="align-middle text-center" id={"opration-#{item.id}"}>
+                            <a class="btn btn-outline-danger vazir" , phx-click="delete" phx-value-id={item.id}><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "حذف برچسب از این مطلب") %></a>
+                        </td>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <div class="space20"></div>
+
+        </div>
+    </div>
+</div>
+
+<%= live_render(@socket, MishkaHtmlWeb.Admin.Public.Notif, id: :notif) %>

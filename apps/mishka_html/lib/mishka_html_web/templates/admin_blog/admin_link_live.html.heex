@@ -1,0 +1,116 @@
+
+<div class="container main-admin rtl">
+    <div class="col admin-main-block-dashboard">
+
+        <div class="row admin-top-page-navigate">
+            <div class="col-sm-5 top-back-admin-menue">
+                <%= live_render(@socket, MishkaHtmlWeb.Admin.Public.AdminMenu, id: :admin_menu) %>
+            </div>
+
+            <div class="col vazir text-start top-post-btn">
+
+                <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطلب") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminLinksLive, @post_id),
+                    class: "btn btn-outline-info" %>
+
+               <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطالب") , to: Routes.live_path(@socket, MishkaHtmlWeb.AdminBlogPostsLive),
+                    class: "btn btn-outline-primary" %>
+            </div>
+        </div>
+
+
+
+        <.live_component module={MishkaHtmlWeb.Admin.Public.LiveFlashComponent} id={:live_flash} flash={@flash} />
+
+
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+        <h2 class="vazir">
+             <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "ساخت نقش جدید") %>
+        </h2>
+        <div class="space20"></div>
+        <hr>
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+
+         <%= if @drafts != [] do %>
+            <div class="col-sm-12">
+                <div class="alert alert-warning vazir draft-alert" role="alert">
+                <%= raw(MishkaTranslator.Gettext.dgettext("html_live_templates", "شما برای این بخش %{number} پیش نسخه ذخیره شده دارید. لطفا در صورت نیاز هر کدام از آن ها را انتخاب کنید و اگر به آن نیاز ندارید لطفا آن را حذف کنید. لازم به ذکر است گزینه انتخابی بعد از ذخیره‌سازی موفقیت آمیز خودکار حذف می گردد.", number: "<span class=\"badge bg-danger\">#{length(@drafts)}</span>")) %>
+                </div>
+            <div class="row">
+                <%= for draft <- @drafts do %>
+                    <.live_component module={MishkaHtmlWeb.Admin.Public.DrfatBlockComponent}
+                        section_id={@id}
+                        draft={draft}
+                        id={draft.id} />
+                <% end %>
+            </div>
+            <div class="clearfix"></div>
+            <div class="space30"></div>
+            </div>
+        <% end%>
+
+
+        <div class="col admin-create-category">
+            <div class="clearfix"></div>
+            <div class="space10"></div>
+            <a phx-click="make_all_basic_menu" class="btn btn-danger admin-create-category-tools" >
+                <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "فیلدهای ضروری") %>
+            </a>
+            <div class="clearfix"></div>
+            <div class="space10"></div>
+
+            <.form let={f} for={@changeset}  phx-submit="save" phx-change="draft" multipart={true} onkeydown="return event.key != 'Enter';" %>
+                <div class="clearfix"></div>
+                <div class="space30"></div>
+                <div class="row">
+                    <%= for form <- @dynamic_form do %>
+                        <%= case MishkaHtmlWeb.AdminLinkLive.search_fields(form.type).form do %>
+                            <% "select" -> %>
+                                <.live_component module={MishkaHtmlWeb.Admin.Form.SelectComponent}
+                                    id: {String.to_atom("admin_form_#{form.type}")}
+                                    form: {form}
+                                    f: {f}
+                                    search_fields: {MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
+                                />
+
+                            <% "editor" -> %>
+                                <.live_component module={MishkaHtmlWeb.Admin.Form.EditorComponent}
+                                        id: {String.to_atom("admin_form_#{form.type}")}
+                                        form: {form}
+                                        f: {f}
+                                        search_fields: {MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
+                                />
+
+                            <% _ -> %>
+                                <.live_component module={MishkaHtmlWeb.Admin.Form.TextComponent}
+                                        id: {String.to_atom("admin_form_text_#{form.type}")}
+                                        form: {form}
+                                        f: {f}
+                                        search_fields: {MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
+                                />
+                        <% end %>
+                    <% end %>
+                </div>
+                <%= if @dynamic_form != [] do %>
+                    <div class="space10"></div>
+                    <%= submit "Save", phx_disable_with: "Saving...", class: "btn btn-primary" %>
+                <% else %>
+                    <div class="clearfix"></div>
+                    <div class="space30"></div>
+                    <div class="col-sm-12 admin-there-is-no-field vazir">
+                    <div class="space30"></div>
+                        <span class="admin-there-is-no-field-text"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "هیچ فیلدی به فرم اضافه نشده است.") %></span>
+                        <div class="space10"></div>
+                        <span class="text-muted"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "از کلید های بالا می توانید فرم های مورد نظر خود را اضافه کنید.") %></span>
+                        <div class="space30"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                <% end %>
+            </.form>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="space50"></div>
+    </div>
+</div>

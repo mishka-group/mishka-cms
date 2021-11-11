@@ -67,6 +67,7 @@ defmodule MishkaHtmlWeb.Admin.User.ListComponent do
                                     </form>
                                     <form  phx-change="user_role">
                                         <input type="hidden" value={item.id} name="user_id">
+                                        <input type="hidden" value={item.full_name} name="full_name">
                                         <select class="form-select" id="role" name="role" size="2" style="min-height: 150px;">
                                         <option value="delete_user_role"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بدون دسترسی") %></option>
                                         <%= for item <- @roles.entries do %>

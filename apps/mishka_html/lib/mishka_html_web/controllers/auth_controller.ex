@@ -10,6 +10,7 @@ defmodule MishkaHtmlWeb.AuthController do
     # to_string(:inet_parse.ntoa(conn.remote_ip))
     with {:ok, :verify, _token_info} <- MishkaUser.Validation.GoogleRecaptcha.verify(token),
          {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
+         {:nil_password?, false} <- {:nil_password?, is_nil(user_info.password_hash)},
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, user_info.status == :inactive},
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do
@@ -46,6 +47,11 @@ defmodule MishkaHtmlWeb.AuthController do
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
 
     else
+      {:nil_password?, false} ->
+        conn
+        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "ممکن است ایمیل یا پسورد شما اشتباه باشد."))
+        |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
+
       {:user_is_not_deactive, true} ->
         conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "حساب کاربری شما از قبل غیر فعال گردیده و این به درخواست صاحب حساب می باشد. برای استفاده مجدد از حساب لطفا دوباره درخواست فعال سازی از بخش کاربری را ارسال فرمایید."))

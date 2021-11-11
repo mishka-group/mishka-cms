@@ -148,6 +148,16 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
+  def login({:nil_password?, true}, _action, conn, _allowed_fields) do
+    conn
+    |> put_status(401)
+    |> json(%{
+      action: :login,
+      system: @request_error_tag,
+      message: MishkaTranslator.Gettext.dgettext("api_auth", "این خطا در زمانی روخ می دهد که اطلاعات حساب کاربری خودتان را به اشتباه ارسال کرده باشد. لطفا دوباره با دقت بیشتر اطلاعات ورود به سیستم را وارد کنید.")
+    })
+  end
+
   def login({:error, :check_password, _error_tag}, _action, conn, _allowed_fields) do
     conn
     |> put_status(401)

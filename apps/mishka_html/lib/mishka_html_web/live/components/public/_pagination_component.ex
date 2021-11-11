@@ -2,25 +2,25 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <nav aria-label="Page navigation example" phx-hook="Paginate">
         <ul class="pagination justify-content-center pagination-lg">
             <li class="page-item">
-                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="1" phx-target="<%= @myself %>">اولین</a>
+                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="1" phx-target={@myself}>اولین</a>
             </li>
             <li class="page-item">
-                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= @data.total_pages %>" phx-target="<%= @myself %>">آخرین</a>
+                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page={@data.total_pages} phx-target={@myself}>آخرین</a>
             </li>
             <%= for item <- navigation(@data.page_number, @data.total_pages) do %>
-            <li class="page-item <%= if(@data.page_number == item, do: "active") %>">
-              <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= item %>" phx-target="<%= @myself %>"><%= item %></a>
+            <li class={"page-item #{if(@data.page_number == item, do: "active")}"}>
+              <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page={item} phx-target={@myself}><%= item %></a>
             </li>
             <% end %>
             <li class="page-item">
-                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= if(@data.page_number + 1 <= @data.total_pages, do: @data.page_number + 1, else: @data.page_number) %>" phx-target="<%= @myself %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بعدی") %></a>
+                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page={if(@data.page_number + 1 <= @data.total_pages, do: @data.page_number + 1, else: @data.page_number)} phx-target={@myself}><%= MishkaTranslator.Gettext.dgettext("html_live_component", "بعدی") %></a>
             </li>
             <li class="page-item">
-                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="<%= if(@data.page_number > 1, do: @data.page_number - 1, else: 1) %>" phx-target="<%= @myself %>"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "قبلی") %></a>
+                <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page={if(@data.page_number > 1, do: @data.page_number - 1, else: 1)} phx-target={@myself}><%= MishkaTranslator.Gettext.dgettext("html_live_component", "قبلی") %></a>
             </li>
         </ul>
       </nav>

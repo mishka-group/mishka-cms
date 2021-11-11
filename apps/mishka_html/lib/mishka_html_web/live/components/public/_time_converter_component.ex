@@ -2,8 +2,8 @@ defmodule MishkaHtmlWeb.Public.TimeConverterComponent do
   use MishkaHtmlWeb, :live_component
 
   def render(assigns) do
-    ~L"""
-      <span id="<%= @span_id %>">
+    ~H"""
+      <span id={@span_id}>
         <% time_need = jalali_create(@time) %>
         <%= time_need.day_number %> <%= time_need.month_name %> <%= time_need.year_number %>
       </span>

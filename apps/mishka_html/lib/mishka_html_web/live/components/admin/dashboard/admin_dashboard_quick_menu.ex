@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
 
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <div class="col admin-home-quickmenu-center-block vazir">
         <%# change with phoenix liveview %>
         <div class="row">
@@ -44,7 +44,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
             <%# categories %>
             <%# seo setting %>
 
-            <div class="create-post-menu text-center" phx-click="blog-posts" phx-target="<%= @myself %>">
+            <div class="create-post-menu text-center" phx-click="blog-posts" phx-target={@myself}>
 
               <span class="iconly-bulkEdit">
                 <span class="path1"></span><span class="path2"></span><span class="path3"></span>
@@ -60,7 +60,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
             </div>
 
 
-            <div class="create-category-menu text-center"  phx-click="blog-categories" phx-target="<%= @myself %>">
+            <div class="create-category-menu text-center"  phx-click="blog-categories" phx-target={@myself}>
               <span class="iconly-bulkEdit">
                 <span class="iconly-bulkFolder"><span class="path1"></span><span class="path2"></span></span>
               </span>
@@ -69,13 +69,13 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
               <div class="space10"></div>
               <div class="clearfix"></div>
 
-              <span class="text-center rtl vazir admin-home-create-category-title-text" phx-click="blog-categories" phx-target="<%= @myself %>">
+              <span class="text-center rtl vazir admin-home-create-category-title-text" phx-click="blog-categories" phx-target={@myself}>
               <%= MishkaTranslator.Gettext.dgettext("html_live_component", "مجموعه ها") %>
               </span>
             </div>
 
 
-            <div class="seo-setting-menu text-center" phx-click="seo-setting" phx-target="<%= @myself %>">
+            <div class="seo-setting-menu text-center" phx-click="seo-setting" phx-target={@myself}>
               <span class="iconly-bulkEdit">
                 <span class="iconly-bulkShow"><span class="path1"></span><span class="path2"></span></span>
               </span>
@@ -92,15 +92,12 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
 
           </div>
 
-          <%= live_component @socket, MishkaHtmlWeb.Admin.Dashboard.ActivitiesComponent,
-                             id: :admin_activities,
-                             activities: @activities
-          %>
+          <.live_component module={MishkaHtmlWeb.Admin.Dashboard.ActivitiesComponent} id={:admin_activities} activities={@activities} />
 
 
           <div class="col cms-block-menu-left">
             <%# statics %>
-            <div class="container home-admin-users" phx-click="users" phx-target="<%= @myself %>">
+            <div class="container home-admin-users" phx-click="users" phx-target={@myself}>
               <div class="text-center rtl vazir">
                 <span class="iconly-bulkShield-Done"><span class="path1"></span><span class="path2"></span></span>
 
@@ -116,7 +113,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
             </div>
 
 
-            <div class="row left-menu-admin-home"  phx-click="comments" phx-target="<%= @myself %>">
+            <div class="row left-menu-admin-home"  phx-click="comments" phx-target={@myself}>
               <div class="col-sm-5 statics-menu float-right comment-home-admin-margin">
                 <div class="text-center admin-home-comment-menu rtl vazir">
                   <span class="iconly-bulkChat"><span class="path1"></span><span class="path2"></span></span>
@@ -132,7 +129,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
                 </div>
               </div>
 
-              <div class="col-sm-5 statics-menu float-left" phx-click="subscriptions" phx-target="<%= @myself %>">
+              <div class="col-sm-5 statics-menu float-left" phx-click="subscriptions" phx-target={@myself}>
 
                 <div class="text-center admin-home-sub-menu rtl vazir">
                   <span class="iconly-bulkWallet"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
@@ -151,7 +148,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
             </div>
 
 
-            <div class="col statics-menu text-center" phx-click="subscriptions" phx-target="<%= @myself %>">
+            <div class="col statics-menu text-center" phx-click="subscriptions" phx-target={@myself}>
                 <div class="text-center admin-home-activity-menu rtl vazir">
                   <span class="iconly-bulkInfo-Square"><span class="path1"></span><span class="path2"></span></span>
 

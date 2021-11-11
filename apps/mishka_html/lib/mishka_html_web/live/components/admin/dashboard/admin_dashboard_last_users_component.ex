@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastUsersComponent do
 
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <div class="col admin-home-toos-right vazir">
         <h3>
         <div class="row">

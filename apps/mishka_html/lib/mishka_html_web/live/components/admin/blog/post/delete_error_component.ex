@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Blog.Post.DeleteErrorComponent do
 
 
   def render(assigns) do
-    ~L"""
+    ~H"""
       <div class="error-card-modal col">
         <div class="alert alert-danger vazir rtl" role="alert">
         <div class="col-sm-6 svg-div-error-modal">

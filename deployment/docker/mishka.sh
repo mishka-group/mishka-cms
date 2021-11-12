@@ -27,6 +27,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         cp dockers/Dockerfile ../../
 
         if web_server_selector -eq "0"; then # nginx
+            WEB_SERVER="nginx"
             while true; do 
                 read -p $'\e[32mEnter Your CMS address (Domain or IP)  [default is \'localhost\']\e[0m: ' CMS_DOMAIN_NAME
                 if domain_checker $CMS_DOMAIN_NAME; then
@@ -66,7 +67,9 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
                 CMS_PORT="80"
                 API_PORT="80" 
                 PROTOCOL="http"
-            fi  
+            fi 
+        else 
+            WEB_SERVER="cowboy" 
         fi 
         
         # get data from user
@@ -117,6 +120,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             --build-arg EMAIL_HOSTNAME=$EMAIL_HOSTNAME \
             --build-arg EMAIL_USERNAME=$EMAIL_USERNAME \
             --build-arg EMAIL_PASSWORD=$EMAIL_PASSWORD \
+            --build-arg WEB_SERVER=$WEB_SERVER \
             ../../ --no-cache
         
         if [[ $? == 0 ]]; then # if docker image was build
@@ -140,6 +144,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         ENV_TYPE="dev"
         
         if web_server_selector -eq "0"; then # nginx
+            WEB_SERVER="nginx"
             read -p $'\e[32mDo You Want to Enable SSL ? (YES/NO)  [default is YES]\e[0m: ' SSL
             SSL=${SSL:-"YES"}
             if [[ ${SSL,,} =~ ^yes$ ]]; then 
@@ -151,6 +156,8 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             CMS_PORT="443"
             API_PORT="443" 
             PROTOCOL="https"     
+        else 
+            WEB_SERVER="cowboy"
         fi 
         
 
@@ -210,6 +217,7 @@ else
                         --build-arg EMAIL_HOSTNAME=$EMAIL_HOSTNAME \
                         --build-arg EMAIL_USERNAME=$EMAIL_USERNAME \
                         --build-arg EMAIL_PASSWORD=$EMAIL_PASSWORD \
+                        --build-arg WEB_SERVER=$WEB_SERVER \
                         ../../ --no-cache
                     
                     # update docker-compose file with values

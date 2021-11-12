@@ -40,7 +40,8 @@ function store_configs() {
         "admin_email": "'$ADMIN_EMAIL'",
         "ssl": "'$SSL'",
         "protocol": "'$PROTOCOL'",
-        "env_type": "'$ENV_TYPE'"
+        "env_type": "'$ENV_TYPE'",
+        "web_server": "'$WEB_SERVER'"
     }
     }' > $PWD/etc/.secret
 }
@@ -365,6 +366,7 @@ function default_values() {
     SSL=${SSL:-"no"}
     PROTOCOL=${PROTOCOL:-"http"}
     ENV_TYPE=${ENV_TYPE:-"dev"}
+    WEB_SERVER=${WEB_SERVER:-"cowboy"}
 }
 
 
@@ -531,8 +533,8 @@ function email_system() {
 
 # web server selector
 function web_server_selector() {
-    read -p $'\e[32mChoose Your Web server (Nginx or Cowboy) [default is \'Cowboy\']\e[0m: ' WEB_SERVER     
-    case "${WEB_SERVER,,}" in 
+    read -p $'\e[32mChoose Your Web server (Nginx or Cowboy) [default is \'Cowboy\']\e[0m: ' WEBSERVER     
+    case "${WEBSERVER,,}" in 
         "nginx")
              # check web server ports to close
             if netstat -nultp | egrep -w '80|443' > /dev/null; then

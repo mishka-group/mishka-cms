@@ -1,6 +1,6 @@
 version: "3.9"
 
-services:    
+services: 
   mishka_nginx:
     image: nginx:1.20.1-alpine
     container_name: mishka_nginx
@@ -14,30 +14,27 @@ services:
       - nginx_logs:/var/log/
       - ../etc/nginx/conf/:/etc/nginx/
       - ../etc/nginx/cache:/var/nginx/cache
-      - ../etc/ssl/prod:/etc/ssl/prod:ro
-      - ../etc/ssl/letsencrypt:/etc/ssl/letsencrypt:ro
+      # - ../etc/certbot/letsencrypt:/etc/letsencrypt:ro
+      # - ../etc/certbot/master_certificates:/etc/master_certificates:ro
       - /etc/localtime:/etc/localtime:ro
-      
     depends_on:
       - mishka_cms
 
 
   mishka_cms:
-    image: mishak_app:latest
+    image: mishkagroup/elixir_dev:1.12.3-alpine
     container_name: mishka_cms
     restart: always
     working_dir: /app
+    command: sleep 365d
     hostname: mishka_cms
     networks:
       netowrk:
-    environment:
-      - DATABASE_USER=mishka_user
-      - DATABASE_PASSWORD=mishka_password
-      - DATABASE_HOST=mishka_db
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=mishka_database
+    env_file:
+      - ../etc/.mishka_cms_env
     volumes:
       - cms:/app/Mnesia.nonode@nohost
+      - ../../../:/app
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - mishka_db
@@ -54,12 +51,10 @@ services:
     restart: always
     networks:
       netowrk:
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - DATABASE_USER=mishka_user
-      - DATABASE_PASSWORD=mishka_password
-      - DATABASE_NAME=mishka_database
+    ports:
+      - "5432:5432"
+    env_file:
+      - ../etc/.mishka_cms_env
     volumes:
       - database:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
@@ -74,7 +69,5 @@ networks:
   
 
 volumes:
-  nginx_logs:
   cms:
   database:
-  

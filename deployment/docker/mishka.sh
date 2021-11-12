@@ -26,49 +26,24 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
     if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then # convert user input to lowercase then check it
         cp dockers/Dockerfile ../../
 
-        # check web server ports to close
-        if netstat -nultp | egrep -w '80|443' > /dev/null; then
-                echo -e "${Red}another apps using port 80 or 443, please kill the apps and rerun mishka.sh --build !${NC}"
-                exit 1
-        fi 
-        
-        # get data from user
-        read -p $'\e[32mEnter Your Database User [default is \'mishka_user\']\e[0m: ' DATABASE_USER
-        read -p $'\e[32mEnter Your Database Password [default is \'mishka_password\']\e[0m: ' DATABASE_PASSWORD
-
-        read -p $'\e[32mEnter Your Database Name [default is \'mishka_database\']\e[0m: ' DATABASE_NAME
-        read -p $'\e[32mEnter Your Postgres User [default is \'postgres\']\e[0m: ' POSTGRES_USER
-        read -p $'\e[32mEnter Your Postgres Password [default is \'postgres\']\e[0m: ' POSTGRES_PASSWORD
-        
-        echo -e "${Red}Please enable the email system for some verification, also, you will need the email server configuration!${NC}"
-        read -p $'\e[32mDo You Want Enable Email System (YES/NO)[default is \'YES\']\e[0m: ' EMAIL_CONFIG
-        EMAIL_CONFIG=${EMAIL_CONFIG:-"YES"}
-        if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
-            email_system
-        fi
-
-        
-        read -p $'\e[32mEnter Your CMS address (Domain or IP)  [default is \'localhost\']\e[0m: ' CMS_DOMAIN_NAME
-        if ip_checker $CMS_DOMAIN_NAME; then
-            CMS_DOMAIN_NAME=$CMS_DOMAIN_NAME
-            API_DOMAIN_NAME=$CMS_DOMAIN_NAME
-            CMS_PORT="4000"
-            API_PORT="4001"
-        elif domain_checker $CMS_DOMAIN_NAME; then
+        if web_server_selector -eq "0"; then # nginx
             while true; do 
-                read -p $'\e[32mEnter Your API address \e[0m: ' API_DOMAIN_NAME
-                if [[ $CMS_DOMAIN_NAME =~ $API_DOMAIN_NAME ]]; then 
-                    echo -e "${Red}address for api must be diffrent than address for cms !${NC}"
-                elif ip_checker $API_DOMAIN_NAME; then
-                    echo -e "${Red}address for api must be domain or sub-domain name!${NC}"
-                elif domain_checker $API_DOMAIN_NAME || domain_checker $API_DOMAIN_NAME; then  
-                    break
-                fi
+                read -p $'\e[32mEnter Your CMS address (Domain or IP)  [default is \'localhost\']\e[0m: ' CMS_DOMAIN_NAME
+                if domain_checker $CMS_DOMAIN_NAME; then
+                    read -p $'\e[32mEnter Your API address \e[0m: ' API_DOMAIN_NAME
+                    if domain_checker $API_DOMAIN_NAME && [[ ! $CMS_DOMAIN_NAME =~ $API_DOMAIN_NAME ]]; then 
+                        break                        
+                    else
+                        echo -e "${Red}The api address must be different from the address for the CMS and must be a domain or sub-domain !${NC}"                         
+                    fi
+                else 
+                    echo -e "${Red}The address of the CMS must not be an IP address!${NC}"
+                fi 
             done 
 
             read -p $'\e[32mDo You Want to Enable SSL ? (YES/NO)  [default is YES]\e[0m: ' SSL
             SSL=${SSL:-"YES"}
-            if [[ ${SSL,,} =~ ^yes$ ]]; then # convert user input to lowercase then check it
+            if [[ ${SSL,,} =~ ^yes$ ]]; then 
                 while true; do 
                     read -p $'\e[32mEnter Your Email Address:\e[0m: ' ADMIN_EMAIL
                     if email_checker $ADMIN_EMAIL; then
@@ -87,13 +62,28 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
                 CMS_PORT="443"
                 API_PORT="443" 
                 PROTOCOL="https" 
-            else
+            else 
                 CMS_PORT="80"
                 API_PORT="80" 
                 PROTOCOL="http"
-            fi 
+            fi  
         fi 
         
+        # get data from user
+        read -p $'\e[32mEnter Your Database User [default is \'mishka_user\']\e[0m: ' DATABASE_USER
+        read -p $'\e[32mEnter Your Database Password [default is \'mishka_password\']\e[0m: ' DATABASE_PASSWORD
+
+        read -p $'\e[32mEnter Your Database Name [default is \'mishka_database\']\e[0m: ' DATABASE_NAME
+        read -p $'\e[32mEnter Your Postgres User [default is \'postgres\']\e[0m: ' POSTGRES_USER
+        read -p $'\e[32mEnter Your Postgres Password [default is \'postgres\']\e[0m: ' POSTGRES_PASSWORD
+        
+        echo -e "${Red}Please enable the email system for some verification, also, you will need the email server configuration!${NC}"
+        read -p $'\e[32mDo You Want Enable Email System (YES/NO)[default is \'YES\']\e[0m: ' EMAIL_CONFIG
+        EMAIL_CONFIG=${EMAIL_CONFIG:-"YES"}
+        if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
+            email_system
+        fi
+
 
         # set default value for variables
         default_values
@@ -149,6 +139,15 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
     else # dev
         ENV_TYPE="dev"
         
+        if web_server_selector -eq "0"; then # nginx
+            read -p $'\e[32mDo You Want to Enable SSL ? (YES/NO)  [default is YES]\e[0m: ' SSL
+            SSL=${SSL:-"YES"}
+            if [[ ${SSL,,} =~ ^yes$ ]]; then 
+                ssl_generator
+            fi         
+        fi 
+        
+
         # set default value for variables
         default_values
 

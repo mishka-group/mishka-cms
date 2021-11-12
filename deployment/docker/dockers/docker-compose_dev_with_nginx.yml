@@ -1,6 +1,26 @@
 version: "3.9"
 
-services:    
+services: 
+  mishka_nginx:
+    image: nginx:1.20.1-alpine
+    container_name: mishka_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      netowrk:
+    volumes:
+      - nginx_logs:/var/log/
+      - ../etc/nginx/conf/:/etc/nginx/
+      - ../etc/nginx/cache:/var/nginx/cache
+      - ../etc/ssl/dev:/etc/ssl/dev:ro
+      - ../etc/ssl/letsencrypt:/etc/ssl/letsencrypt:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - mishka_cms
+      
+         
   mishka_cms:
     image: mishkagroup/elixir_dev:1.12.3-alpine
     container_name: mishka_cms

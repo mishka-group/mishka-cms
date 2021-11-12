@@ -76,6 +76,7 @@ function update_config() {
     if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then 
         if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
             cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
+            cp --force etc/nginx/conf/sample_conf/ssl_prod.conf etc/nginx/conf/ssl.conf 
             # change domains 
             sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
             sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
@@ -110,7 +111,39 @@ function update_config() {
             exit 1
         fi
     else 
-        cp --force dockers/docker-compose_dev.yml dockers/docker-compose.yml
+        if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
+            cp --force dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
+            cp --force etc/nginx/conf/sample_conf/ssl_dev.conf etc/nginx/conf/ssl.conf 
+            # change ports
+            sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            # enable ssl 
+            sed -i 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
+            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+        elif [[ $CMS_PORT == "80" ]]; then 
+            cp --force dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
+            # change domains
+            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            # change ports
+            sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+        else 
+            cp --force dockers/docker-compose_dev_without_nginx.yml dockers/docker-compose.yml
+        fi
+
+        # change value in docker-compose.yml
+        if [ -f $PWD/etc/.secret ]; then 
+            sed -i 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
+            sed -i 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
+            sed -i 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
+            sed -i 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
+            sed -i 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
+        else 
+            echo -e "${Red}.secret file not found, Operation cenceled, Please use 'mishka.sh --build' for install app${NC}"
+            exit 1
+        fi
     fi
    
 }
@@ -126,7 +159,7 @@ function cleanup() {
 
         if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then
             # Delete Images
-            if [ -f etc/certbot/letsencrypt ]; then 
+            if [ -f etc/prod/letsencrypt ]; then 
                 docker image rm nginx:1.20.1-alpine mishak_app:latest mishkagroup/postgresql:3.14
                 echo -e "${Green} mishka images deleted..${NC}"
 
@@ -138,8 +171,8 @@ function cleanup() {
             fi
 
             # Delete SSL certificate 
-            if [ -f etc/certbot/letsencrypt ]; then 
-                rm -r etc/certbot/letsencrypt
+            if [ -f etc/prod/letsencrypt ]; then 
+                rm -r etc/prod/letsencrypt
                 echo -e "${Green} mishka ssl deleted..${NC}"
             fi
         else 
@@ -211,34 +244,40 @@ function cleanup() {
 
 
 function ssl_generator() {
-    local ADMIN_EMAIL=$1
-    local CMS_DOMAIN_NAME=$2
-    local API_DOMAIN_NAME=$3
+    if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then
+        local ADMIN_EMAIL=$1
+        local CMS_DOMAIN_NAME=$2
+        local API_DOMAIN_NAME=$3
 
-    # create dhparam2048
-    if [ ! -f etc/certbot/master_certificates/dhparam2048.pem ]; then 
-        openssl dhparam -out etc/certbot/master_certificates/dhparam2048.pem 2048
+        # create dhparam2048
+        if [ ! -f etc/ssl/letsencrypt/dhparam2048.pem ]; then 
+            openssl dhparam -out etc/ssl/letsencrypt/dhparam2048.pem 2048
+        fi
+
+        # remove old certs
+        if [ -d etc/ssl/prod/letsencrypt ]; then 
+            rm -rf etc/ssl/prod/letsencrypt
+        fi
+
+        # create ssl for domains
+        docker run -it --rm --name certbot  \
+        -p 80:80 \
+        -p 443:443 \
+        -v "$PWD/etc/ssl/prod/letsencrypt:/etc/letsencrypt"  \
+        certbot/certbot certonly -q \
+        --standalone \
+        --agree-tos \
+        --must-staple  \
+        --rsa-key-size 4096   \
+        --email $ADMIN_EMAIL  \
+        -d $CMS_DOMAIN_NAME \
+        -d $API_DOMAIN_NAME
+    else 
+        # create dhparam2048
+        if [ ! -f etc/ssl/letsencrypt/dhparam2048.pem ]; then 
+            openssl dhparam -out etc/ssl/letsencrypt/dhparam2048.pem 2048
+        fi
     fi
-
-    # remove old certs
-    if [ -d etc/certbot/letsencrypt ]; then 
-        rm -rf etc/certbot/letsencrypt
-    fi
-
-    # create ssl for domains
-    docker run -it --rm --name certbot  \
-    -p 80:80 \
-    -p 443:443 \
-    -v "$PWD/etc/certbot/letsencrypt:/etc/letsencrypt"  \
-    certbot/certbot certonly -q \
-    --standalone \
-    --agree-tos \
-    --must-staple  \
-    --rsa-key-size 4096   \
-    --email $ADMIN_EMAIL  \
-    -d $CMS_DOMAIN_NAME \
-    -d $API_DOMAIN_NAME
-
 }
 
 # check validity of domain ( test.example.com or example.com )
@@ -468,4 +507,24 @@ function email_system() {
             echo -e "${Red}You entered some empty values, please try again!${NC}"
         fi 
     done 
+}
+
+
+# web server selector
+function web_server_selector() {
+    read -p $'\e[32mChoose Your Web server (Nginx or Cowboy) [default is \'Cowboy\']\e[0m: ' WEB_SERVER     
+    case "${WEB_SERVER,,}" in 
+        "nginx")
+             # check web server ports to close
+            if netstat -nultp | egrep -w '80|443' > /dev/null; then
+                echo -e "${Red}another apps using port 80 or 443, please kill the apps and rerun mishka.sh !${NC}"
+                exit 1
+            fi 
+            return "0"
+        ;;
+
+        *)
+            return "1"
+        ;;
+    esac 
 }

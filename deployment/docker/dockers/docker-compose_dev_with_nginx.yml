@@ -30,9 +30,6 @@ services:
     hostname: mishka_cms
     networks:
       netowrk:
-    ports:
-      - "4000:4000" # for web
-      - "4001:4001" # for api
     env_file:
       - ../etc/.mishka_cms_env
     volumes:
@@ -72,5 +69,6 @@ networks:
   
 
 volumes:
+  nginx_logs:
   cms:
   database:

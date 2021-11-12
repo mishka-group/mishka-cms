@@ -114,6 +114,9 @@ function update_config() {
         if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
             cp --force dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
             cp --force etc/nginx/conf/sample_conf/ssl_dev.conf etc/nginx/conf/ssl.conf 
+            # change domains 
+            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
             sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
             sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
@@ -277,6 +280,8 @@ function ssl_generator() {
         if [ ! -f etc/ssl/letsencrypt/dhparam2048.pem ]; then 
             openssl dhparam -out etc/ssl/letsencrypt/dhparam2048.pem 2048
         fi
+
+        echo "127.0.0.1 cms.example.com api.example.com" >> /etc/hosts
     fi
 }
 
@@ -406,6 +411,20 @@ function print_build_output() {
     echo -e "${Red}secret_refresh_token_salt:       --> $SPACE $SECRET_REFRESH_TOKEN_SALT $END_SPACE ${NC}"                                                       
     echo -e "${Red}secret_access_token_salt:        --> $SPACE $SECRET_ACCESS_TOKEN_SALT $END_SPACE ${NC}"                                                           
     echo -e "${Red}==================================================================================================${NC}"
+
+    echo -e
+    if [[ "$ENV_TYPE" =~ ^dev$ ]]; then 
+        echo -e "${Green}=======================================================================================================${NC}"
+        echo -e "${Red}please import 'rootCA' into web browser${NC}"
+        echo -e "${Green} $SPACE for google chrome: $END_SPACE ${NC}"
+        echo -e "${Green} $SPACE Enter this address 'chrome://settings/certificates' into google chrome address bar $END_SPACE ${NC}"
+        echo -e "${Green} $SPACE Select 'Authorities' tab $END_SPACE ${NC}"
+        echo -e "${Green} $SPACE Click on 'Import' Button $END_SPACE ${NC}"
+        echo -e "${Green} $SPACE Select 'rootCA_example.pem' file from $PWD/etc/ssl/dev/ $END_SPACE ${NC}"
+        echo -e "${Green} $SPACE Check the first option with name 'Trust this certificate for identifying websites' $END_SPACE ${NC}"
+        echo -e "${Green} $SPACE Finaly click OK $END_SPACE ${NC}"
+        echo -e "${Green}=======================================================================================================${NC}"
+    fi
 }
 
 # remove old dir for DBeaver

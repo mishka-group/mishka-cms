@@ -144,7 +144,13 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             SSL=${SSL:-"YES"}
             if [[ ${SSL,,} =~ ^yes$ ]]; then 
                 ssl_generator
-            fi         
+            fi  
+
+            CMS_DOMAIN_NAME="cms.example.com"       
+            API_DOMAIN_NAME="api.example.com" 
+            CMS_PORT="443"
+            API_PORT="443" 
+            PROTOCOL="https"     
         fi 
         
 
@@ -164,6 +170,10 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         update_config
 
         docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d
+
+        # print information
+        print_build_output
+        
     fi   
 else 
     load_configs
@@ -309,7 +319,7 @@ else
                     load_configs
 
 
-                    if domain_checker $CMS_DOMAIN_NAME && domain_checker $API_DOMAIN_NAME && [[ $ADMIN_EMAIL != "example@example.com" ]]; then 
+                    if domain_checker $CMS_DOMAIN_NAME && domain_checker $API_DOMAIN_NAME && [[ "$SSL" =~ ^yes$ ]]; then 
                         echo -e "${Green}Mishka Cms Available on    --> $SPACE https://$CMS_DOMAIN_NAME $END_SPACE ${NC}"
                         echo -e "${Green}Mishka Api Available on    --> $SPACE https://$API_DOMAIN_NAME $END_SPACE ${NC}" 
                     else 

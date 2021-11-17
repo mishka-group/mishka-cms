@@ -37,6 +37,7 @@ defmodule MishkaApiWeb.AuthController do
   def login(conn, %{"username" => username, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_username(MishkaHtml.username_sanitize(username)),
+         {:nil_password?, false} <- {:nil_password?, is_nil(user_info.password_hash)},
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
         MishkaApi.AuthProtocol.login({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
@@ -49,6 +50,7 @@ defmodule MishkaApiWeb.AuthController do
   def login(conn, %{"email" => email, "password" => password}) do
     to_string(:inet_parse.ntoa(conn.remote_ip))
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
+         {:nil_password?, false} <- {:nil_password?, is_nil(user_info.password_hash)},
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password) do
 
         MishkaApi.AuthProtocol.login({:ok, user_info, :user}, :login, conn, @allowed_fields_output)
@@ -72,6 +74,21 @@ defmodule MishkaApiWeb.AuthController do
     end
   end
 
+  def change_password(conn, %{"curent_password" => password, "new_password" => ""}) do
+    with {:ok, :get_record_by_id, :user, user_info} <- MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id)),
+         {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
+         {:ok, :edit, :user, info} <- MishkaUser.User.edit(%{id: user_info.id, password_hash: nil}) do
+
+          {:ok, :change_password, info}
+          |> MishkaApi.AuthProtocol.change_password(conn, @allowed_fields_output)
+
+    else
+      error  ->
+        error
+        |> MishkaApi.AuthProtocol.change_password(conn, @allowed_fields_output)
+    end
+  end
+
   def change_password(conn, %{"curent_password" => password, "new_password" => new_password}) do
     with {:ok, :get_record_by_id, :user, user_info} <- MishkaUser.User.show_by_id(Map.get(conn.assigns, :user_id)),
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
@@ -85,6 +102,10 @@ defmodule MishkaApiWeb.AuthController do
         error
         |> MishkaApi.AuthProtocol.change_password(conn, @allowed_fields_output)
     end
+  end
+
+  def change_password(conn, %{"curent_password" => password}) do
+    change_password(conn, %{"curent_password" => password, "new_password" => ""})
   end
 
   def reset_password(conn, %{"code" => code, "email" => email, "new_password" => password}) do

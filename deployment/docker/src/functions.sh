@@ -549,3 +549,9 @@ function web_server_selector() {
         ;;
     esac 
 }
+
+
+# show mishka ascii logo
+function mishka_logo() {
+    bin/onefetch --ascii-input "$(cat docs/mishka-logo.ans)"
+}

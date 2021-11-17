@@ -20,8 +20,15 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         git pull
     fi 
 
+    # show mishka logo
+    mishka_logo
 
-    read -p $'\e[32mChoose Environment Type [\'prod or dev, defualt is dev\']\e[0m: ' ENV_TYPE
+    echo -e "${Green}Choose Environment Type:${NC}"
+    options=(prod dev)
+    select menu in "${options[@]}"; do 
+        ENV_TYPE=$REPLY
+        break;
+    done
 
     if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then # convert user input to lowercase then check it
         cp dockers/Dockerfile ../../
@@ -181,11 +188,26 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         # print information
         print_build_output
         
-    fi   
+    fi 
 else 
     load_configs
     if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then  #production env  
-        case $1 in 
+        mishka_logo
+        echo -e "${Green}Below Options is Available for Prod:
+                        update    update images with old token
+                        start     run all containers
+                        stop      stop one or all containers
+                        remove    stop and remove all containers plus network
+                        destroy   stop and remove all containers plus netwok also remove docker images, volume
+                        email     enable email system for cms
+                        logs      show log of specific container of all containers
+                        help      show help for mishka.sh${NC}"
+        options=(update start stop remove destroy email logs help) 
+        select menu in "${options[@]}"; do 
+            break;
+        done
+
+        case $REPLY in 
             "update")
                 if [ -d ../../.git ];then 
                     git pull
@@ -308,7 +330,8 @@ else
                     remove    stop and remove all containers plus network
                     destroy   stop and remove all containers plus netwok also remove docker images, volume
                     email     enable email system for cms
-                    logs      show log of specific container of all containers${NC}"
+                    logs      show log of specific container of all containers
+                    help      show help for mishka.sh${NC}"
             ;;
 
             *)
@@ -318,7 +341,23 @@ else
 
         esac
     else 
-        case $1 in 
+        mishka_logo
+        echo -e "${Green}Below Options is Available for Dev:
+                        start          all containers
+                        stop           stop one or all containers
+                        remove         stop and remove all containers plus network
+                        destroy        stop and remove all containers plus netwok also remove docker images, volume
+                        logs           show log of specific container of all containers
+                        clean          Clean up dev enviroment
+                        login          log into mishka_CMS container
+                        db             graphical database manager with dbeaver
+                        help      show help for mishka.sh${NC}"
+        options=(start stop remove destroy logs clean login db help) 
+        select menu in "${options[@]}"; do 
+            break;
+        done 
+
+        case $REPLY in 
             "start")
                 if [ -f $PWD/etc/.secret ]; then 
                     docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
@@ -370,7 +409,18 @@ else
             ;;
 
             "clean")
-                case $2 in
+                mishka_logo
+                echo -e "${Green}Below Options is Available for clean:
+                                --diskdb     Clean disk database like Erlang runtime db (mnesia)
+                                --deps       Clean dependency
+                                --compiled   Clean old compiled files
+                                --all        Clean disk database, dependency, mix.lock file and old compiled files${NC}"
+                options=(diskdb deps compiled all) 
+                select menu in "${options[@]}"; do 
+                    break;
+                done 
+
+                case $REPLY in
                     "--diskdb")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm --recursive --force ../../Mnesia.nonode@nohost
@@ -408,14 +458,23 @@ else
             "login")
                 CONTAINER_NAME=`docker ps --filter name=mishka_cms --format "{{.Names}}"`
                 if [[ $CONTAINER_NAME != "" ]]; then 
-                    docker exec -it $CONTAINER_NAME ash
+                    docker exec -it $CONTAINER_NAME /bin/sh -l
                 else 
                     echo -e "${Red} Mishka CMS not running !${NC}" 
                 fi
             ;;
 
             "db")
-                case $2 in
+                mishka_logo
+                echo -e "${Green}Below Options is Available for DB:
+                                --install    install DBeaver Package
+                                --run        run DBeaver${NC}"
+                options=(install run) 
+                select menu in "${options[@]}"; do 
+                    break;
+                done 
+
+                case $REPLY in
                         "--install")
                             db_manager
                         ;;
@@ -423,7 +482,7 @@ else
                         "--run")
                             if netstat -nultp | egrep -w '5432' > /dev/null; then
                                 if dbeaver_checker; then 
-                                   dbeaver
+                                dbeaver
                                 else 
                                     echo -e "${Red}DBeaver is Not Installed Please Install it with './mishka.sh db --install' ${NC}" 
                                 fi
@@ -448,14 +507,15 @@ else
                     destroy        stop and remove all containers plus netwok also remove docker images, volume
                     logs           show log of specific container of all containers
                     clean          Clean up dev enviroment
-                      --diskdb     Clean disk database like Erlang runtime db (mnesia)
-                      --deps       Clean dependency
-                      --compiled   Clean old compiled files
-                      --all        Clean disk database, dependency, mix.lock file and old compiled files
+                    --diskdb     Clean disk database like Erlang runtime db (mnesia)
+                    --deps       Clean dependency
+                    --compiled   Clean old compiled files
+                    --all        Clean disk database, dependency, mix.lock file and old compiled files
                     login          log into mishka_CMS container
                     db             graphical database manager with dbeaver
-                      --install    install DBeaver Package
-                      --run        run DBeaver${NC}"
+                    --install    install DBeaver Package
+                    --run        run DBeaver
+                    help      show help for mishka.sh${NC}"
             ;;
 
             *)

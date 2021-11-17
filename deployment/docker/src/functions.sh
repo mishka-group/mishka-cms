@@ -553,5 +553,7 @@ function web_server_selector() {
 
 # show mishka ascii logo
 function mishka_logo() {
+    clear
     bin/onefetch --ascii-input "$(cat docs/mishka-logo.ans)"
+    clear
 }

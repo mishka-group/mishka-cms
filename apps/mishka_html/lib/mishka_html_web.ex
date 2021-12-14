@@ -50,6 +50,7 @@ defmodule MishkaHtmlWeb do
       alias MishkaHtmlWeb.Admin.Public.Notif
       alias MishkaHtmlWeb.Client.Public.ClientMenuAndNotif
       alias MishkaHtmlWeb.Admin.Public.AdminMenu
+      alias MishkaHtml.Helpers.ListItemComponent
       require MishkaTranslator.Gettext
       unquote(view_helpers())
     end

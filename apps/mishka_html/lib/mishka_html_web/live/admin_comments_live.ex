@@ -50,7 +50,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
             socket,
             __MODULE__,
             params: MishkaHtml.Helpers.LiveCRUD.paginate_assign_filter(Map.merge(socket.assigns.filters, %{"sub" => id}), Comment, nil),
-            count: socket.assigns.page_size,
+            count: socket.assigns.page_size
           )
       )
     {:noreply, socket}

@@ -95,6 +95,10 @@ defmodule MishkaContent.General.Subscription do
           like = "%#{value}%"
           from([sub, user] in query, where: like(user.full_name, ^like))
 
+        :user_full_name ->
+          like = "%#{value}%"
+          from([sub, user] in query, where: like(user.full_name, ^like))
+
         _ -> from [sub, user] in query, where: field(sub, ^key) == ^value
       end
     end)

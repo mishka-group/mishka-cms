@@ -29,7 +29,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifsLive do
         user_id: Map.get(session, "user_id"),
         body_color: "#a29ac3cf",
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت اعلانات"),
-        notifs: Notif.notifs(conditions: {1, 10}, filters: %{}),
+        notifs: Notif.notifs(conditions: {1, 10}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [categories: []]}
   end

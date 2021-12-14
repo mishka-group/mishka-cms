@@ -89,6 +89,7 @@ defmodule MishkaHtmlWeb.AdminSubscriptionsLive do
       {true, false, false})
     ]
   end
+
   def section_info(assigns, socket) do
     %{
       section_btns: %{

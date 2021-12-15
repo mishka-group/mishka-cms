@@ -212,4 +212,23 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
             <%= live_redirect btn_item.title, to: Routes.live_path(@socket, btn_item.router, "#{Map.get(btn_item, :key) || btn_item.action}": Map.get(list_item, btn_item.action)), class: btn_item.class %>
         """
     end
+
+    def list_item_btn(:redirect_keys, list_item, assigns, btn_item) do
+        ~H"""
+            <%=
+                live_redirect btn_item.title,
+                to: Routes.live_path(
+                    @socket, btn_item.router,
+                    Enum.map(btn_item.keys, fn {key, value} ->
+                        if is_bitstring(value) do
+                            ["#{key}": value]
+                        else
+                            ["#{key}": Map.get(list_item, value)]
+                        end
+                    end) |> Enum.concat()
+                ),
+                class: btn_item.class
+            %>
+        """
+    end
 end

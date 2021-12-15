@@ -29,11 +29,6 @@ defmodule MishkaHtmlWeb.AdminBlogNotifsLive do
     """
   end
 
-  # @impl true
-  # def render(assigns) do
-  #   Phoenix.View.render(MishkaHtmlWeb.AdminNotifView, "admin_notifs_live.html", assigns)
-  # end
-
   @impl true
   def mount(_params, session, socket) do
     if connected?(socket), do: Notif.subscribe()
@@ -125,12 +120,24 @@ defmodule MishkaHtmlWeb.AdminBlogNotifsLive do
             class: "btn btn-outline-primary vazir"
           },
           %{
-            method: :redirect_key,
+            method: :redirect_keys,
             router: MishkaHtmlWeb.AdminBlogNotifLive,
             title: MishkaTranslator.Gettext.dgettext("html_live",  "ویرایش"),
             class: "btn btn-outline-danger vazir",
-            action: :id,
-            key: :id
+            keys: [
+              {:id, :id},
+              {:type, "edit"},
+            ]
+          },
+          %{
+            method: :redirect_keys,
+            router: MishkaHtmlWeb.AdminBlogNotifLive,
+            title: MishkaTranslator.Gettext.dgettext("html_live",  "نمایش"),
+            class: "btn btn-outline-info vazir",
+            keys: [
+              {:id, :id},
+              {:type, "show"},
+            ]
           }
         ]
       },

@@ -2,15 +2,31 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
   use MishkaHtmlWeb, :live_view
 
   alias MishkaUser.Acl.Permission
+  @section_title MishkaTranslator.Gettext.dgettext("html_live", "مدیریت دسترسی ها")
 
   use MishkaHtml.Helpers.LiveCRUD,
     module: MishkaUser.Acl.Permission,
     redirect: __MODULE__,
     router: Routes
 
+
   @impl true
   def render(assigns) do
-    Phoenix.View.render(MishkaHtmlWeb.AdminUserView, "admin_user_role_permissions_live.html", assigns)
+    ~H"""
+      <.live_component
+        module={MishkaHtml.Helpers.ListContainerComponent}
+        id={:list_container}
+        flash={@flash}
+        section_info={section_info(assigns, @socket)}
+        filters={@filters}
+        list={@permissions}
+        url={MishkaHtmlWeb.AdminUserRolePermissionsLive}
+        page_size={@page_size}
+        parent_assigns={assigns}
+        admin_menu={live_render(@socket, AdminMenu, id: :admin_menu)}
+        left_header_side=""
+      />
+    """
   end
 
   @impl true
@@ -19,8 +35,10 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
+        filters: %{},
+        page_size: 20,
         dynamic_form: [],
-        page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت دسترسی ها"),
+        page_title: @section_title,
         body_color: "#a29ac3cf",
         basic_menu: false,
         changeset: permission_changeset(),
@@ -53,6 +71,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     socket = case Permission.create(%{value: if(user_permission == "*:*", do: "*", else: user_permission), role_id: socket.assigns.id}) do
       {:error, :add, :permission, repo_error} ->
         socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "این خطا در زمانی نمایش داده می شود که دسترسی مورد نظر شما از قبل وجود داشته باشد یا اشتباه باشد."))
         |> assign([changeset: repo_error])
 
       {:ok, :add, :permission, repo_data} ->
@@ -108,5 +127,101 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     MishkaDatabase.Schema.MishkaUser.Permission.changeset(
       %MishkaDatabase.Schema.MishkaUser.Permission{}, params
     )
+  end
+
+  def section_fields() do
+    [
+      ListItemComponent.text_field("value", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "دسترسی"),
+      {true, false, false}),
+      ListItemComponent.text_field("role_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام نقش"),
+      {true, false, false}),
+      ListItemComponent.text_field("role_display_name", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "نام نمایش"),
+      {true, false, false}),
+      ListItemComponent.time_field("inserted_at", [1], "col header4", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
+      {true, false, false})
+    ]
+  end
+
+  def section_info(assigns, socket) do
+    %{
+      section_btns: %{
+        header: [
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به نقش ها"),
+            router: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive),
+            class: "btn btn-outline-danger"
+          },
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به کاربران"),
+            router: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive),
+            class: "btn btn-outline-info"
+          }
+        ],
+        list_item: [
+          %{
+            method: :delete,
+            router: nil,
+            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            class: "btn btn-outline-danger vazir"
+          }
+        ]
+      },
+      title: @section_title,
+      activities_info: %{
+        title: MishkaTranslator.Gettext.dgettext("html_live_templates", "دسترسی ها"),
+        section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "دسترسی"),
+        action: :section,
+        action_by: :section,
+      },
+      custom_operations: nil,
+      description:
+      ~H"""
+        <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "در این بخش شما امکان اضافه کردن نقش های مورد نیاز خود برای هر نقش را خواهید داشت. بعد از تخصیص هر دسترسی می توانید نقش را به یک کاربر متصل کنید") %>
+        <div class="space30"></div>
+        <div class="col-sm-12">
+            <div class="clearfix"></div>
+            <div class="space40"></div>
+            <hr>
+            <div class="space40"></div>
+            <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "ایجاد دسترسی") %></h3>
+            <.form let={f} for={@changeset}  phx-submit="save", multipart={true} >
+                <div class="clearfix"></div>
+                <div class="space30"></div>
+                <div class="row vazir">
+
+                    <div class="col-md-3">
+                        <%= label f , MishkaTranslator.Gettext.dgettext("html_live_templates", "دسترسی") %>
+                        <%= select f, :permission,
+                            [
+                                {MishkaTranslator.Gettext.dgettext("html_live_templates", "ویرایش"), :edit},
+                                {MishkaTranslator.Gettext.dgettext("html_live_templates", "نمایش"), :view},
+                                {MishkaTranslator.Gettext.dgettext("html_live_templates", "تمام دسترسی ها"), :*},
+                            ],
+                            class: "form-select"
+                        %>
+                    </div>
+
+                    <div class="col-md-3">
+                        <%= label f , "انتخاب بخش" %>
+                        <%= select f, :section,
+                            [
+                                {MishkaTranslator.Gettext.dgettext("html_live_templates", "مطالب"), :blog},
+                                {MishkaTranslator.Gettext.dgettext("html_live_templates", "نظرات"), :comment},
+                                {MishkaTranslator.Gettext.dgettext("html_live_templates", "داشبورد مدیریت"), :admin},
+                                {MishkaTranslator.Gettext.dgettext("html_live_templates", "تمام بخش ها"), :*}
+                            ],
+                            class: "form-select"
+                        %>
+                    </div>
+
+
+                </div>
+
+                <div class="space20"></div>
+                <%= submit MishkaTranslator.Gettext.dgettext("html_live_templates", "اضافه کردن"), phx_disable_with: "Saving...", class: "btn btn-primary" %>
+            </.form>
+        </div>
+      """
+    }
   end
 end

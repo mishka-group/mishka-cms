@@ -48,7 +48,7 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
                 </table>
                 <div class="space20"></div>
                 <div class="col-sm-10">
-                    <%= if @list.entries != [] do %>
+                    <%= if is_map(@list) and  @list.entries != [] do %>
                         <.live_component module={MishkaHtmlWeb.Public.PaginationComponent} id={:pagination} pagination_url={@url} data={@list} filters={@filters} count={@count} />
                     <% end %>
                 </div>

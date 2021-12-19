@@ -11,7 +11,6 @@ defmodule MishkaHtmlWeb.AdminBlogNotifsLive do
 
   @impl true
   def render(assigns) do
-    IO.inspect(assigns)
     ~H"""
       <.live_component
         module={MishkaHtml.Helpers.ListContainerComponent}

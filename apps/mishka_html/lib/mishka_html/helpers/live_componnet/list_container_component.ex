@@ -37,7 +37,9 @@ defmodule MishkaHtml.Helpers.ListContainerComponent do
               <div class="space20"></div>
             </div>
             <.live_component module={MishkaHtml.Helpers.FlashComponent} id={:live_flash} flash={@flash} />
-            <.live_component module={MishkaHtml.Helpers.SearchComponent} id={:search_filters} filters={@filters}, fields={@url.section_fields()} />
+            <%= if Enum.filter(@url.section_fields(), fn x -> x.search == true end) != [] do %>
+              <.live_component module={MishkaHtml.Helpers.SearchComponent} id={:search_filters} filters={@filters}, fields={@url.section_fields()} />
+            <% end %>
             <div class="clearfix"></div>
             <div class="col space30"> </div>
             <.live_component module={MishkaHtml.Helpers.ListItemComponent}

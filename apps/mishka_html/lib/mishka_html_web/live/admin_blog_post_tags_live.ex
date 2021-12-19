@@ -196,7 +196,6 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
           <div class="space40"></div>
           <hr>
           <div class="space40"></div>
-
           <form phx-change="search_tag" id="tag-form">
               <div class="col-md-4 vazir">
                   <label for="blogPostTags" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "جستجو برچسب و اضافه کردن به مطلب") %></label>

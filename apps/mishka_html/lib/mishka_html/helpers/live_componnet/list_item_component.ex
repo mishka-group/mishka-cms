@@ -153,7 +153,7 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
     def convert_value_to_list_html(field_item, assigns, value, list_item) when field_item.form == "link" do
         ~H"""
             <%= if is_nil(Map.get(list_item, field_item.action)) do %>
-                ندارد
+                <%= MishkaTranslator.Gettext.dgettext("html_live", "ندارد") %>
             <% else %>
                 <%= live_redirect MishkaHtml.title_sanitize(value),
                 to: Routes.live_path(@socket, field_item.router, id: Map.get(list_item, field_item.action)),
@@ -176,7 +176,7 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
         """
     end
 
-    def convert_value_to_list_html(field_item, _assigns, _value, _list_item) when field_item.form == "time", do: "ندارد"
+    def convert_value_to_list_html(field_item, _assigns, _value, _list_item) when field_item.form == "time", do: MishkaTranslator.Gettext.dgettext("html_live", "ندارد")
 
     def convert_value_to_list_html(field_item, assigns, value, _list_item) when field_item.form == "custom" do
         ~H"""

@@ -29,12 +29,6 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
     """
   end
 
-
-  # @impl true
-  # def render(assigns) do
-  #   Phoenix.View.render(MishkaHtmlWeb.AdminUserView, "admin_user_roles_live.html", assigns)
-  # end
-
   @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
@@ -68,11 +62,11 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
 
   def section_fields() do
     [
-      ListItemComponent.text_field("name", [1], "col-sm-3 header1", MishkaTranslator.Gettext.dgettext("html_live",  "نام"),
+      ListItemComponent.text_field("name", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "نام"),
       {true, false, true}),
-      ListItemComponent.text_field("display_name", [1], "col-sm-3 header1", MishkaTranslator.Gettext.dgettext("html_live",  "نام نمایش"),
+      ListItemComponent.text_field("display_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام نمایش"),
       {true, false, true}),
-      ListItemComponent.time_field("inserted_at", [1], "col header7", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
+      ListItemComponent.time_field("inserted_at", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
       {true, false, false})
     ]
   end

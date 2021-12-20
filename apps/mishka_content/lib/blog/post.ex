@@ -122,6 +122,7 @@ defmodule MishkaContent.Blog.Post do
       inserted_at: post.inserted_at,
       updated_at: post.updated_at,
       unpublish: post.unpublish,
+      robots: post.robots,
       like_count: count(like.id),
       liked_user: liked_user
     }

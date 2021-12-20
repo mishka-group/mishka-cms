@@ -2,7 +2,7 @@ defmodule MishkaContent.Email.EmailHelper do
   alias MishkaContent.Email.{Email, Mailer}
   require MishkaTranslator.Gettext
 
-  @spec send(map(), map()) :: Task.t()
+  @spec send(atom(), tuple()) :: Task.t()
   def send(type, params) do
     Task.Supervisor.async_nolink(MishkaContent.Email.EmailHelperTaskSupervisor, fn ->
       type

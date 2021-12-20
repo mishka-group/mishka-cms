@@ -160,6 +160,7 @@ defmodule MishkaContent.General.Notif do
       expire_time: notif.expire_time,
       extra: notif.extra,
       user_id: notif.user_id,
+      full_name: user.full_name,
       type: notif.type,
       target: notif.target,
       inserted_at: notif.inserted_at,

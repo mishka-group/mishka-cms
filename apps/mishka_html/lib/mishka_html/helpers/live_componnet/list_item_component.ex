@@ -214,21 +214,25 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
     end
 
     def list_item_btn(:redirect_keys, list_item, assigns, btn_item) do
+        router_path = Enum.find(btn_item.keys, fn {key, _value} -> key == :without_key end)
+        get_btns =
+            Enum.map(btn_item.keys, fn {key, value} = list ->
+                cond do
+                    list == {:without_key, value} -> []
+                    is_bitstring(value) -> ["#{key}": value]
+                    true -> ["#{key}": Map.get(list_item, value)]
+                end
+            end)
+            |> Enum.filter(& !is_nil(&1))
+            |> Enum.concat()
+
         ~H"""
-            <%=
-                live_redirect btn_item.title,
-                to: Routes.live_path(
-                    @socket, btn_item.router,
-                    Enum.map(btn_item.keys, fn {key, value} ->
-                        if is_bitstring(value) do
-                            ["#{key}": value]
-                        else
-                            ["#{key}": Map.get(list_item, value)]
-                        end
-                    end) |> Enum.concat()
-                ),
-                class: btn_item.class
-            %>
+            <%= if is_nil(router_path) do %>
+                <%= live_redirect btn_item.title, to: Routes.live_path(@socket, btn_item.router, get_btns), class: btn_item.class %>
+            <% else %>
+                <% {:without_key, value} = router_path %>
+                <%= live_redirect btn_item.title, to: Routes.live_path(@socket, btn_item.router, value, get_btns), class: btn_item.class %>
+            <% end %>
         """
     end
 end

@@ -11,6 +11,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
 
   @impl true
   def render(assigns) do
+    IO.inspect(assigns.filters)
     ~H"""
       <.live_component
         module={MishkaHtml.Helpers.ListContainerComponent}

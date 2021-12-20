@@ -169,12 +169,14 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
             class: "btn btn-outline-primary vazir"
           },
           %{
-            method: :redirect_key,
+            method: :redirect_keys,
             router: MishkaHtmlWeb.AdminCommentsLive,
             title: MishkaTranslator.Gettext.dgettext("html_live",  "نظرات"),
             class: "btn btn-outline-success vazir",
-            action: :id,
-            key: :section_id
+            keys: [
+              {:section_id, :id},
+              {:count, "30"},
+            ]
           },
           %{
             method: :redirect,

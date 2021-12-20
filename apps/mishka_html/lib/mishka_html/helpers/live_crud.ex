@@ -16,7 +16,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"], page_size: count, page_number: page)}
+        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"] || params, page_size: count, page_number: page)}
       end
 
       @impl Phoenix.LiveView
@@ -30,7 +30,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       def handle_params(%{"count" => count} = params, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"], page_size: count, page_number: 1)}
+        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"] || params, page_size: count, page_number: 1)}
       end
 
       @impl Phoenix.LiveView
@@ -49,7 +49,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         router = Keyword.get(@interface_module, :router)
         skip_list = Keyword.get(@interface_module, :skip_list)
         count = if(is_nil(params["count"]), do: socket.assigns.page_size, else: params["count"])
-        {:noreply, push_patch(socket, to: router.live_path(socket, redirect, params: paginate_assign_filter(params, module_selected, skip_list), count: count))}
+        {:noreply, push_patch(socket, to: router.live_path(socket, redirect, params: paginate_assign_filter(Map.merge(socket.assigns.filters, params), module_selected, skip_list), count: count))}
       end
 
       @impl Phoenix.LiveView

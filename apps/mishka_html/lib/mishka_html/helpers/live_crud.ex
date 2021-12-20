@@ -16,7 +16,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"], page_size: count, page_number: page)}
+        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"] || params, page_size: count, page_number: page)}
       end
 
       @impl Phoenix.LiveView
@@ -30,7 +30,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       def handle_params(%{"count" => count} = params, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"], page_size: count, page_number: 1)}
+        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"] || params, page_size: count, page_number: 1)}
       end
 
       @impl Phoenix.LiveView
@@ -49,7 +49,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         router = Keyword.get(@interface_module, :router)
         skip_list = Keyword.get(@interface_module, :skip_list)
         count = if(is_nil(params["count"]), do: socket.assigns.page_size, else: params["count"])
-        {:noreply, push_patch(socket, to: router.live_path(socket, redirect, params: paginate_assign_filter(params, module_selected, skip_list), count: count))}
+        {:noreply, push_patch(socket, to: router.live_path(socket, redirect, params: paginate_assign_filter(Map.merge(socket.assigns.filters, params), module_selected, skip_list), count: count))}
       end
 
       @impl Phoenix.LiveView
@@ -548,9 +548,9 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     |> Enum.reject(fn x -> x == nil end)
   end
 
-  def delete_item_of_list(socket, module_selected, function, id,  user_id, component, skip_list, after_condition) do
+  def delete_item_of_list(socket, module_selected, function, id,  user_id, _component, skip_list, after_condition) do
     require MishkaTranslator.Gettext
-    case module_selected.delete(id) do
+    socket = case module_selected.delete(id) do
       {:ok, :delete, error_atom, repo_data} ->
         MishkaContent.General.Activity.create_activity_by_task(%{
           type: "section",
@@ -563,16 +563,23 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         }, %{user_action: "delete_item_of_list", title: Map.get(repo_data, :title), full_name: Map.get(repo_data, :full_name)})
 
         after_condition.(id)
-        paginate_assign(socket, module_selected, function, user_id, skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
+        socket
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("macro_live", "رکورد مورد نظر با موفقیت حذف گردید"))
       {:error, :delete, :forced_to_delete, _error_atom} ->
-        assign(socket, [open_modal: true, component: component])
+        socket
+        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "برای رکورد مورد نظر شما چندین وابستگی وجود دارد. اول باید رکورد های وابسته حذف گردد بعد از آن امکان حذف رکورد مدنظر را خواهید داشت."))
+        |> push_event("jump_to_top_page", %{})
       {:error, :delete, type, _error_atom} when type in [:uuid, :get_record_by_id] ->
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
+        |> push_event("jump_to_top_page", %{})
       {:error, :delete, _error_atom, _repo_error} ->
         socket
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطا در حذف رکورد اتفاق افتاده است."))
+        |> push_event("jump_to_top_page", %{})
     end
+
+    paginate_assign(socket, module_selected, function, user_id, skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
   end
 
   def soft_delete_item_of_list(socket, id, module_selected, after_condition, function, record_id) do

@@ -1,8 +1,8 @@
 defmodule MishkaHtmlWeb.AdminSettingsLive do
   use MishkaHtmlWeb, :live_view
-  alias MishkaDatabase.Public.Setting
-  alias MishkaHtmlWeb.Admin.Blog.Category.DeleteErrorComponent
 
+  alias MishkaDatabase.Public.Setting
+  @section_title MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات")
 
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaDatabase.Public.Setting,
@@ -11,7 +11,21 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
 
   @impl true
   def render(assigns) do
-    Phoenix.View.render(MishkaHtmlWeb.AdminSettingView, "admin_settings_live.html", assigns)
+    ~H"""
+      <.live_component
+        module={MishkaHtml.Helpers.ListContainerComponent}
+        id={:list_container}
+        flash={@flash}
+        section_info={section_info(assigns, @socket)}
+        filters={@filters}
+        list={@settings}
+        url={MishkaHtmlWeb.AdminSettingsLive}
+        page_size={@page_size}
+        parent_assigns={assigns}
+        admin_menu={live_render(@socket, AdminMenu, id: :admin_menu)}
+        left_header_side=""
+      />
+    """
   end
 
   @impl true
@@ -27,7 +41,7 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
         open_modal: false,
         component: nil,
         body_color: "#a29ac3cf",
-        page_title: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات"),
+        page_title: @section_title,
         settings: Setting.settings(conditions: {1, 10}, filters: %{})
       )
     {:ok, socket, temporary_assigns: [settings: []]}
@@ -43,4 +57,59 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
   selected_menue("MishkaHtmlWeb.AdminSettingsLive")
 
   update_list(:settings, false)
+
+  def section_fields() do
+    [
+      ListItemComponent.select_field("section", [1, 4], "col header1", MishkaTranslator.Gettext.dgettext("html_live_component", "بخش"),
+      [
+        {MishkaTranslator.Gettext.dgettext("html_live", "عمومی"), "public"}
+      ],
+      {true, false, false}),
+      ListItemComponent.time_field("inserted_at", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "تاریخ ثبت"), false,
+      {true, false, false})
+    ]
+  end
+
+  def section_info(assigns, socket) do
+    %{
+      section_btns: %{
+        header: [
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live_templates", "ساخت تنظیمات جدید"),
+            router: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingLive),
+            class: "btn btn-outline-danger"
+          }
+        ],
+        list_item: [
+          %{
+            method: :delete,
+            router: nil,
+            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            class: "btn btn-outline-primary vazir"
+          },
+          %{
+            method: :redirect_key,
+            router: MishkaHtmlWeb.AdminSettingLive,
+            title: MishkaTranslator.Gettext.dgettext("html_live",  "ویرایش"),
+            class: "btn btn-outline-danger vazir",
+            action: :id,
+            key: :id
+          }
+        ]
+      },
+      title: @section_title,
+      activities_info: %{
+        title: MishkaTranslator.Gettext.dgettext("html_live_templates", "تنظیمات"),
+        section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "تنظیمات"),
+        action: :user_full_name,
+        action_by: :user_full_name,
+      },
+      custom_operations: nil,
+      description:
+      ~H"""
+        <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید برای هر قسمت از سایت که از قبل معرفی شده است تنظیمات مورد نظر خود را وارد یا ویرایش کنید.") %>
+        <div class="space30"></div>
+      """
+    }
+  end
 end

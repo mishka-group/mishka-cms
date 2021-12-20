@@ -57,7 +57,7 @@ defmodule MishkaContent.General.Activity do
 
   @spec activities([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
   def activities(conditions: {page, page_size}, filters: filters) do
-    from(activity in Activity, left_join: user in assoc(activity, :users),) |> convert_filters_to_where(filters)
+    from(activity in Activity, left_join: user in assoc(activity, :users)) |> convert_filters_to_where(filters)
     |> field()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -88,7 +88,7 @@ defmodule MishkaContent.General.Activity do
       full_name: user.full_name,
       extra: activity.extra,
       updated_at: activity.updated_at,
-      inserted_at: activity.inserted_at,
+      inserted_at: activity.inserted_at
     }
   end
 

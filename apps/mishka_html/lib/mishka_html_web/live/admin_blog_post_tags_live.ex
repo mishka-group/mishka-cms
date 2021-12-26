@@ -139,9 +139,9 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   def section_fields() do
     [
       ListItemComponent.text_field("title", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
-      {true, true, false}),
+      {true, true, false}, &MishkaHtml.title_sanitize/1),
       ListItemComponent.text_field("custom_title", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر سفارشی"),
-      {true, true, false}),
+      {true, true, false}, &MishkaHtml.title_sanitize/1),
       ListItemComponent.select_field("robots", [3, 5, 6], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "رباط"),
       [
         {"IndexFollow", "IndexFollow"},

@@ -81,10 +81,10 @@ defmodule MishkaHtmlWeb.AdminBlogCategoriesLive do
       ListItemComponent.upload_field("main_image", [1], "col-sm-2 header1", MishkaTranslator.Gettext.dgettext("html_live",  "تصویر"),
       {true, true, false}),
       ListItemComponent.text_field("title", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
-      {false, true, true}),
+      {false, true, true}, &MishkaHtml.title_sanitize/1),
       ListItemComponent.link_field("title", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
       {MishkaHtmlWeb.AdminBlogCategoryLive, :id},
-      {true, false, false}),
+      {true, false, false}, &MishkaHtml.title_sanitize/1),
       ListItemComponent.select_field("category_visibility", [1, 4], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "حالت نمایش"),
       [
         {MishkaTranslator.Gettext.dgettext("html_live", "نمایش"), "show"},

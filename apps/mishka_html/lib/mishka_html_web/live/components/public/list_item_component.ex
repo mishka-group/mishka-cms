@@ -58,7 +58,7 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
     end
 
     # This duplicated code exists in my project because I want to create a space for my new clients to see a clear code
-    def text_field(type, statuses, custom_class, title, {header, input, search}) do
+    def text_field(type, statuses, custom_class, title, {header, input, search}, validation \\ nil) do
         %{
             type: type,
             status: Enum.map(fetch_statuses(statuses), fn {_id, item} -> item end),
@@ -67,7 +67,8 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
             title: title,
             header: header,
             input: input,
-            search: search
+            search: search,
+            validation: validation
         }
     end
 
@@ -81,13 +82,13 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
         |> Map.merge(%{form: "add_tag"})
     end
 
-    def editor_field(type, statuses, custom_class, title, {header, input, search}) do
-        text_field(type, statuses, custom_class, title, {header, input, search})
+    def editor_field(type, statuses, custom_class, title, {header, input, search}, validation \\ nil) do
+        text_field(type, statuses, custom_class, title, {header, input, search}, validation)
         |> Map.merge(%{form: "editor"})
     end
 
-    def textarea_field(type, statuses, custom_class, title, {header, input, search}) do
-        text_field(type, statuses, custom_class, title, {header, input, search})
+    def textarea_field(type, statuses, custom_class, title, {header, input, search}, validation \\ nil) do
+        text_field(type, statuses, custom_class, title, {header, input, search}, validation)
         |> Map.merge(%{form: "textarea"})
     end
 
@@ -106,8 +107,8 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
         |> Map.merge(%{form: "time", time_detail: detail})
     end
 
-    def link_field(type, statuses, custom_class, title, {router, action}, {header, input, search}) do
-        text_field(type, statuses, custom_class, title, {header, input, search})
+    def link_field(type, statuses, custom_class, title, {router, action}, {header, input, search}, validation \\ nil) do
+        text_field(type, statuses, custom_class, title, {header, input, search}, validation)
         |> Map.merge(%{form: "link", router: router, action: action})
     end
 
@@ -155,7 +156,7 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
             <%= if is_nil(Map.get(list_item, field_item.action)) do %>
                 <%= MishkaTranslator.Gettext.dgettext("html_live", "ندارد") %>
             <% else %>
-                <%= live_redirect MishkaHtml.title_sanitize(value),
+                <%= live_redirect value_validation_preparing(field_item.validation, value),
                 to: Routes.live_path(@socket, field_item.router, id: Map.get(list_item, field_item.action)),
                 class: "list-link"
                 %>
@@ -184,10 +185,18 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
         """
     end
 
-    def convert_value_to_list_html(_field_item, assigns, value, _list_item) do
+    def convert_value_to_list_html(field_item, assigns, value, _list_item) do
         ~H"""
-            <%= value %>
+            <%= value_validation_preparing(field_item.validation, value) %>
         """
+    end
+
+    defp value_validation_preparing(nil, value) do
+        value
+    end
+
+    defp value_validation_preparing(validation, value) do
+        validation.(value)
     end
 
     def get_list_headers(fields) do

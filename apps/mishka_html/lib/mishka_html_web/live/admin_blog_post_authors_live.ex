@@ -147,7 +147,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
       {true, false, false}),
       ListItemComponent.link_field("user_full_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نویسنده"),
       {MishkaHtmlWeb.AdminUserLive, :user_id},
-      {true, false, false}),
+      {true, false, false}, &MishkaHtml.full_name_sanitize/1),
       ListItemComponent.time_field("inserted_at", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
       {true, false, false})
     ]

@@ -61,7 +61,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifsLive do
   def section_fields() do
     [
       ListItemComponent.text_field("title", [1], "col-sm-3 header1", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر اعلان"),
-      {true, true, true}),
+      {true, true, true}, &MishkaHtml.title_sanitize/1),
       ListItemComponent.select_field("status", [1, 4], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "وضعیت"),
       [
         {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), "inactive"},
@@ -95,7 +95,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifsLive do
       {true, true, true}),
       ListItemComponent.link_field("full_name", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "کاربر"),
       {MishkaHtmlWeb.AdminUserLive, :user_id},
-      {true, false, false}),
+      {true, false, false}, &MishkaHtml.full_name_sanitize/1),
       ListItemComponent.time_field("inserted_at", [1], "col header7", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
       {true, false, false})
     ]

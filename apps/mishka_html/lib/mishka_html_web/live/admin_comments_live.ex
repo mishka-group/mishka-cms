@@ -99,7 +99,7 @@ defmodule MishkaHtmlWeb.AdminCommentsLive do
       ],
       {true, true, true}),
       ListItemComponent.text_field("user_full_name", [1], "col header4", MishkaTranslator.Gettext.dgettext("html_live",  "کاربر"),
-      {true, false, false}),
+      {true, false, false}, &MishkaHtml.full_name_sanitize/1),
       ListItemComponent.time_field("inserted_at", [1], "col header5", MishkaTranslator.Gettext.dgettext("html_live",  "تاریخ ثبت"), false,
       {true, false, false})
     ]

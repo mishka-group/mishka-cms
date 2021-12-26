@@ -112,7 +112,7 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
   def section_fields() do
     [
       ListItemComponent.text_field("title", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
-      {true, false, false}),
+      {true, false, false}, &MishkaHtml.title_sanitize/1),
       ListItemComponent.select_field("status", [1, 4], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "وضعیت"),
       [
         {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), "inactive"},

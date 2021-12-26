@@ -63,9 +63,9 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   def section_fields() do
     [
       ListItemComponent.text_field("name", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "نام"),
-      {true, false, true}),
+      {true, false, true}, &MishkaHtml.title_sanitize/1),
       ListItemComponent.text_field("display_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام نمایش"),
-      {true, false, true}),
+      {true, false, true}, &MishkaHtml.username_sanitize/1),
       ListItemComponent.time_field("inserted_at", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
       {true, false, false})
     ]

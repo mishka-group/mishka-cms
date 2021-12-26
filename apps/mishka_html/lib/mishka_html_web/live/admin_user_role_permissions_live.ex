@@ -134,9 +134,9 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
       ListItemComponent.text_field("value", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "دسترسی"),
       {true, false, false}),
       ListItemComponent.text_field("role_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام نقش"),
-      {true, false, false}),
+      {true, false, false}, &MishkaHtml.title_sanitize/1),
       ListItemComponent.text_field("role_display_name", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "نام نمایش"),
-      {true, false, false}),
+      {true, false, false}, &MishkaHtml.username_sanitize/1),
       ListItemComponent.time_field("inserted_at", [1], "col header4", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
       {true, false, false})
     ]

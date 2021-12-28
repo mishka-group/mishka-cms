@@ -55,7 +55,7 @@ In the near future the features related to the CMS will be explained in forms of
 
 ### Required versions:
 
-- Elixir 1.12.0 (compiled with Erlang/OTP 24)
+- Elixir 1.13.0 (compiled with Erlang/OTP 24)
 - PostgreSQL v13
 
 ### Implementation:

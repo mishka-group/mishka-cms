@@ -7,7 +7,7 @@ defmodule MishkaUser.User do
   import Ecto.Query
   alias MishkaDatabase.Schema.MishkaUser.User
 
-  use MishkaDatabase.CRUD,
+  use MishkaDeveloperTools.DB.CRUD,
           module: User,
           error_atom: :user,
           repo: MishkaDatabase.Repo
@@ -23,7 +23,7 @@ defmodule MishkaUser.User do
   @type repo_error() :: Ecto.Changeset.t()
   @type password() :: String.t()
 
-  @behaviour MishkaDatabase.CRUD
+  @behaviour MishkaDeveloperTools.DB.CRUD
 
 
   def subscribe do
@@ -34,37 +34,37 @@ defmodule MishkaUser.User do
     this function starts push notification in this module.
   """
 
-  @doc delegate_to: {MishkaDatabase.CRUD, :crud_add, 1}
+  @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_add, 1}
   def create(attrs) do
     crud_add(Map.merge(attrs, %{"unconfirmed_email" => attrs["email"]}))
     |> notify_subscribers(:user)
   end
 
-  @doc delegate_to: {MishkaDatabase.CRUD, :crud_add, 1}
+  @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_add, 1}
   def create(attrs, allowed_fields) do
     crud_add(Map.merge(attrs, %{"unconfirmed_email" => attrs["email"]}), allowed_fields)
     |> notify_subscribers(:user)
   end
 
-  @doc delegate_to: {MishkaDatabase.CRUD, :crud_edit, 1}
+  @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_edit, 1}
   def edit(attrs) do
     crud_edit(attrs)
     |> notify_subscribers(:user)
   end
 
-  @doc delegate_to: {MishkaDatabase.CRUD, :crud_edit, 1}
+  @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_edit, 1}
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
     |> notify_subscribers(:user)
   end
 
-  @doc delegate_to: {MishkaDatabase.CRUD, :crud_delete, 1}
+  @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_delete, 1}
   def delete(id) do
     crud_delete(id)
     |> notify_subscribers(:user)
   end
 
-  @doc delegate_to: {MishkaDatabase.CRUD, :crud_get_record, 1}
+  @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_get_record, 1}
   def show_by_id(id) do
     crud_get_record(id)
   end

@@ -4,12 +4,14 @@ defmodule MishkaContent.Email.EmailHelper do
 
   @spec send(atom(), tuple()) :: Task.t()
   def send(type, params) do
-    Task.Supervisor.async_nolink(MishkaContent.Email.EmailHelperTaskSupervisor, fn ->
-      type
-      |> create_email_info(params)
-      |> Email.account_email()
-      |> Mailer.deliver_later!()
-    end)
+    if Mix.env() != :test do
+      Task.Supervisor.async_nolink(MishkaContent.Email.EmailHelperTaskSupervisor, fn ->
+        type
+        |> create_email_info(params)
+        |> Email.account_email()
+        |> Mailer.deliver_later!()
+      end)
+    end
   end
 
   defp create_email_info(:verify_email, {user_email, code_or_link}) do

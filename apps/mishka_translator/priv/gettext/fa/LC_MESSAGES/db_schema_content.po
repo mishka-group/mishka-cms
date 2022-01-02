@@ -60,9 +60,10 @@ msgstr ""
 #: lib/schema/mishka_content/category.ex:65 lib/schema/mishka_content/category.ex:66
 #: lib/schema/mishka_content/category.ex:67 lib/schema/mishka_content/category.ex:68
 #: lib/schema/mishka_content/category.ex:69 lib/schema/mishka_content/category.ex:70
-#: lib/schema/mishka_content/comment.ex:38 lib/schema/mishka_content/post.ex:73 lib/schema/mishka_content/post.ex:74
-#: lib/schema/mishka_content/post.ex:75 lib/schema/mishka_content/post.ex:76 lib/schema/mishka_content/post.ex:77
-#: lib/schema/mishka_content/post.ex:78 lib/schema/mishka_content/post.ex:79 lib/schema/mishka_content/post.ex:80
+#: lib/schema/mishka_content/comment.ex:38 lib/schema/mishka_content/notif.ex:35 lib/schema/mishka_content/post.ex:73
+#: lib/schema/mishka_content/post.ex:74 lib/schema/mishka_content/post.ex:75 lib/schema/mishka_content/post.ex:76
+#: lib/schema/mishka_content/post.ex:77 lib/schema/mishka_content/post.ex:78 lib/schema/mishka_content/post.ex:79
+#: lib/schema/mishka_content/post.ex:80
 msgid "حداکثر تعداد کاراکتر های مجاز %{number} می باشد"
 msgstr ""
 
@@ -72,13 +73,14 @@ msgid "شما از قبل در این بخش مشترک شده اید."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_content/activity.ex:29
+#: lib/schema/mishka_content/activity.ex:31
 #: lib/schema/mishka_content/blog_author.ex:20 lib/schema/mishka_content/blog_like.ex:27
 #: lib/schema/mishka_content/blog_link.ex:38 lib/schema/mishka_content/blog_tag.ex:31
 #: lib/schema/mishka_content/blog_tag_mapper.ex:21 lib/schema/mishka_content/bookmark.ex:28
 #: lib/schema/mishka_content/category.ex:62 lib/schema/mishka_content/comment.ex:37
-#: lib/schema/mishka_content/comment_like.ex:26 lib/schema/mishka_content/notif.ex:30 lib/schema/mishka_content/post.ex:72
+#: lib/schema/mishka_content/comment_like.ex:26 lib/schema/mishka_content/notif.ex:34 lib/schema/mishka_content/post.ex:72
 #: lib/schema/mishka_content/post_like.ex:26 lib/schema/mishka_content/subscription.ex:29
+#: lib/schema/mishka_content/user_notif_status.ex:24
 msgid "فیلد مذکور نمی تواند خالی باشد"
 msgstr ""
 
@@ -88,13 +90,24 @@ msgstr ""
 #: lib/schema/mishka_content/blog_like.ex:31 lib/schema/mishka_content/blog_tag_mapper.ex:24
 #: lib/schema/mishka_content/blog_tag_mapper.ex:25 lib/schema/mishka_content/bookmark.ex:31
 #: lib/schema/mishka_content/comment.ex:41 lib/schema/mishka_content/comment_like.ex:29
-#: lib/schema/mishka_content/comment_like.ex:30 lib/schema/mishka_content/notif.ex:33 lib/schema/mishka_content/post.ex:82
+#: lib/schema/mishka_content/comment_like.ex:30 lib/schema/mishka_content/notif.ex:39 lib/schema/mishka_content/post.ex:82
 #: lib/schema/mishka_content/post_like.ex:29 lib/schema/mishka_content/post_like.ex:30
-#: lib/schema/mishka_content/subscription.ex:32
+#: lib/schema/mishka_content/subscription.ex:32 lib/schema/mishka_content/user_notif_status.ex:27
+#: lib/schema/mishka_content/user_notif_status.ex:28
 msgid "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"
 msgstr ""
 
 #, elixir-format
 #: lib/schema/mishka_content/category.ex:72
 msgid "چنین لینکی قبلا برای یک مجموعه دیگر انتخاب شده است. لطفا لینک دیگری را ارسال کنید."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/schema/mishka_content/notif.ex:36
+msgid "حداقل تعداد کاراکتر های مجاز %{number} می باشد"
+msgstr ""
+
+#, elixir-format
+#: lib/schema/mishka_content/user_notif_status.ex:29
+msgid "شما برای این اطلاع رسانی یک بار وضعیت ثبت کرده اید."
 msgstr ""

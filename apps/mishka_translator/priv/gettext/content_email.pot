@@ -11,83 +11,83 @@ msgid ""
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:68
+#: lib/email/email_helper.ex:66
 msgid "\n        از طرف حساب کاربری شما درخواست غیرفعال سازی حساب ارسال گردید است که به شرح زیر می باشد.\n       در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید.\n        "
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:84
+#: lib/email/email_helper.ex:82
 msgid "\n        باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید\n      برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را\n      انتخاب کنید.\n        "
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:156
+#: lib/email/email_helper.ex:154
 msgid "از طرف حساب کاربری شما درخواست فراموشی پسورد ارسال گردید است که به شرح زیر می باشد.\n        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:26
+#: lib/email/email_helper.ex:24
 msgid "از طرف حساب کاربری شما درخواست فعال سازی ایمیل ارسال گردید است که به شرح زیر می باشد.\n        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:113
+#: lib/email/email_helper.ex:111
 msgid "از طرف حساب کاربری شما درخواست پاک سازی توکن ها ارسال گردید است که به شرح زیر می باشد.\n        در صورتی که شما ارسال کننده این پیام نبودید لطفا آن را در نظر نگیرید و در صورت تکرار لطفا با پشتیبان وب سایت در تماس باشید."
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:39 lib/email/email_helper.ex:128
-#: lib/email/email_helper.ex:171
+#: lib/email/email_helper.ex:37 lib/email/email_helper.ex:126
+#: lib/email/email_helper.ex:169
 msgid "باید به این نکته توجه داشت. در صورتی که شما از طرف وب سرویس یا اپلکیشن سایت این درخواست را کرده اید\n        برای شما کد موقت و اگر از طرف سایت این درخواست را کرده باشید لینک موقت ارسال می شود در صورتی که درخواست سفارشی در موقع درخواست برای شما ثبت نشده باشد. لطفا در صورت نیاز یکی از راه های بالا را\n        انتخاب کنید."
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:64 lib/email/email_helper.ex:98
+#: lib/email/email_helper.ex:62 lib/email/email_helper.ex:96
 msgid "درخواست غیر فعال سازی حساب کاربری"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:187
+#: lib/email/email_helper.ex:185
 msgid "درخواست فراموشی پسورد"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:53
+#: lib/email/email_helper.ex:51
 msgid "درخواست فعال سازی ایمیل حساب کاربری"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:109 lib/email/email_helper.ex:140
+#: lib/email/email_helper.ex:107 lib/email/email_helper.ex:138
 msgid "درخواست پاک سازی توکن ها و سیستم های وارد شده"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:152
+#: lib/email/email_helper.ex:150
 msgid "فراموشی پسورد"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:22
+#: lib/email/email_helper.ex:20
 msgid "فعال سازی ایمیل حساب کاربری"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:163
+#: lib/email/email_helper.ex:161
 msgid "لینک یا کد تازه سازی پسورد به شرح زیر می باشد:"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:120
+#: lib/email/email_helper.ex:118
 msgid "لینک یا کد تازه پاک سازی توکن به شرح زیر می باشد:"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:77
+#: lib/email/email_helper.ex:75
 msgid "لینک یا کد غیرفعال سازی حساب کاربری به شرح زیر می باشد:"
 msgstr ""
 
 #, elixir-format
-#: lib/email/email_helper.ex:48 lib/email/email_helper.ex:94
-#: lib/email/email_helper.ex:136 lib/email/email_helper.ex:180
+#: lib/email/email_helper.ex:46 lib/email/email_helper.ex:92
+#: lib/email/email_helper.ex:134 lib/email/email_helper.ex:178
 msgid "کد و لینک موقت دارای یک زمان کوتاه ۵ دقیقه ای می باشد و بعد از آن به صورت خودکار منقضی می گردد."
 msgstr ""

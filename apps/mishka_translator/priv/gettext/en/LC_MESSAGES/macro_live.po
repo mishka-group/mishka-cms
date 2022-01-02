@@ -1,0 +1,59 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:449
+msgid "اشتراک شما با موفقیت لغو شد."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:375
+msgid "برای اشتراک در این بخش لطفا وارد سایت شوید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:570
+msgid "برای رکورد مورد نظر شما چندین وابستگی وجود دارد. اول باید رکورد های وابسته حذف گردد بعد از آن امکان حذف رکورد مدنظر را خواهید داشت."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:578
+#: lib/mishka_html/helpers/live_crud.ex:597
+msgid "خطا در حذف رکورد اتفاق افتاده است."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:434
+msgid "خطای در حذف اشتراک شما پیش آماده است لطفا صفحه را رفرش کنید و در صورت تکرار با پشتیبانی در تماس باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:412
+msgid "خطایی در ثبت اشتراک پیش آماده است.لطفا در صورت تکرار با پشتیبانی در ارتباط باشید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:567
+msgid "رکورد مورد نظر با موفقیت حذف گردید"
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:397
+msgid "شما با موفقیت مشترک این بخش شدید. لطفا برای دیدن تاریخ انقضای اشتراک در صورت وجود داشتن یا همینطور غیر فعال سازی اشتراک وارد تنظیمات پروفایل خود شوید."
+msgstr ""
+
+#, elixir-format
+#: lib/mishka_html/helpers/live_crud.ex:574
+#: lib/mishka_html/helpers/live_crud.ex:594
+msgid "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."
+msgstr ""

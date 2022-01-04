@@ -1,5 +1,5 @@
 defmodule MishkaInstaller.RegisterdPlugin do
-  defstruct[:name, :module, :status, :priority, :depend_type, :depends]
+  # defstruct[:name, :module, :status, :priority, :depend_type, :depends]
 
 
   # TODO: start a genserver

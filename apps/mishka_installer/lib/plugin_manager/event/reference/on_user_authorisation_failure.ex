@@ -1,0 +1,3 @@
+defmodule MishkaInstaller.Reference.OnUserAuthorisationFailure do
+
+end

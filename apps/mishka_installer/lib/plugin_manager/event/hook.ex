@@ -8,4 +8,5 @@ defmodule MishkaInstaller.Hook do
 
   # TODO: start a module
 
+  # TODO: validate each module output and allowed_input
 end

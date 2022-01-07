@@ -1,20 +1,17 @@
 defmodule MishkaInstaller.Event do
+
   alias __MODULE__
   alias MishkaInstaller.Reference, as: Ref
-  defstruct [:name, :section, :reference, allowed_input: :tuple, allowed_output: :tuple]
-
-  # TODO: we need optional @callback for each defualt system event, for init and call functions
+  defstruct [:name, :section, :reference]
+  @type event :: %{name: atom(), section: atom(), reference: module(), allowed_input: map(), allowed_output: map()}
 
   # TODO: bind all plugins events
+  # TODO: allowed_input and allowed_output should be a list of keywords which are allowed, but we need different output like state
 
-  # TODO: Define developers custom plugins events
-
-  @type event :: %{name: atom(), section: atom(), reference: module(), allowed_input: map(), allowed_output: map()}
 
   @spec system_events() :: list(event())
   def system_events do
     [
-      # TODO: allowed_input and allowed_output should be a list of keywords which are allowed, but we need different output like state
       # Content
       %Event{name: :on_content_prepare, section: :mishka_content, reference: Ref.OnContentPrepare},
       %Event{name: :on_content_after_title, section: :mishka_content, reference: Ref.OnContentAfterTitle},
@@ -30,13 +27,11 @@ defmodule MishkaInstaller.Event do
       %Event{name: :on_content_search, section: :mishka_content, reference: Ref.OnContentSearch},
       %Event{name: :on_content_search_areas, section: :mishka_content, reference: Ref.OnContentSearchAreas},
       %Event{name: :on_user_before_data_validation, section: :mishka_content, reference: Ref.OnUserBeforeDataValidation},
-
       # Captcha
       %Event{name: :on_init, section: :mishka_user, reference: Ref.OnInit},
       %Event{name: :on_display, section: :mishka_user, reference: Ref.OnDisplay},
       %Event{name: :on_check_answer, section: :mishka_user, reference: Ref.OnCheckAnswer},
       %Event{name: :on_privacy_collect_admin_capabilities, section: :mishka_user, reference: Ref.OnPrivacyCollectAdminCapabilities},
-
       # User
       %Event{name: :on_user_authorisation, section: :mishka_user, reference: Ref.OnUserAuthorisation},
       %Event{name: :on_user_authorisation_failure, section: :mishka_user, reference: Ref.OnUserAuthorisationFailure},

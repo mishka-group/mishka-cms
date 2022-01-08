@@ -2,14 +2,13 @@ defmodule MishkaInstaller.Event do
 
   alias __MODULE__
   alias MishkaInstaller.Reference, as: Ref
+  @type event :: %Event{name: atom(), section: atom(), reference: module()}
+
   defstruct [:name, :section, :reference]
-  @type event :: %{name: atom(), section: atom(), reference: module(), allowed_input: map(), allowed_output: map()}
-
   # TODO: bind all plugins events
-  # TODO: allowed_input and allowed_output should be a list of keywords which are allowed, but we need different output like state
 
 
-  @spec system_events() :: list(event())
+  @spec system_events :: [event]
   def system_events do
     [
       # Content

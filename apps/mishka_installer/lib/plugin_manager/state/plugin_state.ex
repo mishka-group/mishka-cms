@@ -9,72 +9,80 @@ defmodule MishkaInstaller.PluginState do
   @type id() :: String.t()
   @type module_name() :: atom()
   @type event_name() :: atom()
+  @type event() :: atom()
   @type plugin() :: %PluginState{
     name: atom(),
-    module: module(),
+    event: event(),
     priority: integer(),
     status: atom(),
     depend_type: :soft | :hard,
     depends: [module()]
   }
 
-  defstruct [:name, :module, :priority, :status, :depend_type, :depends]
+  defstruct [:name, :event, priority: 1, status: :started, depend_type: :soft, depends: []]
 
   def start_link(args) do
     {id, type} = {Map.get(args, :id), Map.get(args, :type)}
     GenServer.start_link(__MODULE__, default(id), name: via(id, type))
   end
 
-  defp default(event_name) do
-    %{id: event_name}
+  defp default(module_name) do
+    %PluginState{name: module_name}
   end
 
-  @spec save(plugin(), module_name(), event_name()) :: :ok | {:error, :save, any} | {:error, :save, :already_started, any}
-  def save(element, module_name, event_name) do
-    case PSupervisor.start_job(%{id: module_name, type: event_name}) do
+  @spec save(plugin()) :: :ok | {:error, :save, any} | {:error, :save, :already_started, any}
+  def save(element) do
+    case PSupervisor.start_job(%{id: Map.get(element, :name), type: Map.get(element, :event)}) do
       {:ok, pid} ->
-        GenServer.cast(pid, {:push, element, module_name, event_name})
+        GenServer.cast(pid, {:push, element})
         {:ok, :save, element}
       {:ok, pid, _any} ->
-        GenServer.cast(pid, {:push, element, module_name, event_name})
+        GenServer.cast(pid, {:push, element})
       {:error, {:already_started, pid}} ->  {:error, :save, :already_started, pid}
       {:error, result} ->  {:error, :save, result}
     end
   end
 
-  def get(module: _module_name) do
-    # {:ok, :get_plugin_pid, pid} = PSupervisor.get_plugin_pid(module_name)
-    # GenServer.call(pid, {:pop, :module, module_name})
+  def get(module: module_name) do
+    case PSupervisor.get_plugin_pid(module_name) do
+      {:ok, :get_plugin_pid, pid} ->
+        GenServer.call(pid, {:pop, :module})
+      {:error, :get_plugin_pid} -> {:error, :get, :not_found}
+    end
   end
 
-  def get_all(event: _event_name) do
-    # PSupervisor.get_user_pid(user_id)
-    # GenServer.call(pid, {:pop, :event, event_name})
+  def get_all(event: event_name) do
+    PSupervisor.running_imports(event_name) |> Enum.map(&get(module: &1.id))
   end
 
   def get_all() do
-    # PSupervisor.get_user_pid(user_id)
-    # GenServer.call(pid, {:pop, :events})
+    PSupervisor.running_imports() |> Enum.map(&get(module: &1.id))
   end
 
-  def delete(module: _module_name) do
-    # PSupervisor.get_user_pid(user_id)
-    # GenServer.cast(pid, {:delete, :module, module_name})
+  def delete(module: module_name) do
+    case PSupervisor.get_plugin_pid(module_name) do
+      {:ok, :get_plugin_pid, pid} ->
+        GenServer.cast(pid, {:delete, :module})
+        {:ok, :delete}
+      {:error, :get_plugin_pid} -> {:error, :get, :not_found}
+    end
   end
 
-  def delete(event: _event_name) do
-    # PSupervisor.get_user_pid(user_id)
-    # GenServer.cast(pid, {:delete, :event, event_name})
+  def delete(event: event_name) do
+    PSupervisor.running_imports(event_name) |> Enum.map(&delete(module: &1.id))
   end
 
-  def stop(module: _module_name)  do
-    # PSupervisor.get_user_pid(user_id)
-    # GenServer.cast(pid, {:stop, :module, module_name})
+  def stop(module: module_name)  do
+    case PSupervisor.get_plugin_pid(module_name) do
+      {:ok, :get_plugin_pid, pid} ->
+        GenServer.cast(pid, {:stop, :module})
+        {:ok, :stop}
+      {:error, :get_plugin_pid} -> {:error, :stop, :not_found}
+    end
   end
 
-  def stop(event: _event_name) do
-    # PSupervisor.get_user_pid(user_id)
-    # GenServer.cast(pid, {:stop, :event, event_name})
+  def stop(event: event_name) do
+    PSupervisor.running_imports(event_name) |> Enum.map(&stop(module: &1.id))
   end
 
 
@@ -86,44 +94,24 @@ defmodule MishkaInstaller.PluginState do
   end
 
   @impl true
-  def handle_call({:pop, :module, _module_name}, _from, state) do
+  def handle_call({:pop, :module}, _from, state) do
     {:reply, state, state}
   end
 
   @impl true
-  def handle_call({:pop, :event, _event_name}, _from, state) do
-    {:reply, state, state}
+  def handle_cast({:push, element}, _state) do
+    {:noreply, element}
   end
 
   @impl true
-  def handle_call({:pop, :events}, _from, state) do
-    {:reply, state, state}
+  def handle_cast({:stop, :module}, state) do
+    new_state = Map.merge(state, %{status: :stopped})
+    {:noreply, new_state}
   end
 
   @impl true
-  def handle_cast({:push, _element, _module_name, _event_name}, state) do
-    {:noreply, state}
-  end
-
-  @impl true
-  def handle_cast({:delete, :module, _module_name}, state) do
+  def handle_cast({:delete, :module}, state) do
     {:stop, :normal, state}
-  end
-
-  @impl true
-  def handle_cast({:delete, :event, _event_name}, state) do
-    Logger.info("OTP Plugin state server was stoped and clean State")
-    {:stop, :normal, state}
-  end
-
-  @impl true
-  def handle_cast({:stop, :module, _module_name}, state) do
-    {:noreply, state}
-  end
-
-  @impl true
-  def handle_cast({:stop, :event, _event_name}, state) do
-    {:noreply, state}
   end
 
   @impl true
@@ -134,5 +122,4 @@ defmodule MishkaInstaller.PluginState do
   defp via(id, value) do
     {:via, Registry, {MishkaInstaller.PluginStateRegistry, id, value}}
   end
-
 end

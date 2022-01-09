@@ -7,9 +7,13 @@ defmodule MishkaInstaller.Application do
 
   @impl true
   def start(_type, _args) do
+    plugin_runner_config = [
+      strategy: :one_for_one,
+      name: MishkaInstaller.Cache.PluginStateOtpRunner
+    ]
     children = [
-      # Starts a worker by calling: MishkaInstaller.Worker.start_link(arg)
-      # {MishkaInstaller.Worker, arg}
+      {Registry, keys: :unique, name: MishkaInstaller.PluginStateRegistry},
+      {DynamicSupervisor, plugin_runner_config}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

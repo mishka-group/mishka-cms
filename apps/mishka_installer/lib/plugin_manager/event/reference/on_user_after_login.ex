@@ -7,7 +7,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterLogin do
     It is just a sender and is active for both side endpoints.
   """
 
-  alias __MODULE__
+  # alias __MODULE__
   @type user_id() :: Ecto.UUID.t
   @type user_info() :: map()
   @type ip() :: String.t() # User's IP from both side endpoints connections
@@ -25,7 +25,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterLogin do
   @callback restart(registerd_info()) :: {:ok, ref(), new_state} | {:error, ref(), reason()}
   @optional_callbacks stop: 1, restart: 1
 
-  @plugin :on_user_after_login
+  # @plugin :on_user_after_login
 
   defstruct [:user_info, :ip, :endpoint, :status]
 end

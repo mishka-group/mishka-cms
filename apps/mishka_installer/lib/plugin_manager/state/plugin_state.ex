@@ -14,7 +14,7 @@ defmodule MishkaInstaller.PluginState do
     name: atom(),
     event: event(),
     priority: integer(),
-    status: atom(),
+    status: :started | :stopped | :restarted,
     depend_type: :soft | :hard,
     depends: [module()]
   }

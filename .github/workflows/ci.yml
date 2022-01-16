@@ -39,7 +39,7 @@ jobs:
 
     strategy:
       matrix:
-        otp: ['23.x', '24.x']
+        otp: ['24.x']
         elixir: ['1.12', '1.13.1', '1.13.2']
         postgres: ['13.5-alpine']
 
@@ -74,14 +74,14 @@ jobs:
           mix local.hex --force
           mix local.rebar --force
           mix archive.install hex phx_new --force
-      - name: Database Dependencies
-        run: | 
-          mix ecto.create
-          mix ecto.migrate
       - name: Source Compiling
         run: | 
           mix deps.get
           mix deps.compile
           mix assets.deploy
+      - name: Database Dependencies
+        run: | 
+          mix ecto.create
+          mix ecto.migrate
       - name: Run tests
         run: mix test

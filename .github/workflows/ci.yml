@@ -20,8 +20,8 @@ jobs:
       DATABASE_NAME: mishka_database_repo
       DATABASE_USER: mishka_database_repo
       DATABASE_PASSWORD: postgres
-      DATABASE_HOST: postgresql
-      DOMAIN_NAME: postgresql
+      DATABASE_HOST: postgres
+      DOMAIN_NAME: postgres
       SECRET_CURRENT_TOKEN_SALT: TestSaltCurrentToken
       SECRET_REFRESH_TOKEN_SALT: TestRefreshSaltToken
       SECRET_ACCESS_TOKEN_SALT: TestAccessSaltToken

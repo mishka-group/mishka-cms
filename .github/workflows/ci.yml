@@ -18,7 +18,7 @@ jobs:
       matrix:
         otp: ['24.x']
         elixir: ['1.13.2']
-        postgres: ['13.5-alpine']
+        postgres: ['14.1-alpine']
 
     services:
       postgres:

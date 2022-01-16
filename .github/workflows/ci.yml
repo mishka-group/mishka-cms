@@ -27,7 +27,7 @@ jobs:
           POSTGRES_DB: mishka_database_repo
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: localhost
           
         options: >-
           --health-cmd pg_isready

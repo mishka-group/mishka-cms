@@ -40,7 +40,7 @@ jobs:
     strategy:
       matrix:
         otp: ['24.x']
-        elixir: ['1.12', '1.13.1', '1.13.2']
+        elixir: ['1.13.2']
         postgres: ['13.5-alpine']
 
 
@@ -59,7 +59,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5337:5432
+          - 5432/tcp
         
 
 

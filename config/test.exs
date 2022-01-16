@@ -10,9 +10,6 @@ config :mishka_api, MishkaApiWeb.Endpoint,
   http: [port: 4003],
   server: false
 
-IO.inspect("++++++++++++++++++++++++++++++")
-IO.inspect(System.get_env("DATABASE_HOST"))
-IO.inspect("++++++++++++++++++++++++++++++")
 config :mishka_database, MishkaDatabase.Repo,
   username: System.get_env("DATABASE_USER"),
   password: System.get_env("DATABASE_PASSWORD"),

@@ -11,6 +11,7 @@ config :mishka_api, MishkaApiWeb.Endpoint,
   server: false
 
 config :mishka_database, MishkaDatabase.Repo,
+  socket_dir: "/var/run/postgres",
   username: System.get_env("DATABASE_USER"),
   password: System.get_env("DATABASE_PASSWORD"),
   database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",

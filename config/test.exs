@@ -11,10 +11,10 @@ config :mishka_api, MishkaApiWeb.Endpoint,
   server: false
 
 config :mishka_database, MishkaDatabase.Repo,
-  socket_dir: "/var/run/postgres",
   username: System.get_env("DATABASE_USER"),
   password: System.get_env("DATABASE_PASSWORD"),
   database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",
+  socket_dir: "/var/run/postgresql",
   hostname: System.get_env("DATABASE_HOST"),
   pool_size: 10,
   show_sensitive_data_on_connection_error: true,

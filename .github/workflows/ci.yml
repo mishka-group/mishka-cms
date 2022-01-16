@@ -13,29 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MIX_ENV: test
-      SECRET_KEY_BASE_API: qP5c9diga3k115/empFNEEi/fgwXkhArZvpvFaiLqdi3Um1ntPh0P2AkleLzEpzY
-      SECRET_KEY_BASE_HTML: afY0EvH0QD34GEhkEiXGjDAnxp9lskQjRbMQ1K8v69t3ZzPCK8RU+rbD4K3E3yHa
-      LIVE_VIEW_SALT: wqSr52l4
-      TOKEN_JWT_KEY: Exe6Qk6YPWWNmOS7rAtXQfPPngruPtEIivDB1nsXwSk
-      DATABASE_NAME: mishka_database_repo
-      DATABASE_USER: mishka_database_repo
-      DATABASE_PASSWORD: postgres
-      DATABASE_HOST: postgres
-      DOMAIN_NAME: postgres
-      SECRET_CURRENT_TOKEN_SALT: TestSaltCurrentToken
-      SECRET_REFRESH_TOKEN_SALT: TestRefreshSaltToken
-      SECRET_ACCESS_TOKEN_SALT: TestAccessSaltToken
-      EMAIL_SYSTEM: test@test.com
-      EMAIL_DOMAIN: test.com
-      EMAIL_PORT: '587'
-      EMAIL_SERVER: test.test.com
-      EMAIL_HOSTNAME: test.test.org
-      EMAIL_USERNAME: test@test.com
-      EMAIL_PASSWORD: TestPasswordForEmail
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: TestPasswordForPOSTGRES
-
-
 
     strategy:
       matrix:
@@ -43,13 +20,12 @@ jobs:
         elixir: ['1.13.2']
         postgres: ['13.5-alpine']
 
-
     services:
       postgres:
         image: postgres
         env:
           POSTGRES_DB: mishka_database_repo
-          POSTGRES_PASSWORD: TestPasswordForPOSTGRES
+          POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_HOST: postgres
           
@@ -61,8 +37,6 @@ jobs:
         ports:
           - 5432/tcp
         
-
-
     steps:
       - uses: actions/checkout@v2
       - uses: erlef/setup-beam@v1.10.0
@@ -80,8 +54,30 @@ jobs:
           mix deps.compile
           mix assets.deploy
       - name: Database Dependencies
+        env:
+          DATABASE_NAME: mishka_database_repo
+          DATABASE_USER: mishka_database_repo
+          DATABASE_PASSWORD: postgres
+          DATABASE_HOST: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         run: | 
           mix ecto.create
           mix ecto.migrate
       - name: Run tests
+        env:
+          SECRET_KEY_BASE_API: qP5c9diga3k115/empFNEEi/fgwXkhArZvpvFaiLqdi3Um1ntPh0P2AkleLzEpzY
+          SECRET_KEY_BASE_HTML: afY0EvH0QD34GEhkEiXGjDAnxp9lskQjRbMQ1K8v69t3ZzPCK8RU+rbD4K3E3yHa
+          LIVE_VIEW_SALT: wqSr52l4
+          TOKEN_JWT_KEY: Exe6Qk6YPWWNmOS7rAtXQfPPngruPtEIivDB1nsXwSk
+          SECRET_CURRENT_TOKEN_SALT: TestSaltCurrentToken
+          SECRET_REFRESH_TOKEN_SALT: TestRefreshSaltToken
+          SECRET_ACCESS_TOKEN_SALT: TestAccessSaltToken
+          EMAIL_SYSTEM: test@test.com
+          EMAIL_DOMAIN: test.com
+          EMAIL_PORT: '587'
+          EMAIL_SERVER: test.test.com
+          EMAIL_HOSTNAME: test.test.org
+          EMAIL_USERNAME: test@test.com
+          EMAIL_PASSWORD: TestPasswordForEmail
         run: mix test

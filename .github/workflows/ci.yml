@@ -58,7 +58,7 @@ jobs:
           DATABASE_NAME: mishka_database_repo
           DATABASE_USER: mishka_database_repo
           DATABASE_PASSWORD: postgres
-          DATABASE_HOST: postgres
+          DATABASE_HOST: localhost
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         run: | 

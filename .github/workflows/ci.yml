@@ -24,7 +24,7 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_DB: mishka_database_repo
+          POSTGRES_DB: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_HOST: localhost
@@ -55,8 +55,8 @@ jobs:
           mix assets.deploy
       - name: Database Dependencies
         env:
-          DATABASE_NAME: mishka_database_repo
-          DATABASE_USER: mishka_database_repo
+          DATABASE_NAME: postgres
+          DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
           DATABASE_HOST: localhost
           POSTGRES_USER: postgres

@@ -1,0 +1,87 @@
+name: MishkaCms CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+      SECRET_KEY_BASE_API: qP5c9diga3k115/empFNEEi/fgwXkhArZvpvFaiLqdi3Um1ntPh0P2AkleLzEpzY
+      SECRET_KEY_BASE_HTML: afY0EvH0QD34GEhkEiXGjDAnxp9lskQjRbMQ1K8v69t3ZzPCK8RU+rbD4K3E3yHa
+      LIVE_VIEW_SALT: wqSr52l4
+      TOKEN_JWT_KEY: Exe6Qk6YPWWNmOS7rAtXQfPPngruPtEIivDB1nsXwSk
+      DATABASE_NAME: mishka_database_repo
+      DATABASE_USER: mishka_database_repo
+      DATABASE_PASSWORD: postgres
+      DATABASE_HOST: postgresql
+      DOMAIN_NAME: postgresql
+      SECRET_CURRENT_TOKEN_SALT: TestSaltCurrentToken
+      SECRET_REFRESH_TOKEN_SALT: TestRefreshSaltToken
+      SECRET_ACCESS_TOKEN_SALT: TestAccessSaltToken
+      EMAIL_SYSTEM: test@test.com
+      EMAIL_DOMAIN: test.com
+      EMAIL_PORT: '587'
+      EMAIL_SERVER: test.test.com
+      EMAIL_HOSTNAME: test.test.org
+      EMAIL_USERNAME: test@test.com
+      EMAIL_PASSWORD: TestPasswordForEmail
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: TestPasswordForPOSTGRES
+
+
+
+    strategy:
+      matrix:
+        otp: ['23.x', '24.x']
+        elixir: ['1.12', '1.13.1', '1.13.2']
+        postgres: '13.5-alpine'
+
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: mishka_database_repo
+          POSTGRES_PASSWORD: TestPasswordForPOSTGRES
+          POSTGRES_USER: postgres
+          POSTGRES_HOST: postgres
+          
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5337:5432
+        
+
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: erlef/setup-beam@v1.10.0
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+      - name: Elixir and Erlang Dependencies
+        run: | 
+          mix local.hex --force
+          mix local.rebar --force
+          mix archive.install hex phx_new --force
+      - name: Database Dependencies
+        run: | 
+          mix ecto.create
+          mix ecto.migrate
+      - name: Source Compiling
+        run: | 
+          mix deps.get
+          mix deps.compile
+          mix assets.deploy
+      - name: Run tests
+        run: mix test

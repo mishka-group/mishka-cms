@@ -27,7 +27,7 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
-          POSTGRES_HOST: localhost
+          POSTGRES_HOST: postgres
           
         options: >-
           --health-cmd pg_isready

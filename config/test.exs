@@ -15,7 +15,6 @@ config :mishka_database, MishkaDatabase.Repo,
   password: System.get_env("DATABASE_PASSWORD"),
   database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: System.get_env("DATABASE_HOST"),
-  pool_size: 10,
   show_sensitive_data_on_connection_error: true,
   pool: Ecto.Adapters.SQL.Sandbox
 

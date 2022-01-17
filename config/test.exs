@@ -18,9 +18,9 @@ config :mishka_database, MishkaDatabase.Repo,
   show_sensitive_data_on_connection_error: true,
   pool: Ecto.Adapters.SQL.Sandbox
 
-IO.inspect(System.get_env("GITHUB_ACTIONS"))
-if System.get_env("GITHUB_ACTIONS") do
-  config :mishka_database, MishkaDatabase.Repo, hostname: "localhost"
-end
+IO.inspect(System.get_env("DATABASE_NAME"))
+# if System.get_env("GITHUB_ACTIONS") do
+#   config :mishka_database, MishkaDatabase.Repo, hostname: "localhost"
+# end
 # Print only warnings and errors during test
 config :logger, level: :warn

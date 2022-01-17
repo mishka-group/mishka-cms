@@ -60,6 +60,7 @@ jobs:
           DATABASE_HOST: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          GITHUB_ACTIONS: true
         run: | 
           mix ecto.create
           mix ecto.migrate

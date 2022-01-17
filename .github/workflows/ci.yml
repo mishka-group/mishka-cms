@@ -54,7 +54,7 @@ jobs:
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
 
-          DATABASE_NAME: mishka_cms
+          DATABASE_NAME: postgres
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
           DATABASE_HOST: postgres

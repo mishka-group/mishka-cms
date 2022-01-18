@@ -10,6 +10,8 @@ config :mishka_api, MishkaApiWeb.Endpoint,
   http: [port: 4003],
   server: false
 
+config :mishka_database, ecto_repos: [MishkaDatabase.Repo, MishkaDeveloperTools.Repo]
+
 if System.get_env("GITHUB_ACTIONS") do
   config :mishka_database, MishkaDatabase.Repo,
     priv: "apps/mishka_database/priv/repo",
@@ -18,6 +20,10 @@ if System.get_env("GITHUB_ACTIONS") do
     pool_size: 10,
     show_sensitive_data_on_connection_error: true
 
+  config :mishka_developer_tools, MishkaDeveloperTools.Repo,
+    url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",
+    pool: Ecto.Adapters.SQL.Sandbox,
+    pool_size: 10
 else
   config :mishka_database, MishkaDatabase.Repo,
     username: System.get_env("DATABASE_USER"),

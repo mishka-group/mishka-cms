@@ -18,15 +18,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - pair:
-              elixir: '1.13'
-              otp: '24.2'
-              postgres: '10.19-alpine'
+          # - pair:
+          #     elixir: '1.13'
+          #     otp: '24.2'
+          #     postgres: '10.19-alpine'
 
-          - pair:
-              elixir: '1.13.1'
-              otp: '24.2'
-              postgres: '13.5-alpine'
+          # - pair:
+          #     elixir: '1.13.1'
+          #     otp: '24.2'
+          #     postgres: '13.5-alpine'
 
           - pair:
               elixir: '1.13.2'
@@ -80,9 +80,10 @@ jobs:
           mix deps.compile
           mix assets.deploy
 
-      - name: Run mix ecto.migrate
+      - name: Run mix ecto.setup
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
+          DATABASE_DEVELOPERT_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_developer_tools_test
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
           DATABASE_NAME: mishka_test
@@ -92,6 +93,7 @@ jobs:
       - name: Run test with temporary information
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
+          DATABASE_DEVELOPERT_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_developer_tools_test
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
           DATABASE_NAME: mishka_test

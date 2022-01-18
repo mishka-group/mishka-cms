@@ -21,7 +21,7 @@ if System.get_env("GITHUB_ACTIONS") do
     show_sensitive_data_on_connection_error: true
 
   config :mishka_developer_tools, MishkaDeveloperTools.Repo,
-    url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",
+    url: System.get_env("DATABASE_DEVELOPERT_URL") || "postgres://localhost:5432/mishka_developer_tools_test",
     pool: Ecto.Adapters.SQL.Sandbox,
     pool_size: 10
 else

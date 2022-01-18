@@ -13,7 +13,7 @@ jobs:
     env:
       MIX_ENV: test
       GITHUB_ACTION: true
-      DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
+      
     strategy:
       fail-fast: false
       matrix:

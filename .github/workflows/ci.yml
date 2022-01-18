@@ -13,7 +13,7 @@ jobs:
     env:
       MIX_ENV: test
       GITHUB_ACTION: true
-      
+
     strategy:
       fail-fast: false
       matrix:
@@ -87,7 +87,7 @@ jobs:
           DATABASE_PASSWORD: postgres
           DATABASE_NAME: mishka_test
           DATABASE_HOST: localhost
-        run: mix ecto.migrate -r MishkaDatabase.Repo
+        run: mix ecto.setup
 
       - name: Run test with temporary information
         env:

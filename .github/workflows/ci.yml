@@ -1,4 +1,4 @@
-name: MishkaCms CI
+name: MishkaCms CI2
 
 on:
   push:
@@ -11,22 +11,21 @@ on:
 jobs:
   ci:
     env:
-      # MIX_ENV: test
       GITHUB_ACTION: true
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          # - pair:
-          #     elixir: '1.13'
-          #     otp: '24.2'
-          #     postgres: '10.19-alpine'
+          - pair:
+              elixir: '1.13'
+              otp: '24.2'
+              postgres: '10.19-alpine'
 
-          # - pair:
-          #     elixir: '1.13.1'
-          #     otp: '24.2'
-          #     postgres: '13.5-alpine'
+          - pair:
+              elixir: '1.13.1'
+              otp: '24.2'
+              postgres: '13.5-alpine'
 
           - pair:
               elixir: '1.13.2'
@@ -58,16 +57,6 @@ jobs:
           otp-version: ${{matrix.pair.otp}}
           elixir-version: ${{matrix.pair.elixir}}
 
-      - uses: actions/cache@v2
-        with:
-          path: |
-            deps
-            _build
-          key: ${{ runner.os }}-mix-${{matrix.pair.elixir}}-${{matrix.pair.otp}}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-mix-${{matrix.pair.elixir}}-${{matrix.pair.otp}}-
-
-
       - name: Elixir and Erlang Dependencies
         run: | 
           mix local.hex --force
@@ -89,9 +78,9 @@ jobs:
           DATABASE_NAME: mishka_test
           DATABASE_HOST: localhost
         run: |
-          MIX_ENV=test mix ecto.drop
-          MIX_ENV=test mix ecto.create
-          MIX_ENV=test mix ecto.migrate
+          mix ecto.drop
+          mix ecto.create
+          mix ecto.migrate
 
       - name: Run test with temporary information
         env:

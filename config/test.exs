@@ -14,7 +14,6 @@ config :mishka_database, ecto_repos: [MishkaDatabase.Repo, MishkaDeveloperTools.
 
 if System.get_env("GITHUB_ACTIONS") do
   config :mishka_database, MishkaDatabase.Repo,
-    priv: "apps/mishka_database/priv/repo",
     url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",
     pool: Ecto.Adapters.SQL.Sandbox,
     pool_size: 10,

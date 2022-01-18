@@ -88,7 +88,10 @@ jobs:
           DATABASE_PASSWORD: postgres
           DATABASE_NAME: mishka_test
           DATABASE_HOST: localhost
-        run: mix ecto.setup
+        run: |
+          MIX_ENV=test mix ecto.drop
+          MIX_ENV=test mix ecto.create
+          MIX_ENV=test mix ecto.migrate
 
       - name: Run test with temporary information
         env:
@@ -113,7 +116,4 @@ jobs:
           EMAIL_USERNAME: test@test.com
           EMAIL_PASSWORD: TestPasswordForEmail
         run: |
-          MIX_ENV=test mix ecto.drop -r MishkaDatabase.Repo
-          MIX_ENV=test mix ecto.create -r MishkaDatabase.Repo
-          MIX_ENV=test mix ecto.migrate -r MishkaDatabase.Repo
           mix test

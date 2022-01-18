@@ -46,7 +46,7 @@ else
     show_sensitive_data_on_connection_error: true
 end
 
-config :mishka_database, ecto_repos: [MishkaDatabase.Repo]
+config :mishka_database, ecto_repos: [MishkaDatabase.Repo, MishkaDeveloperTools.Repo]
 
 
 # # Configures the endpoint

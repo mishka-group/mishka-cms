@@ -112,4 +112,7 @@ jobs:
           EMAIL_HOSTNAME: test.test.org
           EMAIL_USERNAME: test@test.com
           EMAIL_PASSWORD: TestPasswordForEmail
-        run: mix test
+        run: |
+          mix ecto.setup
+          mix ecto.migrate
+          mix test

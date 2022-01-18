@@ -11,7 +11,7 @@ on:
 jobs:
   ci:
     env:
-      MIX_ENV: test
+      # MIX_ENV: test
       GITHUB_ACTION: true
 
     strategy:
@@ -113,7 +113,6 @@ jobs:
           EMAIL_USERNAME: test@test.com
           EMAIL_PASSWORD: TestPasswordForEmail
         run: |
-          mix ecto.drop -r MishkaDatabase.Repo
           MIX_ENV=test mix ecto.drop -r MishkaDatabase.Repo
           MIX_ENV=test mix ecto.create -r MishkaDatabase.Repo
           MIX_ENV=test mix ecto.migrate -r MishkaDatabase.Repo

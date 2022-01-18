@@ -74,7 +74,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
-          DATABASE_NAME: postgres
+          DATABASE_NAME: mishka_test
           DATABASE_HOST: localhost
         run: mix ecto.migrate -r MishkaDatabase.Repo
 
@@ -83,7 +83,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
-          DATABASE_NAME: postgres
+          DATABASE_NAME: mishka_test
           DATABASE_HOST: localhost
           SECRET_KEY_BASE_API: qP5c9diga3k115/empFNEEi/fgwXkhArZvpvFaiLqdi3Um1ntPh0P2AkleLzEpzY
           SECRET_KEY_BASE_HTML: afY0EvH0QD34GEhkEiXGjDAnxp9lskQjRbMQ1K8v69t3ZzPCK8RU+rbD4K3E3yHa

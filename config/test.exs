@@ -10,17 +10,22 @@ config :mishka_api, MishkaApiWeb.Endpoint,
   http: [port: 4003],
   server: false
 
-config :mishka_database, MishkaDatabase.Repo,
-  username: System.get_env("DATABASE_USER"),
-  password: System.get_env("DATABASE_PASSWORD"),
-  database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",
-  hostname: System.get_env("DATABASE_HOST"),
-  show_sensitive_data_on_connection_error: true,
-  pool: Ecto.Adapters.SQL.Sandbox
+if System.get_env("GITHUB_ACTIONS") do
+  config :mishka_database, MishkaDatabase.Repo,
+    priv: "apps/mishka_database/priv/repo",
+    url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",
+    pool: Ecto.Adapters.SQL.Sandbox,
+    pool_size: 10
 
-IO.inspect(System.get_env("DATABASE_NAME"))
-# if System.get_env("GITHUB_ACTIONS") do
-#   config :mishka_database, MishkaDatabase.Repo, hostname: "localhost"
-# end
+else
+  config :mishka_database, MishkaDatabase.Repo,
+    username: System.get_env("DATABASE_USER"),
+    password: System.get_env("DATABASE_PASSWORD"),
+    database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",
+    hostname: System.get_env("DATABASE_HOST"),
+    show_sensitive_data_on_connection_error: true,
+    pool: Ecto.Adapters.SQL.Sandbox
+end
+
 # Print only warnings and errors during test
 config :logger, level: :warn

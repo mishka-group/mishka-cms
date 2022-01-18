@@ -11,6 +11,8 @@ config :mishka_api, MishkaApiWeb.Endpoint,
   server: false
 
 if System.get_env("GITHUB_ACTIONS") do
+  IO.inspect("GITHUB_ACTIONS is true")
+  IO.inspect(System.get_env("DATABASE_URL"))
   config :mishka_database, MishkaDatabase.Repo,
     priv: "apps/mishka_database/priv/repo",
     url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",

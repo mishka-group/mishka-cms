@@ -23,23 +23,23 @@ defmodule MishkaInstaller.PluginState do
 
   def start_link(args) do
     {id, type} = {Map.get(args, :id), Map.get(args, :type)}
-    GenServer.start_link(__MODULE__, default(id), name: via(id, type))
+    GenServer.start_link(__MODULE__, default(id, type), name: via(id, type))
   end
 
-  defp default(module_name) do
-    %PluginState{name: module_name}
+  defp default(plugin_name, event) do
+    %PluginState{name: plugin_name, event: event}
   end
 
-  @spec save(plugin()) :: :ok | {:error, :save, any} | {:error, :save, :already_started, any}
-  def save(element) do
-    case PSupervisor.start_job(%{id: Map.get(element, :name), type: Map.get(element, :event)}) do
+  @spec add(plugin()) :: :ok | {:error, :add, any} | {:error, :add, :already_started, any}
+  def add(%PluginState{} = element) do
+    case PSupervisor.start_job(%{id: element.name, type: element.event}) do
       {:ok, pid} ->
         GenServer.cast(pid, {:push, element})
-        {:ok, :save, element}
+        {:ok, :add, element}
       {:ok, pid, _any} ->
         GenServer.cast(pid, {:push, element})
-      {:error, {:already_started, pid}} ->  {:error, :save, :already_started, pid}
-      {:error, result} ->  {:error, :save, result}
+      {:error, {:already_started, pid}} ->  {:error, :add, :already_started, pid}
+      {:error, result} ->  {:error, :add, result}
     end
   end
 
@@ -89,7 +89,7 @@ defmodule MishkaInstaller.PluginState do
   # Callbacks
   @impl true
   def init(state) do
-    Logger.info("OTP Plugin state server was started")
+    Logger.info("#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager system was started")
     {:ok, state}
   end
 
@@ -100,13 +100,13 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def handle_cast({:push, element}, _state) do
-    {:noreply, element}
+    {:noreply, element, {:continue, :sync_with_database}}
   end
 
   @impl true
   def handle_cast({:stop, :module}, state) do
     new_state = Map.merge(state, %{status: :stopped})
-    {:noreply, new_state}
+    {:noreply, new_state, {:continue, :sync_with_database}}
   end
 
   @impl true
@@ -115,8 +115,20 @@ defmodule MishkaInstaller.PluginState do
   end
 
   @impl true
-  def terminate(reason, _state) do
-    Logger.warn("Reason of Terminate #{inspect(reason)}")
+  def handle_continue(:sync_with_database, state) do
+    # TODO: Synce the data with database immediately
+    # TODO: there is no reason which forces us to check the data with each other, then we don't need to compare the data with the state and database
+    # TODO: If it doesn't exist, add the data in database if existed, just update it or compare before?
+    # TODO: Because it is just a cache which doesn't need to be changed every time and the plugins of system always are limited.
+    {:noreply, state}
+  end
+
+  @impl true
+  def terminate(reason, state) do
+    Logger.warn(
+      "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,
+      Reason of Terminate #{inspect(reason)}"
+    )
   end
 
   defp via(id, value) do

@@ -1,7 +1,6 @@
 defmodule MishkaInstaller.PluginStateDynamicSupervisor do
 
-
-  @spec start_job(map()) :: :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
+  @spec start_job(%{id: atom(), type: atom()}) :: :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
   def start_job(args) do
     DynamicSupervisor.start_child(MishkaInstaller.Cache.PluginStateOtpRunner, {MishkaInstaller.PluginState, args})
   end

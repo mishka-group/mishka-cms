@@ -1,4 +1,4 @@
-name: MishkaCms CI2
+name: MishkaCms CI
 
 on:
   push:

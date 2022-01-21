@@ -7,7 +7,6 @@ defmodule MishkaInstaller.Plugin do
           error_atom: :plugin,
           repo: MishkaDatabase.Repo
 
-
   @type data_uuid() :: Ecto.UUID.t
   @type record_input() :: map()
   @type error_tag() :: :plugin

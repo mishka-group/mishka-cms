@@ -25,7 +25,7 @@ defmodule MishkaDatabase.Schema.MishkaInstaller.Plugin do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@required_fields, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_required(@required_fields, message: MishkaTranslator.Gettext.dgettext("db_schema_installer", "فیلد مذکور نمی تواند خالی باشد"))
     |> unique_constraint(:name, name: :index_identities_on_provider_uid_and_identity_provider, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "هر پلاگین می تواند یک اسم یکتا داشته باشد"))
   end
 

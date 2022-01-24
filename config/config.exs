@@ -23,7 +23,9 @@ config :mishka_translator, MishkaTranslator.Gettext,
 
 
 config :mishka_api, :auth,
-token_type: :jwt_token
+  token_type: :jwt_token
+
+config :mishka_database, ecto_repos: [MishkaDatabase.Repo]
 
 if System.get_env("GITHUB_ACTIONS") do
   config :mishka_database, MishkaDatabase.Repo,
@@ -31,11 +33,6 @@ if System.get_env("GITHUB_ACTIONS") do
     pool: Ecto.Adapters.SQL.Sandbox,
     pool_size: 10,
     show_sensitive_data_on_connection_error: true
-
-    config :mishka_developer_tools, MishkaDeveloperTools.Repo,
-    url: System.get_env("DATABASE_DEVELOPERT_URL") || "postgres://localhost:5432/mishka_developer_tools_test",
-    pool: Ecto.Adapters.SQL.Sandbox,
-    pool_size: 10
 else
   config :mishka_database, MishkaDatabase.Repo,
     database: System.get_env("DATABASE_NAME"),
@@ -45,8 +42,6 @@ else
     pool_size: 10,
     show_sensitive_data_on_connection_error: true
 end
-
-config :mishka_database, ecto_repos: [MishkaDatabase.Repo, MishkaDeveloperTools.Repo]
 
 
 # # Configures the endpoint

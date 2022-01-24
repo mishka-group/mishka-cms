@@ -27,7 +27,7 @@ defmodule MishkaInstaller.MixProject do
   defp deps do
     [
       {:mishka_database, in_umbrella: true},
-      {:mishka_developer_tools, "~> 0.0.2"}
+      {:mishka_developer_tools, "~> 0.0.3"}
     ]
   end
 end

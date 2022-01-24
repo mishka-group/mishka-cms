@@ -30,7 +30,7 @@ defmodule MishkaDatabase.MixProject do
     [
       {:ecto_sql, "~> 3.7", override: true},
       {:postgrex, "~> 0.15.13", override: true},
-      {:mishka_developer_tools, "~> 0.0.2"},
+      {:mishka_developer_tools, "~> 0.0.3"},
       {:comeonin, "~> 5.3"},
       {:bcrypt_elixir, "~> 2.3"},
       {:ecto_enum, "~> 1.4"},

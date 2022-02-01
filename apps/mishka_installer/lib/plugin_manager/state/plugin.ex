@@ -17,12 +17,14 @@ defmodule MishkaInstaller.Plugin do
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_add, 1}
   def create(attrs) do
-    crud_add(attrs)
+    event_atom_to_string(attrs)
+    |> crud_add()
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_add, 1}
   def create(attrs, allowed_fields) do
-    crud_add(attrs, allowed_fields)
+    event_atom_to_string(attrs)
+    |> crud_add(allowed_fields)
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_edit, 1}
@@ -44,4 +46,23 @@ defmodule MishkaInstaller.Plugin do
   def show_by_id(id) do
     crud_get_record(id)
   end
+
+  @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_get_by_field, 2}
+  def show_by_name(name) do
+    crud_get_by_field("name", name)
+  end
+
+  def edit_by_name(state) do
+    case show_by_name("#{state.name}") do
+      {:ok, :get_record_by_field, :plugin,  _repo_data} -> edit(state)
+      _ -> {:error, :edit_by_name, :not_found}
+    end
+  end
+
+  defp event_atom_to_string(%{name: name, event: event} = attrs) when is_atom(name) and is_atom(event) do
+    attrs
+    |> Map.merge(%{name: Atom.to_string(name), event: Atom.to_string(event)})
+  end
+
+  defp event_atom_to_string(attrs), do: attrs
 end

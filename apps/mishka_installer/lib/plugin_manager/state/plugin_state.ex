@@ -2,6 +2,7 @@ defmodule MishkaInstaller.PluginState do
   use GenServer, restart: :temporary
   require Logger
   alias MishkaInstaller.PluginStateDynamicSupervisor, as: PSupervisor
+  alias MishkaInstaller.Plugin
   alias __MODULE__
   # TODO: if each plugin is down or has error, what we should do?
 
@@ -30,23 +31,17 @@ defmodule MishkaInstaller.PluginState do
     %PluginState{name: plugin_name, event: event}
   end
 
-  @spec add(plugin()) :: :ok | {:error, :add, any} | {:error, :add, :already_started, any}
-  def add(%PluginState{} = element) do
+  @spec push(plugin()) :: :ok | {:error, :push, any}
+  def push(%PluginState{} = element) do
     case PSupervisor.start_job(%{id: element.name, type: element.event}) do
-      {:ok, pid} ->
-        GenServer.cast(pid, {:push, element})
-        {:ok, :add, element}
-      {:ok, pid, _any} ->
-        GenServer.cast(pid, {:push, element})
-      {:error, {:already_started, pid}} ->  {:error, :add, :already_started, pid}
-      {:error, result} ->  {:error, :add, result}
+      {:ok, status, pid} -> GenServer.cast(pid, {:push, status, element})
+      {:error, result} ->  {:error, :push, result}
     end
   end
 
   def get(module: module_name) do
     case PSupervisor.get_plugin_pid(module_name) do
-      {:ok, :get_plugin_pid, pid} ->
-        GenServer.call(pid, {:pop, :module})
+      {:ok, :get_plugin_pid, pid} -> GenServer.call(pid, {:pop, :module})
       {:error, :get_plugin_pid} -> {:error, :get, :not_found}
     end
   end
@@ -99,14 +94,14 @@ defmodule MishkaInstaller.PluginState do
   end
 
   @impl true
-  def handle_cast({:push, element}, _state) do
-    {:noreply, element, {:continue, :sync_with_database}}
+  def handle_cast({:push, status, element}, _state) do
+    {:noreply, element, {:continue, {:sync_with_database, status}}}
   end
 
   @impl true
   def handle_cast({:stop, :module}, state) do
     new_state = Map.merge(state, %{status: :stopped})
-    {:noreply, new_state, {:continue, :sync_with_database}}
+    {:noreply, new_state, {:continue, {:sync_with_database, :edit}}}
   end
 
   @impl true
@@ -115,13 +110,27 @@ defmodule MishkaInstaller.PluginState do
   end
 
   @impl true
-  def handle_continue(:sync_with_database, state) do
-    # TODO: Synce the data with database immediately
-    # TODO: there is no reason which forces us to check the data with each other, then we don't need to compare the data with the state and database
-    # TODO: If it doesn't exist, add the data in database if existed, just update it or compare before?
-    # TODO: Because it is just a cache which doesn't need to be changed every time and the plugins of system always are limited.
+  def handle_continue({:sync_with_database, :add}, %PluginState{} = state) do
+    state
+    |> Map.from_struct()
+    |> Plugin.create()
     {:noreply, state}
   end
+
+  @impl true
+  def handle_continue({:sync_with_database, :edit}, %PluginState{} = state) do
+    state
+    |> Map.from_struct()
+    |> Plugin.edit_by_name()
+    {:noreply, state}
+  end
+
+  # @impl true
+  # def handle_continue(:sync_with_database, %PluginState{} = state) do
+  #   state
+  #   |> update_or_add_plugin_to_database()
+  #   {:noreply, state}
+  # end
 
   @impl true
   def terminate(reason, state) do

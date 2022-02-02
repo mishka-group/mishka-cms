@@ -85,30 +85,30 @@ defmodule MishkaInstaller.PluginState do
 
   # Callbacks
   @impl true
-  def init(state) do
+  def init(%PluginState{} = state) do
     Logger.info("#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager system was started")
     {:ok, state}
   end
 
   @impl true
-  def handle_call({:pop, :module}, _from, state) do
+  def handle_call({:pop, :module}, _from, %PluginState{} = state) do
     {:reply, state, state}
   end
 
   @impl true
-  def handle_cast({:push, status, element}, _state) do
+  def handle_cast({:push, status, %PluginState{} = element}, _state) do
     {:noreply, element, {:continue, {:sync_with_database, status}}}
   end
 
   @impl true
-  def handle_cast({:stop, :module}, state) do
+  def handle_cast({:stop, :module}, %PluginState{} = state) do
     new_state = Map.merge(state, %{status: :stopped})
     {:noreply, new_state, {:continue, {:sync_with_database, :edit}}}
   end
 
   @impl true
-  def handle_cast({:delete, :module}, state) do
-    # TODO: Save the log into database
+  def handle_cast({:delete, :module}, %PluginState{} = state) do
+    MishkaInstaller.plugin_activity("destroy", state, "high", "report")
     # TODO: check the type of depend_type and disable all the dependes events if it is hard type
     # TODO: Save a log for admin (danger type), if there is a lib which needs this plugin to load (multi dependes)
     {:stop, :normal, state}
@@ -116,7 +116,7 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def handle_continue({:sync_with_database, :add}, %PluginState{} = state) do
-    # TODO: Save the log into database
+    MishkaInstaller.plugin_activity("add", state, "high")
     state
     |> Map.from_struct()
     |> Plugin.create()
@@ -125,7 +125,8 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def handle_continue({:sync_with_database, :edit}, %PluginState{} = state) do
-    # TODO: Save the log into database
+    action = if state.status == :stopped, do: "delete", else: "edit"
+    MishkaInstaller.plugin_activity(action, state, "high")
     state
     |> Map.from_struct()
     |> Plugin.edit_by_name()
@@ -133,8 +134,8 @@ defmodule MishkaInstaller.PluginState do
   end
 
   @impl true
-  def terminate(reason, state) do
-    # TODO: Save the log into database
+  def terminate(reason, %PluginState{} = state) do
+    MishkaInstaller.plugin_activity("read", state, "high", "throw")
     # TODO: Introduce a strategy for preparing again
     Logger.warn(
       "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,

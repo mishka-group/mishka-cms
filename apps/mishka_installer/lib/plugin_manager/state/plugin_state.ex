@@ -5,6 +5,7 @@ defmodule MishkaInstaller.PluginState do
   alias MishkaInstaller.Plugin
   alias __MODULE__
   # TODO: if each plugin is down or has error, what we should do?
+  # TODO: how can a developer create a simple config for his/her plugin without creating a new table etc, like Joomla XML
 
   @type params() :: map()
   @type id() :: String.t()
@@ -19,6 +20,7 @@ defmodule MishkaInstaller.PluginState do
     depend_type: :soft | :hard,
     depends: [module()]
   }
+  @type t :: plugin()
 
   defstruct [:name, :event, priority: 1, status: :started, depend_type: :soft, depends: []]
 
@@ -106,11 +108,15 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def handle_cast({:delete, :module}, state) do
+    # TODO: Save the log into database
+    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
+    # TODO: Save a log for admin (danger type), if there is a lib which needs this plugin to load (multi dependes)
     {:stop, :normal, state}
   end
 
   @impl true
   def handle_continue({:sync_with_database, :add}, %PluginState{} = state) do
+    # TODO: Save the log into database
     state
     |> Map.from_struct()
     |> Plugin.create()
@@ -119,21 +125,17 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def handle_continue({:sync_with_database, :edit}, %PluginState{} = state) do
+    # TODO: Save the log into database
     state
     |> Map.from_struct()
     |> Plugin.edit_by_name()
     {:noreply, state}
   end
 
-  # @impl true
-  # def handle_continue(:sync_with_database, %PluginState{} = state) do
-  #   state
-  #   |> update_or_add_plugin_to_database()
-  #   {:noreply, state}
-  # end
-
   @impl true
   def terminate(reason, state) do
+    # TODO: Save the log into database
+    # TODO: Introduce a strategy for preparing again
     Logger.warn(
       "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,
       Reason of Terminate #{inspect(reason)}"

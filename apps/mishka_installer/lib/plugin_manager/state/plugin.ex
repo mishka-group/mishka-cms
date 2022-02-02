@@ -29,12 +29,14 @@ defmodule MishkaInstaller.Plugin do
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_edit, 1}
   def edit(attrs) do
-    crud_edit(attrs)
+    event_atom_to_string(attrs)
+    |> crud_edit()
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_edit, 1}
   def edit(attrs, allowed_fields) do
-    crud_edit(attrs, allowed_fields)
+    event_atom_to_string(attrs)
+    |> crud_edit(allowed_fields)
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_delete, 1}
@@ -54,7 +56,7 @@ defmodule MishkaInstaller.Plugin do
 
   def edit_by_name(state) do
     case show_by_name("#{state.name}") do
-      {:ok, :get_record_by_field, :plugin,  _repo_data} -> edit(state)
+      {:ok, :get_record_by_field, :plugin, repo_data} -> edit(state |> Map.merge(%{id: repo_data.id}))
       _ -> {:error, :edit_by_name, :not_found}
     end
   end

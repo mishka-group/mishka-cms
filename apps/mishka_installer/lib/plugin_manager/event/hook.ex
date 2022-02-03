@@ -11,6 +11,8 @@ defmodule MishkaInstaller.Hook do
   # Hook just needs to load :started status
   #### Finishing Priority Check ####
 
+  # TODO: First binding form waht? (database, disk?) to --> MishkaInstaller.PluginState
+
   # TODO: register a module
   def register() do
     {:ok, :register}
@@ -28,6 +30,7 @@ defmodule MishkaInstaller.Hook do
 
   # TODO: stop a module
   def stop() do
+    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
     {:ok, :stop}
   end
 
@@ -36,6 +39,7 @@ defmodule MishkaInstaller.Hook do
   end
 
   def delete() do
+    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
     {:ok, :delete}
   end
 

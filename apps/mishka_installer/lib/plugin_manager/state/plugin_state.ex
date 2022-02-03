@@ -5,7 +5,6 @@ defmodule MishkaInstaller.PluginState do
   alias MishkaInstaller.Plugin
   alias __MODULE__
   # TODO: if each plugin is down or has error, what we should do?
-  # TODO: how can a developer create a simple config for his/her plugin without creating a new table etc, like Joomla XML
 
   @type params() :: map()
   @type id() :: String.t()
@@ -87,7 +86,7 @@ defmodule MishkaInstaller.PluginState do
   @impl true
   def init(%PluginState{} = state) do
     Logger.info("#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager system was started")
-    {:ok, state}
+    {:ok, state, {:continue, {:sync_with_database, :take}}}
   end
 
   @impl true
@@ -109,8 +108,6 @@ defmodule MishkaInstaller.PluginState do
   @impl true
   def handle_cast({:delete, :module}, %PluginState{} = state) do
     MishkaInstaller.plugin_activity("destroy", state, "high", "report")
-    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
-    # TODO: Save a log for admin (danger type), if there is a lib which needs this plugin to load (multi dependes)
     {:stop, :normal, state}
   end
 
@@ -134,9 +131,21 @@ defmodule MishkaInstaller.PluginState do
   end
 
   @impl true
+  def handle_continue({:sync_with_database, :take}, %PluginState{} = state) do
+    state =
+      case Plugin.show_by_name("#{state.name}") do
+        {:ok, :get_record_by_field, _error_atom, record_info} ->
+          struct(__MODULE__, Map.from_struct(record_info))
+          |> event_string_to_atom
+        {:error, _result, _error_atom} -> state
+      end
+    {:noreply, state}
+  end
+
+  @impl true
   def terminate(reason, %PluginState{} = state) do
     MishkaInstaller.plugin_activity("read", state, "high", "throw")
-    # TODO: Introduce a strategy for preparing again
+    # TODO: Introduce a strategy for preparing again ( load from database, disk ?)
     Logger.warn(
       "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,
       Reason of Terminate #{inspect(reason)}"
@@ -146,4 +155,11 @@ defmodule MishkaInstaller.PluginState do
   defp via(id, value) do
     {:via, Registry, {MishkaInstaller.PluginStateRegistry, id, value}}
   end
+
+  defp event_string_to_atom(%{name: name, event: event} = attrs) when is_binary(name) and is_binary(event) do
+    attrs
+    |> Map.merge(%{name: String.to_atom(name), event: String.to_atom(event)})
+  end
+
+  defp event_string_to_atom(attrs), do: attrs
 end

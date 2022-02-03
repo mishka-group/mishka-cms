@@ -1,7 +1,8 @@
 defmodule MishkaInstaller.Plugin do
 
   alias MishkaDatabase.Schema.MishkaInstaller.Plugin, as: PluginSchema
-  # import Ecto.Query
+  alias MishkaInstaller.PluginState
+  import Ecto.Query
   use MishkaDeveloperTools.DB.CRUD,
           module: PluginSchema,
           error_atom: :plugin,
@@ -59,6 +60,33 @@ defmodule MishkaInstaller.Plugin do
       {:ok, :get_record_by_field, :plugin, repo_data} -> edit(state |> Map.merge(%{id: repo_data.id}))
       _ -> {:error, :edit_by_name, :not_found}
     end
+  end
+
+  def plugins(event: event) do
+    from(plg in PluginSchema, where: plg.event == ^event)
+    |> fields()
+    |> MishkaDatabase.Repo.all()
+    |> Enum.map(&struct(PluginState, &1))
+  end
+
+  def plugins() do
+    from(plg in PluginSchema)
+    |> fields()
+    |> MishkaDatabase.Repo.all()
+    |> Enum.map(&struct(PluginState, &1))
+  end
+
+  defp fields(query) do
+    from [plg] in query,
+    order_by: [desc: plg.inserted_at, desc: plg.id],
+    select: %{
+      name: plg.name,
+      event: plg.event,
+      priority: plg.priority,
+      status: plg.status,
+      depend_type: plg.depend_type,
+      depends: plg.depends
+    }
   end
 
   defp event_atom_to_string(%{name: name, event: event} = attrs) when is_atom(name) and is_atom(event) do

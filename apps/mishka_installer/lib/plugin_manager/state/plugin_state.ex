@@ -85,12 +85,22 @@ defmodule MishkaInstaller.PluginState do
   # Callbacks
   @impl true
   def init(%PluginState{} = state) do
+    IO.inspect("start init offfffffff plugin state")
     Logger.info("#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager system was started")
     {:ok, state, {:continue, {:sync_with_database, :take}}}
   end
 
+  def child_spec(process_name) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, [process_name]},
+      restart: :permanent
+    }
+  end
+
   @impl true
   def handle_call({:pop, :module}, _from, %PluginState{} = state) do
+    # raise "Raising!"
     {:reply, state, state}
   end
 
@@ -144,12 +154,18 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def terminate(reason, %PluginState{} = state) do
+    IO.inspect(state)
     MishkaInstaller.plugin_activity("read", state, "high", "throw")
     # TODO: Introduce a strategy for preparing again ( load from database, disk ?)
     Logger.warn(
       "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,
       Reason of Terminate #{inspect(reason)}"
     )
+  end
+
+  @impl true
+  def handle_info(_skip_task, state) do
+    {:noreply, state}
   end
 
   defp via(id, value) do

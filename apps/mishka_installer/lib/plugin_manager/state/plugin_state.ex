@@ -16,11 +16,12 @@ defmodule MishkaInstaller.PluginState do
     priority: integer(),
     status: :started | :stopped | :restarted,
     depend_type: :soft | :hard,
-    depends: [module()]
+    depends: [module()],
+    extra: [map()]
   }
   @type t :: plugin()
 
-  defstruct [:name, :event, priority: 1, status: :started, depend_type: :soft, depends: []]
+  defstruct [:name, :event, priority: 1, status: :started, depend_type: :soft, depends: [], extra: []]
 
   def start_link(args) do
     {id, type} = {Map.get(args, :id), Map.get(args, :type)}

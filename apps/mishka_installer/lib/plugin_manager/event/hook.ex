@@ -1,5 +1,5 @@
 defmodule MishkaInstaller.Hook do
-
+  alias MishkaInstaller.PluginState
   #### Starting Priority Check ####
   # if a package has a hight priority like 100 and there are 3 more package
   # if there is no `depends` for this packages, Then start with the lowest priority, and pass theire `{:reply, new_state}` to higher
@@ -11,35 +11,63 @@ defmodule MishkaInstaller.Hook do
   # Hook just needs to load :started status
   #### Finishing Priority Check ####
 
-  # TODO: First binding form waht? (database, disk?) to --> MishkaInstaller.PluginState
+  def register(event: %PluginState{} = event) do
+    if ensure_event(event) do
+      PluginState.push(event)
+      {:ok, :register, :activated}
+    else
+      extra = (event.extra || []) ++ [%{operations: :hook}, %{fun: :register}]
+      MishkaInstaller.plugin_activity("add", Map.merge(event, %{extra: extra}) , "high", "error")
+      {:error, :register, :inactive_dependencies}
+    end
+  end
 
-  # TODO: register a module
-  def register() do
-    {:ok, :register}
+  def register(event: %PluginState{} = _event, depends: :force) do
+    # TODO: enable all the deps events
   end
 
   # TODO: start a module
-  def start() do
+  def start(module: _module_name) do
+    {:ok, :stop}
+  end
+
+  def start(event: _event) do
     {:ok, :stop}
   end
 
   # TODO: restart a module
-  def restart() do
+  def restart(module: _module_name) do
+    {:ok, :reset}
+  end
+
+  def restart(event: _event) do
     {:ok, :reset}
   end
 
   # TODO: stop a module
-  def stop() do
+  def stop(module: _module_name) do
     # TODO: check the type of depend_type and disable all the dependes events if it is hard type
     {:ok, :stop}
   end
 
-  def call() do
+  def stop(event: _event) do
+    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
+    {:ok, :stop}
+  end
+
+  def call(event: _event) do
     {:ok, :call}
   end
 
-  def delete() do
+  def delete(event: _event) do
     # TODO: check the type of depend_type and disable all the dependes events if it is hard type
+    # TODO: it should delete simple store fields like xml joomla config
+    {:ok, :delete}
+  end
+
+  def delete(module: _module_name) do
+    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
+    # TODO: it should delete simple store fields like xml joomla config
     {:ok, :delete}
   end
 
@@ -47,4 +75,13 @@ defmodule MishkaInstaller.Hook do
   def check_priority_of_events_registerd() do
     {:ok, :check_priority_of_events_registerd}
   end
+
+  def ensure_event(%PluginState{depend_type: :hard, depends: depends} = _event) do
+    Enum.filter(depends, fn evn ->
+      !Code.ensure_loaded?(evn.evn) && Map.get(PluginState.get(module: evn.evn), :status) != :started
+    end)
+    |> length() == 0
+  end
+
+  def ensure_event(%PluginState{} = _event), do: true
 end

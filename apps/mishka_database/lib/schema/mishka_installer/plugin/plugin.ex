@@ -14,11 +14,12 @@ defmodule MishkaDatabase.Schema.MishkaInstaller.Plugin do
     field :status, PluginStatusEnum, null: false, default: :started
     field :depend_type, PluginDependTypeEnum, null: false, default: :soft
     field :depends, {:array, :string}, null: true
+    field :extra, :map, null: false
 
     timestamps(type: :utc_datetime)
   end
 
-  @all_fields ~w(name event priority status depend_type depends)a
+  @all_fields ~w(name event priority status depend_type depends extra)a
   @required_fields ~w(name event priority status depend_type)a
 
   @spec changeset(struct(), map()) :: Ecto.Changeset.t()

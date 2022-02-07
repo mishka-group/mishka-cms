@@ -5,8 +5,6 @@ defmodule MishkaInstaller.Event do
   @type event :: %Event{name: atom(), section: atom(), reference: module()}
 
   defstruct [:name, :section, :reference]
-  # TODO: bind all plugins events
-
 
   @spec system_events :: [event]
   def system_events do

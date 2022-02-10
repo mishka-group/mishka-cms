@@ -11,7 +11,7 @@ defmodule MishkaDatabase.Repo.Migrations.Plugins do
       add(:status, :integer, null: false)
       add(:depend_type, :integer, null: false)
       add(:depends, {:array, :string}, null: true)
-      add(:extra, :map, null: false)
+      add(:extra, {:array, :map}, null: false)
       timestamps()
     end
     create(

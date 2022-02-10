@@ -9,10 +9,10 @@ defmodule MishkaInstaller.Application do
   def start(_type, _args) do
     plugin_runner_config = [
       strategy: :one_for_one,
-      name: MishkaInstaller.Cache.PluginStateOtpRunner
+      name: PluginStateOtpRunner
     ]
     children = [
-      {Registry, keys: :unique, name: MishkaInstaller.PluginStateRegistry},
+      {Registry, keys: :unique, name: PluginStateRegistry},
       {DynamicSupervisor, plugin_runner_config}
     ]
 

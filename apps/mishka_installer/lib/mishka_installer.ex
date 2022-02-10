@@ -1,5 +1,4 @@
 defmodule MishkaInstaller do
-  # TODO: it needs delegate
   alias MishkaInstaller.PluginState
 
   @spec plugin_activity(String.t(), PluginState.t(), integer(), String.t()) :: Task.t()

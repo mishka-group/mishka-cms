@@ -1,38 +1,47 @@
 defmodule MishkaInstaller.PluginState do
-  use GenServer, restart: :temporary
+  # TODO: change activity Task, we dont need its return
+  use GenServer
   require Logger
   alias MishkaInstaller.PluginStateDynamicSupervisor, as: PSupervisor
   alias MishkaInstaller.Plugin
   alias __MODULE__
 
+  defstruct [:name, :event, priority: 1, status: :started, depend_type: :soft, depends: [], extra: []]
+
   @type params() :: map()
   @type id() :: String.t()
-  @type module_name() :: atom()
-  @type event_name() :: atom()
-  @type event() :: atom()
+  @type module_name() :: String.t()
+  @type event_name() :: String.t()
   @type plugin() :: %PluginState{
-    name: atom(),
-    event: event(),
+    name: module_name(),
+    event: event_name(),
     priority: integer(),
     status: :started | :stopped | :restarted,
     depend_type: :soft | :hard,
-    depends: [module()],
-    extra: [map()]
+    depends: list(String.t()),
+    extra: list(map())
   }
   @type t :: plugin()
-
-  defstruct [:name, :event, priority: 1, status: :started, depend_type: :soft, depends: [], extra: []]
 
   def start_link(args) do
     {id, type} = {Map.get(args, :id), Map.get(args, :type)}
     GenServer.start_link(__MODULE__, default(id, type), name: via(id, type))
   end
 
+  def child_spec(process_name) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, [process_name]},
+      restart: :transient,
+      max_restarts: 4
+    }
+  end
+
   defp default(plugin_name, event) do
     %PluginState{name: plugin_name, event: event}
   end
 
-  @spec push(plugin()) :: :ok | {:error, :push, any}
+  @spec push(MishkaInstaller.PluginState.t()) :: :ok | {:error, :push, any}
   def push(%PluginState{} = element) do
     case PSupervisor.start_job(%{id: element.name, type: element.event}) do
       {:ok, status, pid} -> GenServer.cast(pid, {:push, status, element})
@@ -40,6 +49,7 @@ defmodule MishkaInstaller.PluginState do
     end
   end
 
+  @spec get([{:module, module_name()}]) :: plugin() | {:error, :get, :not_found}
   def get(module: module_name) do
     case PSupervisor.get_plugin_pid(module_name) do
       {:ok, :get_plugin_pid, pid} -> GenServer.call(pid, {:pop, :module})
@@ -68,6 +78,13 @@ defmodule MishkaInstaller.PluginState do
     PSupervisor.running_imports(event_name) |> Enum.map(&delete(module: &1.id))
   end
 
+  def delete_child(module: module_name) do
+    case PSupervisor.get_plugin_pid(module_name) do
+      {:ok, :get_plugin_pid, pid} -> DynamicSupervisor.terminate_child(PluginStateOtpRunner, pid)
+      {:error, :get_plugin_pid} -> {:error, :get, :not_found}
+    end
+  end
+
   def stop(module: module_name)  do
     case PSupervisor.get_plugin_pid(module_name) do
       {:ok, :get_plugin_pid, pid} ->
@@ -81,20 +98,12 @@ defmodule MishkaInstaller.PluginState do
     PSupervisor.running_imports(event_name) |> Enum.map(&stop(module: &1.id))
   end
 
-
   # Callbacks
   @impl true
   def init(%PluginState{} = state) do
+    IO.inspect(state)
     Logger.info("#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager system was started")
     {:ok, state, {:continue, {:sync_with_database, :take}}}
-  end
-
-  def child_spec(process_name) do
-    %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, [process_name]},
-      restart: :permanent
-    }
   end
 
   @impl true
@@ -115,26 +124,17 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def handle_cast({:delete, :module}, %PluginState{} = state) do
-    MishkaInstaller.plugin_activity("destroy", state, "high", "report")
+    # MishkaInstaller.plugin_activity("destroy", state, "high", "report")
     {:stop, :normal, state}
   end
 
   @impl true
-  def handle_continue({:sync_with_database, :add}, %PluginState{} = state) do
-    MishkaInstaller.plugin_activity("add", state, "high")
+  def handle_continue({:sync_with_database, _status}, %PluginState{} = state) do
     state
     |> Map.from_struct()
-    |> Plugin.create()
-    {:noreply, state}
-  end
+    |> Plugin.add_or_edit_by_name()
+    |> check_output(state)
 
-  @impl true
-  def handle_continue({:sync_with_database, :edit}, %PluginState{} = state) do
-    action = if state.status == :stopped, do: "delete", else: "edit"
-    MishkaInstaller.plugin_activity(action, state, "high")
-    state
-    |> Map.from_struct()
-    |> Plugin.edit_by_name()
     {:noreply, state}
   end
 
@@ -144,7 +144,6 @@ defmodule MishkaInstaller.PluginState do
       case Plugin.show_by_name("#{state.name}") do
         {:ok, :get_record_by_field, _error_atom, record_info} ->
           struct(__MODULE__, Map.from_struct(record_info))
-          |> event_string_to_atom
         {:error, _result, _error_atom} -> state
       end
     {:noreply, state}
@@ -152,11 +151,11 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def terminate(reason, %PluginState{} = state) do
-    MishkaInstaller.plugin_activity("read", state, "high", "throw")
+    # MishkaInstaller.plugin_activity("read", state, "high", "throw") # TODO: Should be replaced, we dont need its result
     Logger.warn(
       "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,
       Reason of Terminate #{inspect(reason)}"
-    )
+      )
   end
 
   @impl true
@@ -165,13 +164,22 @@ defmodule MishkaInstaller.PluginState do
   end
 
   defp via(id, value) do
-    {:via, Registry, {MishkaInstaller.PluginStateRegistry, id, value}}
+    {:via, Registry, {PluginStateRegistry, id, value}}
   end
 
-  defp event_string_to_atom(%{name: name, event: event} = attrs) when is_binary(name) and is_binary(event) do
-    attrs
-    |> Map.merge(%{name: String.to_atom(name), event: String.to_atom(event)})
+  defp check_output({:error, status, _, _} = output, %PluginState{} = state) do
+    MishkaInstaller.plugin_activity("#{status}", state, "high", "error")
+    output
   end
 
-  defp event_string_to_atom(attrs), do: attrs
+  defp check_output({:ok, :add, _, _} = output, %PluginState{} = state) do
+    MishkaInstaller.plugin_activity("add", state, "high")
+    output
+  end
+
+  defp check_output({:ok, :edit, _, _} = output, %PluginState{} = state) do
+    action = if state.status == :stopped, do: "delete", else: "edit"
+    MishkaInstaller.plugin_activity(action, state, "high")
+    output
+  end
 end

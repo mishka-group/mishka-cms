@@ -14,7 +14,7 @@ defmodule MishkaDatabase.Schema.MishkaInstaller.Plugin do
     field :status, PluginStatusEnum, null: false, default: :started
     field :depend_type, PluginDependTypeEnum, null: false, default: :soft
     field :depends, {:array, :string}, null: true
-    field :extra, :map, null: false
+    field :extra, {:array, :map}, null: false
 
     timestamps(type: :utc_datetime)
   end
@@ -27,7 +27,7 @@ defmodule MishkaDatabase.Schema.MishkaInstaller.Plugin do
     struct
     |> cast(params, @all_fields)
     |> validate_required(@required_fields, message: MishkaTranslator.Gettext.dgettext("db_schema_installer", "فیلد مذکور نمی تواند خالی باشد"))
-    |> unique_constraint(:name, name: :index_identities_on_provider_uid_and_identity_provider, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "هر پلاگین می تواند یک اسم یکتا داشته باشد"))
+    |> unique_constraint(:name, name: :index_plugins_on_name, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "هر پلاگین می تواند یک اسم یکتا داشته باشد"))
   end
 
 end

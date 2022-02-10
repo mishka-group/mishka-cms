@@ -1,8 +1,8 @@
 defmodule MishkaInstaller.PluginStateDynamicSupervisor do
 
-  @spec start_job(%{id: atom(), type: atom()}) :: :ignore | {:error, any} | {:ok, :add | :edit, pid}
+  @spec start_job(%{id: String.t(), type: String.t()}) :: :ignore | {:error, any} | {:ok, :add | :edit, pid}
   def start_job(args) do
-    DynamicSupervisor.start_child(MishkaInstaller.Cache.PluginStateOtpRunner, {MishkaInstaller.PluginState, args})
+    DynamicSupervisor.start_child(PluginStateOtpRunner, {MishkaInstaller.PluginState, args})
     |> case do
       {:ok, pid} -> {:ok, :add, pid}
       {:ok, pid, _any} -> {:ok, :add, pid}
@@ -10,7 +10,6 @@ defmodule MishkaInstaller.PluginStateDynamicSupervisor do
       {:error, result} -> {:error, result}
     end
   end
-
 
   def running_imports(), do: registery()
 
@@ -25,12 +24,12 @@ defmodule MishkaInstaller.PluginStateDynamicSupervisor do
         {:"$1", :"$2", :"$3"},
         [%{id: :"$1", pid: :"$2", type: :"$3"}]
       }
-    Registry.select(MishkaInstaller.PluginStateRegistry, [{match_all, guards, map_result}])
+    Registry.select(PluginStateRegistry, [{match_all, guards, map_result}])
   end
 
   @spec get_plugin_pid(String.t()) :: {:error, :get_plugin_pid} | {:ok, :get_plugin_pid, pid}
   def get_plugin_pid(module_name) do
-    case Registry.lookup(MishkaInstaller.PluginStateRegistry, module_name) do
+    case Registry.lookup(PluginStateRegistry, module_name) do
       [] -> {:error, :get_plugin_pid}
       [{pid, _type}] -> {:ok, :get_plugin_pid, pid}
     end

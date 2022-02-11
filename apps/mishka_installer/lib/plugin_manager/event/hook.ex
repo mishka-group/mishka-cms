@@ -1,5 +1,7 @@
 defmodule MishkaInstaller.Hook do
   alias MishkaInstaller.PluginState
+  alias MishkaInstaller.PluginStateDynamicSupervisor, as: PSupervisor
+  alias MishkaInstaller.Plugin
   #### Starting Priority Check ####
   # if a package has a hight priority like 100 and there are 3 more package
   # if there is no `depends` for this packages, Then start with the lowest priority, and pass theire `{:reply, new_state}` to higher
@@ -12,30 +14,29 @@ defmodule MishkaInstaller.Hook do
   #### Finishing Priority Check ####
 
   def register(event: %PluginState{} = event) do
-    # TODO: if the spesefic record exist before, what we should do in every restarting server?
-    # TODO: if a record exist in db what we should do in every restarting server?
-    # TODO: if the record has problem with Ecto changeset, what we should do?
+    extra = (event.extra || []) ++ [%{operations: :hook}, %{fun: :register}]
     register_status =
-      if ensure_event?(event) do
-        PluginState.push(event)
-        {:ok, :register, :activated}
+      with {:ok, :ensure_event, "The modules concerned are activated"} <- ensure_event(event, :debug),
+           {:error, :get_record_by_field, :plugin} <- Plugin.show_by_name("#{event.name}"),
+           {:ok, :add, :plugin, record_info} <- Plugin.create(Map.from_struct(event)) do
+            PSupervisor.start_job(%{id: record_info.name, type: record_info.event})
+            {:ok, :register, :activated}
       else
-        # extra = (event.extra || []) ++ [%{operations: :hook}, %{fun: :register}]
-        # MishkaInstaller.plugin_activity("add", Map.merge(event, %{extra: extra}) , "high", "error")
-        {:error, :register, :inactive_dependencies}
+        {:error, :ensure_event, %{errors: check_data}} ->
+          MishkaInstaller.plugin_activity("add", Map.merge(event, %{extra: extra}) , "high", "error")
+          {:error, :register, check_data}
+        {:ok, :get_record_by_field, :plugin, _record_info} ->
+          PluginState.push(event)
+          {:ok, :register, :activated}
+        {:error, :add, :plugin, repo_error} ->
+          MishkaInstaller.plugin_activity("add", Map.merge(event, %{extra: extra}) , "high", "error")
+          {:error, :register, repo_error}
       end
     register_status
   end
 
   def register(event: %PluginState{} = event, depends: :force) do
     PluginState.push(event)
-  end
-
-  def register(event: %PluginState{} = event, depends: :debug) do
-    case ensure_event(event, :debug) do
-      {:ok, :ensure_event, msg} -> {:ok, :register, :debug, msg}
-      {:error, :ensure_event, %{errors: errors}} -> {:error, :register, :debug, errors}
-    end
   end
 
   # TODO: start a module

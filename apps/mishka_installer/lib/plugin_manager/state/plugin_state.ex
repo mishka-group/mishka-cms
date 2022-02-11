@@ -100,7 +100,6 @@ defmodule MishkaInstaller.PluginState do
   # Callbacks
   @impl true
   def init(%PluginState{} = state) do
-    IO.inspect(state)
     Logger.info("#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager system was started")
     {:ok, state, {:continue, {:sync_with_database, :take}}}
   end
@@ -165,12 +164,12 @@ defmodule MishkaInstaller.PluginState do
     MishkaInstaller.plugin_activity("#{status}", state, "high", "error")
   end
 
-  defp check_output({:ok, :add, _, _} = _output, %PluginState{} = state) do
-    MishkaInstaller.plugin_activity("add", state, "high")
-  end
-
-  defp check_output({:ok, :edit, _, _} = _output, %PluginState{} = state) do
-    action = if state.status == :stopped, do: "delete", else: "edit"
+  defp check_output({:ok, status, _, _} = _output, %PluginState{} = state) do
+    action = cond do
+      status == :add -> "add"
+      state.status == :stopped -> "delete"
+      true -> "edit"
+    end
     MishkaInstaller.plugin_activity(action, state, "high")
   end
 end

@@ -92,6 +92,25 @@ defmodule MishkaContent.General.Activity do
     }
   end
 
+  @spec create_activity_by_start_child(map(), map()) ::
+          :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
+  def create_activity_by_start_child(params, extra \\ %{}) do
+    Task.Supervisor.start_child(MishkaContent.General.ActivityTaskSupervisor, fn ->
+      create(
+        %{
+          type: params.type,
+          section: params.section,
+          section_id: params.section_id,
+          priority: params.priority,
+          status: params.status,
+          action: params.action,
+          user_id: params.user_id,
+          extra: extra
+        }
+      )
+    end)
+  end
+
   @spec create_activity_by_task(map(), map()) :: Task.t()
   def create_activity_by_task(params, extra \\ %{}) do
     Task.Supervisor.async_nolink(MishkaContent.General.ActivityTaskSupervisor, fn ->
@@ -109,6 +128,7 @@ defmodule MishkaContent.General.Activity do
       )
     end)
   end
+
 
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: Activity.__schema__(:fields)

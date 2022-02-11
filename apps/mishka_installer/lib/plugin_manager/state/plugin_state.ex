@@ -1,5 +1,4 @@
 defmodule MishkaInstaller.PluginState do
-  # TODO: change activity Task, we dont need its return
   use GenServer
   require Logger
   alias MishkaInstaller.PluginStateDynamicSupervisor, as: PSupervisor
@@ -124,7 +123,7 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def handle_cast({:delete, :module}, %PluginState{} = state) do
-    # MishkaInstaller.plugin_activity("destroy", state, "high", "report")
+    MishkaInstaller.plugin_activity("destroy", state, "high", "report")
     {:stop, :normal, state}
   end
 
@@ -151,35 +150,27 @@ defmodule MishkaInstaller.PluginState do
 
   @impl true
   def terminate(reason, %PluginState{} = state) do
-    # MishkaInstaller.plugin_activity("read", state, "high", "throw") # TODO: Should be replaced, we dont need its result
+    MishkaInstaller.plugin_activity("read", state, "high", "throw")
     Logger.warn(
       "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,
       Reason of Terminate #{inspect(reason)}"
       )
   end
 
-  @impl true
-  def handle_info(_skip_task, state) do
-    {:noreply, state}
-  end
-
   defp via(id, value) do
     {:via, Registry, {PluginStateRegistry, id, value}}
   end
 
-  defp check_output({:error, status, _, _} = output, %PluginState{} = state) do
+  defp check_output({:error, status, _, _} = _output, %PluginState{} = state) do
     MishkaInstaller.plugin_activity("#{status}", state, "high", "error")
-    output
   end
 
-  defp check_output({:ok, :add, _, _} = output, %PluginState{} = state) do
+  defp check_output({:ok, :add, _, _} = _output, %PluginState{} = state) do
     MishkaInstaller.plugin_activity("add", state, "high")
-    output
   end
 
-  defp check_output({:ok, :edit, _, _} = output, %PluginState{} = state) do
+  defp check_output({:ok, :edit, _, _} = _output, %PluginState{} = state) do
     action = if state.status == :stopped, do: "delete", else: "edit"
     MishkaInstaller.plugin_activity(action, state, "high")
-    output
   end
 end

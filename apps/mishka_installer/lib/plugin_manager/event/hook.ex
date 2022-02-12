@@ -97,29 +97,26 @@ defmodule MishkaInstaller.Hook do
     end
   end
 
-  def restart(event: event) do
-    Plugin.plugins(event: event)
+  def restart(event: event_name) do
+    Plugin.plugins(event: event_name)
     |> Enum.map(&restart(module: &1.name))
   end
 
-  def restart(event: event, depends: :force) do
-    Plugin.plugins(event: event)
+  def restart(event: event_name, depends: :force) do
+    Plugin.plugins(event: event_name)
     |> Enum.map(&restart(module: &1.name, depends: :force))
   end
 
-  # TODO: stop a module
-  def stop(module: _module_name) do
-    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
-    {:ok, :stop}
+  def stop(module: module_name) do
+    case PluginState.stop(module: module_name) do
+      {:ok, :stop} -> {:ok, :stop, "The module concerned was stopped"}
+      {:error, :stop, :not_found} -> {:error, :stop, "TThe module concerned doesn't exist in database."}
+    end
   end
 
-  def stop(event: _event) do
-    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
-    {:ok, :stop}
-  end
-
-  def call(event: _event) do
-    {:ok, :call}
+  def stop(event: event_name) do
+    PSupervisor.running_imports(event_name)
+    |> Enum.map(&stop(module: &1.id))
   end
 
   def delete(event: _event) do
@@ -132,6 +129,10 @@ defmodule MishkaInstaller.Hook do
     # TODO: check the type of depend_type and disable all the dependes events if it is hard type
     # TODO: it should delete simple store fields like xml joomla config
     {:ok, :delete}
+  end
+
+  def call(event: _event) do
+    {:ok, :call}
   end
 
   # TODO: validate each module output and allowed_input

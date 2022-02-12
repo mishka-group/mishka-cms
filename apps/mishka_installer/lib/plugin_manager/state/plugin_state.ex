@@ -69,7 +69,7 @@ defmodule MishkaInstaller.PluginState do
       {:ok, :get_plugin_pid, pid} ->
         GenServer.cast(pid, {:delete, :module})
         {:ok, :delete}
-      {:error, :get_plugin_pid} -> {:error, :get, :not_found}
+      {:error, :get_plugin_pid} -> {:error, :delete, :not_found}
     end
   end
 
@@ -80,7 +80,7 @@ defmodule MishkaInstaller.PluginState do
   def delete_child(module: module_name) do
     case PSupervisor.get_plugin_pid(module_name) do
       {:ok, :get_plugin_pid, pid} -> DynamicSupervisor.terminate_child(PluginStateOtpRunner, pid)
-      {:error, :get_plugin_pid} -> {:error, :get, :not_found}
+      {:error, :get_plugin_pid} -> {:error, :delete, :not_found}
     end
   end
 

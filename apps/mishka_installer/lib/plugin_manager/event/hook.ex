@@ -13,10 +13,13 @@ defmodule MishkaInstaller.Hook do
   # Hook just needs to load :started status
   #### Finishing Priority Check ####
 
+  # TODO: We should ensure the event are submitted or just its dependencies
+  # TODO: check the events pass and module with a real example
+
   def register(event: %PluginState{} = event) do
     extra = (event.extra || []) ++ [%{operations: :hook}, %{fun: :register}]
     register_status =
-      with {:ok, :ensure_event, "The modules concerned are activated"} <- ensure_event(event, :debug),
+      with {:ok, :ensure_event, _msg} <- ensure_event(event, :debug),
            {:error, :get_record_by_field, :plugin} <- Plugin.show_by_name("#{event.name}"),
            {:ok, :add, :plugin, record_info} <- Plugin.create(Map.from_struct(event)) do
             PSupervisor.start_job(%{id: record_info.name, type: record_info.event})
@@ -37,24 +40,71 @@ defmodule MishkaInstaller.Hook do
 
   def register(event: %PluginState{} = event, depends: :force) do
     PluginState.push(event)
+    {:ok, :register, :force}
   end
 
-  # TODO: start a module
-  def start(module: _module_name) do
-    {:ok, :stop}
+  def start(module: module_name) do
+    with {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}"),
+         {:ok, :ensure_event, _msg} <- ensure_event(plugin_state_struct(record_info), :debug) do
+          PluginState.push(plugin_state_struct(record_info) |> Map.merge(%{status: :started}))
+          {:ok, :start, "The module's status was changed"}
+    else
+      {:error, :get_record_by_field, :plugin} -> {:error, :register, "The module concerned doesn't exist in database."}
+      {:error, :ensure_event, %{errors: check_data}} -> {:error, :register, check_data}
+    end
   end
 
-  def start(event: _event) do
-    {:ok, :stop}
+  def start(module: module_name, depends: :force) do
+    with {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}") do
+      PluginState.push(plugin_state_struct(record_info) |> Map.merge(%{status: :started}))
+      {:ok, :start, :force}
+    else
+      {:error, :get_record_by_field, :plugin} -> {:error, :register, "The module concerned doesn't exist in database."}
+    end
   end
 
-  # TODO: restart a module
-  def restart(module: _module_name) do
-    {:ok, :reset}
+  def start(event: event) do
+    Plugin.plugins(event: event)
+    |> Enum.map(&start(module: &1.name))
   end
 
-  def restart(event: _event) do
-    {:ok, :reset}
+  def start(event: event, depends: :force) do
+    Plugin.plugins(event: event)
+    |> Enum.map(&start(module: &1.name, depends: :force))
+  end
+
+  def restart(module: module_name) do
+    with {:ok, :delete} <- PluginState.delete(module: module_name),
+         {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}"),
+         {:ok, :ensure_event, _msg} <- ensure_event(plugin_state_struct(record_info), :debug) do
+          PluginState.push(plugin_state_struct(record_info))
+          {:ok, :restart, "The module concerned was restarted"}
+    else
+      {:error, :delete, :not_found} -> {:error, :restart, "The module concerned doesn't exist in state."}
+      {:error, :ensure_event, %{errors: check_data}} -> {:error, :restart, check_data}
+      {:error, :get_record_by_field, :plugin} -> {:error, :restart, "The module concerned doesn't exist in database."}
+    end
+  end
+
+  def restart(module: module_name, depends: :force) do
+    with {:ok, :delete} <- PluginState.delete(module: module_name),
+         {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}") do
+          PluginState.push(plugin_state_struct(record_info))
+          {:ok, :restart, "The module concerned was restarted"}
+    else
+      {:error, :delete, :not_found} -> {:error, :restart, "The module concerned doesn't exist in state."}
+      {:error, :get_record_by_field, :plugin} -> {:error, :restart, "The module concerned doesn't exist in database."}
+    end
+  end
+
+  def restart(event: event) do
+    Plugin.plugins(event: event)
+    |> Enum.map(&restart(module: &1.name))
+  end
+
+  def restart(event: event, depends: :force) do
+    Plugin.plugins(event: event)
+    |> Enum.map(&restart(module: &1.name, depends: :force))
   end
 
   # TODO: stop a module
@@ -89,6 +139,7 @@ defmodule MishkaInstaller.Hook do
     {:ok, :check_priority_of_events_registerd}
   end
 
+  @spec ensure_event?(PluginState.t()) :: boolean
   def ensure_event?(%PluginState{depend_type: :hard, depends: depends} = _event) do
     check_data = check_dependencies(depends)
     Enum.any?(check_data, fn {status, _error_atom, _event, _msg} -> status == :error end)
@@ -100,6 +151,8 @@ defmodule MishkaInstaller.Hook do
 
   def ensure_event?(%PluginState{} = _event), do: true
 
+  @spec ensure_event(PluginState.t(), :debug) ::
+          {:error, :ensure_event, %{errors: list}} | {:ok, :ensure_event, String.t()}
   def ensure_event(%PluginState{depend_type: :hard, depends: depends} = _event, :debug) when depends != [] do
     check_data = check_dependencies(depends)
     Enum.any?(check_data, fn {status, _error_atom, _event, _msg} -> status == :error end)
@@ -110,6 +163,7 @@ defmodule MishkaInstaller.Hook do
   end
 
   def ensure_event(%PluginState{depend_type: :hard} = _event, :debug), do: {:ok, :ensure_event, "The modules concerned are activated"}
+  def ensure_event(%PluginState{} = _event, :debug), do: {:ok, :ensure_event, "The modules concerned are activated"}
 
   defp check_dependencies(depends) do
     Enum.map(depends, fn evn ->
@@ -125,5 +179,17 @@ defmodule MishkaInstaller.Hook do
         {:activated_plugin, false, _state} -> {:error, :activated_plugin, evn, "The event concerned is not activated."}
       end
     end)
+  end
+
+  defp plugin_state_struct(output) do
+    %PluginState{
+      name: output.name,
+      event: output.event,
+      priority: output.priority,
+      status: output.status,
+      depend_type: output.depend_type,
+      depends: Map.get(output, :depends) || [],
+      extra: Map.get(output, :extra) || []
+    }
   end
 end

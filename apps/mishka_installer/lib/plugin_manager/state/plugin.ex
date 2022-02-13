@@ -84,4 +84,14 @@ defmodule MishkaInstaller.Plugin do
       depends: plg.depends
     }
   end
+
+  def delete_plugins(event) do
+    stream = MishkaDatabase.Repo.stream(from(plg in PluginSchema))
+    MishkaDatabase.Repo.transaction(fn() ->
+      stream
+      |> Stream.filter(&(event in &1.depends))
+      |> Task.async_stream(&MishkaInstaller.Hook.unregister(module: &1.name), max_concurrency: 10)
+      |> Stream.run
+    end)
+  end
 end

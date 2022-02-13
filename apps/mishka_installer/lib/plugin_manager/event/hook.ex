@@ -13,9 +13,8 @@ defmodule MishkaInstaller.Hook do
   # Hook just needs to load :started status
   #### Finishing Priority Check ####
 
-  # TODO: We should ensure the event are submitted or just its dependencies
-  # TODO: check the events pass and module with a real example
 
+  # TODO: check the events pass and module with a real example
   def register(event: %PluginState{} = event) do
     extra = (event.extra || []) ++ [%{operations: :hook}, %{fun: :register}]
     register_status =
@@ -49,7 +48,7 @@ defmodule MishkaInstaller.Hook do
           PluginState.push(plugin_state_struct(record_info) |> Map.merge(%{status: :started}))
           {:ok, :start, "The module's status was changed"}
     else
-      {:error, :get_record_by_field, :plugin} -> {:error, :register, "The module concerned doesn't exist in database."}
+      {:error, :get_record_by_field, :plugin} -> {:error, :register, "The module concerned doesn't exist in the database."}
       {:error, :ensure_event, %{errors: check_data}} -> {:error, :register, check_data}
     end
   end
@@ -59,7 +58,7 @@ defmodule MishkaInstaller.Hook do
       PluginState.push(plugin_state_struct(record_info) |> Map.merge(%{status: :started}))
       {:ok, :start, :force}
     else
-      {:error, :get_record_by_field, :plugin} -> {:error, :register, "The module concerned doesn't exist in database."}
+      {:error, :get_record_by_field, :plugin} -> {:error, :register, "The module concerned doesn't exist in the database."}
     end
   end
 
@@ -80,9 +79,9 @@ defmodule MishkaInstaller.Hook do
           PluginState.push(plugin_state_struct(record_info))
           {:ok, :restart, "The module concerned was restarted"}
     else
-      {:error, :delete, :not_found} -> {:error, :restart, "The module concerned doesn't exist in state."}
+      {:error, :delete, :not_found} -> {:error, :restart, "The module concerned doesn't exist in the state."}
       {:error, :ensure_event, %{errors: check_data}} -> {:error, :restart, check_data}
-      {:error, :get_record_by_field, :plugin} -> {:error, :restart, "The module concerned doesn't exist in database."}
+      {:error, :get_record_by_field, :plugin} -> {:error, :restart, "The module concerned doesn't exist in the database."}
     end
   end
 
@@ -92,8 +91,8 @@ defmodule MishkaInstaller.Hook do
           PluginState.push(plugin_state_struct(record_info))
           {:ok, :restart, "The module concerned was restarted"}
     else
-      {:error, :delete, :not_found} -> {:error, :restart, "The module concerned doesn't exist in state."}
-      {:error, :get_record_by_field, :plugin} -> {:error, :restart, "The module concerned doesn't exist in database."}
+      {:error, :delete, :not_found} -> {:error, :restart, "The module concerned doesn't exist in the state."}
+      {:error, :get_record_by_field, :plugin} -> {:error, :restart, "The module concerned doesn't exist in the database."}
     end
   end
 
@@ -107,10 +106,20 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&restart(module: &1.name, depends: :force))
   end
 
+  def restart(depends: :force) do
+    Plugin.plugins()
+    |> Enum.map(&restart(module: &1.name, depends: :force))
+  end
+
+  def restart() do
+    Plugin.plugins()
+    |> Enum.map(&restart(module: &1.name))
+  end
+
   def stop(module: module_name) do
     case PluginState.stop(module: module_name) do
       {:ok, :stop} -> {:ok, :stop, "The module concerned was stopped"}
-      {:error, :stop, :not_found} -> {:error, :stop, "TThe module concerned doesn't exist in database."}
+      {:error, :stop, :not_found} -> {:error, :stop, "The module concerned doesn't exist in database."}
     end
   end
 
@@ -119,16 +128,40 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&stop(module: &1.id))
   end
 
-  def delete(event: _event) do
-    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
-    # TODO: it should delete simple store fields like xml joomla config
-    {:ok, :delete}
+  def delete(module: module_name) do
+    case PluginState.delete(module: module_name) do
+      {:ok, :delete} -> {:ok, :delete, "The module's state was deleted"}
+      {:error, :delete, :not_found} -> {:error, :delete, "The module concerned doesn't exist in the state."}
+    end
   end
 
-  def delete(module: _module_name) do
-    # TODO: check the type of depend_type and disable all the dependes events if it is hard type
-    # TODO: it should delete simple store fields like xml joomla config
-    {:ok, :delete}
+  def delete(event: event_name) do
+    PSupervisor.running_imports(event_name)
+    |> Enum.map(&delete(module: &1.id))
+  end
+
+  # TODO: check the type of depend_type and disable all the dependes events if it is hard type
+  # TODO: delete event record in the database and state
+  def unregister(module: module_name) do
+    with {:ok, :delete, _msg} <- delete(module: module_name),
+         {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}"),
+         {:ok, :delete, :plugin, _} <- Plugin.delete(record_info.id) do
+          # TODO: should be tested in a real example
+          Plugin.delete_plugins(module_name)
+         {:ok, :unregister, "The module concerned and its dependencies were unregister"}
+
+    else
+      {:error, :delete, msg} -> {:error, :unregister, msg}
+      {:error, :get_record_by_field, :plugin} -> {:error, :unregister, "The module concerned doesn't exist in the database."}
+      {:error, :delete, status, _error_tag} when status in [:uuid, :get_record_by_id, :forced_to_delete] ->
+        {:error, :unregister, "There is a problem to find or delete the record in the database #{status}"}
+      {:error, :delete, :plugin, repo_error} -> {:error, :unregister, repo_error}
+    end
+  end
+
+  def unregister(event: event_name) do
+    Plugin.plugins(event: event_name)
+    |> Enum.map(&unregister(module: &1.name))
   end
 
   def call(event: _event) do

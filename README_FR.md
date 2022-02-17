@@ -75,10 +75,10 @@ Vous pouvez maintenant établir le projet avec ces quelques commandes après avo
 
 
 ```elixir
-mix ecto.create # Vous devez d’abord entrer les informations relatives à votre base de données dans le fichier de configuration
-mix ecto.migrate
 mix deps.get
 mix deps.compile
+mix ecto.create # Vous devez d’abord entrer les informations relatives à votre base de données dans le fichier de configuration
+mix ecto.migrate
 mix assets.deploy
 mix test
 mix run apps/mishka_database/priv/repo/seeds.exs # N’exécutez qu’une seule fois si vous voulez que le contenu et l’utilisateur de test soient corrects.

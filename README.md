@@ -63,10 +63,10 @@ In the near future the features related to the CMS will be explained in forms of
 After installing the dependencies above, now you can run the project using the following commands:
 
 ```elixir
-mix ecto.create # (first you have to define your database information in the config file)
-mix ecto.migrate
 mix deps.get
 mix deps.compile
+mix ecto.create # (first you have to define your database information in the config file)
+mix ecto.migrate
 mix assets.deploy
 mix test
 mix run apps/mishka_database/priv/repo/seeds.exs # in case you want content and test user to be made, run one time only

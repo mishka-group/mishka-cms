@@ -140,19 +140,17 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&delete(module: &1.id))
   end
 
-  # TODO: check the type of depend_type and disable all the dependes events if it is hard type
-  # TODO: delete event record in the database and state
   def unregister(module: module_name) do
     with {:ok, :delete, _msg} <- delete(module: module_name),
-         {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}"),
+         {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name(module_name),
          {:ok, :delete, :plugin, _} <- Plugin.delete(record_info.id) do
           # TODO: should be tested in a real example
-          Plugin.delete_plugins(module_name)
+          # Plugin.delete_plugins(module_name)
          {:ok, :unregister, "The module concerned and its dependencies were unregister"}
 
     else
       {:error, :delete, msg} -> {:error, :unregister, msg}
-      {:error, :get_record_by_field, :plugin} -> {:error, :unregister, "The module concerned doesn't exist in the database."}
+      {:error, :get_record_by_field, :plugin} -> {:error, :unregister, "The #{module_name} module doesn't exist in the database."}
       {:error, :delete, status, _error_tag} when status in [:uuid, :get_record_by_id, :forced_to_delete] ->
         {:error, :unregister, "There is a problem to find or delete the record in the database #{status}"}
       {:error, :delete, :plugin, repo_error} -> {:error, :unregister, repo_error}

@@ -20,6 +20,7 @@ if System.get_env("GITHUB_ACTIONS") do
     show_sensitive_data_on_connection_error: true
 else
   config :mishka_database, MishkaDatabase.Repo,
+    adapter: Ecto.Adapters.Postgres,
     username: System.get_env("DATABASE_USER"),
     password: System.get_env("DATABASE_PASSWORD"),
     database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",

@@ -14,35 +14,31 @@ defmodule MishkaInstallerTest.State.PluginDatabaseTest do
   end
 
   @depends ["joomla_login_plugin", "wordpress_login_plugin", "magento_login_plugin"]
-  @new_soft_plugin %MishkaInstaller.PluginState{
-    name: "plugin_one",
-    event: "event_one",
-    priority: 1,
-    status: :started,
-    depend_type: :soft
-  }
+  @new_soft_plugin %MishkaInstaller.PluginState{name: "plugin_one", event: "event_one"}
 
   @plugins [
-    %MishkaInstaller.PluginState{
-      name: "nested_plugin_one", event: "nested_event_one", priority: 100, status: :started, depend_type: :soft,
-      depends: []
-    },
-    %MishkaInstaller.PluginState{
-      name: "nested_plugin_two", event: "nested_event_one", priority: 100, status: :started, depend_type: :hard,
-      depends: ["unnested_plugin_three"]
-    },
-    %MishkaInstaller.PluginState{
-      name: "unnested_plugin_three", event: "nested_event_one", priority: 100, status: :started, depend_type: :hard,
-      depends: ["nested_plugin_one"]
-    },
-    %MishkaInstaller.PluginState{
-      name: "unnested_plugin_four", event: "nested_event_one", priority: 1, status: :started, depend_type: :soft,
-      depends: []
-    },
-    %MishkaInstaller.PluginState{
-      name: "unnested_plugin_five", event: "nested_event_one", priority: 1, status: :started, depend_type: :hard,
-      depends: ["unnested_plugin_four"]
+    %MishkaInstaller.PluginState{name: "nested_plugin_one", event: "nested_event_one"},
+    %MishkaInstaller.PluginState{name: "nested_plugin_two", event: "nested_event_one", depend_type: :hard, depends: ["unnested_plugin_three"]},
+    %MishkaInstaller.PluginState{name: "unnested_plugin_three", event: "nested_event_one", depend_type: :hard, depends: ["nested_plugin_one"]},
+    %MishkaInstaller.PluginState{name: "unnested_plugin_four", event: "nested_event_one"},
+    %MishkaInstaller.PluginState{name: "unnested_plugin_five", event: "nested_event_one", depend_type: :hard, depends: ["unnested_plugin_four"]
     }
+  ]
+
+  @plugins2 [
+    %MishkaInstaller.PluginState{name: "one", event: "one", depend_type: :soft},
+    %MishkaInstaller.PluginState{name: "two", event: "one", depend_type: :hard, depends: ["one"]},
+    %MishkaInstaller.PluginState{name: "three", event: "one", depend_type: :hard,depends: ["two"]},
+    %MishkaInstaller.PluginState{name: "four", event: "one", depend_type: :hard, depends: ["three"]},
+    %MishkaInstaller.PluginState{name: "five", event: "one", depend_type: :hard, depends: ["four"]}
+  ]
+
+  @plugins3 [
+    %MishkaInstaller.PluginState{name: "one", event: "one", depend_type: :hard, depends: ["two"]},
+    %MishkaInstaller.PluginState{name: "two", event: "one", depend_type: :hard, depends: ["four"]},
+    %MishkaInstaller.PluginState{name: "three", event: "one", depend_type: :hard,depends: ["five"]},
+    %MishkaInstaller.PluginState{name: "four", event: "one", depend_type: :hard, depends: ["three"]},
+    %MishkaInstaller.PluginState{name: "five", event: "one", depend_type: :hard, depends: ["one"]}
   ]
 
   test "delete plugins dependencies with dependencies which do not exist", %{this_is: _this_is} do
@@ -51,6 +47,7 @@ defmodule MishkaInstallerTest.State.PluginDatabaseTest do
     |> Map.from_struct()
     |> MishkaInstaller.Plugin.create()
 
+    # it tests MishkaInstaller.Plugin.delete_plugins
     MishkaInstaller.Hook.unregister(module: "plugin_one")
     assert length(MishkaInstaller.Plugin.plugins()) == 1
   end
@@ -68,6 +65,7 @@ defmodule MishkaInstallerTest.State.PluginDatabaseTest do
       |> MishkaInstaller.PluginState.push_call()
     end)
 
+    # it tests MishkaInstaller.Plugin.delete_plugins
     MishkaInstaller.Hook.unregister(module: List.first(@depends))
     assert length(MishkaInstaller.Plugin.plugins()) == 0
   end
@@ -76,8 +74,27 @@ defmodule MishkaInstallerTest.State.PluginDatabaseTest do
     clean_db()
     Enum.map(@plugins, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
     Enum.map(@plugins, fn item -> MishkaInstaller.PluginState.push_call(item) end)
+    # it tests MishkaInstaller.Plugin.delete_plugins
     MishkaInstaller.Hook.unregister(module: "nested_plugin_one")
     assert length(MishkaInstaller.Plugin.plugins()) == 2
+  end
+
+  test "delete plugins dependencies with nested dependencies which exist, strategy two", %{this_is: _this_is} do
+    clean_db()
+    Enum.map(@plugins2, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
+    Enum.map(@plugins2, fn item -> MishkaInstaller.PluginState.push_call(item) end)
+    # it tests MishkaInstaller.Plugin.delete_plugins
+    MishkaInstaller.Hook.unregister(module: "one")
+    assert length(MishkaInstaller.Plugin.plugins()) == 0
+  end
+
+  test "delete plugins dependencies with nested dependencies which exist, strategy three", %{this_is: _this_is} do
+    clean_db()
+    Enum.map(@plugins3, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
+    Enum.map(@plugins3, fn item -> MishkaInstaller.PluginState.push_call(item) end)
+    # it tests MishkaInstaller.Plugin.delete_plugins
+    MishkaInstaller.Hook.unregister(module: "five")
+    assert length(MishkaInstaller.Plugin.plugins()) == 0
   end
 
   def clean_db() do

@@ -93,12 +93,12 @@ defmodule MishkaInstaller.Plugin do
       |> Enum.to_list()
     end)
     |> case do
+      {:ok, []} -> []
       {:ok, list} ->
         list
         |> Task.async_stream(&MishkaInstaller.Hook.unregister(module: &1.name), max_concurrency: 20)
         |> Stream.run
       error ->
-        # TODO: Shoule be stored on Activity db
         IO.inspect(error)
     end
   end

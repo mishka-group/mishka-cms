@@ -11,6 +11,12 @@ defmodule MishkaInstaller.PluginStateDynamicSupervisor do
     end
   end
 
+  def terminate_childeren() do
+    Enum.map(running_imports(), fn item ->
+      DynamicSupervisor.terminate_child(PluginStateOtpRunner, item.pid)
+    end)
+  end
+
   def running_imports(), do: registery()
 
   def running_imports(event_name) do

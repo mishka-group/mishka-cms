@@ -28,7 +28,7 @@ defmodule MishkaInstaller.MixProject do
     [
       {:mishka_database, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
-      {:mishka_developer_tools, "~> 0.0.4"}
+      {:mishka_developer_tools, "~> 0.0.5"}
     ]
   end
 end

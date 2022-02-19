@@ -48,6 +48,14 @@ defmodule MishkaInstaller.PluginState do
     end
   end
 
+  @spec push_call(MishkaInstaller.PluginState.t()) :: :ok | {:error, :push, any}
+  def push_call(%PluginState{} = element) do
+    case PSupervisor.start_job(%{id: element.name, type: element.event}) do
+      {:ok, status, pid} -> GenServer.call(pid, {:push, status, element})
+      {:error, result} ->  {:error, :push, result}
+    end
+  end
+
   @spec get([{:module, module_name()}]) :: plugin() | {:error, :get, :not_found}
   def get(module: module_name) do
     case PSupervisor.get_plugin_pid(module_name) do
@@ -84,6 +92,11 @@ defmodule MishkaInstaller.PluginState do
     end
   end
 
+  def terminate_all_pids() do
+    Enum.map(PSupervisor.running_imports(), fn item ->
+      GenServer.cast(item.pid, {:delete, :module})
+    end)
+  end
   def stop(module: module_name)  do
     case PSupervisor.get_plugin_pid(module_name) do
       {:ok, :get_plugin_pid, pid} ->
@@ -107,6 +120,14 @@ defmodule MishkaInstaller.PluginState do
   @impl true
   def handle_call({:pop, :module}, _from, %PluginState{} = state) do
     {:reply, state, state}
+  end
+
+  @impl true
+  def handle_call({:push, _status, %PluginState{} = element}, _from, %PluginState{} = _state) do
+    element
+    |> Map.from_struct()
+    |> Plugin.add_or_edit_by_name()
+    {:reply, element, element}
   end
 
   @impl true

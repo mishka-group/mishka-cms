@@ -26,6 +26,8 @@ else
     database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",
     hostname: System.get_env("DATABASE_HOST"),
     show_sensitive_data_on_connection_error: true,
+    pool_size: 20,
+    queue_target: 5000,
     pool: Ecto.Adapters.SQL.Sandbox
 end
 

@@ -14,21 +14,20 @@ defmodule MishkaInstaller.Hook do
   #### Finishing Priority Check ####
 
 
-  # TODO: check the events pass and module with a real example
   def register(event: %PluginState{} = event) do
     extra = (event.extra || []) ++ [%{operations: :hook}, %{fun: :register}]
     register_status =
       with {:ok, :ensure_event, _msg} <- ensure_event(event, :debug),
            {:error, :get_record_by_field, :plugin} <- Plugin.show_by_name("#{event.name}"),
-           {:ok, :add, :plugin, record_info} <- Plugin.create(Map.from_struct(event)) do
-            PSupervisor.start_job(%{id: record_info.name, type: record_info.event})
+           {:ok, :add, :plugin, _record_info} <- Plugin.create(Map.from_struct(event)) do
+            PluginState.push_call(event)
             {:ok, :register, :activated}
       else
         {:error, :ensure_event, %{errors: check_data}} ->
           MishkaInstaller.plugin_activity("add", Map.merge(event, %{extra: extra}) , "high", "error")
           {:error, :register, check_data}
         {:ok, :get_record_by_field, :plugin, _record_info} ->
-          PluginState.push(event)
+          PluginState.push_call(event)
           {:ok, :register, :activated}
         {:error, :add, :plugin, repo_error} ->
           MishkaInstaller.plugin_activity("add", Map.merge(event, %{extra: extra}) , "high", "error")
@@ -38,27 +37,27 @@ defmodule MishkaInstaller.Hook do
   end
 
   def register(event: %PluginState{} = event, depends: :force) do
-    PluginState.push(event)
+    PluginState.push_call(event)
     {:ok, :register, :force}
   end
 
   def start(module: module_name) do
     with {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}"),
          {:ok, :ensure_event, _msg} <- ensure_event(plugin_state_struct(record_info), :debug) do
-          PluginState.push(plugin_state_struct(record_info) |> Map.merge(%{status: :started}))
+          PluginState.push_call(plugin_state_struct(record_info) |> Map.merge(%{status: :started}))
           {:ok, :start, "The module's status was changed"}
     else
-      {:error, :get_record_by_field, :plugin} -> {:error, :register, "The module concerned doesn't exist in the database."}
-      {:error, :ensure_event, %{errors: check_data}} -> {:error, :register, check_data}
+      {:error, :get_record_by_field, :plugin} -> {:error, :start, "The module concerned doesn't exist in the database."}
+      {:error, :ensure_event, %{errors: check_data}} -> {:error, :start, check_data}
     end
   end
 
   def start(module: module_name, depends: :force) do
     with {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}") do
-      PluginState.push(plugin_state_struct(record_info) |> Map.merge(%{status: :started}))
+      PluginState.push_call(plugin_state_struct(record_info) |> Map.merge(%{status: :started}))
       {:ok, :start, :force}
     else
-      {:error, :get_record_by_field, :plugin} -> {:error, :register, "The module concerned doesn't exist in the database."}
+      {:error, :get_record_by_field, :plugin} -> {:error, :start, "The module concerned doesn't exist in the database."}
     end
   end
 
@@ -76,7 +75,7 @@ defmodule MishkaInstaller.Hook do
     with {:ok, :delete} <- PluginState.delete(module: module_name),
          {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}"),
          {:ok, :ensure_event, _msg} <- ensure_event(plugin_state_struct(record_info), :debug) do
-          PluginState.push(plugin_state_struct(record_info))
+          PluginState.push_call(plugin_state_struct(record_info))
           {:ok, :restart, "The module concerned was restarted"}
     else
       {:error, :delete, :not_found} -> {:error, :restart, "The module concerned doesn't exist in the state."}
@@ -88,7 +87,7 @@ defmodule MishkaInstaller.Hook do
   def restart(module: module_name, depends: :force) do
     with {:ok, :delete} <- PluginState.delete(module: module_name),
          {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}") do
-          PluginState.push(plugin_state_struct(record_info))
+          PluginState.push_call(plugin_state_struct(record_info))
           {:ok, :restart, "The module concerned was restarted"}
     else
       {:error, :delete, :not_found} -> {:error, :restart, "The module concerned doesn't exist in the state."}

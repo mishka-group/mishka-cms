@@ -1,12 +1,12 @@
 defmodule MishkaInstallerTest.State.PluginDatabaseTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   doctest MishkaInstaller
   setup_all _tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(MishkaDatabase.Repo)
-    Ecto.Adapters.SQL.Sandbox.mode(MishkaDatabase.Repo, :auto)
+    # Ecto.Adapters.SQL.Sandbox.mode(MishkaDatabase.Repo, :auto)
     on_exit fn ->
       :ok = Ecto.Adapters.SQL.Sandbox.checkout(MishkaDatabase.Repo)
-      Ecto.Adapters.SQL.Sandbox.mode(MishkaDatabase.Repo, :auto)
+      # Ecto.Adapters.SQL.Sandbox.mode(MishkaDatabase.Repo, :auto)
       clean_db()
       :ok
     end
@@ -47,8 +47,7 @@ defmodule MishkaInstallerTest.State.PluginDatabaseTest do
     |> Map.from_struct()
     |> MishkaInstaller.Plugin.create()
 
-    # it tests MishkaInstaller.Plugin.delete_plugins
-    MishkaInstaller.Hook.unregister(module: "plugin_one")
+    MishkaInstaller.Plugin.delete_plugins("plugin_one")
     assert length(MishkaInstaller.Plugin.plugins()) == 1
   end
 
@@ -65,35 +64,32 @@ defmodule MishkaInstallerTest.State.PluginDatabaseTest do
       |> MishkaInstaller.PluginState.push_call()
     end)
 
-    # it tests MishkaInstaller.Plugin.delete_plugins
-    MishkaInstaller.Hook.unregister(module: List.first(@depends))
+    MishkaInstaller.Plugin.delete_plugins(List.first(@depends))
     assert length(MishkaInstaller.Plugin.plugins()) == 0
+
   end
 
   test "delete plugins dependencies with nested dependencies which exist, strategy one", %{this_is: _this_is} do
     clean_db()
     Enum.map(@plugins, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
     Enum.map(@plugins, fn item -> MishkaInstaller.PluginState.push_call(item) end)
-    # it tests MishkaInstaller.Plugin.delete_plugins
-    MishkaInstaller.Hook.unregister(module: "nested_plugin_one")
-    assert length(MishkaInstaller.Plugin.plugins()) == 2
+    MishkaInstaller.Plugin.delete_plugins("nested_plugin_one")
+    assert length(MishkaInstaller.Plugin.plugins()) == 3
   end
 
   test "delete plugins dependencies with nested dependencies which exist, strategy two", %{this_is: _this_is} do
     clean_db()
     Enum.map(@plugins2, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
     Enum.map(@plugins2, fn item -> MishkaInstaller.PluginState.push_call(item) end)
-    # it tests MishkaInstaller.Plugin.delete_plugins
-    MishkaInstaller.Hook.unregister(module: "one")
-    assert length(MishkaInstaller.Plugin.plugins()) == 0
+    MishkaInstaller.Plugin.delete_plugins("one")
+    assert length(MishkaInstaller.Plugin.plugins()) == 1
   end
 
   test "delete plugins dependencies with nested dependencies which exist, strategy three", %{this_is: _this_is} do
     clean_db()
     Enum.map(@plugins3, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
     Enum.map(@plugins3, fn item -> MishkaInstaller.PluginState.push_call(item) end)
-    # it tests MishkaInstaller.Plugin.delete_plugins
-    MishkaInstaller.Hook.unregister(module: "five")
+    MishkaInstaller.Plugin.delete_plugins("five")
     assert length(MishkaInstaller.Plugin.plugins()) == 0
   end
 

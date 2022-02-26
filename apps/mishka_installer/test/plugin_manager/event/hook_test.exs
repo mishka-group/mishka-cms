@@ -53,7 +53,6 @@ defmodule MishkaInstallerTest.Event.HookTest do
     clean_db()
     # It is just not enough to set hard as depend_type, you should have some deps in depends list more than 0
     # I think the developer maybe create a mistake, so it let him start his app instead of stopping when we have no depends
-    # TODO: we should cover `ensure_event` module after preparing a way to import module of a plugin
     {:error, :register, _check_data} = assert Hook.register(event: Map.merge(@new_soft_plugin, %{depend_type: :hard, depends: ["test1", "test2"]}))
     {:error, :register, _check_data} = assert Hook.register(event: Map.merge(@new_soft_plugin, %{name: ""}))
   end
@@ -63,7 +62,6 @@ defmodule MishkaInstallerTest.Event.HookTest do
     clean_db()
     Hook.register(event: @new_soft_plugin)
     {:ok, :start, "The module's status was changed"} = assert Hook.start(module: @new_soft_plugin.name)
-    # TODO: we should cover `ensure_event` module after preparing a way to import module of a plugin
     Hook.register(event: Map.merge(@new_soft_plugin, %{name: "ensure_event_plugin", depend_type: :hard, depends: ["test1", "test2"]}))
     {:error, :start, _msg} = assert Hook.start(module: "ensure_event_plugin")
   end
@@ -72,13 +70,21 @@ defmodule MishkaInstallerTest.Event.HookTest do
     clean_db()
     Hook.register(event: @new_soft_plugin)
     {:ok, :start, "The module's status was changed"} = assert Hook.start(module: @new_soft_plugin.name)
-    # TODO: we should cover `ensure_event` module after preparing a way to import module of a plugin
     {:ok, :restart, _msg} = assert Hook.restart(module: @new_soft_plugin.name)
     Map.merge(@new_soft_plugin, %{name: "ensure_event_plugin", depend_type: :hard, depends: ["test1", "test2"]})
     |> Map.from_struct()
     |> MishkaInstaller.Plugin.create()
     {:error, :restart, _msg} = assert Hook.restart(module: "ensure_event_plugin")
     {:error, :restart, _msg} = assert Hook.restart(module: "none_plugin")
+  end
+
+  test "restart a registerd plugin force type", %{this_is: _this_is} do
+    clean_db()
+    Hook.register(event: @new_soft_plugin)
+    {:ok, :start, "The module's status was changed"} = assert Hook.start(module: @new_soft_plugin.name)
+    Map.merge(@new_soft_plugin, %{name: "ensure_event_plugin", depend_type: :hard, depends: ["test1", "test2"]})
+    |> Map.from_struct()
+    |> MishkaInstaller.Plugin.create()
     {:ok, :restart, _msg} = assert Hook.restart(module: @new_soft_plugin.name, depends: :force)
     {:error, :restart, _msg} = assert Hook.restart(module: "none_plugin", depends: :force)
   end
@@ -111,7 +117,6 @@ defmodule MishkaInstallerTest.Event.HookTest do
     end)
 
     # it tests MishkaInstaller.Plugin.delete_plugins
-    # TODO: we should cover `ensure_event` module after preparing a way to import module of a plugin
     Hook.unregister(module: List.first(@depends))
     assert length(MishkaInstaller.Plugin.plugins()) == 0
 
@@ -122,7 +127,6 @@ defmodule MishkaInstallerTest.Event.HookTest do
     Enum.map(@plugins, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
     Enum.map(@plugins, fn item -> MishkaInstaller.PluginState.push_call(item) end)
     # it tests MishkaInstaller.Plugin.delete_plugins
-    # TODO: we should cover `ensure_event` module after preparing a way to import module of a plugin
     Hook.unregister(module: "nested_plugin_one")
     assert length(MishkaInstaller.Plugin.plugins()) == 2
   end
@@ -132,7 +136,6 @@ defmodule MishkaInstallerTest.Event.HookTest do
     Enum.map(@plugins2, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
     Enum.map(@plugins2, fn item -> MishkaInstaller.PluginState.push_call(item) end)
     # it tests MishkaInstaller.Plugin.delete_plugins
-    # TODO: we should cover `ensure_event` module after preparing a way to import module of a plugin
     Hook.unregister(module: "one")
     assert length(MishkaInstaller.Plugin.plugins()) == 0
   end
@@ -142,9 +145,17 @@ defmodule MishkaInstallerTest.Event.HookTest do
     Enum.map(@plugins3, fn x -> Map.from_struct(x) |> MishkaInstaller.Plugin.create() end)
     Enum.map(@plugins3, fn item -> MishkaInstaller.PluginState.push_call(item) end)
     # it tests MishkaInstaller.Plugin.delete_plugins
-    # TODO: we should cover `ensure_event` module after preparing a way to import module of a plugin
     Hook.unregister(module: "five")
     assert length(MishkaInstaller.Plugin.plugins()) == 0
+  end
+
+  test "ensure_event?" do
+    Hook.register(event: @new_soft_plugin |> Map.merge(%{name: "MishkaInstaller.PluginState"}))
+    test_plug =
+      %MishkaInstaller.PluginState{name: "MishkaInstaller.Hook", event: "event_one", depend_type: :hard, depends: ["MishkaInstaller.PluginState"]}
+
+    {:ok, :ensure_event, _msg} = assert Hook.ensure_event(test_plug, :debug)
+    true = assert Hook.ensure_event?(test_plug)
   end
 
   def clean_db() do

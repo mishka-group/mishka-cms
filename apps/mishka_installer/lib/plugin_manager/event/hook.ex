@@ -170,8 +170,8 @@ defmodule MishkaInstaller.Hook do
   end
 
   @spec ensure_event?(PluginState.t()) :: boolean
-  def ensure_event?(%PluginState{depend_type: :hard, depends: depends} = _event) do
-    check_data = check_dependencies(depends)
+  def ensure_event?(%PluginState{depend_type: :hard, depends: depends} = event) do
+    check_data = check_dependencies(depends, event.name)
     Enum.any?(check_data, fn {status, _error_atom, _event, _msg} -> status == :error end)
     |> case do
       true ->  false
@@ -183,8 +183,8 @@ defmodule MishkaInstaller.Hook do
 
   @spec ensure_event(PluginState.t(), :debug) ::
           {:error, :ensure_event, %{errors: list}} | {:ok, :ensure_event, String.t()}
-  def ensure_event(%PluginState{depend_type: :hard, depends: depends} = _event, :debug) when depends != [] do
-    check_data = check_dependencies(depends)
+  def ensure_event(%PluginState{depend_type: :hard, depends: depends} = event, :debug) when depends != [] do
+    check_data = check_dependencies(depends, event.name)
     Enum.any?(check_data, fn {status, _error_atom, _event, _msg} -> status == :error end)
     |> case do
       true ->  {:error, :ensure_event, %{errors: check_data}}
@@ -195,9 +195,9 @@ defmodule MishkaInstaller.Hook do
   def ensure_event(%PluginState{depend_type: :hard} = _event, :debug), do: {:ok, :ensure_event, "The modules concerned are activated"}
   def ensure_event(%PluginState{} = _event, :debug), do: {:ok, :ensure_event, "The modules concerned are activated"}
 
-  defp check_dependencies(depends) do
+  defp check_dependencies(depends, event_name) do
     Enum.map(depends, fn evn ->
-      with {:ensure_loaded, true} <- {:ensure_loaded, Code.ensure_loaded?(String.to_atom(evn))},
+      with {:ensure_loaded, true} <- {:ensure_loaded, Code.ensure_loaded?(String.to_atom("Elixir.#{evn}"))},
            plugin_state <- PluginState.get(module: evn),
            {:plugin_state?, true, _state} <- {:plugin_state?, is_struct(plugin_state), plugin_state},
            {:activated_plugin, true, _state} <- {:activated_plugin, Map.get(plugin_state, :status) == :started, plugin_state} do
@@ -209,6 +209,14 @@ defmodule MishkaInstaller.Hook do
         {:activated_plugin, false, _state} -> {:error, :activated_plugin, evn, "The event concerned is not activated."}
       end
     end)
+    ++ [string_ensure_loaded(event_name)]
+  end
+
+  defp string_ensure_loaded(event_name) do
+    case Code.ensure_loaded?(String.to_atom("Elixir.#{event_name}")) do
+      true -> {:ok, :ensure_event, event_name, "The module concerned is activated"}
+      false -> {:error, :ensure_loaded, event_name, "The module concerned doesn't exist."}
+    end
   end
 
   defp plugin_state_struct(output) do

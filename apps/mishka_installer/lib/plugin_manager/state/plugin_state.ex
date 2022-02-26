@@ -51,7 +51,9 @@ defmodule MishkaInstaller.PluginState do
   @spec push_call(MishkaInstaller.PluginState.t()) :: :ok | {:error, :push, any}
   def push_call(%PluginState{} = element) do
     case PSupervisor.start_job(%{id: element.name, type: element.event}) do
-      {:ok, status, pid} -> GenServer.call(pid, {:push, status, element})
+      {:ok, status, pid} ->
+        if Mix.env() == :test, do: Logger.warn("Plugin State of #{element.name} is being pushed")
+        GenServer.call(pid, {:push, status, element})
       {:error, result} ->  {:error, :push, result}
     end
   end
@@ -171,10 +173,12 @@ defmodule MishkaInstaller.PluginState do
   @impl true
   def terminate(reason, %PluginState{} = state) do
     MishkaInstaller.plugin_activity("read", state, "high", "throw")
-    Logger.warn(
-      "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,
-      Reason of Terminate #{inspect(reason)}"
+    if reason != :normal do
+      Logger.warn(
+        "#{Map.get(state, :name)} from #{Map.get(state, :event)} event of Plugins manager was Terminated,
+        Reason of Terminate #{inspect(reason)}"
       )
+    end
   end
 
   defp via(id, value) do

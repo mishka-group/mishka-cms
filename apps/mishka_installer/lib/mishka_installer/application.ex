@@ -13,9 +13,13 @@ defmodule MishkaInstaller.Application do
     ]
     children = [
       {Registry, keys: :unique, name: PluginStateRegistry},
-      {DynamicSupervisor, plugin_runner_config}
+      {DynamicSupervisor, plugin_runner_config},
+      %{
+        id: MsihkaSendingEmailPlugin.SendingEmail,
+        start: {MsihkaSendingEmailPlugin.SendingEmail, :start_link, [[]]}
+      }
     ]
-
+    # MsihkaSendingEmailPlugin.SendingEmail.init([])
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: MishkaInstaller.Supervisor]

@@ -61,7 +61,7 @@ defmodule MishkaInstallerTest.Event.HookTest do
   test "start a registerd plugin", %{this_is: _this_is} do
     clean_db()
     Hook.register(event: @new_soft_plugin)
-    {:ok, :start, "The module's status was changed"} = assert Hook.start(module: @new_soft_plugin.name)
+    {:ok, :start, _msg} = assert Hook.start(module: @new_soft_plugin.name)
     Hook.register(event: Map.merge(@new_soft_plugin, %{name: "ensure_event_plugin", depend_type: :hard, depends: ["test1", "test2"]}))
     {:error, :start, _msg} = assert Hook.start(module: "ensure_event_plugin")
   end
@@ -69,7 +69,7 @@ defmodule MishkaInstallerTest.Event.HookTest do
   test "restart a registerd plugin", %{this_is: _this_is} do
     clean_db()
     Hook.register(event: @new_soft_plugin)
-    {:ok, :start, "The module's status was changed"} = assert Hook.start(module: @new_soft_plugin.name)
+    {:ok, :start, _msg} = assert Hook.start(module: @new_soft_plugin.name)
     {:ok, :restart, _msg} = assert Hook.restart(module: @new_soft_plugin.name)
     Map.merge(@new_soft_plugin, %{name: "ensure_event_plugin", depend_type: :hard, depends: ["test1", "test2"]})
     |> Map.from_struct()
@@ -81,7 +81,7 @@ defmodule MishkaInstallerTest.Event.HookTest do
   test "restart a registerd plugin force type", %{this_is: _this_is} do
     clean_db()
     Hook.register(event: @new_soft_plugin)
-    {:ok, :start, "The module's status was changed"} = assert Hook.start(module: @new_soft_plugin.name)
+    {:ok, :start, _msg} = assert Hook.start(module: @new_soft_plugin.name)
     Map.merge(@new_soft_plugin, %{name: "ensure_event_plugin", depend_type: :hard, depends: ["test1", "test2"]})
     |> Map.from_struct()
     |> MishkaInstaller.Plugin.create()

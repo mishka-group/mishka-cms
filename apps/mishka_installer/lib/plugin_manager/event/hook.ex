@@ -26,8 +26,8 @@ defmodule MishkaInstaller.Hook do
         {:error, :ensure_event, %{errors: check_data}} ->
           MishkaInstaller.plugin_activity("add", Map.merge(event, %{extra: extra}) , "high", "error")
           {:error, :register, check_data}
-        {:ok, :get_record_by_field, :plugin, _record_info} ->
-          PluginState.push_call(event)
+        {:ok, :get_record_by_field, :plugin, record_info} ->
+          PluginState.push_call(plugin_state_struct(record_info))
           {:ok, :register, :activated}
         {:error, :add, :plugin, repo_error} ->
           MishkaInstaller.plugin_activity("add", Map.merge(event, %{extra: extra}) , "high", "error")

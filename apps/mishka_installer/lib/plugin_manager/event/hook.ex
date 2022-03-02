@@ -13,7 +13,6 @@ defmodule MishkaInstaller.Hook do
   # Hook just needs to load :started status
   #### Finishing Priority Check ####
 
-
   def register(event: %PluginState{} = event) do
     extra = (event.extra || []) ++ [%{operations: :hook}, %{fun: :register}]
     register_status =
@@ -229,5 +228,40 @@ defmodule MishkaInstaller.Hook do
       depends: Map.get(output, :depends) || [],
       extra: Map.get(output, :extra) || []
     }
+  end
+
+  defmacro __using__(opts) do
+    quote(bind_quoted: [opts: opts]) do
+      import MishkaInstaller.Hook
+      use GenServer, restart: :transient
+      require Logger
+      alias MishkaInstaller.{PluginState, Hook}
+      module_selected = Keyword.get(opts, :module)
+      initial_entry = Keyword.get(opts, :initial)
+      behaviour = Keyword.get(opts, :behaviour)
+      event = Keyword.get(opts, :event)
+
+      @ref event
+      @behaviour behaviour
+
+      # Start registering with Genserver and set this in application file of MishkaInstaller
+      def start_link(_args) do
+        GenServer.start_link(unquote(module_selected), %{id: "#{unquote(module_selected)}"}, name: unquote(module_selected))
+      end
+
+      def init(state) do
+        {:ok, state, 300}
+      end
+
+      # This part helps us to wait for database and completing PubSub either
+      def handle_info(:timeout, state) do
+        if is_nil(Process.whereis(MishkaHtml.PubSub)) do
+          {:noreply, state, 100}
+        else
+          unquote(module_selected).initial(unquote(initial_entry))
+          {:noreply, state}
+        end
+      end
+    end
   end
 end

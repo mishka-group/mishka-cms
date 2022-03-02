@@ -19,7 +19,6 @@ defmodule MishkaInstaller.Application do
         start: {MsihkaSendingEmailPlugin.SendingEmail, :start_link, [[]]}
       }
     ]
-    # MsihkaSendingEmailPlugin.SendingEmail.init([])
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: MishkaInstaller.Supervisor]

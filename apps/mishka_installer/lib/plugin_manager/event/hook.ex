@@ -159,11 +159,45 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&unregister(module: &1.name))
   end
 
-  def call(event: _event) do
-    {:ok, :call}
+  def call(event: event_name, state: state, operation: :no_return) do
+    call(event: event_name, state: state)
+  after
+    state
   end
 
-  # TODO: validate each module output and allowed_input
+  def call(event: event_name, state: state) do
+    PluginState.get_all(event: event_name)
+    |> sorted_plugins()
+    |> run_plugin_state({:reply, state})
+  rescue
+    _e -> state
+  end
+
+  defp run_plugin_state([], {:reply, state}), do: state
+
+  defp run_plugin_state(_plugins, {:reply, :halt, state}), do: state
+
+  defp run_plugin_state([h | t], {:reply, state}) do
+    new_state = apply(String.to_atom("Elixir.#{h.name}"), :call, [state])
+    run_plugin_state(t, new_state)
+  end
+
+  defp sorted_plugins(plugins) do
+    plugins
+    |> Enum.map(fn event ->
+      case ensure_event(event, :debug) do
+        {:error, :ensure_event, %{errors: _check_data}} ->
+        extra = (event.extra) ++ [%{operations: :hook}, %{fun: :call}]
+        MishkaInstaller.plugin_activity("read", Map.merge(event, %{extra: extra}) , "high", "error")
+        []
+        {:ok, :ensure_event, _msg} ->
+          %{name: event.name, priority: event.priority, status: event.status}
+      end
+    end)
+    |> Enum.filter(& &1 != [] and &1.status == :started)
+    |> Enum.sort_by(fn item -> {item.priority, item.name} end)
+  end
+
   def check_priority_of_events_registerd() do
     {:ok, :check_priority_of_events_registerd}
   end

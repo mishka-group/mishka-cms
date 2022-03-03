@@ -13,16 +13,14 @@ defmodule MishkaInstaller.Reference.OnUserAfterLogin do
   @type endpoint() :: atom() # API, HTML
   @type status() :: :started | :stopped | :restarted
   @type ref() :: :on_user_after_login # Name of this plugin
-  @type new_state() :: %{user_info: user_info(), ip: ip(), endpoint: endpoint(), status: status()}
-  @type reason() :: map()
+  @type reason() :: map() | String.t()
   @type registerd_info() :: MishkaInstaller.PluginState.t() # information about this plugin on state which was saved
+  @type state() :: %__MODULE__{user_info: user_info(), ip: ip(), endpoint: endpoint(), status: status()}
+  @type t :: state()
 
-  @type call() :: %__MODULE__{user_info: user_info(), ip: ip(), endpoint: endpoint(), status: status()}
-  @type t :: call()
-
-  @callback initial(list()) :: {:ok, ref(), new_state} | {:error, ref(), reason()}
-  @callback call(call()) :: {:reply, new_state()} | {:noreply, :halt}  # Developer should decide what
-  @callback stop(registerd_info()) :: {:ok, ref(), new_state} | {:error, ref(), reason()}
-  @callback restart(registerd_info()) :: {:ok, ref(), new_state} | {:error, ref(), reason()}
+  @callback initial(list()) :: {:ok, ref(), state()} | {:error, ref(), reason()}
+  @callback call(state()) :: {:reply, state()} | {:reply, :halt, state()}  # Developer should decide what
+  @callback stop(registerd_info()) :: {:ok, ref(), registerd_info()} | {:error, ref(), reason()}
+  @callback restart(registerd_info()) :: {:ok, ref(), registerd_info()} | {:error, ref(), reason()}
   @optional_callbacks stop: 1, restart: 1
 end

@@ -1,8 +1,9 @@
 defmodule MsihkaSendingEmailPlugin.SendingEmail do
 
+  alias MishkaInstaller.Reference.OnUserAfterLogin
   use MishkaInstaller.Hook,
       module: __MODULE__,
-      behaviour: MishkaInstaller.Reference.OnUserAfterLogin,
+      behaviour: OnUserAfterLogin,
       event: :on_user_after_login,
       initial: []
 
@@ -13,24 +14,21 @@ defmodule MsihkaSendingEmailPlugin.SendingEmail do
     {:ok, @ref, args}
   end
 
-  def call(%MishkaInstaller.Reference.OnUserAfterLogin{} = _data) do
-    # TODO: this Call function should be used with hook
-    # TODO: should we have a halt status to terminate all the programes?
-    # TODO: send an email without changing state
-    # TODO: store a log for activities
-    # {:reply, new_state} | {:noreply, :halt}
+  def call(%OnUserAfterLogin{} = state) do
+    IO.inspect(state)
+    {:reply, state}
   end
 
   def stop(%PluginState{} = registerd_info) do
     case Hook.stop(module: registerd_info.name) do
-      {:ok, :stop, msg} -> {:ok, @ref, msg}
+      {:ok, :stop, _msg} -> {:ok, @ref, registerd_info}
       {:error, :stop, msg} -> {:error, @ref, msg}
     end
   end
 
   def restart(%PluginState{} = registerd_info) do
     case Hook.restart(module: registerd_info.name) do
-      {:ok, :restart, msg} -> {:ok, @ref, msg}
+      {:ok, :restart, _msg} -> {:ok, @ref, registerd_info}
       {:error, :restart, msg} -> {:error, @ref, msg}
     end
   end

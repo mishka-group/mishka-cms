@@ -11,7 +11,6 @@ defmodule MishkaInstaller.Reference.OnUserAuthorisationFailure do
   @type error() :: map() | struct() | tuple()
   @type ip() :: String.t() # User's IP from both side endpoints connections
   @type endpoint() :: atom() # API, HTML
-  @type module_name() :: String.t()
   @type operation() :: atom()
   @type ref() :: :on_user_authorisation_failure # Name of this event
   @type reason() :: map() | String.t() # output of state for this event

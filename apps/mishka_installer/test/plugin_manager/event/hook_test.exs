@@ -149,6 +149,17 @@ defmodule MishkaInstallerTest.Event.HookTest do
     assert length(MishkaInstaller.Plugin.plugins()) == 0
   end
 
+  test "call event and plugins with halt response" do
+    sample_of_login_state = %MishkaInstaller.Reference.OnUserAfterLogin{
+      user_info: %{name: "shahryar"},
+      ip: "127.0.1.1",
+      endpoint: :admin,
+      status: :started
+    }
+    assert Hook.call(event: "on_user_after_login", state: sample_of_login_state) == Map.merge(sample_of_login_state, %{ip: "129.0.1.1"})
+    assert Hook.call(event: "return_first_state", state: sample_of_login_state) == sample_of_login_state
+  end
+
   test "ensure_event?" do
     Hook.register(event: @new_soft_plugin |> Map.merge(%{name: "MishkaInstaller.PluginState"}))
     test_plug =

@@ -1,5 +1,5 @@
-defmodule MsihkaSendingEmailPlugin.SendingEmail do
-
+defmodule MsihkaSendingEmailPlugin.SendingSMS do
+  # This module was just made for testing
   alias MishkaInstaller.Reference.OnUserAfterLogin
   use MishkaInstaller.Hook,
       module: __MODULE__,
@@ -8,15 +8,15 @@ defmodule MsihkaSendingEmailPlugin.SendingEmail do
       initial: []
 
   def initial(args) do
-    Logger.info("SendingEmail plugin was started")
-    event = %PluginState{name: "MsihkaSendingEmailPlugin.SendingEmail", event: Atom.to_string(@ref), priority: 100}
+    Logger.info("SendingSMS plugin was started")
+    event = %PluginState{name: "MsihkaSendingEmailPlugin.SendingSMS", event: Atom.to_string(@ref), priority: 1}
     Hook.register(event: event)
     {:ok, @ref, args}
   end
 
   def call(%OnUserAfterLogin{} = state) do
-    IO.inspect(state)
-    {:reply, state}
+    new_state = Map.merge(state, %{ip: "128.0.1.1"})
+    {:reply, new_state}
   end
 
   def stop(%PluginState{} = registerd_info) do

@@ -1,7 +1,7 @@
 defmodule MishkaInstaller.Reference.OnUserAfterDeleteRole do
   @moduledoc """
     This event is triggered whenever a user's role is successfully deleted. if there is any active module in this section on state,
-    this module sends a request as a Task tool to the developer call function that includes `user_info()`, `ip()`, `endpoint()`.
+    this module sends a request as a Task tool to the developer call function that includes `user_info()`, `ip()`, `endpoint()`, `modifier_user()`.
     It should be noted; This process does not interfere with the main operation of the system.
     It is just a sender and is active for both side endpoints.
   """

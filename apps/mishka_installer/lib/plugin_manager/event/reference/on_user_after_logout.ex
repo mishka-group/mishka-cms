@@ -1,6 +1,6 @@
-defmodule MishkaInstaller.Reference.OnUserAfterLogin do
+defmodule MishkaInstaller.Reference.OnUserAfterLogout do
   @moduledoc """
-    This event is triggered whenever a user is successfully logged in. if there is any active module in this section on state,
+    This event is triggered whenever a user is successfully logged out. if there is any active module in this section on state,
     this module sends a request as a Task tool to the developer call function that includes `user_info()`, `ip()`, `endpoint()`.
     It should be noted; This process does not interfere with the main operation of the system.
     It is just a sender and is active for both side endpoints.
@@ -11,7 +11,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterLogin do
   @type user_info() :: map()
   @type ip() :: String.t() # User's IP from both side endpoints connections
   @type endpoint() :: atom() # API, HTML
-  @type ref() :: :on_user_after_login # Name of this event
+  @type ref() :: :on_user_after_logout # Name of this event
   @type reason() :: map() | String.t() # output of state for this event
   @type registerd_info() :: MishkaInstaller.PluginState.t() # information about this plugin on state which was saved
   @type state() :: %__MODULE__{user_info: user_info(), ip: ip(), endpoint: endpoint()}

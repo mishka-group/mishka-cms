@@ -23,7 +23,6 @@ defmodule MishkaInstaller.Event do
       %Event{name: :on_content_change_state, section: :mishka_content, reference: Ref.OnContentChangeState},
       %Event{name: :on_content_search, section: :mishka_content, reference: Ref.OnContentSearch},
       %Event{name: :on_content_search_areas, section: :mishka_content, reference: Ref.OnContentSearchAreas},
-      %Event{name: :on_user_before_data_validation, section: :mishka_content, reference: Ref.OnUserBeforeDataValidation},
       # Captcha
       %Event{name: :on_init, section: :mishka_user, reference: Ref.OnInit},
       %Event{name: :on_display, section: :mishka_user, reference: Ref.OnDisplay},
@@ -34,15 +33,12 @@ defmodule MishkaInstaller.Event do
       %Event{name: :on_user_authorisation_failure, section: :mishka_user, reference: Ref.OnUserAuthorisationFailure},
       %Event{name: :on_user_before_save, section: :mishka_user, reference: Ref.OnUserBeforeSave},
       %Event{name: :on_user_after_save, section: :mishka_user, reference: Ref.OnUserAfterSave},
-      %Event{name: :on_user_before_delete, section: :mishka_user, reference: Ref.OnUserBeforeDelete},
       %Event{name: :on_user_after_delete, section: :mishka_user, reference: Ref.OnUserAfterDelete},
       %Event{name: :on_user_login, section: :mishka_user, reference: Ref.OnUserLogin},
       %Event{name: :on_user_login_failure, section: :mishka_user, reference: Ref.OnUserLoginFailure},
       %Event{name: :on_user_after_login, section: :mishka_user, reference: Ref.OnUserAfterLogin},
       %Event{name: :on_user_after_logout, section: :mishka_user, reference: Ref.OnUserAfterLogout},
-      %Event{name: :on_user_before_save_role, section: :mishka_user, reference: Ref.OnUserBeforeSaveRole},
       %Event{name: :on_user_after_save_role, section: :mishka_user, reference: Ref.OnUserAfterSaveRole},
-      %Event{name: :on_user_before_delete_role, section: :mishka_user, reference: Ref.OnUserBeforeDeleteRole},
       %Event{name: :on_user_after_delete_role, section: :mishka_user, reference: Ref.OnUserAfterDeleteRole}
     ]
   end

@@ -1,11 +1,11 @@
 defmodule MishkaInstaller.Reference.OnUserAuthorisationFailure do
   @moduledoc """
-    This event is triggered whenever a user is unsuccessfully logged in. if there is any active module in this section on state,
+    This event is triggered whenever a user gets an error for authorisation. if there is any active module in this section on state,
     this module sends a request as a Task tool to the developer call function that includes `entries()`, `ip()`, `endpoint()`.
     It should be noted; This process does not interfere with the main operation of the system.
     It is just a sender and is active for both side endpoints.
   """
-  defstruct [:user_info, :ip, :endpoint, :error, :module, :operation, :entries]
+  defstruct [:ip, :endpoint, :error, :module, :operation, :entries]
 
   @type entries() :: map() | struct() | tuple()
   @type error() :: map() | struct() | tuple()

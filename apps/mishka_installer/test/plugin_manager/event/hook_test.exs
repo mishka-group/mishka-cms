@@ -153,8 +153,7 @@ defmodule MishkaInstallerTest.Event.HookTest do
     sample_of_login_state = %MishkaInstaller.Reference.OnUserAfterLogin{
       user_info: %{name: "shahryar"},
       ip: "127.0.1.1",
-      endpoint: :admin,
-      status: :started
+      endpoint: :admin
     }
     assert Hook.call(event: "on_user_after_login", state: sample_of_login_state) == Map.merge(sample_of_login_state, %{ip: "129.0.1.1"})
     assert Hook.call(event: "return_first_state", state: sample_of_login_state) == sample_of_login_state

@@ -7,7 +7,6 @@ defmodule MishkaInstaller.Reference.OnUserAfterLogout do
   """
   defstruct [:user_info, :ip, :endpoint]
 
-  @type user_id() :: Ecto.UUID.t
   @type user_info() :: map()
   @type ip() :: String.t() # User's IP from both side endpoints connections
   @type endpoint() :: atom() # API, HTML

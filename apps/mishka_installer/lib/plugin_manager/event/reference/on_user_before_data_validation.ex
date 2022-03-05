@@ -1,3 +1,0 @@
-defmodule MishkaInstaller.Reference.OnUserBeforeDataValidation do
-
-end

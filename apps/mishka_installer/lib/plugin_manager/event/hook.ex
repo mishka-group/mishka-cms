@@ -2,17 +2,12 @@ defmodule MishkaInstaller.Hook do
   alias MishkaInstaller.PluginState
   alias MishkaInstaller.PluginStateDynamicSupervisor, as: PSupervisor
   alias MishkaInstaller.Plugin
-  #### Starting Priority Check ####
-  # if a package has a hight priority like 100 and there are 3 more package
-  # if there is no `depends` for this packages, Then start with the lowest priority, and pass theire `{:reply, new_state}` to higher
-  # than before.
-  # but if `depends` for each of thease packages exists, then check if the specific package is loaded or not! if not `{:noreply, :halt}`
-  # if yes use `{:reply, new_state}`
-  # it should be noted, any package that wants to be stopped in this way just loads `{:noreply, :halt}`, after doing this, the higher
-  # priority plugins are not loaded or run
-  # Hook just needs to load :started status
-  #### Finishing Priority Check ####
 
+  @type event() :: String.t()
+  @type plugin() :: event()
+
+  @spec register([{:depends, :force} | {:event, MishkaInstaller.PluginState.t()}]) ::
+          {:error, :register, any} | {:ok, :register, :activated | :force}
   def register(event: %PluginState{} = event) do
     extra = (event.extra || []) ++ [%{operations: :hook}, %{fun: :register}]
     register_status =
@@ -40,6 +35,8 @@ defmodule MishkaInstaller.Hook do
     {:ok, :register, :force}
   end
 
+  @spec start([{:depends, :force} | {:event, event()} | {:module, plugin()}]) ::
+          list | {:error, :start, any()} | {:ok, :start, :force | String.t()}
   def start(module: module_name) do
     with {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}"),
          {:ok, :ensure_event, _msg} <- ensure_event(plugin_state_struct(record_info), :debug) do
@@ -70,6 +67,8 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&start(module: &1.name, depends: :force))
   end
 
+  @spec restart([{:depends, :force} | {:event, event()} | {:module, plugin()}]) ::
+          list | {:error, :restart, any()} | {:ok, :restart, String.t()}
   def restart(module: module_name) do
     with {:ok, :delete} <- PluginState.delete(module: module_name),
          {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name("#{module_name}"),
@@ -114,6 +113,8 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&restart(module: &1.name))
   end
 
+  @spec stop([{:event, event()} | {:module, plugin()}]) ::
+          list | {:error, :stop, String.t()} | {:ok, :stop, String.t()}
   def stop(module: module_name) do
     case PluginState.stop(module: module_name) do
       {:ok, :stop} -> {:ok, :stop, "The module concerned was stopped"}
@@ -126,6 +127,8 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&stop(module: &1.id))
   end
 
+  @spec delete([{:event, event()} | {:module, plugin()}]) ::
+          list | {:error, :delete, String.t()} | {:ok, :delete, String.t()}
   def delete(module: module_name) do
     case PluginState.delete(module: module_name) do
       {:ok, :delete} -> {:ok, :delete, "The module's state (#{module_name}) was deleted"}
@@ -138,6 +141,8 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&delete(module: &1.id))
   end
 
+  @spec unregister([{:event, event()} | {:module, plugin()}]) ::
+          list | {:error, :unregister, any} | {:ok, :unregister, Stream.timer()}
   def unregister(module: module_name) do
     with {:ok, :delete, _msg} <- delete(module: module_name),
          {:ok, :get_record_by_field, :plugin, record_info} <- Plugin.show_by_name(module_name),
@@ -159,6 +164,7 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(&unregister(module: &1.name))
   end
 
+  @spec call([{:event, event()} | {:operation, :no_return} | {:state, struct()}]) :: any
   def call(event: event_name, state: state, operation: :no_return) do
     call(event: event_name, state: state)
   after
@@ -187,19 +193,15 @@ defmodule MishkaInstaller.Hook do
     |> Enum.map(fn event ->
       case ensure_event(event, :debug) do
         {:error, :ensure_event, %{errors: _check_data}} ->
-        extra = (event.extra) ++ [%{operations: :hook}, %{fun: :call}]
-        MishkaInstaller.plugin_activity("read", Map.merge(event, %{extra: extra}) , "high", "error")
-        []
+          extra = (event.extra) ++ [%{operations: :hook}, %{fun: :call}]
+          MishkaInstaller.plugin_activity("read", Map.merge(event, %{extra: extra}) , "high", "error")
+          []
         {:ok, :ensure_event, _msg} ->
           %{name: event.name, priority: event.priority, status: event.status}
       end
     end)
     |> Enum.filter(& &1 != [] and &1.status == :started)
     |> Enum.sort_by(fn item -> {item.priority, item.name} end)
-  end
-
-  def check_priority_of_events_registerd() do
-    {:ok, :check_priority_of_events_registerd}
   end
 
   @spec ensure_event?(PluginState.t()) :: boolean

@@ -24,7 +24,7 @@ defmodule MishkaHtml.MixProject do
   def application do
     [
       mod: {MishkaHtml.Application, []},
-      extra_applications: [:logger, :runtime_tools, :os_mon, :mishka_user, :mishka_content, :mishka_translator]
+      extra_applications: [:logger, :runtime_tools, :os_mon, :mishka_user, :mishka_content, :mishka_translator, :mishka_installer]
     ]
   end
 
@@ -55,7 +55,8 @@ defmodule MishkaHtml.MixProject do
       {:mishka_translator, in_umbrella: true},
       {:esbuild, "~> 0.3.4", runtime: Mix.env() == :dev},
       {:sobelow, "~> 0.11.1", only: :dev},
-      {:jalaali, "~> 0.4.0"}
+      {:jalaali, "~> 0.4.0"},
+      {:mishka_installer, in_umbrella: true}
     ]
   end
 

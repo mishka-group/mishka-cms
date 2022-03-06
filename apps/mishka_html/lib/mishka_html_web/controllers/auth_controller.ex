@@ -14,13 +14,8 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, user_info.status == :inactive},
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do
-
-        MishkaUser.Acl.AclManagement.save(%{
-          id: user_info.id,
-          user_permission: MishkaUser.User.permissions(user_info.id),
-          created: System.system_time(:second)},
-          user_info.id
-        )
+        state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :html, ip: "127.0.1.1", type: :email, user_info: user_info}
+        MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
 
         MishkaContent.General.Activity.create_activity_by_task(%{
           type: "section",
@@ -90,6 +85,10 @@ defmodule MishkaHtmlWeb.AuthController do
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end
 
+    state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: "127.0.1.1", user_id: get_session(conn, :user_id)}
+    hook = MishkaInstaller.Hook.call(event: "on_user_after_logout", state: state)
+
+    # TODO: should be imported in a plugin
     MishkaContent.General.Activity.create_activity_by_task(%{
       type: "section",
       section: "user",
@@ -97,10 +96,10 @@ defmodule MishkaHtmlWeb.AuthController do
       action: "auth",
       priority: "high",
       status: "info",
-      user_id: get_session(conn, :user_id)
+      user_id: get_session(hook.conn, :user_id)
     }, %{user_action: "log_out", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
-    conn
+    hook.conn
     |> configure_session(drop: true)
     |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
   end

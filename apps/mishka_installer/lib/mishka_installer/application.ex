@@ -12,7 +12,7 @@ defmodule MishkaInstaller.Application do
       name: PluginStateOtpRunner
     ]
 
-    test_plugin = if Mix.env in [:test, :dev] do
+    test_plugin = if Mix.env in [:test] do
       [
         %{id: SendingEmail, start: {SendingEmail, :start_link, [[]]}},
         %{id: SendingSMS, start: {SendingSMS, :start_link, [[]]}},

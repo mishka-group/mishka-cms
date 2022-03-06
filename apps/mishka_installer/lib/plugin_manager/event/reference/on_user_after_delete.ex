@@ -7,7 +7,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterDelete do
   """
   defstruct [:user_info, :ip, :endpoint, :modifier_user]
 
-  @type user_id() :: Ecto.UUID.t
+  @type user_id() :: <<_::288>>
   @type user_info() :: map()
   @type ip() :: String.t() # User's IP from both side endpoints connections
   @type endpoint() :: atom() # API, HTML

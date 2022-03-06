@@ -7,7 +7,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterSave do
   """
   defstruct [:user_info, :ip, :endpoint, :modifier_user, :status]
 
-  @type user_id() :: Ecto.UUID.t
+  @type user_id() :: <<_::288>>
   @type user_info() :: map()
   @type status() :: :added | :edited
   @type ip() :: String.t() # User's IP from both side endpoints connections

@@ -71,7 +71,6 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
           <div class="col-sm-2 text-start ltr">
 
-
             <%= if !is_nil(@user_id) do %>
               <div class="col client-notif text-start">
                 <div class="row">
@@ -108,17 +107,6 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
                 </div>
               </div>
             <% end %>
-
-
-
-
-
-
-
-
-
-
-
 
           </div>
         </div>

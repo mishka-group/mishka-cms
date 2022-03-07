@@ -16,8 +16,8 @@ if System.get_env("GITHUB_ACTIONS") do
   config :mishka_database, MishkaDatabase.Repo,
     url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",
     pool: Ecto.Adapters.SQL.Sandbox,
-    pool_size: 20,
-    queue_target: 5000,
+    pool_size: 30,
+    queue_target: 10000,
     show_sensitive_data_on_connection_error: true
 else
   config :mishka_database, MishkaDatabase.Repo,
@@ -27,8 +27,8 @@ else
     database: "#{System.get_env("DATABASE_NAME")}_test#{System.get_env("MIX_TEST_PARTITION")}",
     hostname: System.get_env("DATABASE_HOST"),
     show_sensitive_data_on_connection_error: true,
-    pool_size: 20,
-    queue_target: 5000,
+    pool_size: 30,
+    queue_target: 10000,
     pool: Ecto.Adapters.SQL.Sandbox
 end
 

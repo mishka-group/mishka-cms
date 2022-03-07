@@ -1,5 +1,5 @@
 defmodule MishkaInstallerTest.Event.HookTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
   doctest MishkaInstaller
   alias MishkaInstaller.Hook
 
@@ -85,6 +85,7 @@ defmodule MishkaInstallerTest.Event.HookTest do
     Map.merge(@new_soft_plugin, %{name: "ensure_event_plugin", depend_type: :hard, depends: ["test1", "test2"]})
     |> Map.from_struct()
     |> MishkaInstaller.Plugin.create()
+    :timer.sleep(3000)
     {:ok, :restart, _msg} = assert Hook.restart(module: @new_soft_plugin.name, depends: :force)
     {:error, :restart, _msg} = assert Hook.restart(module: "none_plugin", depends: :force)
   end
@@ -119,7 +120,6 @@ defmodule MishkaInstallerTest.Event.HookTest do
     # it tests MishkaInstaller.Plugin.delete_plugins
     Hook.unregister(module: List.first(@depends))
     assert length(MishkaInstaller.Plugin.plugins()) == 0
-
   end
 
   test "delete plugins dependencies with nested dependencies which exist, strategy one", %{this_is: _this_is} do
@@ -150,12 +150,12 @@ defmodule MishkaInstallerTest.Event.HookTest do
   end
 
   test "call event and plugins with halt response" do
-    sample_of_login_state = %MishkaInstaller.Reference.OnUserAfterLogin{
+    sample_of_login_state = %MsihkaSendingEmailPlugin.TestEvent{
       user_info: %{name: "shahryar"},
       ip: "127.0.1.1",
       endpoint: :admin
     }
-    assert Hook.call(event: "on_user_after_login", state: sample_of_login_state) == Map.merge(sample_of_login_state, %{ip: "129.0.1.1"})
+    assert Hook.call(event: "on_test_event", state: sample_of_login_state) == Map.merge(sample_of_login_state, %{ip: "129.0.1.1"})
     assert Hook.call(event: "return_first_state", state: sample_of_login_state) == sample_of_login_state
   end
 

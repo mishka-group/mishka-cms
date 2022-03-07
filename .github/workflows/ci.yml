@@ -105,4 +105,4 @@ jobs:
           EMAIL_USERNAME: test@test.com
           EMAIL_PASSWORD: TestPasswordForEmail
         run: |
-          mix test
+          mix test --trace

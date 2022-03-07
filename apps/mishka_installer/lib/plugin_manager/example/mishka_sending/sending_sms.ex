@@ -1,10 +1,10 @@
 defmodule MsihkaSendingEmailPlugin.SendingSMS do
   # This module was just made for testing
-  alias MishkaInstaller.Reference.OnUserAfterLogin
+  alias MsihkaSendingEmailPlugin.TestEvent
   use MishkaInstaller.Hook,
       module: __MODULE__,
-      behaviour: OnUserAfterLogin,
-      event: :on_user_after_login,
+      behaviour: TestEvent,
+      event: :on_test_event,
       initial: []
 
   def initial(args) do
@@ -14,7 +14,7 @@ defmodule MsihkaSendingEmailPlugin.SendingSMS do
     {:ok, @ref, args}
   end
 
-  def call(%OnUserAfterLogin{} = state) do
+  def call(%TestEvent{} = state) do
     new_state = Map.merge(state, %{ip: "128.0.1.1"})
     {:reply, new_state}
   end

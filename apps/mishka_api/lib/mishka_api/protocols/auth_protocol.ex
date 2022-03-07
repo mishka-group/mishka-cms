@@ -290,7 +290,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def logout({:ok, :delete_refresh_token}, conn) do
-    state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: "127.0.1.1", user_id: get_session(conn, :user_id)}
+    state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: "127.0.1.1", user_id: Map.get(conn.assigns, :user_id)}
     hook = MishkaInstaller.Hook.call(event: "on_user_after_logout", state: state)
 
     # TODO: activity shoudl be imported in a plugin

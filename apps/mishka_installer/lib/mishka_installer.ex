@@ -4,7 +4,7 @@ defmodule MishkaInstaller do
   @spec plugin_activity(String.t(), PluginState.t(), String.t(), String.t()) ::
           :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
   def plugin_activity(action, %PluginState{} = plugin, priority, status \\ "info") do
-    MishkaContent.General.Activity.create_activity_by_start_child(%{
+    MishkaInstaller.Activity.create_activity_by_start_child(%{
       type: "plugin",
       section: "other",
       section_id: nil,

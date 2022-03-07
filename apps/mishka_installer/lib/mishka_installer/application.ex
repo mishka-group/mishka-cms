@@ -24,7 +24,8 @@ defmodule MishkaInstaller.Application do
 
     children = [
       {Registry, keys: :unique, name: PluginStateRegistry},
-      {DynamicSupervisor, plugin_runner_config}
+      {DynamicSupervisor, plugin_runner_config},
+      {Task.Supervisor, name: MishkaInstaller.Activity}
     ] ++ test_plugin
 
     opts = [strategy: :one_for_one, name: MishkaInstaller.Supervisor]

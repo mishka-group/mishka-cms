@@ -22,7 +22,7 @@ defmodule MishkaContent.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :ecto_sql, :ecto, :mishka_database, :phoenix_pubsub, :mishka_translator, :bamboo, :bamboo_smtp, :phoenix_html],
+      extra_applications: [:logger, :ecto_sql, :ecto, :mishka_database, :phoenix_pubsub, :mishka_translator, :bamboo, :bamboo_smtp, :phoenix_html, :mishka_installer],
       mod: {MishkaContent.Application, []}
     ]
   end

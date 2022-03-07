@@ -29,8 +29,8 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
     <hr class="menu-space-hr">
       <div class="container">
         <div class="row grid">
-          <nav class="col-sm navbar navbar-expand-lg">
-            <div class="container">
+          <nav class="col-sm navbar main-client-navbar navbar-expand-lg">
+            <div class="">
               <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -69,7 +69,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
             </div>
           </nav>
 
-          <div class="col-sm-2 text-start ltr">
+          <div class="col-sm-2 text-start notif-ico-main-block ltr">
 
             <%= if !is_nil(@user_id) do %>
               <div class="col client-notif text-start">

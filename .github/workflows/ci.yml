@@ -52,11 +52,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: erlef/setup-beam@v1
-        with:
-          otp-version: ${{matrix.pair.otp}}
-          elixir-version: ${{matrix.pair.elixir}}
-
       - uses: actions/cache@v2
         with:
           path: |
@@ -65,6 +60,12 @@ jobs:
           key: ${{ runner.os }}-mix-${{matrix.pair.elixir}}-${{matrix.pair.otp}}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{matrix.pair.elixir}}-${{matrix.pair.otp}}-
+            
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.pair.otp}}
+          elixir-version: ${{matrix.pair.elixir}}
+
 
       - name: Elixir and Erlang Dependencies
         run: | 

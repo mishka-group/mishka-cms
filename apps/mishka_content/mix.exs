@@ -36,7 +36,8 @@ defmodule MishkaContent.MixProject do
       {:bamboo_smtp, "~> 4.0.1"},
       {:bamboo_phoenix, "~> 1.0.0"},
       {:timex, "~> 3.7"},
-      {:mishka_translator, in_umbrella: true}
+      {:mishka_translator, in_umbrella: true},
+      {:mishka_installer, in_umbrella: true}
     ]
   end
 end

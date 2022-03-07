@@ -18,7 +18,7 @@ defmodule MishkaInstaller.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :mishka_database, :mishka_content],
+      extra_applications: [:logger, :mishka_database],
       mod: {MishkaInstaller.Application, []}
     ]
   end
@@ -27,7 +27,6 @@ defmodule MishkaInstaller.MixProject do
   defp deps do
     [
       {:mishka_database, in_umbrella: true},
-      {:mishka_content, in_umbrella: true},
       {:mishka_developer_tools, "~> 0.0.5"}
     ]
   end

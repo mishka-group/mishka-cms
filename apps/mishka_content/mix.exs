@@ -14,7 +14,7 @@ defmodule MishkaContent.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       xref: [
-        exclude: [MishkaUser.User]
+        exclude: [MishkaUser.User, MishkaInstaller.Hook]
       ]
     ]
   end

@@ -5,16 +5,17 @@ defmodule MishkaInstaller.Reference.OnUserAfterLogout do
     It should be noted; This process does not interfere with the main operation of the system.
     It is just a sender and is active for both side endpoints.
   """
-  defstruct [:user_id, :ip, :endpoint, :conn]
+  defstruct [:user_id, :ip, :endpoint, :conn, :extra]
 
   @type user_id() :: <<_::288>>
+  @type extra() :: map() | struct() | list()
   @type ip() :: String.t() # User's IP from both side endpoints connections
   @type endpoint() :: :html | :api # API, HTML
   @type conn() :: Plug.Conn.t()
   @type ref() :: :on_user_after_logout # Name of this event
   @type reason() :: map() | String.t() # output of state for this event
   @type registerd_info() :: MishkaInstaller.PluginState.t() # information about this plugin on state which was saved
-  @type state() :: %__MODULE__{user_id: user_id(), ip: ip(), endpoint: endpoint(), conn: conn()}
+  @type state() :: %__MODULE__{user_id: user_id(), ip: ip(), endpoint: endpoint(), conn: conn(), extra: extra()}
   @type t :: state() # help developers to keep elixir style
   @type optional_callbacks :: {:ok, ref(), registerd_info()} | {:error, ref(), reason()}
 

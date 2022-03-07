@@ -25,6 +25,8 @@ defmodule MishkaContent.Application do
       {Registry, keys: :unique, name: MishkaContent.Cache.ContentDraftRegistry},
       {DynamicSupervisor, bookmark_runner_config},
       {DynamicSupervisor, content_draft_runner_config},
+      %{id: MishkaContent.CorePlugin.Login.SuccessLogin, start: {MishkaContent.CorePlugin.Login.SuccessLogin, :start_link, [[]]}},
+      %{id: MishkaContent.CorePlugin.Login.SuccessLogout, start: {MishkaContent.CorePlugin.Login.SuccessLogout, :start_link, [[]]}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

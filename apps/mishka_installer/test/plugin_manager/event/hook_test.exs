@@ -74,6 +74,7 @@ defmodule MishkaInstallerTest.Event.HookTest do
     Map.merge(@new_soft_plugin, %{name: "ensure_event_plugin", depend_type: :hard, depends: ["test1", "test2"]})
     |> Map.from_struct()
     |> MishkaInstaller.Plugin.create()
+    :timer.sleep(3000)
     {:error, :restart, _msg} = assert Hook.restart(module: "ensure_event_plugin")
     {:error, :restart, _msg} = assert Hook.restart(module: "none_plugin")
   end

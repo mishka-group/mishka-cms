@@ -2678,9 +2678,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   }
 
   .col-sm-3.notif-drop {
-    position: relative;
+    /* position: relative; */
     min-width: 400px;
-    right: 15px;
+    left: 10px;
+    top: 100px;
   }
   /* end of notif */
 

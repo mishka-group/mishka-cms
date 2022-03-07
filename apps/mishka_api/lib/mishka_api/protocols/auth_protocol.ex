@@ -102,18 +102,9 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def login(%{access_token: access_token, refresh_token: refresh_token}, user_info, conn, allowed_fields) do
-    state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :api, ip: "127.0.1.1", type: :email, user_info: user_info}
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
+    state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :api, ip: user_ip, type: :email, user_info: user_info}
     hook = MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
-
-    MishkaContent.General.Activity.create_activity_by_task(%{
-      type: "internal_api",
-      section: "user",
-      section_id: user_info.id,
-      action: "send_request",
-      priority: "medium",
-      status: "info",
-      user_id: user_info.id
-    }, %{user_action: "login", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     hook.conn
     |> put_status(200)
@@ -292,17 +283,6 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   def logout({:ok, :delete_refresh_token}, conn) do
     state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: "127.0.1.1", user_id: Map.get(conn.assigns, :user_id)}
     hook = MishkaInstaller.Hook.call(event: "on_user_after_logout", state: state)
-
-    # TODO: activity shoudl be imported in a plugin
-    MishkaContent.General.Activity.create_activity_by_task(%{
-      type: "internal_api",
-      section: "user",
-      section_id: Map.get(hook.conn.assigns, :user_id),
-      action: "send_request",
-      priority: "low",
-      status: "info",
-      user_id: Map.get(hook.conn.assigns, :user_id)
-    }, %{user_action: "logout", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
     hook.conn
     |> put_status(200)

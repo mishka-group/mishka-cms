@@ -16,13 +16,13 @@ defmodule MishkaContent.CorePlugin.Login.SuccessLogout do
 
     @spec call(OnUserAfterLogout.t()) :: {:reply, OnUserAfterLogout.t()}
     def call(%OnUserAfterLogout{} = state) do
-      create_user_activity(state.user_id, state.ip)
+      create_user_activity(state.user_id, state.ip, state.endpoint)
       {:reply, state}
     end
 
-    defp create_user_activity(user_id, user_ip) do
+    defp create_user_activity(user_id, user_ip, endpoint) do
       MishkaContent.General.Activity.create_activity_by_task(%{
-        type: "section",
+        type: if(endpoint == :html, do: "section", else: "internal_api"),
         section: "user",
         section_id: nil,
         action: "auth",

@@ -15,14 +15,14 @@ defmodule MishkaContent.CorePlugin.Login.SuccessLogin do
 
     @spec call(OnUserAfterLogin.t()) :: {:reply, OnUserAfterLogin.t()}
     def call(%OnUserAfterLogin{} = state) do
-      create_user_activity(state.user_info, state.ip)
+      create_user_activity(state.user_info, state.ip, state.endpoint)
       start_user_bookmarks(state.user_info.id)
       {:reply, state}
     end
 
-    defp create_user_activity(user_info, user_ip) do
+    defp create_user_activity(user_info, user_ip, endpoint) do
       MishkaContent.General.Activity.create_activity_by_task(%{
-        type: "section",
+        type: if(endpoint == :html, do: "section", else: "internal_api"),
         section: "user",
         section_id: user_info.id,
         action: "auth",

@@ -172,7 +172,7 @@
       <%= if @posts.entries != [] do %>
         <.live_component module={MishkaHtmlWeb.Public.PaginationComponent}
                         id={:pagination}
-                        pagination_ur={ MishkaHtmlWeb.BlogCategoryLive}
+                        pagination_url={MishkaHtmlWeb.BlogCategoryLive}
                         data={@posts}
                         filters={@filters}
                         count={@page_size}

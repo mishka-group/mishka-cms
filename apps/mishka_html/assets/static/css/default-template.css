@@ -11,6 +11,11 @@
   font-display: block;
 } */
 
+.navbar-toggler-icon {
+  width: 3em !important;
+  height: 2em !important;
+}
+
 a.list-link {
   text-decoration: none;
 }
@@ -2662,9 +2667,6 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (max-width: 767.98px) {
-  .col-sm-3.navbar.navbar-dark {
-    width: 70%;
-  }
 
   .client-notif-icon svg {
     max-width: 30px;

@@ -1,10 +1,10 @@
 defmodule MsihkaSendingEmailPlugin.SendingHalt do
   # This module was just made for testing
-  alias MishkaInstaller.Reference.OnUserAfterLogin
+  alias MsihkaSendingEmailPlugin.TestEvent
   use MishkaInstaller.Hook,
       module: __MODULE__,
-      behaviour: OnUserAfterLogin,
-      event: :on_user_after_login,
+      behaviour: TestEvent,
+      event: :on_test_event,
       initial: []
 
   def initial(args) do
@@ -14,7 +14,7 @@ defmodule MsihkaSendingEmailPlugin.SendingHalt do
     {:ok, @ref, args}
   end
 
-  def call(%OnUserAfterLogin{} = state) do
+  def call(%TestEvent{} = state) do
     new_state = if state.ip == "128.0.1.1", do: Map.merge(state, %{ip: "129.0.1.1"}), else: state
     {:reply, :halt, new_state}
   end

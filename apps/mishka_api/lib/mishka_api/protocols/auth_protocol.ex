@@ -103,7 +103,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
   def login(%{access_token: access_token, refresh_token: refresh_token}, user_info, conn, allowed_fields) do
     state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :api, ip: "127.0.1.1", type: :email, user_info: user_info}
-    MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
+    hook = MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
 
     MishkaContent.General.Activity.create_activity_by_task(%{
       type: "internal_api",
@@ -115,7 +115,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       user_id: user_info.id
     }, %{user_action: "login", cowboy_ip: MishkaApi.cowboy_ip(conn)})
 
-    conn
+    hook.conn
     |> put_status(200)
     |> json(%{
       action: :login,

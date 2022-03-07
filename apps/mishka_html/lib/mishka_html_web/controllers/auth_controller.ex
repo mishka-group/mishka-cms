@@ -7,33 +7,18 @@ defmodule MishkaHtmlWeb.AuthController do
   @hard_secret_random_link "Test refresh"
 
   def login(conn, %{"user" => %{"email" => email, "password" => password, "g-recaptcha-response" => token}} = _params) do
-    # to_string(:inet_parse.ntoa(conn.remote_ip))
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
     with {:ok, :verify, _token_info} <- MishkaUser.Validation.GoogleRecaptcha.verify(token),
          {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(MishkaHtml.email_sanitize(email)),
          {:nil_password?, false} <- {:nil_password?, is_nil(user_info.password_hash)},
          {:ok, :check_password, :user} <- MishkaUser.User.check_password(user_info, password),
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, user_info.status == :inactive},
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do
-        state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :html, ip: "127.0.1.1", type: :email, user_info: user_info}
-        MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
-          type: "section",
-          section: "user",
-          section_id: user_info.id,
-          action: "auth",
-          priority: "high",
-          status: "info",
-          user_id: user_info.id
-        }, %{user_action: "login", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
+        state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :html, ip: user_ip, type: :email, user_info: user_info}
+        hook = MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
 
-        Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
-          MishkaContent.Cache.BookmarkDynamicSupervisor.start_job([id: user_info.id, type: "user_bookmarks"])
-        end)
-
-
-
-        conn
+        hook.conn
         |> renew_session()
         |> put_session(:current_token, token)
         |> put_session(:user_id, user_info.id)
@@ -71,33 +56,20 @@ defmodule MishkaHtmlWeb.AuthController do
   end
 
   def log_out(conn, _params) do
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
     if live_socket_id = get_session(conn, :live_socket_id) do
-
       Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
         :timer.sleep(1000)
         MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
       end)
-
       Task.Supervisor.async_nolink(MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor, fn ->
         MishkaContent.Cache.BookmarkManagement.stop(get_session(conn, :user_id))
       end)
-
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end
 
-    state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: "127.0.1.1", user_id: get_session(conn, :user_id)}
+    state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: user_ip, user_id: get_session(conn, :user_id)}
     hook = MishkaInstaller.Hook.call(event: "on_user_after_logout", state: state)
-
-    # TODO: should be imported in a plugin
-    MishkaContent.General.Activity.create_activity_by_task(%{
-      type: "section",
-      section: "user",
-      section_id: nil,
-      action: "auth",
-      priority: "high",
-      status: "info",
-      user_id: get_session(hook.conn, :user_id)
-    }, %{user_action: "log_out", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
 
     hook.conn
     |> configure_session(drop: true)

@@ -10,7 +10,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterSave do
   @type user_id() :: <<_::288>>
   @type user_info() :: map()
   @type status() :: :added | :edited
-  @type ip() :: String.t() # User's IP from both side endpoints connections
+  @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
   @type endpoint() :: atom() # API, HTML
   @type ref() :: :on_user_after_save # Name of this event
   @type reason() :: map() | String.t() # output of state for this event

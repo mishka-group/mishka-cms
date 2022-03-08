@@ -10,8 +10,8 @@ defmodule MishkaInstaller.Reference.OnUserAuthorisation do
   @type entries() :: map() | struct() | tuple()
   @type user_id() :: <<_::288>>
   @type extra() :: map() | struct() | list()
-  @type conn() :: Plug.Conn.t()
-  @type ip() :: String.t() # User's IP from both side endpoints connections
+  @type conn() :: Plug.Conn.t() | Phoenix.LiveView.Socket.t()
+  @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
   @type endpoint() :: :html | :api # API, HTML
   @type module_name() :: String.t()
   @type operation() :: atom()

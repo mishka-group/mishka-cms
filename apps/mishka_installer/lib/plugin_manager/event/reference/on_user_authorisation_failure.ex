@@ -9,8 +9,8 @@ defmodule MishkaInstaller.Reference.OnUserAuthorisationFailure do
 
   @type extra() :: map() | struct() | list()
   @type error() :: map() | struct() | tuple()
-  @type conn() :: Plug.Conn.t()
-  @type ip() :: String.t() # User's IP from both side endpoints connections
+  @type conn() :: Plug.Conn.t() | Phoenix.LiveView.Socket.t()
+  @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
   @type endpoint() :: atom() # API, HTML
   @type operation() :: atom()
   @type ref() :: :on_user_authorisation_failure # Name of this event

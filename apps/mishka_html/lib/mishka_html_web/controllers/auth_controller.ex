@@ -28,28 +28,27 @@ defmodule MishkaHtmlWeb.AuthController do
 
     else
       {:nil_password?, false} ->
-        conn
+        on_user_login_failure(conn, user_ip, {:nil_password?, false}).conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "ممکن است ایمیل یا پسورد شما اشتباه باشد."))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
 
       {:user_is_not_deactive, true} ->
-        conn
+        on_user_login_failure(conn, user_ip, {:user_is_not_deactive, true}).conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "حساب کاربری شما از قبل غیر فعال گردیده و این به درخواست صاحب حساب می باشد. برای استفاده مجدد از حساب لطفا دوباره درخواست فعال سازی از بخش کاربری را ارسال فرمایید."))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
 
-      {:error, :more_device, _error_tag} ->
-        conn
+      {:error, :more_device, error_tag} ->
+        on_user_login_failure(conn, user_ip, {:error, :more_device, error_tag}).conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "حساب کاربری شما بیشتر از ۵ بار در سیستم های مختلف استفاده شده است. لطفا یکی از این موارد را غیر فعال کنید و خروج را بفشارید."))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
 
       {:error, :verify, msg} ->
-
-        conn
+        on_user_login_failure(conn, user_ip, {:error, :verify, msg}).conn
         |> put_flash(:error, msg)
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
 
-      _error ->
-        conn
+      error ->
+        on_user_login_failure(conn, user_ip, error).conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "ممکن است ایمیل یا پسورد شما اشتباه باشد."))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.auth_path(conn, :login)}")
     end
@@ -264,5 +263,10 @@ defmodule MishkaHtmlWeb.AuthController do
     :mishka_api
     |> Application.fetch_env!(:auth)
     |> Keyword.fetch!(item)
+  end
+
+  defp on_user_login_failure(conn, user_ip, error) do
+    state = %MishkaInstaller.Reference.OnUserLoginFailure{conn: conn, ip: user_ip, endpoint: :html, error: error}
+    MishkaInstaller.Hook.call(event: "on_user_login_failure", state: state)
   end
 end

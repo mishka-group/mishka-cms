@@ -125,8 +125,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def login({:error, :get_record_by_field, _error_tag}, _action, conn, _allowed_fields) do
-    conn
+  def login({:error, :get_record_by_field, error_tag}, _action, conn, _allowed_fields) do
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), {:error, :get_record_by_field, error_tag}).conn
     |> put_status(401)
     |> json(%{
       action: :login,
@@ -136,7 +136,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def login({:nil_password?, true}, _action, conn, _allowed_fields) do
-    conn
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), {:nil_password?, true}).conn
     |> put_status(401)
     |> json(%{
       action: :login,
@@ -145,8 +145,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def login({:error, :check_password, _error_tag}, _action, conn, _allowed_fields) do
-    conn
+  def login({:error, :check_password, error_tag}, _action, conn, _allowed_fields) do
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), {:error, :check_password, error_tag}).conn
     |> put_status(401)
     |> json(%{
       action: :login,
@@ -155,8 +155,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def login({:error, :more_device, _error_tag}, _action, conn, _allowed_fields) do
-    conn
+  def login({:error, :more_device, error_tag}, _action, conn, _allowed_fields) do
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), {:error, :more_device, error_tag}).conn
     |> put_status(401)
     |> json(%{
       action: :login,
@@ -165,8 +165,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def login(_n , _action, conn, _allowed_fields) do
-    conn
+  def login(error , _action, conn, _allowed_fields) do
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), error).conn
     |> put_status(500)
     |> json(%{
       action: :login,
@@ -1070,4 +1070,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       })
   end
 
+  defp on_user_login_failure(conn, user_ip, error) do
+    state = %MishkaInstaller.Reference.OnUserLoginFailure{conn: conn, ip: user_ip, endpoint: :api, error: error}
+    MishkaInstaller.Hook.call(event: "on_user_login_failure", state: state)
+  end
 end

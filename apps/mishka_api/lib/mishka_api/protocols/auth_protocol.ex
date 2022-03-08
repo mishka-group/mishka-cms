@@ -758,8 +758,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       {:error, :edit, _acction, _error_tag} ->
-
-        conn
+       conn
         |> put_status(401)
         |> json(%{
           action: :deactive_account,
@@ -834,7 +833,6 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       {:error, :edit, _acction, _error_tag} ->
-
         conn
         |> put_status(401)
         |> json(%{
@@ -852,7 +850,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           message: MishkaTranslator.Gettext.dgettext("api_auth", "کد فعال سازی شما منقضی شده است.")
         })
 
-      [{:error, :get_user, _acction} ]->
+      [{:error, :get_user, _acction}]->
         conn
         |> put_status(401)
         |> json(%{
@@ -960,7 +958,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     end
   end
 
-  def verify_email_by_email_link(_, conn, _allowed_fields_output) do
+  def verify_email_by_email_link(_error, conn, _allowed_fields_output) do
     conn
     |> put_status(404)
     |> json(%{
@@ -1017,7 +1015,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     end
   end
 
-  def deactive_account_by_email_link(_, conn, _allowed_fields_output) do
+  def deactive_account_by_email_link(_error, conn, _allowed_fields_output) do
     conn
     |> put_status(404)
     |> json(%{

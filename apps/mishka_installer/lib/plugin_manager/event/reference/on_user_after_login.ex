@@ -11,7 +11,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterLogin do
   @type extra() :: map() | struct() | list()
   @type conn() :: Plug.Conn.t()
   @type type() :: :email | :username
-  @type ip() :: String.t() # User's IP from both side endpoints connections
+  @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
   @type endpoint() :: :html | :api # API, HTML
   @type ref() :: :on_user_after_login # Name of this event
   @type reason() :: map() | String.t() # output of state for this event

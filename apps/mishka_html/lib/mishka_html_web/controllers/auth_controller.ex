@@ -169,22 +169,18 @@ defmodule MishkaHtmlWeb.AuthController do
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_auth", "حساب کاربری غیرفعال سازی گردید. اگر نیازمند به استفاده مجدد هست از بخش کاربری دوباره درخواست فعال سازی حساب را ارسال فرمایید."))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
 
-
     else
       {:user_is_not_deactive, true} ->
-
         conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "حساب کاربری شما از قبل غیر فعال شده است."))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
 
       {:error, :get_record_by_field, _error_tag} ->
-
         conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "حساب کاربری شما بافت نشد. این اتفاق در زمانی روخ می دهد که از قبل حساب کاربری شما غیر فعال یا حذف شده باشد"))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
 
       _ ->
-
         conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "کد غیر فعال سازی حساب کاربری شما غیر معتبر است یا منقضی شده است. لطفا دوباره تلاش کنید."))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
@@ -236,20 +232,16 @@ defmodule MishkaHtmlWeb.AuthController do
         |> configure_session(drop: true)
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
 
-
     else
       {:error, :get_record_by_field, _error_tag} ->
-
         conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "حساب کاربری شما بافت نشد. این اتفاق در زمانی روخ می دهد که از قبل حساب کاربری شما غیر فعال یا حذف شده باشد"))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
 
       _ ->
-
         conn
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_auth", "کد پاکسازی توکن حساب کاربری شما غیر معتبر است یا منقضی شده است. لطفا دوباره تلاش کنید."))
         |> redirect(to: "#{MishkaHtmlWeb.Router.Helpers.live_path(conn, MishkaHtmlWeb.HomeLive)}")
-
     end
   end
 

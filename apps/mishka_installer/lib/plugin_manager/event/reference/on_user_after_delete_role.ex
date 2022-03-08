@@ -9,7 +9,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterDeleteRole do
 
   @type user_id() :: <<_::288>>
   @type user_info() :: map()
-  @type ip() :: String.t() # User's IP from both side endpoints connections
+  @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
   @type endpoint() :: atom() # API, HTML
   @type ref() :: :on_user_after_delete_role # Name of this event
   @type reason() :: map() | String.t() # output of state for this event

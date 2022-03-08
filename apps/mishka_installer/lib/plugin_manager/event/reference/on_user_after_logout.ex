@@ -9,7 +9,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterLogout do
 
   @type user_id() :: <<_::288>>
   @type extra() :: map() | struct() | list()
-  @type ip() :: String.t() # User's IP from both side endpoints connections
+  @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
   @type endpoint() :: :html | :api # API, HTML
   @type conn() :: Plug.Conn.t()
   @type ref() :: :on_user_after_logout # Name of this event

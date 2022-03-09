@@ -2,6 +2,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
   use MishkaHtmlWeb, :live_view
   @allowed_fields_output ["full_name", "username", "email", "status", "id"]
   @allowed_fields ["full_name", "email", "password", "username", "unconfirmed_email"]
+  alias MishkaHtmlWeb.Router.Helpers
 
   @impl true
   def render(assigns) do
@@ -39,22 +40,19 @@ defmodule MishkaHtmlWeb.RegisterLive do
         MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
         state = %MishkaInstaller.Reference.OnUserAfterSave{
           user_info: allowed_user_info, ip: socket.assigns.user_ip, endpoint: :html, status: :added, conn: socket, modifier_user: :self,
-          extra: %{
-            site_url: MishkaHtmlWeb.Router.Helpers.url(socket),
-            endpoint_uri: MishkaHtmlWeb.Router.Helpers.auth_path(socket, :verify_email, "random_link")
-          }
+          extra: %{site_url: Helpers.url(socket), endpoint_uri: Helpers.auth_path(socket, :verify_email, "random_link")}
         }
-        hook = MishkaInstaller.Hook.call(event: "on_user_after_save", state: state)
-        IO.inspect(hook.ip)
-        hook.conn
+        MishkaInstaller.Hook.call(event: "on_user_after_save", state: state).conn
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."))
         |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.LoginLive))
 
       else
-        {:error, :add, _error_tag, changeset} -> assign(socket, changeset: changeset)
+        {:error, :add, error_tag, changeset} ->
+          on_user_after_save_failure({:error, :add, error_tag, changeset}, socket.assigns.user_ip, socket).conn
+          |> assign(changeset: changeset)
 
         {:error, :verify, msg} ->
-          socket
+          on_user_after_save_failure({:error, :verify, msg}, socket.assigns.user_ip, socket).conn
           |> put_flash(:error, msg)
           |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
       end
@@ -119,5 +117,12 @@ defmodule MishkaHtmlWeb.RegisterLive do
       "unconfirmed_email" => MishkaHtml.email_sanitize(params["unconfirmed_email"])
     })
     {token, filtered_params}
+  end
+
+  defp on_user_after_save_failure(error, user_ip, socket) do
+    state = %MishkaInstaller.Reference.OnUserAfterSaveFailure{
+      error: error, ip: user_ip, endpoint: :api, status: :added, conn: socket, modifier_user: :self
+    }
+    MishkaInstaller.Hook.call(event: "on_user_after_save_failure", state: state)
   end
 end

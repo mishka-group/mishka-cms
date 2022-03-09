@@ -40,7 +40,7 @@ end
 defimpl MishkaApi.AuthProtocol, for: Any do
   use MishkaApiWeb, :controller
   alias MishkaUser.Token.Token
-  alias MishkaDatabase.Cache.{RandomCode}
+  alias MishkaDatabase.Cache.RandomCode
   require MishkaTranslator.Gettext
 
   @request_error_tag :user
@@ -58,30 +58,20 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def register({:ok, _action, _error_tag, repo_data}, conn, allowed_fields) do
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
+    allowed_user_info = Map.take(repo_data, allowed_fields |> Enum.map(&String.to_existing_atom/1))
     MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
 
+    state = %MishkaInstaller.Reference.OnUserAfterSave{user_info: allowed_user_info, ip: user_ip, endpoint: :api, status: :added, conn: conn, modifier_user: :self}
+    hook = MishkaInstaller.Hook.call(event: "on_user_after_save", state: state)
 
-    random_code = Enum.random(100000..999999)
-    RandomCode.save(repo_data.email, random_code)
-    MishkaContent.Email.EmailHelper.send(:verify_email, {repo_data.email, random_code})
-
-    MishkaContent.General.Activity.create_activity_by_task(%{
-      type: "internal_api",
-      section: "user",
-      section_id: repo_data.id,
-      action: "add",
-      priority: "medium",
-      status: "info",
-      user_id: repo_data.id
-    }, %{identity_provider: "self", user_action: "register", cowboy_ip: MishkaApi.cowboy_ip(conn)})
-
-    conn
+    hook.conn
     |> put_status(200)
     |> json(%{
       action: :register,
       system: @request_error_tag,
       message: MishkaTranslator.Gettext.dgettext("api_auth", "ثبت نام شما موفقیت آمیز بود. لطفا به ایمیل خود مراجعه کنید و کد فعال سازی ایمیل را برای تایید حساب کاربری ارسال فرمایید. لازم به ذکر هست کد فعال سازی فقط 5 دقیقه اعتبار دارد."),
-      user_info: Map.take(repo_data, allowed_fields |> Enum.map(&String.to_existing_atom/1))
+      user_info: allowed_user_info
     })
   end
 
@@ -281,7 +271,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def logout({:ok, :delete_refresh_token}, conn) do
-    state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: "127.0.1.1", user_id: Map.get(conn.assigns, :user_id)}
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
+    state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: user_ip, user_id: Map.get(conn.assigns, :user_id)}
     hook = MishkaInstaller.Hook.call(event: "on_user_after_logout", state: state)
 
     hook.conn

@@ -21,7 +21,7 @@ defmodule MishkaContent.CorePlugin.Login.SuccessLogin do
     end
 
     defp create_user_activity(user_info, user_ip, endpoint) do
-      MishkaContent.General.Activity.create_activity_by_task(%{
+      MishkaContent.General.Activity.create_activity_by_start_child(%{
         type: if(endpoint == :html, do: "section", else: "internal_api"),
         section: "user",
         section_id: user_info.id,
@@ -29,7 +29,7 @@ defmodule MishkaContent.CorePlugin.Login.SuccessLogin do
         priority: "high",
         status: "info",
         user_id: user_info.id
-      }, %{user_action: "login", user_ip: user_ip})
+      }, %{user_action: "login", user_ip: MishkaInstaller.ip(user_ip)})
     end
 
     def start_user_bookmarks(user_id) do

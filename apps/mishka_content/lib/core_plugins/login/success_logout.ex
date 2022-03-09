@@ -21,7 +21,7 @@ defmodule MishkaContent.CorePlugin.Login.SuccessLogout do
     end
 
     defp create_user_activity(user_id, user_ip, endpoint) do
-      MishkaContent.General.Activity.create_activity_by_task(%{
+      MishkaContent.General.Activity.create_activity_by_start_child(%{
         type: if(endpoint == :html, do: "section", else: "internal_api"),
         section: "user",
         section_id: nil,
@@ -29,6 +29,6 @@ defmodule MishkaContent.CorePlugin.Login.SuccessLogout do
         priority: "high",
         status: "info",
         user_id: user_id
-      }, %{user_action: "log_out", user_ip: user_ip})
+      }, %{user_action: "log_out", user_ip: MishkaInstaller.ip(user_ip)})
     end
 end

@@ -5,17 +5,21 @@ defmodule MishkaInstaller.Reference.OnUserAfterSave do
     It should be noted; This process does not interfere with the main operation of the system.
     It is just a sender and is active for both side endpoints.
   """
-  defstruct [:user_info, :ip, :endpoint, :modifier_user, :status]
+  defstruct [:user_info, :ip, :endpoint, :status, :conn, :modifier_user, :extra]
 
-  @type user_id() :: <<_::288>>
+  @type modifier_user() :: <<_::288>> | :self
   @type user_info() :: map()
   @type status() :: :added | :edited
+  @type conn() :: Plug.Conn.t() | Phoenix.LiveView.Socket.t()
+  @type extra() :: map() | struct() | list()
   @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
-  @type endpoint() :: atom() # API, HTML
+  @type endpoint() :: :html | :api # API, HTML
   @type ref() :: :on_user_after_save # Name of this event
   @type reason() :: map() | String.t() # output of state for this event
   @type registerd_info() :: MishkaInstaller.PluginState.t() # information about this plugin on state which was saved
-  @type state() :: %__MODULE__{user_info: user_info(), ip: ip(), endpoint: endpoint(), modifier_user: user_id() | :self, status: state()}
+  @type state() :: %__MODULE__{
+    user_info: user_info(), ip: ip(), endpoint: endpoint(), status: status(), conn: conn(), modifier_user: modifier_user(), extra: extra()
+  }
   @type t :: state() # help developers to keep elixir style
   @type optional_callbacks :: {:ok, ref(), registerd_info()} | {:error, ref(), reason()}
 

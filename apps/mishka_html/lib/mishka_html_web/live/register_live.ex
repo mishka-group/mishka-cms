@@ -1,9 +1,7 @@
 defmodule MishkaHtmlWeb.RegisterLive do
   use MishkaHtmlWeb, :live_view
-
-  # TODO: should be on config file or ram
-  @hard_secret_random_link "Test refresh"
-  alias MishkaDatabase.Cache.RandomCode
+  @allowed_fields_output ["full_name", "username", "email", "status", "id"]
+  @allowed_fields ["full_name", "email", "password", "username", "unconfirmed_email"]
 
   @impl true
   def render(assigns) do
@@ -23,59 +21,43 @@ defmodule MishkaHtmlWeb.RegisterLive do
         body_color: "#40485d",
         changeset: changeset,
         user_id: Map.get(session, "user_id"),
-        self_pid: self()
+        self_pid: self(),
+        user_ip: get_connect_info(socket, :peer_data).address
       )
     {:ok, socket}
   end
 
   @impl true
   def handle_event("save", %{"user" => params}, socket) do
-    token = params["g-recaptcha-response"]
-    filtered_params = Map.merge(params, %{
-      "email" => MishkaHtml.email_sanitize(params["email"]),
-      "full_name" => MishkaHtml.full_name_sanitize(params["full_name"]),
-      "username" => MishkaHtml.username_sanitize(params["username"]),
-      "unconfirmed_email" => MishkaHtml.email_sanitize(params["unconfirmed_email"])
-    })
+    {token, filtered_params} = get_google_recaptcha_and_filtered_params(params)
 
+    socket =
+      with {:ok, :verify, _token_info} <- MishkaUser.Validation.GoogleRecaptcha.verify(token),
+           {:ok, :add, _error_tag, repo_data} <- MishkaUser.User.create(filtered_params, @allowed_fields) do
 
-    socket = with {:ok, :verify, _token_info} <- MishkaUser.Validation.GoogleRecaptcha.verify(token),
-                  {:ok, :add, _error_tag, repo_data} <- MishkaUser.User.create(filtered_params, ["full_name", "email", "password", "username", "unconfirmed_email"]) do
-      MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
+        allowed_user_info = Map.take(repo_data, @allowed_fields_output |> Enum.map(&String.to_existing_atom/1))
+        MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
+        state = %MishkaInstaller.Reference.OnUserAfterSave{
+          user_info: allowed_user_info, ip: socket.assigns.user_ip, endpoint: :html, status: :added, conn: socket, modifier_user: :self,
+          extra: %{
+            site_url: MishkaHtmlWeb.Router.Helpers.url(socket),
+            endpoint_uri: MishkaHtmlWeb.Router.Helpers.auth_path(socket, :verify_email, "random_link")
+          }
+        }
+        hook = MishkaInstaller.Hook.call(event: "on_user_after_save", state: state)
+        IO.inspect(hook.ip)
+        hook.conn
+        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."))
+        |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.LoginLive))
 
-        random_link = Phoenix.Token.sign(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, %{id: repo_data.id, type: "access"}, [key_digest: :sha256])
-        RandomCode.save(repo_data.email, random_link)
+      else
+        {:error, :add, _error_tag, changeset} -> assign(socket, changeset: changeset)
 
-        site_link = MishkaContent.Email.EmailHelper.email_site_link_creator(
-          MishkaHtmlWeb.Router.Helpers.url(socket),
-          MishkaHtmlWeb.Router.Helpers.auth_path(socket, :verify_email, random_link)
-        )
-
-          MishkaContent.Email.EmailHelper.send(:verify_email, {repo_data.email, site_link})
-
-          MishkaContent.General.Activity.create_activity_by_task(%{
-            type: "section",
-            section: "user",
-            section_id: repo_data.id,
-            action: "add",
-            priority: "low",
-            status: "info",
-            user_id: repo_data.id
-          }, %{user_action: "register", identity_provider: "self", type: "client"})
-
+        {:error, :verify, msg} ->
           socket
-          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شما موفقیت آمیز بوده است و هم اکنون می توانید وارد سایت شوید. لطفا برای دسترسی کامل به سایت حساب کاربر خود را فعال کنید. برای فعال سازی لطفا به ایمیل خود سر زده و روی لینک یا کد فعال سازی که برای شما ارسال گردیده است کلیک کنید."))
-          |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.LoginLive))
-
-    else
-      {:error, :add, _error_tag, changeset} -> assign(socket, changeset: changeset)
-
-      {:error, :verify, msg} ->
-
-        socket
-        |> put_flash(:error, msg)
-        |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
-    end
+          |> put_flash(:error, msg)
+          |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
+      end
 
     {:noreply, socket}
   end
@@ -126,5 +108,16 @@ defmodule MishkaHtmlWeb.RegisterLive do
       keywords: "ثبت نام کاربر",
       link: site_link <> Routes.live_path(socket, __MODULE__)
     }
+  end
+
+  defp get_google_recaptcha_and_filtered_params(params) do
+    token = params["g-recaptcha-response"]
+    filtered_params = Map.merge(params, %{
+      "email" => MishkaHtml.email_sanitize(params["email"]),
+      "full_name" => MishkaHtml.full_name_sanitize(params["full_name"]),
+      "username" => MishkaHtml.username_sanitize(params["username"]),
+      "unconfirmed_email" => MishkaHtml.email_sanitize(params["unconfirmed_email"])
+    })
+    {token, filtered_params}
   end
 end

@@ -14,4 +14,6 @@ defmodule MishkaInstaller do
       user_id: nil
     }, Map.from_struct(plugin))
   end
+
+  def ip(user_ip), do: is_bitstring(user_ip) && user_ip || Enum.join(Tuple.to_list(user_ip), ".")
 end

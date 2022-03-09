@@ -46,8 +46,13 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   @request_error_tag :user
   @hard_secret_random_link "Test refresh"
 
-  def register({:error, _action, _error_tag, repo_error}, conn, _allowed_fields) do
-    conn
+  def register({:error, action, error_tag, repo_error}, conn, _allowed_fields) do
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
+    state = %MishkaInstaller.Reference.OnUserAfterSaveFailure{
+      error: {:error, action, error_tag, repo_error}, ip: user_ip, endpoint: :api, status: :added, conn: conn, modifier_user: :self
+    }
+
+    MishkaInstaller.Hook.call(event: "on_user_after_save_failure", state: state).conn
     |> put_status(400)
     |> json(%{
       action: :register,
@@ -61,11 +66,9 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
     allowed_user_info = Map.take(repo_data, allowed_fields |> Enum.map(&String.to_existing_atom/1))
     MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
-
     state = %MishkaInstaller.Reference.OnUserAfterSave{user_info: allowed_user_info, ip: user_ip, endpoint: :api, status: :added, conn: conn, modifier_user: :self}
-    hook = MishkaInstaller.Hook.call(event: "on_user_after_save", state: state)
 
-    hook.conn
+    MishkaInstaller.Hook.call(event: "on_user_after_save", state: state).conn
     |> put_status(200)
     |> json(%{
       action: :register,

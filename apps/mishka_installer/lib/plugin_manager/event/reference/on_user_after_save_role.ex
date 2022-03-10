@@ -8,6 +8,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterSaveRole do
   defstruct [:user_info, :ip, :endpoint, :modifier_user]
 
   @type user_id() :: <<_::288>>
+  @type conn() :: Plug.Conn.t() | Phoenix.LiveView.Socket.t()
   @type user_info() :: map()
   @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
   @type endpoint() :: atom() # API, HTML
@@ -18,7 +19,7 @@ defmodule MishkaInstaller.Reference.OnUserAfterSaveRole do
   @type t :: state() # help developers to keep elixir style
   @type optional_callbacks :: {:ok, ref(), registerd_info()} | {:error, ref(), reason()}
 
-  @callback initial(list()) :: {:ok, ref(), state()} | {:error, ref(), reason()} # Register hook
+  @callback initial(list()) :: {:ok, ref(), list()} | {:error, ref(), reason()} # Register hook
   @callback call(state()) :: {:reply, state()} | {:reply, :halt, state()}  # Developer should decide what and Hook call function
   @callback stop(registerd_info()) :: optional_callbacks() # Stop of hook module
   @callback restart(registerd_info()) :: optional_callbacks() # Restart of hook module

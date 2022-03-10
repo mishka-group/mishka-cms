@@ -562,8 +562,8 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
           user_id: Map.get(socket.assigns, :user_id)
         }, %{user_action: "delete_item_of_list", title: Map.get(repo_data, :title), full_name: Map.get(repo_data, :full_name)})
 
-        after_condition.(id)
-        socket
+        # It should pass conn or socket output
+        after_condition.(id, socket)
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("macro_live", "رکورد مورد نظر با موفقیت حذف گردید"))
       {:error, :delete, :forced_to_delete, _error_atom} ->
         socket

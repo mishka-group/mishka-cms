@@ -5,17 +5,17 @@ defmodule MishkaInstaller.Reference.OnUserAfterSaveRole do
     It should be noted; This process does not interfere with the main operation of the system.
     It is just a sender and is active for both side endpoints.
   """
-  defstruct [:user_info, :ip, :endpoint, :modifier_user]
+  defstruct [:role_id, :ip, :endpoint, :conn]
 
-  @type user_id() :: <<_::288>>
+  @type role_id() :: <<_::288>>
+  @type user_id() :: role_id()
   @type conn() :: Plug.Conn.t() | Phoenix.LiveView.Socket.t()
-  @type user_info() :: map()
   @type ip() :: String.t() | tuple() # User's IP from both side endpoints connections
-  @type endpoint() :: atom() # API, HTML
+  @type endpoint() :: :html | :api # API, HTML
   @type ref() :: :on_user_after_save_role # Name of this event
   @type reason() :: map() | String.t() # output of state for this event
   @type registerd_info() :: MishkaInstaller.PluginState.t() # information about this plugin on state which was saved
-  @type state() :: %__MODULE__{user_info: user_info(), ip: ip(), endpoint: endpoint(), modifier_user: user_id()}
+  @type state() :: %__MODULE__{role_id: role_id(), ip: ip(), endpoint: endpoint(), conn: conn()}
   @type t :: state() # help developers to keep elixir style
   @type optional_callbacks :: {:ok, ref(), registerd_info()} | {:error, ref(), reason()}
 

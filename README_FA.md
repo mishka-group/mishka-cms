@@ -70,10 +70,10 @@ https://github.com/shahryarjb
 <div dir="ltr">
  
 ```elixir
-mix ecto.create # اول باید در فایل کانفیگ اطلاعات دیتابیس خود را وارد کنید
-mix ecto.migrate
 mix deps.get
 mix deps.compile
+mix ecto.create # اول باید در فایل کانفیگ اطلاعات دیتابیس خود را وارد کنید
+mix ecto.migrate
 mix assets.deploy
 mix test
 mix run apps/mishka_database/priv/repo/seeds.exs # در صورتی که می خواهید مطالب و کاربر آزمایشی درست شود. فقط یک بار اجرا شود

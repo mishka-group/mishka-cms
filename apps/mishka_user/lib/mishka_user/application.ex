@@ -24,7 +24,9 @@ defmodule MishkaUser.Application do
       {Registry, keys: :unique, name: MishkaUser.Acl.AclRegistry},
       {DynamicSupervisor, acl_runner_config},
       {MishkaUser.Acl.AclTask, []},
-      {Finch, name: MyHttpClient}
+      {Finch, name: MyHttpClient},
+      %{id: MishkaUser.CorePlugin.Login.SuccessLogin, start: {MishkaUser.CorePlugin.Login.SuccessLogin, :start_link, [[]]}},
+      %{id: MishkaUser.CorePlugin.Login.SuccessLogout, start: {MishkaUser.CorePlugin.Login.SuccessLogout, :start_link, [[]]}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

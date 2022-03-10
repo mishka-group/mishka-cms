@@ -3,6 +3,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
 
   alias MishkaUser.User
   @error_atom :user
+  @allowed_fields_output ["full_name", "username", "email", "status", "id"]
   alias MishkaContent.Cache.ContentDraftManagement
 
   use MishkaHtml.Helpers.LiveCRUD,
@@ -28,7 +29,9 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         user_id: Map.get(session, "user_id"),
         drafts: ContentDraftManagement.drafts_by_section(section: "user"),
         draft_id: nil,
-        changeset: user_changeset())
+        user_ip: get_connect_info(socket, :peer_data).address,
+        changeset: user_changeset()
+      )
     {:ok, socket}
   end
 
@@ -50,10 +53,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         |> Enum.reject(fn x -> x.value == nil end)
 
         socket
-        |> assign([
-          dynamic_form: user_info,
-          id: repo_data.id,
-        ])
+        |> assign([dynamic_form: user_info, id: repo_data.id])
     end
 
     {:noreply, socket}
@@ -128,24 +128,15 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   defp create_user(socket, params: {params}) do
     socket = case User.create(params) do
       {:error, :add, :user, repo_error} ->
-        socket
+        on_user_after_save_failure({:error, :add, :user, repo_error}, socket.assigns.user_ip, socket, :added).conn
         |> assign([changeset: repo_error])
 
       {:ok, :add, :user, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
-          type: "section",
-          section: "user",
-          section_id: repo_data.id,
-          action: "add",
-          priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_create_user", type: "admin"})
-
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
         MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
-        socket
+
+        on_user_after_save(socket, repo_data, socket.assigns.user_ip, :added).conn
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "کاربر مورد نظر ساخته شد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
@@ -157,30 +148,19 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   defp edit_user(socket, params: {params, id}) do
     socket = case User.edit(Map.merge(params, %{"id" => id})) do
       {:error, :edit, :user, repo_error} ->
-        socket
-        |> assign([
-          changeset: repo_error,
-        ])
+        on_user_after_save_failure({:error, :edit, :user, repo_error}, socket.assigns.user_ip, socket, :edited).conn
+        |> assign([changeset: repo_error])
 
       {:ok, :edit, :user, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
-          type: "section",
-          section: "user",
-          section_id: repo_data.id,
-          action: "edit",
-          priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_edit_user", type: "admin"})
-
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "کاربر: %{title} به روز شده است.", title: MishkaHtml.full_name_sanitize(repo_data.full_name))})
-        socket
+
+        on_user_after_save(socket, repo_data, socket.assigns.user_ip, :edited).conn
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "کاربر به روز رسانی شد"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
-      {:error, :edit, :uuid, _error_tag} ->
-        socket
+      {:error, :edit, :uuid, error_tag} ->
+        on_user_after_save_failure({:error, :edit, :uuid, error_tag}, socket.assigns.user_ip, socket, :edited).conn
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین کاربری وجود ندارد یا ممکن است از قبل حذف شده باشد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUsersLive))
 
@@ -265,5 +245,20 @@ defmodule MishkaHtmlWeb.AdminUserLive do
       title: MishkaTranslator.Gettext.dgettext("html_live", "ایمیل فعال سازی"),
       description: MishkaTranslator.Gettext.dgettext("html_live", "ایمیل فعال سازی فیلدی می باشد که در صورت خالی بود یعنی حساب کاربر یک بار به وسیله ایمیل فعال سازی گردیده است. لطفا با وضعیت کاربر به صورت همزمان بررسی گردد.")},
     ]
+  end
+
+  defp on_user_after_save_failure(error, user_ip, socket, status) do
+    state = %MishkaInstaller.Reference.OnUserAfterSaveFailure{
+      error: error, ip: user_ip, endpoint: :api, status: status, conn: socket, modifier_user: :self
+    }
+    MishkaInstaller.Hook.call(event: "on_user_after_save_failure", state: state)
+  end
+
+  defp on_user_after_save(socket, user_info, user_ip, status, extra \\ %{}) do
+    state = %MishkaInstaller.Reference.OnUserAfterSave{
+      user_info: Map.take(user_info, @allowed_fields_output |> Enum.map(&String.to_existing_atom/1)), ip: user_ip, endpoint: :html, status: status, conn: socket, modifier_user: user_ip,
+      extra: extra
+    }
+    MishkaInstaller.Hook.call(event: "on_user_after_save", state: state)
   end
 end

@@ -239,8 +239,10 @@ defmodule MishkaDatabase.Cache.MnesiaToken do
 
   @impl true
   def terminate(reason, state) do
-    Logger.warn("Reason of Terminate #{inspect(reason)} and State is #{inspect(state)}")
-    # send error to log server
+    if reason != :normal do
+      Logger.warn("Reason of Terminate #{inspect(reason)} and State is #{inspect(state)}")
+    end
+    # TODO: send error to log server
   end
 
   defp start_token() do

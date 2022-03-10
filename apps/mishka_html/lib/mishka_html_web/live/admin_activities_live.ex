@@ -130,6 +130,7 @@ defmodule MishkaHtmlWeb.AdminActivitiesLive do
         {MishkaTranslator.Gettext.dgettext("html_live", "وب سایت"), "html_router"},
         {MishkaTranslator.Gettext.dgettext("html_live", "روتر API"), "api_router"},
         {MishkaTranslator.Gettext.dgettext("html_live", "بانک اطلاعاتی"), "db"},
+        {MishkaTranslator.Gettext.dgettext("html_live", "مدیریت پلاگین"), "plugin"},
       ],
       {true, true, true}),
       ListItemComponent.link_field("username", [1, 4], "col header7", MishkaTranslator.Gettext.dgettext("html_live",  "کاربر"),

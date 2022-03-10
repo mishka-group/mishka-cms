@@ -11,6 +11,8 @@ defmodule MishkaContent.Email.EmailHelper do
         |> Email.account_email()
         |> Mailer.deliver_later!()
       end)
+    else
+      {:error, :send, :test}
     end
   end
 

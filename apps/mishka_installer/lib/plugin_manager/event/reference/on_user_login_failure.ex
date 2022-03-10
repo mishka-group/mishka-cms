@@ -19,7 +19,7 @@ defmodule MishkaInstaller.Reference.OnUserLoginFailure do
   @type t :: state() # help developers to keep elixir style
   @type optional_callbacks :: {:ok, ref(), registerd_info()} | {:error, ref(), reason()}
 
-  @callback initial(list()) :: {:ok, ref(), state()} | {:error, ref(), reason()} # Register hook
+  @callback initial(list()) :: {:ok, ref(), list()} | {:error, ref(), reason()} # Register hook
   @callback call(state()) :: {:reply, state()} | {:reply, :halt, state()}  # Developer should decide what and Hook call function
   @callback stop(registerd_info()) :: optional_callbacks() # Stop of hook module
   @callback restart(registerd_info()) :: optional_callbacks() # Restart of hook module

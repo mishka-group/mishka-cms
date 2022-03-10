@@ -42,6 +42,7 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
       user_id: Map.get(session, "user_id"),
       page_title: @section_title,
       body_color: "#a29ac3cf",
+      user_ip: get_connect_info(socket, :peer_data).address,
       roles: Role.roles(conditions: {1, 10}, filters: %{})
     )
     {:ok, socket, temporary_assigns: [roles: []]}
@@ -52,9 +53,14 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
 
   list_search_and_action()
 
-  delete_list_item(:roles, DeleteErrorComponent, false, do: fn data ->
-    data
-  end, before: fn x -> MishkaUser.Acl.AclTask.delete_role(x) end)
+  delete_list_item(:roles, DeleteErrorComponent, false,
+  do: fn role_id, socket ->
+    state = %MishkaInstaller.Reference.OnUserAfterDeleteRole{role_id: role_id, ip: socket.assigns.user_ip, endpoint: :html, conn: socket}
+    MishkaInstaller.Hook.call(event: "on_user_after_delete_role", state: state).conn
+  end,
+  before: fn x ->
+    MishkaUser.Acl.AclTask.delete_role(x)
+  end)
 
   selected_menue("MishkaHtmlWeb.AdminUserRolesLive")
 

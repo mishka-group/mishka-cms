@@ -53,10 +53,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
         |> Enum.reject(fn x -> x.value == nil end)
 
         socket
-        |> assign([
-          dynamic_form: user_info,
-          id: repo_data.id,
-        ])
+        |> assign([dynamic_form: user_info, id: repo_data.id])
     end
 
     {:noreply, socket}

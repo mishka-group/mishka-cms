@@ -39,7 +39,8 @@ defmodule MishkaInstaller.Event do
       %Event{name: :on_user_after_login, section: :mishka_user, reference: Ref.OnUserAfterLogin},
       %Event{name: :on_user_after_logout, section: :mishka_user, reference: Ref.OnUserAfterLogout},
       %Event{name: :on_user_after_save_role, section: :mishka_user, reference: Ref.OnUserAfterSaveRole},
-      %Event{name: :on_user_after_delete_role, section: :mishka_user, reference: Ref.OnUserAfterDeleteRole}
+      %Event{name: :on_user_after_delete_role, section: :mishka_user, reference: Ref.OnUserAfterDeleteRole},
+      %Event{name: :on_user_after_save_failure, section: :mishka_user, reference: Ref.OnUserAfterSaveFailure}
     ]
   end
 end

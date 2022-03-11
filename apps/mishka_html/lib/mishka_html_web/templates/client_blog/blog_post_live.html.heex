@@ -2,10 +2,7 @@
   <div id="spacer" class="space30"></div>
   <.live_component module={MishkaHtmlWeb.Client.Public.HeaderComponent} id={:client_header} />
 
-    <.live_component module={MishkaHtmlWeb.Admin.Public.LiveFlashComponent}
-                            id={:live_flash}
-                            flash={@flash}
-    />
+    <.live_component module={MishkaHtmlWeb.Admin.Public.LiveFlashComponent} id={:live_flash} flash={@flash} />
 
     <article class="col mx-auto client-content vazir" id="client-main-article-of-blog-post">
 
@@ -67,7 +64,6 @@
                <.live_component module={MishkaHtmlWeb.Public.TimeConverterComponent}
                         id={"inserted-#{@post.id}-component"}
                         span_id={"inserted-#{@post.id}-component"}
-                        id={"inserted-#{@post.id}-component"}
                         time={@post.inserted_at}
                 />
                </span>
@@ -77,7 +73,6 @@
                <.live_component module={MishkaHtmlWeb.Public.TimeConverterComponent}
                         id={"updated-#{@post.id}-component"}
                         span_id={"updated-#{@post.id}-component"}
-                        id={"updated-#{@post.id}-component"}
                         time={@post.updated_at}
                 />
                </span>

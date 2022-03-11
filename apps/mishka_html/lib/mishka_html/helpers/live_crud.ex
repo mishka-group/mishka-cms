@@ -469,7 +469,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
       record ->
         editor =
-          Map.get(record, :editor) || Enum.find(record.dynamic_form, fn x -> x.type == "description" end).value || ""
+          Map.get(record, :editor) || get_description(Enum.find(record.dynamic_form, fn x -> x.type == "description" end)) || ""
 
         socket
         |> assign(dynamic_form: record.dynamic_form, draft_id: record.id, editor: editor)
@@ -478,6 +478,10 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
     {:noreply, socket}
   end
+
+  defp get_description(nil), do: nil
+  defp get_description(description), do: description.value
+
 
   def draft(socket, type, params, options_menu, extra_params, key) do
     {_key, value} = Map.take(params, [type])

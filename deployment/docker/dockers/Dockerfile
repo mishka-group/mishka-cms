@@ -1,5 +1,5 @@
 # Extend from the official Elixir image
-FROM elixir:1.12.3-alpine
+FROM elixir:1.13.3-alpine
 
 RUN apk update && apk add postgresql-client && rm -rf /var/cache/apk/*
 

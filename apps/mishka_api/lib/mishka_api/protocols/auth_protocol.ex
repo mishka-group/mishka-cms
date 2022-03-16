@@ -40,14 +40,19 @@ end
 defimpl MishkaApi.AuthProtocol, for: Any do
   use MishkaApiWeb, :controller
   alias MishkaUser.Token.Token
-  alias MishkaDatabase.Cache.{RandomCode}
+  alias MishkaDatabase.Cache.RandomCode
   require MishkaTranslator.Gettext
 
   @request_error_tag :user
   @hard_secret_random_link "Test refresh"
 
-  def register({:error, _action, _error_tag, repo_error}, conn, _allowed_fields) do
-    conn
+  def register({:error, action, error_tag, repo_error}, conn, _allowed_fields) do
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
+    state = %MishkaInstaller.Reference.OnUserAfterSaveFailure{
+      error: {:error, action, error_tag, repo_error}, ip: user_ip, endpoint: :api, status: :added, conn: conn, modifier_user: :self
+    }
+
+    MishkaInstaller.Hook.call(event: "on_user_after_save_failure", state: state).conn
     |> put_status(400)
     |> json(%{
       action: :register,
@@ -58,30 +63,18 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def register({:ok, _action, _error_tag, repo_data}, conn, allowed_fields) do
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
+    allowed_user_info = Map.take(repo_data, allowed_fields |> Enum.map(&String.to_existing_atom/1))
     MishkaUser.Identity.create(%{user_id: repo_data.id, identity_provider: :self})
+    state = %MishkaInstaller.Reference.OnUserAfterSave{user_info: allowed_user_info, ip: user_ip, endpoint: :api, status: :added, conn: conn, modifier_user: :self}
 
-
-    random_code = Enum.random(100000..999999)
-    RandomCode.save(repo_data.email, random_code)
-    MishkaContent.Email.EmailHelper.send(:verify_email, {repo_data.email, random_code})
-
-    MishkaContent.General.Activity.create_activity_by_task(%{
-      type: "internal_api",
-      section: "user",
-      section_id: repo_data.id,
-      action: "add",
-      priority: "medium",
-      status: "info",
-      user_id: repo_data.id
-    }, %{identity_provider: "self", user_action: "register", cowboy_ip: MishkaApi.cowboy_ip(conn)})
-
-    conn
+    MishkaInstaller.Hook.call(event: "on_user_after_save", state: state).conn
     |> put_status(200)
     |> json(%{
       action: :register,
       system: @request_error_tag,
       message: MishkaTranslator.Gettext.dgettext("api_auth", "ثبت نام شما موفقیت آمیز بود. لطفا به ایمیل خود مراجعه کنید و کد فعال سازی ایمیل را برای تایید حساب کاربری ارسال فرمایید. لازم به ذکر هست کد فعال سازی فقط 5 دقیقه اعتبار دارد."),
-      user_info: Map.take(repo_data, allowed_fields |> Enum.map(&String.to_existing_atom/1))
+      user_info: allowed_user_info
     })
   end
 
@@ -102,24 +95,11 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def login(%{access_token: access_token, refresh_token: refresh_token}, user_info, conn, allowed_fields) do
-    MishkaUser.Acl.AclManagement.save(%{
-      id: user_info.id,
-      user_permission: MishkaUser.User.permissions(user_info.id),
-      created: System.system_time(:second)},
-      user_info.id
-    )
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
+    state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :api, ip: user_ip, type: :email, user_info: user_info}
+    hook = MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
 
-    MishkaContent.General.Activity.create_activity_by_task(%{
-      type: "internal_api",
-      section: "user",
-      section_id: user_info.id,
-      action: "send_request",
-      priority: "medium",
-      status: "info",
-      user_id: user_info.id
-    }, %{user_action: "login", cowboy_ip: MishkaApi.cowboy_ip(conn)})
-
-    conn
+    hook.conn
     |> put_status(200)
     |> json(%{
       action: :login,
@@ -138,8 +118,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def login({:error, :get_record_by_field, _error_tag}, _action, conn, _allowed_fields) do
-    conn
+  def login({:error, :get_record_by_field, error_tag}, _action, conn, _allowed_fields) do
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), {:error, :get_record_by_field, error_tag}).conn
     |> put_status(401)
     |> json(%{
       action: :login,
@@ -149,7 +129,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def login({:nil_password?, true}, _action, conn, _allowed_fields) do
-    conn
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), {:nil_password?, true}).conn
     |> put_status(401)
     |> json(%{
       action: :login,
@@ -158,8 +138,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def login({:error, :check_password, _error_tag}, _action, conn, _allowed_fields) do
-    conn
+  def login({:error, :check_password, error_tag}, _action, conn, _allowed_fields) do
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), {:error, :check_password, error_tag}).conn
     |> put_status(401)
     |> json(%{
       action: :login,
@@ -168,8 +148,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def login({:error, :more_device, _error_tag}, _action, conn, _allowed_fields) do
-    conn
+  def login({:error, :more_device, error_tag}, _action, conn, _allowed_fields) do
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), {:error, :more_device, error_tag}).conn
     |> put_status(401)
     |> json(%{
       action: :login,
@@ -178,8 +158,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def login(_n , _action, conn, _allowed_fields) do
-    conn
+  def login(error , _action, conn, _allowed_fields) do
+    on_user_login_failure(conn, to_string(:inet_parse.ntoa(conn.remote_ip)), error).conn
     |> put_status(500)
     |> json(%{
       action: :login,
@@ -294,17 +274,11 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def logout({:ok, :delete_refresh_token}, conn) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
-      type: "internal_api",
-      section: "user",
-      section_id: Map.get(conn.assigns, :user_id),
-      action: "send_request",
-      priority: "low",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "logout", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+    user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
+    state = %MishkaInstaller.Reference.OnUserAfterLogout{conn: conn, endpoint: :api, ip: user_ip, user_id: Map.get(conn.assigns, :user_id)}
+    hook = MishkaInstaller.Hook.call(event: "on_user_after_logout", state: state)
 
-    conn
+    hook.conn
     |> put_status(200)
     |> json(%{
       action: :logout,
@@ -778,8 +752,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       {:error, :edit, _acction, _error_tag} ->
-
-        conn
+       conn
         |> put_status(401)
         |> json(%{
           action: :deactive_account,
@@ -854,7 +827,6 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       {:error, :edit, _acction, _error_tag} ->
-
         conn
         |> put_status(401)
         |> json(%{
@@ -872,7 +844,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           message: MishkaTranslator.Gettext.dgettext("api_auth", "کد فعال سازی شما منقضی شده است.")
         })
 
-      [{:error, :get_user, _acction} ]->
+      [{:error, :get_user, _acction}]->
         conn
         |> put_status(401)
         |> json(%{
@@ -980,7 +952,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     end
   end
 
-  def verify_email_by_email_link(_, conn, _allowed_fields_output) do
+  def verify_email_by_email_link(_error, conn, _allowed_fields_output) do
     conn
     |> put_status(404)
     |> json(%{
@@ -1037,7 +1009,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     end
   end
 
-  def deactive_account_by_email_link(_, conn, _allowed_fields_output) do
+  def deactive_account_by_email_link(_error, conn, _allowed_fields_output) do
     conn
     |> put_status(404)
     |> json(%{
@@ -1090,4 +1062,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       })
   end
 
+  defp on_user_login_failure(conn, user_ip, error) do
+    state = %MishkaInstaller.Reference.OnUserLoginFailure{conn: conn, ip: user_ip, endpoint: :api, error: error}
+    MishkaInstaller.Hook.call(event: "on_user_login_failure", state: state)
+  end
 end

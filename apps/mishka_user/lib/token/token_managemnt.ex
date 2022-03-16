@@ -275,8 +275,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   @impl true
   def terminate(reason, _state) do
-    Logger.warn("Reason of Terminate #{inspect(reason)}")
-    # send error to log server
+    if reason != :normal do
+      Logger.warn("Reason of Terminate #{inspect(reason)}")
+    end
+    # TODO: send error to log server
   end
 
 

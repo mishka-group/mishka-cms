@@ -1,0 +1,118 @@
+name: MishkaCms CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  ci:
+    env:
+      GITHUB_ACTION: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pair:
+              elixir: '1.13'
+              otp: '24.2'
+              postgres: '10.19-alpine'
+
+          - pair:
+              elixir: '1.13.1'
+              otp: '24.2'
+              postgres: '13.5-alpine'
+
+          - pair:
+              elixir: '1.13.2'
+              otp: '24.2'
+              postgres: '14.1-alpine'
+
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:${{matrix.pair.postgres}}
+        env:
+          POSTGRES_DB: mishka_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432/tcp
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{matrix.pair.elixir}}-${{matrix.pair.otp}}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{matrix.pair.elixir}}-${{matrix.pair.otp}}-
+            
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.pair.otp}}
+          elixir-version: ${{matrix.pair.elixir}}
+
+
+      - name: Elixir and Erlang Dependencies
+        run: | 
+          mix local.hex --force
+          mix local.rebar --force
+          mix archive.install hex phx_new --force
+
+      - name: Source Compiling
+        run: | 
+          mix deps.get
+          mix deps.compile
+          mix assets.deploy
+
+      - name: Run mix ecto.setup
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
+          DATABASE_DEVELOPERT_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_developer_tools_test
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_NAME: mishka_test
+          DATABASE_HOST: localhost
+        run: |
+          mix ecto.drop
+          mix ecto.create
+          mix ecto.migrate
+
+      - name: Run test with temporary information
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
+          DATABASE_DEVELOPERT_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_developer_tools_test
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_NAME: mishka_test
+          DATABASE_HOST: localhost
+          SECRET_KEY_BASE_API: qP5c9diga3k115/empFNEEi/fgwXkhArZvpvFaiLqdi3Um1ntPh0P2AkleLzEpzY
+          SECRET_KEY_BASE_HTML: afY0EvH0QD34GEhkEiXGjDAnxp9lskQjRbMQ1K8v69t3ZzPCK8RU+rbD4K3E3yHa
+          LIVE_VIEW_SALT: wqSr52l4
+          TOKEN_JWT_KEY: Exe6Qk6YPWWNmOS7rAtXQfPPngruPtEIivDB1nsXwSk
+          SECRET_CURRENT_TOKEN_SALT: TestSaltCurrentToken
+          SECRET_REFRESH_TOKEN_SALT: TestRefreshSaltToken
+          SECRET_ACCESS_TOKEN_SALT: TestAccessSaltToken
+          EMAIL_SYSTEM: test@test.com
+          EMAIL_DOMAIN: test.com
+          EMAIL_PORT: '587'
+          EMAIL_SERVER: test.test.com
+          EMAIL_HOSTNAME: test.test.org
+          EMAIL_USERNAME: test@test.com
+          EMAIL_PASSWORD: TestPasswordForEmail
+        run: |
+          mix test --trace

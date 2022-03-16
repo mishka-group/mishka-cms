@@ -1,7 +1,7 @@
 defmodule MishkaDatabase.Helpers.CrudMacroTest do
   use ExUnit.Case, async: true
   doctest MishkaDatabase
-  use MishkaDatabase.CRUD,
+  use MishkaDeveloperTools.DB.CRUD,
                         module: MishkaDatabase.Schema.MishkaUser.User,
                         error_atom: :user,
                         repo: MishkaDatabase.Repo

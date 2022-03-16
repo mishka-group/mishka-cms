@@ -26,6 +26,7 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         id: nil,
         drafts: ContentDraftManagement.drafts_by_section(section: "role"),
         draft_id: nil,
+        user_ip: get_connect_info(socket, :peer_data).address,
         changeset: role_changeset())
     {:ok, socket}
   end
@@ -59,22 +60,11 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :role, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
-          type: "section",
-          section: "role",
-          section_id: repo_data.id,
-          action: "add",
-          priority: "high",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_role_create", type: "admin"})
-
-        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "نقش: %{title} درست شده است.", title: repo_data.name)})
-        socket
+        state = %MishkaInstaller.Reference.OnUserAfterSaveRole{role_id: repo_data.id, ip: socket.assigns.user_ip, endpoint: :html, conn: socket}
+        MishkaInstaller.Hook.call(event: "on_user_after_save_role", state: state).conn
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نقش مورد نظر ساخته شد."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))
-
     end
 
     {:noreply, socket}

@@ -5,6 +5,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   alias MishkaContent.Blog.TagMapper
   alias MishkaContent.Blog.Post
 
+
   use MishkaHtml.Helpers.LiveCRUD,
       module: MishkaContent.Blog.TagMapper,
       redirect: __MODULE__,
@@ -12,7 +13,21 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
 
   @impl true
   def render(assigns) do
-    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_blog_post_tags_live.html", assigns)
+    ~H"""
+      <.live_component
+        module={MishkaHtml.Helpers.ListContainerComponent}
+        id={:list_container}
+        flash={@flash}
+        section_info={section_info(assigns, @socket)}
+        filters={@filters}
+        list={@tags}
+        url={MishkaHtmlWeb.AdminBlogPostTagsLive}
+        page_size={@page_size}
+        parent_assigns={assigns}
+        admin_menu={live_render(@socket, AdminMenu, id: :admin_menu)}
+        left_header_side=""
+      />
+    """
   end
 
   @impl true
@@ -33,6 +48,8 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
         Process.send_after(self(), :menu, 100)
         socket
         |> assign(
+          page_size: 20,
+          filters: %{},
           post_id: post_id,
           page_title: "#{repo_data.title}",
           body_color: "#a29ac3cf",
@@ -114,4 +131,100 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   end
 
   selected_menue("MishkaHtmlWeb.AdminBlogPostTagsLive")
+
+  def handle_info(_params, socket) do
+    {:noreply, socket}
+  end
+
+  def section_fields() do
+    [
+      ListItemComponent.text_field("title", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
+      {true, true, false}, &MishkaHtml.title_sanitize/1),
+      ListItemComponent.text_field("custom_title", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر سفارشی"),
+      {true, true, false}, &MishkaHtml.title_sanitize/1),
+      ListItemComponent.select_field("robots", [3, 5, 6], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "رباط"),
+      [
+        {"IndexFollow", "IndexFollow"},
+        {"IndexNoFollow", "IndexNoFollow"},
+        {"NoIndexFollow", "NoIndexFollow"},
+        {"NoIndexNoFollow", "NoIndexNoFollow"}
+      ],
+      {true, true, false}),
+      ListItemComponent.time_field("inserted_at", [1], "col header4", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
+      {true, false, false})
+    ]
+  end
+
+  def section_info(assigns, socket) do
+    %{
+      section_btns: %{
+        header: [
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطالب"),
+            router: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive),
+            class: "btn btn-outline-danger"
+          },
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live_templates", "برچسب ها"),
+            router: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogTagsLive),
+            class: "btn btn-outline-info"
+          }
+        ],
+        list_item: [
+          %{
+            method: :delete,
+            router: nil,
+            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف برچسب از این مطلب"),
+            class: "btn btn-outline-danger vazir"
+          }
+        ]
+      },
+      title: MishkaTranslator.Gettext.dgettext("html_live_templates", "برچسب موضوع %{title}", title: assigns.page_title),
+      activities_info: %{
+        title: MishkaTranslator.Gettext.dgettext("html_live_templates", "برچسب موضوع %{title}", title: assigns.page_title),
+        section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "برچسب"),
+        action: :section,
+        action_by: :section,
+      },
+      custom_operations: nil,
+      description:
+      ~H"""
+        <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید به مطلب مورد نظر یک یا چند برچسب تخصیص بدهید یا از لیست برچسب های مطلب مذکور موردی که نیاز ندارید را حذف کنید.") %>
+        <div class="space30"></div>
+        <div class="col-sm-12">
+          <div class="clearfix"></div>
+          <div class="space40"></div>
+          <hr>
+          <div class="space40"></div>
+          <form phx-change="search_tag" id="tag-form">
+              <div class="col-md-4 vazir">
+                  <label for="blogPostTags" class="form-label"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "جستجو برچسب و اضافه کردن به مطلب") %></label>
+                  <div class="space10"> </div>
+                  <input type="text" class="title-input-text form-control" name="search-tag-title" id="search-tag">
+                  <div class="col space10"> </div>
+                  <div class="space10"></div>
+                  <div class="col" phx-update="replace" id="search_tags">
+                      <%= for {item, color} <- Enum.zip(@search, Stream.cycle(["warning", "info" , "danger" , "success" , "primary" ])) do %>
+                          <div class={"list-group-item list-group-item-#{color}"} aria-current="true">
+                              <div class="d-flex w-100 justify-content-between">
+                                  <h4 class="mb-1">
+                                      <%= item.title %>
+                                  </h4>
+
+                                  <small class="text-muted">
+                                      <div class="btn btn-outline-primary vazir" phx-click="add_tag" phx-value-id={item.id}>
+                                          <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "اضافه کردن") %>
+                                      </div>
+                                  </small>
+                              </div>
+                          </div>
+                      <% end %>
+                  </div>
+              </div>
+          </form>
+        </div>
+      """
+    }
+  end
+
 end

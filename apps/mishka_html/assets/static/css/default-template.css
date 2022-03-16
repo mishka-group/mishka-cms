@@ -11,6 +11,22 @@
   font-display: block;
 } */
 
+.navbar-toggler-icon {
+  width: 3em !important;
+  height: 2em !important;
+}
+
+a.list-link {
+  text-decoration: none;
+}
+
+.list-item-value {
+  text-align: center;
+}
+
+.list-activity-blog-post-and-category .badge.bg-light {
+  color: #000;
+}
 select:-internal-list-box option:checked {
   background-color: -internal-light-dark(rgb(206, 206, 206), rgb(84, 84, 84)) !important;
   color: -internal-light-dark(rgb(16, 16, 16), rgb(255, 255, 255)) !important;
@@ -76,8 +92,8 @@ span.d-inline-block.bg-secondary.rounded-circle {
 }
 
 .admin-home-activities-link .alert {
-  padding-left: 5px !important;
-  padding-right: 5px !important;
+  padding-left: 3px !important;
+  padding-right: 3px !important;
 }
 
 .category-side-short_description {
@@ -241,6 +257,15 @@ p.my-align-right {
 }
 
 .admin-list-img img {
+  max-height: 100px;
+  width: 100%;
+  box-shadow: 1px 1px 8px #dadada;background-size: cover;background-position: center center;
+  border-radius: 10px;
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.list-img img {
   max-height: 100px;
   width: 100%;
   box-shadow: 1px 1px 8px #dadada;background-size: cover;background-position: center center;
@@ -2642,13 +2667,23 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 }
 
 @media (max-width: 767.98px) {
-  .col-sm-3.navbar.navbar-dark {
-    width: 70%;
+  .navbar-collapse.collapse {
+    padding-top: 20px;
   }
-
   .client-notif-icon svg {
     max-width: 30px;
     max-height: 30px;
+  }
+
+  .col-sm.navbar.main-client-navbar  {
+    width: 50%;
+    z-index: 1000;
+    flex: 0 0 50%;
+  }
+
+  .notif-ico-main-block  {
+    position: absolute;
+    left: 1px;
   }
 
   .col-sm.client-notif {
@@ -2656,9 +2691,10 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   }
 
   .col-sm-3.notif-drop {
-    position: relative;
+    position: absolute;
     min-width: 400px;
-    right: 15px;
+    left: 1px;
+    top: 80px;
   }
   /* end of notif */
 
@@ -2711,7 +2747,16 @@ article.col-sm-3.home-blog-posts-normal-with-body {
 
 /* `sm` applies to x-small devices (portrait phones, less than 576px) */
 @media (max-width: 575.98px) {
-
+  .col-sm-3.notif-drop {
+    min-width: 350px;
+    width: 95%;
+    left: 1px;
+    top: 70px;
+  }
+  .notif-ico-main-block  {
+    position: absolute;
+    left: 10px;
+  }
   .col-sm-4.home-blog-posts-normal-with-body.rtl.home-image-post header.home-blog-posts-normal-with-body-header {
     padding: 5px 5px;
   }
@@ -2852,7 +2897,88 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   }
 }
 
+.header1 {
+  color: #084298;
+  background-color: #cfe2ff !important;
+  border-color: #b6d4fe;
+  position: relative;
+  padding: 1rem 1rem !important;
+  margin-bottom: 1rem;
+  border: 1px solid transparent !important;
+  border-radius: .25rem;
+}
 
+.header2 {
+  color: #664d03;
+  background-color: #fff3cd !important;
+  border-color: #ffecb5;
+  position: relative;
+  padding: 1rem 1rem !important;
+  margin-bottom: 1rem;
+  border: 1px solid transparent !important;
+  border-radius: .25rem;
+}
+
+.header3 {
+  color: #0f5132;
+  background-color: #d1e7dd !important;
+  border-color: #badbcc;
+  position: relative;
+  padding: 1rem 1rem  !important;
+  margin-bottom: 1rem;
+  border: 1px solid transparent !important;
+  border-radius: .25rem;
+}
+
+.header4 {
+  color: #842029;
+  background-color: #f8d7da !important;
+  border-color: #f5c2c7;
+  position: relative;
+  padding: 1rem 1rem  !important;
+  margin-bottom: 1rem;
+  border: 1px solid transparent !important;
+  border-radius: .25rem;
+}
+
+.header5 {
+  color: #055160;
+  background-color: #cff4fc !important;
+  border-color: #b6effb;
+  position: relative;
+  padding: 1rem 1rem  !important;
+  margin-bottom: 1rem;
+  border: 1px solid transparent !important;
+  border-radius: .25rem;
+}
+
+.header6 {
+  color: #141619;
+  background-color: #d3d3d4 !important;
+  border-color: #bcbebf;
+  position: relative;
+  padding: 1rem 1rem  !important;
+  margin-bottom: 1rem;
+  border: 1px solid transparent  !important;
+  border-radius: .25rem;
+}
+
+.header7 {
+  color: #0f5132;
+  background-color: #d1e7dd !important;
+  border-color: #badbcc;
+  position: relative;
+  padding: 1rem 1rem !important;
+  margin-bottom: 1rem;
+  border: 1px solid transparent  !important;
+  border-radius: .25rem;
+}
+
+.list-component-links-item,
+.list-component-header-item,
+.list-component-item {
+  text-align: center;
+}
 
 
 

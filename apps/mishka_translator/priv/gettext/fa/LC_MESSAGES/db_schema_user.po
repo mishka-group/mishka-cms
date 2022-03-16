@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=1\n"
 
 #, elixir-format
-#: lib/schema/mishka_user/user.ex:47 lib/schema/mishka_user/user.ex:49
+#: lib/schema/mishka_user/user.ex:48 lib/schema/mishka_user/user.ex:50
 msgid "این ایمیل از قبل در سیستم ثبت شده است."
 msgstr ""
 
@@ -33,26 +33,27 @@ msgid "این سطح دسترسی از قبل برای نقش مذکور اضا�
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/user.ex:48
+#: lib/schema/mishka_user/user.ex:49
 msgid "این نام کاربری از قبل در سیستم ثبت شده است."
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/user.ex:38 lib/schema/mishka_user/user.ex:39
-#: lib/schema/mishka_user/user.ex:40 lib/schema/mishka_user/user.ex:41 lib/schema/mishka_user/user.ex:57
-#: lib/schema/mishka_user/user.ex:58
+#: lib/schema/mishka_user/user.ex:39 lib/schema/mishka_user/user.ex:40
+#: lib/schema/mishka_user/user.ex:41 lib/schema/mishka_user/user.ex:42 lib/schema/mishka_user/user.ex:58
+#: lib/schema/mishka_user/user.ex:59
 msgid "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}"
 msgstr ""
 
 #, elixir-format
 #: lib/schema/mishka_user/identity_provider.ex:26
-#: lib/schema/mishka_user/permission.ex:19 lib/schema/mishka_user/role.ex:22 lib/schema/mishka_user/user.ex:37
-#: lib/schema/mishka_user/user.ex:56 lib/schema/mishka_user/user_role.ex:21
+#: lib/schema/mishka_user/permission.ex:19 lib/schema/mishka_user/role.ex:22 lib/schema/mishka_user/user.ex:38
+#: lib/schema/mishka_user/user.ex:57 lib/schema/mishka_user/user_role.ex:21
 msgid "فیلد مذکور نمی تواند خالی باشد"
 msgstr ""
 
 #, elixir-format
-#: lib/schema/mishka_user/identity_provider.ex:28
-#: lib/schema/mishka_user/permission.ex:21 lib/schema/mishka_user/user_role.ex:24 lib/schema/mishka_user/user_role.ex:25
+#: lib/schema/mishka_content/activity.ex:32
+#: lib/schema/mishka_user/identity_provider.ex:28 lib/schema/mishka_user/permission.ex:21
+#: lib/schema/mishka_user/user_role.ex:24 lib/schema/mishka_user/user_role.ex:25
 msgid "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"
 msgstr ""

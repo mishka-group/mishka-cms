@@ -149,7 +149,9 @@ defmodule MishkaContent.Cache.ContentDraftManagement do
 
   @impl true
   def terminate(reason, _state) do
-    Logger.warn("Reason of Terminate #{inspect(reason)}")
+    if reason != :normal do
+      Logger.warn("Reason of Terminate #{inspect(reason)}")
+    end
   end
 
   defp via(id, section) do

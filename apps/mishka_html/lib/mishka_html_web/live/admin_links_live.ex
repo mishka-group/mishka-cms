@@ -10,7 +10,21 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
 
   @impl true
   def render(assigns) do
-    Phoenix.View.render(MishkaHtmlWeb.AdminBlogView, "admin_links_live.html", assigns)
+    ~H"""
+      <.live_component
+        module={MishkaHtml.Helpers.ListContainerComponent}
+        id={:list_container}
+        flash={@flash}
+        section_info={section_info(assigns, @socket)}
+        filters={@filters}
+        list={@post_links}
+        url={MishkaHtmlWeb.AdminLinksLive}
+        page_size={@page_size}
+        parent_assigns={assigns}
+        admin_menu={live_render(@socket, AdminMenu, id: :admin_menu)}
+        left_header_side=""
+      />
+    """
   end
 
   @impl true
@@ -20,7 +34,9 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
         if connected?(socket), do: BlogLink.subscribe()
         Process.send_after(self(), :menu, 100)
         assign(socket,
-          page_title: MishkaTranslator.Gettext.dgettext("html_live", "مطلب %{title}", title: record.title),
+          page_size: 20,
+          filters: %{},
+          page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت لینک ها مطلب %{title}", title: record.title),
           body_color: "#a29ac3cf",
           user_id: Map.get(session, "user_id"),
           post_links: BlogLink.links(filters: %{section_id: post_id}),
@@ -87,4 +103,91 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
 
 
   selected_menue("MishkaHtmlWeb.AdminPostLinksLive")
+
+  @impl true
+  def handle_info(_, socket) do
+    {:noreply, socket}
+  end
+
+  def section_fields() do
+    [
+      ListItemComponent.text_field("title", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
+      {true, false, false}, &MishkaHtml.title_sanitize/1),
+      ListItemComponent.select_field("status", [1, 4], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "وضعیت"),
+      [
+        {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), "inactive"},
+        {MishkaTranslator.Gettext.dgettext("html_live", "فعال"), "active"},
+        {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), "archived"},
+        {MishkaTranslator.Gettext.dgettext("html_live", "حذف با پرچم"), "soft_delete"},
+      ],
+      {true, false, false}),
+      ListItemComponent.select_field("type", [1, 4], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "نوع لینک"),
+      [
+        {MishkaTranslator.Gettext.dgettext("html_live", "پایین"), "bottom"},
+        {MishkaTranslator.Gettext.dgettext("html_live", "وسط"), "inside"},
+        {MishkaTranslator.Gettext.dgettext("html_live", "ویژه"), "featured"}
+      ],
+      {true, false, false}),
+      ListItemComponent.select_field("robots", [3, 5, 6], "col header4", MishkaTranslator.Gettext.dgettext("html_live",  "رباط"),
+      [
+        {"IndexFollow", "IndexFollow"},
+        {"IndexNoFollow", "IndexNoFollow"},
+        {"NoIndexFollow", "NoIndexFollow"},
+        {"NoIndexNoFollow", "NoIndexNoFollow"}
+      ],
+      {true, false, false}),
+      ListItemComponent.time_field("inserted_at", [1], "col header5", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
+      {true, false, false})
+    ]
+  end
+
+  def section_info(assigns, socket) do
+    %{
+      section_btns: %{
+        header: [
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live_templates", "اضافه کردن لینک"),
+            router: Routes.live_path(socket, MishkaHtmlWeb.AdminLinkLive, assigns.post_id),
+            class: "btn btn-outline-danger"
+          },
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live_templates", "برگشت به مطالب"),
+            router: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive),
+            class: "btn btn-outline-primary"
+          }
+        ],
+        list_item: [
+          %{
+            method: :delete,
+            router: nil,
+            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف لینک از این مطلب"),
+            class: "btn btn-outline-danger vazir"
+          },
+          %{
+            method: :redirect_keys,
+            router: MishkaHtmlWeb.AdminLinkLive,
+            title: MishkaTranslator.Gettext.dgettext("html_live",  "ویرایش"),
+            class: "btn btn-outline-info vazir",
+            keys: [
+              {:without_key, assigns.post_id},
+              {:id, :id}
+            ]
+          }
+        ]
+      },
+      title: assigns.page_title,
+      activities_info: %{
+        title: assigns.page_title,
+        section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "لینک"),
+        action: :section,
+        action_by: :section,
+      },
+      custom_operations: nil,
+      description:
+      ~H"""
+        <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید برای هر مطلب یک سری لینک با توضیحات اضافه کنید که به عنوان پیوست یا نمایش می تواند در تولید محتوا کاربردی باشد.") %>
+        <div class="space30"></div>
+      """
+    }
+  end
 end

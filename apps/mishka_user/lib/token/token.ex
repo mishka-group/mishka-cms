@@ -8,8 +8,14 @@ defmodule MishkaUser.Token.Token do
   @type result() :: map() | tuple() | atom()
   @type clime() :: map() | tuple() | struct()
 
-  @spec create_token(user_info(), :jwt_token | :phoenix_token) ::
+
+
+  @spec create_token(
+          atom | user_info(),
+          :current | :jwt_token | :phoenix_token
+        ) ::
           {:error, :more_device}
+          | {:ok, :save_token, nonempty_binary}
           | {:error, :verify_token, :refresh, :expired | :invalid | :missing | :token_otp_state}
           | %{access_token: %{clime: clime(), token: token()}, refresh_token: %{clime: clime(), token: token()}}
 

@@ -68,26 +68,26 @@
                         <%= case MishkaHtmlWeb.AdminLinkLive.search_fields(form.type).form do %>
                             <% "select" -> %>
                                 <.live_component module={MishkaHtmlWeb.Admin.Form.SelectComponent}
-                                    id: {String.to_atom("admin_form_#{form.type}")}
-                                    form: {form}
-                                    f: {f}
-                                    search_fields: {MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
+                                    id={String.to_atom("admin_form_#{form.type}")}
+                                    form={form}
+                                    f={f}
+                                    search_fields={MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
                                 />
 
                             <% "editor" -> %>
                                 <.live_component module={MishkaHtmlWeb.Admin.Form.EditorComponent}
-                                        id: {String.to_atom("admin_form_#{form.type}")}
-                                        form: {form}
-                                        f: {f}
-                                        search_fields: {MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
+                                        id={String.to_atom("admin_form_#{form.type}")}
+                                        form={form}
+                                        f={f}
+                                        search_fields={MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
                                 />
 
                             <% _ -> %>
                                 <.live_component module={MishkaHtmlWeb.Admin.Form.TextComponent}
-                                        id: {String.to_atom("admin_form_text_#{form.type}")}
-                                        form: {form}
-                                        f: {f}
-                                        search_fields: {MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
+                                        id={String.to_atom("admin_form_text_#{form.type}")}
+                                        form={form}
+                                        f={f}
+                                        search_fields={MishkaHtmlWeb.AdminLinkLive.search_fields(form.type)}
                                 />
                         <% end %>
                     <% end %>

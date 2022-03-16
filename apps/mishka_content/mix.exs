@@ -14,7 +14,7 @@ defmodule MishkaContent.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       xref: [
-        exclude: [MishkaUser.User]
+        exclude: [MishkaUser.User, MishkaInstaller.Hook]
       ]
     ]
   end
@@ -22,7 +22,7 @@ defmodule MishkaContent.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :ecto_sql, :ecto, :mishka_database, :phoenix_pubsub, :mishka_translator, :bamboo, :bamboo_smtp, :phoenix_html],
+      extra_applications: [:logger, :ecto_sql, :ecto, :mishka_database, :phoenix_pubsub, :mishka_translator, :bamboo, :bamboo_smtp, :phoenix_html, :mishka_installer],
       mod: {MishkaContent.Application, []}
     ]
   end
@@ -36,7 +36,8 @@ defmodule MishkaContent.MixProject do
       {:bamboo_smtp, "~> 4.0.1"},
       {:bamboo_phoenix, "~> 1.0.0"},
       {:timex, "~> 3.7"},
-      {:mishka_translator, in_umbrella: true}
+      {:mishka_translator, in_umbrella: true},
+      {:mishka_installer, in_umbrella: true}
     ]
   end
 end

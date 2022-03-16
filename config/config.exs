@@ -7,7 +7,7 @@
 # all use the same configuration file. If you want different
 # configurations or dependencies per app, it is best to
 # move said applications out of the umbrella.
-use Mix.Config
+import Config
 
 config :esbuild,
   version: "0.12.18",
@@ -23,19 +23,25 @@ config :mishka_translator, MishkaTranslator.Gettext,
 
 
 config :mishka_api, :auth,
-token_type: :jwt_token
-
-
-config :mishka_database, MishkaDatabase.Repo,
-  database: System.get_env("DATABASE_NAME"),
-  username: System.get_env("DATABASE_USER"),
-  password: System.get_env("DATABASE_PASSWORD"),
-  hostname: System.get_env("DATABASE_HOST"),
-  pool_size: 10,
-  show_sensitive_data_on_connection_error: true
-
+  token_type: :jwt_token
 
 config :mishka_database, ecto_repos: [MishkaDatabase.Repo]
+
+if System.get_env("GITHUB_ACTIONS") do
+  config :mishka_database, MishkaDatabase.Repo,
+    url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",
+    pool: Ecto.Adapters.SQL.Sandbox,
+    pool_size: 10,
+    show_sensitive_data_on_connection_error: true
+else
+  config :mishka_database, MishkaDatabase.Repo,
+    database: System.get_env("DATABASE_NAME"),
+    username: System.get_env("DATABASE_USER"),
+    password: System.get_env("DATABASE_PASSWORD"),
+    hostname: System.get_env("DATABASE_HOST"),
+    pool_size: 10,
+    show_sensitive_data_on_connection_error: true
+end
 
 
 # # Configures the endpoint

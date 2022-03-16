@@ -12,7 +12,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
   alias MishkaContent.General.Subscription
   alias MishkaContent.Blog.BlogLink
   alias MishkaContent.General.Notif
-  alias alias MishkaContent.Blog.Author
+  alias MishkaContent.Blog.Author
 
 
   setup_all do

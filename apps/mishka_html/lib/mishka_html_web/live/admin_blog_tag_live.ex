@@ -179,15 +179,14 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
         {:noreply, socket}
 
       {:ok, :add, :blog_tag, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "blog_tag",
           section_id: repo_data.id,
           action: "add",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_add_tag", type: "admin"})
+          status: "info"
+        }, %{user_action: "live_add_tag", type: "admin", user_id: socket.assigns.user_id})
 
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "برچسب: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.title))})
         socket =
@@ -218,15 +217,14 @@ defmodule MishkaHtmlWeb.AdminBlogTagLive do
         {:noreply, socket}
 
       {:ok, :edit, :blog_tag, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "blog_tag",
           section_id: repo_data.id,
           action: "edit",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_edit_tag", type: "admin"})
+          status: "info"
+        }, %{user_action: "live_edit_tag", type: "admin", user_id: socket.assigns.user_id})
 
         Notif.notify_subscribers(%{id: repo_data.id, msg: "برچسب: #{MishkaHtml.full_name_sanitize(repo_data.title)} به روز شده است."})
 

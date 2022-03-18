@@ -66,15 +66,14 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
   @impl true
   def handle_event("delete", %{"id" => tag_id} = _params, socket) do
     TagMapper.delete(socket.assigns.post_id, tag_id)
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "section",
       section: "blog_tag",
       section_id: tag_id,
       action: "delete",
       priority: "low",
-      status: "info",
-      user_id: socket.assigns.user_id
-    }, %{user_action: "live_delete_post_tag", post_id: socket.assigns.post_id, type: "admin"})
+      status: "info"
+    }, %{user_action: "live_delete_post_tag", post_id: socket.assigns.post_id, type: "admin", user_id: socket.assigns.user_id})
 
     {:noreply, socket}
   end
@@ -98,15 +97,14 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
       {:error, :add, _error_tag, _repo_error} -> socket
 
       {:ok, :add, _error_tag, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "blog_tag",
           section_id: repo_data.id,
           action: "add",
           priority: "low",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_add_post_tag", post_id: socket.assigns.post_id, type: "admin"})
+          status: "info"
+        }, %{user_action: "live_add_post_tag", post_id: socket.assigns.post_id, type: "admin", user_id: socket.assigns.user_id})
         socket
     end
     {:noreply, socket}

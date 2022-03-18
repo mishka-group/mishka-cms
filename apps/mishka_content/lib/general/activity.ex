@@ -57,7 +57,7 @@ defmodule MishkaContent.General.Activity do
 
   @spec activities([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
   def activities(conditions: {page, page_size}, filters: filters) do
-    from(activity in Activity, left_join: user in assoc(activity, :users)) |> convert_filters_to_where(filters)
+    from(activity in Activity) |> convert_filters_to_where(filters)
     |> field()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
@@ -68,12 +68,12 @@ defmodule MishkaContent.General.Activity do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from [activity, user] in query, where: field(activity, ^key) == ^value
+      from [activity] in query, where: field(activity, ^key) == ^value
     end)
   end
 
   defp field(query) do
-    from [activity, user] in query,
+    from [activity] in query,
     order_by: [desc: activity.inserted_at, desc: activity.id],
     select: %{
       id: activity.id,
@@ -83,9 +83,6 @@ defmodule MishkaContent.General.Activity do
       priority: activity.priority,
       status: activity.status,
       action: activity.action,
-      user_id: activity.user_id,
-      username: user.username,
-      full_name: user.full_name,
       extra: activity.extra,
       updated_at: activity.updated_at,
       inserted_at: activity.inserted_at
@@ -116,7 +113,6 @@ defmodule MishkaContent.General.Activity do
           priority: params.priority,
           status: params.status,
           action: params.action,
-          user_id: params.user_id,
           extra: extra
         }
       )
@@ -140,9 +136,9 @@ defmodule MishkaContent.General.Activity do
       section_id: nil,
       action: "other",
       priority: create_activity_router_priority(Map.get(reason, :plug_status)),
-      status: Atom.to_string(kind),
-      user_id: Map.get(conn.assigns, :user_id)
+      status: Atom.to_string(kind)
     }, %{
+      user_id: Map.get(conn.assigns, :user_id),
       kind: kind,
       plug_status: Map.get(reason, :plug_status),
       params: Map.get(reason.conn, :params),

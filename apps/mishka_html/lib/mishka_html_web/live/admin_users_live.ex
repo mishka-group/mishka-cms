@@ -72,15 +72,14 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   def handle_event("user_role", %{"role" => role_id, "user_id" => user_id, "full_name" => full_name}, socket) do
     case role_id do
       "delete_user_role" ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "user",
           section_id: user_id,
           action: "auth",
           priority: "medium",
-          status: "info",
-          user_id: Map.get(socket.assigns, :user_id)
-        }, %{user_action: "live_delete_user_role", type: "admin", full_name: full_name})
+          status: "info"
+        }, %{user_action: "live_delete_user_role", type: "admin", full_name: full_name, user_id: Map.get(socket.assigns, :user_id)})
 
         title = MishkaTranslator.Gettext.dgettext("html_live", "نقش کاربری شما حذف شد")
         description = MishkaTranslator.Gettext.dgettext("html_live", "دسترسی حساب کاربری شما تغییر کرده است. این به منظور مسدود شدن شما نمی باشد. بلکه نقش کاربری از قبل داده شده پاک گردیده است. لازم به ذکر است این تغییرات به وسیله مدیریت وب سایت انجام شده است.")
@@ -128,15 +127,14 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
     case MishkaUser.Acl.UserRole.show_by_user_id(user_id) do
       {:error, _, _repo_error} ->
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "user",
           section_id: user_id,
           action: "auth",
           priority: "medium",
-          status: "info",
-          user_id: Map.get(socket.assigns, :user_id)
-        }, %{user_action: "live_create_or_edit_user_role", type: "admin", full_name: full_name})
+          status: "info"
+        }, %{user_action: "live_create_or_edit_user_role", type: "admin", full_name: full_name, user_id: Map.get(socket.assigns, :user_id)})
 
         MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
 

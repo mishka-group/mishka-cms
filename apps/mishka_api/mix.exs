@@ -24,7 +24,7 @@ defmodule MishkaApi.MixProject do
   def application do
     [
       mod: {MishkaApi.Application, []},
-      extra_applications: [:logger, :runtime_tools, :mishka_translator, :mishka_user, :plug, :mishka_content, :mishka_html, :mishka_installer]
+      extra_applications: [:logger, :runtime_tools, :mishka_translator, :mishka_user, :plug, :mishka_content, :mishka_html]
     ]
   end
 
@@ -49,7 +49,7 @@ defmodule MishkaApi.MixProject do
       {:plug, "~> 1.11"},
       {:mishka_translator, in_umbrella: true},
       {:sobelow, "~> 0.8", only: :dev},
-      {:mishka_installer, in_umbrella: true},
+      {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"},
     ]
   end
 

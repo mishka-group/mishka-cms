@@ -188,15 +188,14 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :subscription, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "subscription",
           section_id: repo_data.id,
           action: "add",
           priority: "medium",
           status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_create_subscription", type: "admin"})
+        }, %{user_action: "live_create_subscription", type: "admin", user_id: socket.assigns.user_id})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک برای بخش: %{title} درست شده است.", title: repo_data.section)})
@@ -217,15 +216,14 @@ defmodule MishkaHtmlWeb.AdminSubscriptionLive do
         ])
 
       {:ok, :edit, :subscription, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "subscription",
           section_id: repo_data.id,
           action: "edit",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_edit_subscription", type: "admin"})
+          status: "info"
+        }, %{user_action: "live_edit_subscription", type: "admin", user_id: socket.assigns.user_id})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "یک اشتراک از بهش: %{title} به روز شده است.", title: repo_data.section)})

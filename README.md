@@ -66,6 +66,8 @@ After installing the dependencies above, now you can run the project using the f
 mix deps.get
 mix deps.compile
 mix ecto.create # (first you have to define your database information in the config file)
+mix mishka_installer.db.gen.migration # Before running this command, please go to apps/mishka_database
+# After running top command please come back to root of the project like: cd ../..
 mix ecto.migrate
 mix assets.deploy
 mix test

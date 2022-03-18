@@ -16,9 +16,8 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do
 
         state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :html, ip: user_ip, type: :email, user_info: user_info}
-        hook = MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
 
-        hook.conn
+        MishkaInstaller.Hook.call(event: "on_user_after_login", state: state).conn
         |> renew_session()
         |> put_session(:current_token, token)
         |> put_session(:user_id, user_info.id)
@@ -86,15 +85,14 @@ defmodule MishkaHtmlWeb.AuthController do
         # delete all randome codes of user
         RandomCode.delete_code(code, user_info.email)
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "internal_api",
           section: "user",
           section_id: repo_data.id,
           action: "auth",
           priority: "high",
-          status: "info",
-          user_id: repo_data.id
-        }, %{user_action: "verify_email", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
+          status: "info"
+        }, %{user_action: "verify_email", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip)), user_id: repo_data.id})
 
         conn
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_auth", "ایمیل حساب کاربری شما با موفقیت تایید گردید."))
@@ -131,15 +129,14 @@ defmodule MishkaHtmlWeb.AuthController do
          {:user_is_not_deactive, false} <- {:user_is_not_deactive, repo_data.status == :inactive},
          {:ok, :edit, :user, user_info} <- MishkaUser.User.edit(%{id: repo_data.id, status: "inactive"}) do
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "internal_api",
           section: "user",
           section_id: repo_data.id,
           action: "auth",
           priority: "high",
-          status: "info",
-          user_id: repo_data.id
-        }, %{user_action: "deactive_account", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
+          status: "info"
+        }, %{user_action: "deactive_account", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip)), user_id: repo_data.id})
 
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(user_info.id)
@@ -194,15 +191,14 @@ defmodule MishkaHtmlWeb.AuthController do
          {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, "#{random_link.code}", [max_age: MishkaHtmlWeb.ResetChangePasswordLive.random_link_expire_time().age])},
          {:ok, :get_record_by_field, :user, repo_data} <- MishkaUser.User.show_by_email(random_link_user_info.email) do
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "internal_api",
           section: "user",
           section_id: repo_data.id,
           action: "auth",
           priority: "high",
-          status: "info",
-          user_id: repo_data.id
-        }, %{user_action: "delete_tokens", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip))})
+          status: "info"
+        }, %{user_action: "delete_tokens", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip)), user_id: repo_data.id})
 
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.stop(repo_data.id)

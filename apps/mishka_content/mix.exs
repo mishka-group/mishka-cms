@@ -30,14 +30,13 @@ defmodule MishkaContent.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"},
       {:mishka_database, in_umbrella: true},
-      {:ecto_sql, "~> 3.7"},
       {:bamboo, "~> 2.1.0"},
       {:bamboo_smtp, "~> 4.0.1"},
       {:bamboo_phoenix, "~> 1.0.0"},
       {:timex, "~> 3.7"},
-      {:mishka_translator, in_umbrella: true},
-      {:mishka_installer, in_umbrella: true}
+      {:mishka_translator, in_umbrella: true}
     ]
   end
 end

@@ -27,9 +27,8 @@ defmodule MishkaContent.CorePlugin.Login.SuccessLogin do
         section_id: user_info.id,
         action: "auth",
         priority: "high",
-        status: "info",
-        user_id: user_info.id
-      }, %{user_action: "login", user_ip: MishkaInstaller.ip(user_ip)})
+        status: "info"
+      }, %{user_action: "login", user_ip: MishkaInstaller.ip(user_ip), user_id: user_info.id})
     end
 
     def start_user_bookmarks(user_id) do

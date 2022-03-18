@@ -46,17 +46,14 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
                   {:code_verify, {:ok, %{id: _id, type: "access"}}} <- {:code_verify, Phoenix.Token.verify(MishkaHtmlWeb.Endpoint, @hard_secret_random_link, socket.assigns.random_link, [max_age: random_link_expire_time().age])},
                   {:ok, :edit, :user, user_info} <- MishkaUser.User.edit(%{id: repo_data.id, password: new_password}) do
 
-
-
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "user",
           section_id: repo_data.id,
           action: "edit",
           priority: "high",
-          status: "info",
-          user_id: repo_data.id
-        }, %{user_action: "change_password", type: "client"})
+          status: "info"
+        }, %{user_action: "change_password", type: "client", user_id: repo_data.id})
 
         # Send password changed notification to a user
         title = MishkaTranslator.Gettext.dgettext("html_live", "پسورد حساب کاربری شما تغییر کرد.")

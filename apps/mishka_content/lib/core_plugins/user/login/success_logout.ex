@@ -27,8 +27,7 @@ defmodule MishkaContent.CorePlugin.Login.SuccessLogout do
         section_id: nil,
         action: "auth",
         priority: "high",
-        status: "info",
-        user_id: user_id
-      }, %{user_action: "log_out", user_ip: MishkaInstaller.ip(user_ip)})
+        status: "info"
+      }, %{user_action: "log_out", user_ip: MishkaInstaller.ip(user_ip), user_id: user_id})
     end
 end

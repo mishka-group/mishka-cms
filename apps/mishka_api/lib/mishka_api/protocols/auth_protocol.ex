@@ -243,15 +243,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
     {:ok, :get_record_by_id, :user, user_info} = MishkaUser.User.show_by_id(refresh_clime["id"])
 
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "user",
       section_id: user_info.id,
       action: "send_request",
       priority: "high",
-      status: "info",
-      user_id: user_info.id
-    }, %{user_action: "refresh_token", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "refresh_token", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: user_info.id})
 
     conn
     |> put_status(200)
@@ -305,15 +304,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     # delete all user's Acl
     MishkaUser.Acl.AclManagement.stop(info.id)
 
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "user",
       section_id: info.id,
       action: "send_request",
       priority: "high",
-      status: "info",
-      user_id: info.id
-    }, %{user_action: "change_password", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "change_password", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: info.id})
 
     conn
     |> put_status(200)
@@ -388,15 +386,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
 
   def user_tokens({:ok, :get_record_by_id, :user, user_info}, conn, allowed_fields_output) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "user",
       section_id: user_info.id,
       action: "send_request",
       priority: "high",
-      status: "info",
-      user_id: user_info.id
-    }, %{user_action: "user_tokens", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "user_tokens", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: user_info.id})
 
     conn
     |> put_status(200)
@@ -435,15 +432,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   def get_token_expire_time({:ok, :get_record_by_id, :user, user_info}, conn, token, allowed_fields_output) do
     token_allowed_filed = ["access_expires_in", "create_time", "last_used", "os", "token", "type"]
 
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "user",
       section_id: user_info.id,
       action: "send_request",
       priority: "medium",
-      status: "info",
-      user_id: user_info.id
-    }, %{user_action: "get_token_expire_time", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "get_token_expire_time", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: user_info.id})
 
     conn
     |> put_status(200)
@@ -477,15 +473,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       random_code = Enum.random(100000..999999)
       RandomCode.save(user_info.email, random_code)
       MishkaContent.Email.EmailHelper.send(:forget_password, {user_info.email, random_code})
-      MishkaContent.General.Activity.create_activity_by_task(%{
+      MishkaContent.General.Activity.create_activity_by_start_child(%{
         type: "internal_api",
         section: "user",
         section_id: user_info.id,
         action: "send_request",
         priority: "high",
-        status: "info",
-        user_id: user_info.id
-      }, %{user_action: "reset_password", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
+        status: "info"
+      }, %{user_action: "reset_password", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email", user_id: user_info.id})
     end
 
     conn
@@ -532,15 +527,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           # delete all user's ACL
           MishkaUser.Acl.AclManagement.stop(user_info.id)
 
-          MishkaContent.General.Activity.create_activity_by_task(%{
+          MishkaContent.General.Activity.create_activity_by_start_child(%{
             type: "internal_api",
             section: "user",
             section_id: user_info.id,
             action: "send_request",
             priority: "high",
-            status: "info",
-            user_id: user_info.id
-          }, %{user_action: "reset_password", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "active"})
+            status: "info"
+          }, %{user_action: "reset_password", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "active", user_id: user_info.id})
 
         conn
         |> put_status(200)
@@ -577,15 +571,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
     MishkaUser.Token.TokenManagemnt.delete_token(user_id, token.token)
 
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "user",
       section_id: user_id,
       action: "send_request",
       priority: "high",
-      status: "info",
-      user_id: user_id
-    }, %{user_action: "delete_token", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_token", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: user_id})
 
     conn
     |> put_status(200)
@@ -598,15 +591,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
 
   def delete_tokens(conn) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "user",
       section_id: Map.get(conn.assigns, :user_id),
       action: "send_request",
       priority: "high",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "delete_tokens", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_tokens", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> put_status(200)
@@ -618,15 +610,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def edit_profile({:ok, :edit, :user, user_info}, conn, allowed_fields_output) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "user",
       section_id: user_info.id,
       action: "send_request",
       priority: "high",
-      status: "info",
-      user_id: user_info.id
-    }, %{user_action: "edit_profile", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "edit_profile", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: user_info.id})
     # after we create dynamic profile we can do more than now
     conn
     |> put_status(200)
@@ -660,15 +651,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def deactive_account({:ok, :get_record_by_id, _user, user_info}, :send, conn, allowed_fields_output) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "user",
       section_id: user_info.id,
       action: "send_request",
       priority: "high",
-      status: "info",
-      user_id: user_info.id
-    }, %{user_action: "deactive_account", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "deactive_account", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: user_info.id})
 
     case user_info.status do
       :inactive  ->
@@ -721,15 +711,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(user_info.id)
           MishkaUser.Token.TokenManagemnt.stop(user_info.id)
 
-          MishkaContent.General.Activity.create_activity_by_task(%{
+          MishkaContent.General.Activity.create_activity_by_start_child(%{
             type: "internal_api",
             section: "user",
             section_id: repo_data.id,
             action: "send_request",
             priority: "high",
-            status: "info",
-            user_id: repo_data.id
-          }, %{user_action: "deactive_account", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+            status: "info"
+          }, %{user_action: "deactive_account", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: repo_data.id})
 
           conn
           |> put_status(200)
@@ -796,15 +785,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
           RandomCode.delete_code(code, user_info.email)
 
-          MishkaContent.General.Activity.create_activity_by_task(%{
+          MishkaContent.General.Activity.create_activity_by_start_child(%{
             type: "internal_api",
             section: "user",
             section_id: user_info.id,
             action: "send_request",
             priority: "low",
-            status: "info",
-            user_id: user_info.id
-          }, %{user_action: "verify_email", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+            status: "info"
+          }, %{user_action: "verify_email", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: user_info.id})
 
           conn
           |> put_status(200)
@@ -882,15 +870,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           random_code = Enum.random(100000..999999)
           RandomCode.save(user_info.email, random_code)
           MishkaContent.Email.EmailHelper.send(:verify_email, {user_info.email, random_code})
-          MishkaContent.General.Activity.create_activity_by_task(%{
+          MishkaContent.General.Activity.create_activity_by_start_child(%{
             type: "internal_api",
             section: "user",
             section_id: user_info.id,
             action: "send_request",
             priority: "low",
-            status: "info",
-            user_id: user_info.id
-          }, %{user_action: "verify_email", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
+            status: "info"
+          }, %{user_action: "verify_email", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email", user_id: user_info.id})
         end
 
         conn
@@ -929,15 +916,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
           MishkaContent.Email.EmailHelper.send(:verify_email, {user_info.email, site_link})
 
-          MishkaContent.General.Activity.create_activity_by_task(%{
+          MishkaContent.General.Activity.create_activity_by_start_child(%{
             type: "internal_api",
             section: "user",
             section_id: user_info.id,
             action: "send_request",
             priority: "low",
-            status: "info",
-            user_id: user_info.id
-          }, %{user_action: "verify_email_by_email_link", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
+            status: "info"
+          }, %{user_action: "verify_email_by_email_link", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email", user_id: user_info.id})
         end
 
         conn
@@ -987,15 +973,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
           MishkaContent.Email.EmailHelper.send(:deactive_account, {user_info.email, site_link})
 
-          MishkaContent.General.Activity.create_activity_by_task(%{
+          MishkaContent.General.Activity.create_activity_by_start_child(%{
             type: "internal_api",
             section: "user",
             section_id: user_info.id,
             action: "send_request",
             priority: "high",
-            status: "info",
-            user_id: user_info.id
-          }, %{user_action: "deactive_account_by_email_link", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
+            status: "info"
+          }, %{user_action: "deactive_account_by_email_link", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email", user_id: user_info.id})
         end
 
         conn
@@ -1032,15 +1017,14 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
       MishkaContent.Email.EmailHelper.send(:delete_tokens, {user_info.email, site_link})
 
-      MishkaContent.General.Activity.create_activity_by_task(%{
+      MishkaContent.General.Activity.create_activity_by_start_child(%{
         type: "internal_api",
         section: "user",
         section_id: user_info.id,
         action: "send_request",
         priority: "high",
-        status: "info",
-        user_id: user_info.id
-      }, %{user_action: "send_delete_tokens_link_by_email", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email"})
+        status: "info"
+      }, %{user_action: "send_delete_tokens_link_by_email", cowboy_ip: MishkaApi.cowboy_ip(conn), type: "send_email", user_id: user_info.id})
     end
 
     conn

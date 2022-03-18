@@ -226,15 +226,14 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :notif, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "notif",
           section_id: repo_data.id,
           action: "add",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_create_notif", type: "admin"})
+          status: "info"
+        }, %{user_action: "live_create_notif", type: "admin", user_id: socket.assigns.user_id})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "اعلان: %{title} درست شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
@@ -258,15 +257,14 @@ defmodule MishkaHtmlWeb.AdminBlogNotifLive do
         ])
 
       {:ok, :edit, @error_atom, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "notif",
           section_id: repo_data.id,
           action: "edit",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_edit_notif", type: "admin"})
+          status: "info"
+        }, %{user_action: "live_edit_notif", type: "admin", user_id: socket.assigns.user_id})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
 

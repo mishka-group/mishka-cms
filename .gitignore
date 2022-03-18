@@ -57,3 +57,5 @@ Temporary Items
 
 Dockerfile_postgres
 init_db.sh
+
+mix.lock

@@ -57,15 +57,14 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
   def handle_event("add_author", %{"user-id" => user_id}, socket) do
     socket = case Author.create(%{post_id: socket.assigns.post_id, user_id: user_id}) do
       {:ok, :add, :blog_author, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "blog_author",
           section_id: repo_data.id,
           action: "add",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_add_author", type: "admin"})
+          status: "info"
+        }, %{user_action: "live_add_author", type: "admin", user_id: socket.assigns.user_id})
 
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت ثبت شد."))
@@ -84,15 +83,14 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
     socket = case Author.delete(id) do
       {:ok, :delete, :blog_author, repo_data} ->
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "blog_author",
           section_id: repo_data.id,
           action: "delete",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_delete_author", type: "admin"})
+          status: "info"
+        }, %{user_action: "live_delete_author", type: "admin", user_id: socket.assigns.user_id})
 
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت حذف شد"))

@@ -132,10 +132,7 @@ defmodule MishkaHtmlWeb.AdminActivitiesLive do
         {MishkaTranslator.Gettext.dgettext("html_live", "بانک اطلاعاتی"), "db"},
         {MishkaTranslator.Gettext.dgettext("html_live", "مدیریت پلاگین"), "plugin"},
       ],
-      {true, true, true}),
-      ListItemComponent.link_field("username", [1, 4], "col header7", MishkaTranslator.Gettext.dgettext("html_live",  "کاربر"),
-      {MishkaHtmlWeb.AdminUserLive, :user_id},
-      {true, false, false}, &MishkaHtml.username_sanitize/1)
+      {true, true, true})
     ]
   end
 

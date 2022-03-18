@@ -1,10 +1,9 @@
-defmodule MishkaDatabase.Repo.Migrations.Plugins do
+defmodule MishkaDatabase.Repo.Migrations.CreateMishkaInistrallerPluginTable do
   use Ecto.Migration
 
   def change do
     create table(:plugins, primary_key: false) do
       add(:id, :uuid, primary_key: true)
-
       add(:name, :string, size: 200, null: false)
       add(:event, :string, size: 200, null: false)
       add(:priority, :integer, null: false)
@@ -12,6 +11,7 @@ defmodule MishkaDatabase.Repo.Migrations.Plugins do
       add(:depend_type, :integer, null: false)
       add(:depends, {:array, :string}, null: true)
       add(:extra, {:array, :map}, null: false)
+
       timestamps()
     end
     create(

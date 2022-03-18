@@ -16,9 +16,8 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :save_token, token} <- Token.create_token(user_info, :current) do
 
         state = %MishkaInstaller.Reference.OnUserAfterLogin{conn: conn, endpoint: :html, ip: user_ip, type: :email, user_info: user_info}
-        hook = MishkaInstaller.Hook.call(event: "on_user_after_login", state: state)
 
-        hook.conn
+        MishkaInstaller.Hook.call(event: "on_user_after_login", state: state).conn
         |> renew_session()
         |> put_session(:current_token, token)
         |> put_session(:user_id, user_info.id)

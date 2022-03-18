@@ -18,16 +18,6 @@ jobs:
       matrix:
         include:
           - pair:
-              elixir: '1.13'
-              otp: '24.2'
-              postgres: '10.19-alpine'
-
-          - pair:
-              elixir: '1.13.1'
-              otp: '24.2'
-              postgres: '13.5-alpine'
-
-          - pair:
               elixir: '1.13.2'
               otp: '24.2'
               postgres: '14.1-alpine'
@@ -77,6 +67,7 @@ jobs:
       - name: Source Compiling
         run: | 
           mix deps.get
+          mix deps.update --all
           mix deps.compile
           mix assets.deploy
 

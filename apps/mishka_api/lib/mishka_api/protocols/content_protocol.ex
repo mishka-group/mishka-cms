@@ -147,15 +147,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_post({:ok, :add, :post, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_post",
       section_id: repo_data.id,
       action: "add",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "create_post", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "create_post", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_post, output_name: "post_info")
@@ -167,15 +166,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_post({:ok, :edit, :post, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_post",
       section_id: repo_data.id,
       action: "edit",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "edit_post", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "edit_post", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :edit_post, output_name: "post_info")
@@ -191,15 +189,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_post({:ok, :edit, :post, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_post",
       section_id: repo_data.id,
       action: "delete",
       priority: "high",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "delete_post", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_post", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_post, output_name: "post_info")
@@ -210,15 +207,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def destroy_post({:ok, :delete, :post, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_post",
       section_id: repo_data.id,
       action: "destroy",
       priority: "high",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "destroy_post", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "destroy_post", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :destroy_post, output_name: "post_info")
@@ -239,15 +235,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_category({:ok, :add, :category, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_category",
       section_id: repo_data.id,
       action: "add",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "create_category", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "create_category", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_category, output_name: "category_info")
@@ -258,15 +253,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_category({:ok, :edit, :category, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_category",
       section_id: repo_data.id,
       action: "edit",
       priority: "medium",
       status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "edit_category", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+    }, %{user_action: "edit_category", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :edit_category, output_name: "category_info")
@@ -278,15 +272,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_category({:ok, :edit, :category, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_category",
       section_id: repo_data.id,
       action: "delete",
       priority: "high",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "delete_category", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_category", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_category, output_name: "category_info")
@@ -311,15 +304,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def destroy_category({:ok, :delete, :category, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_category",
       section_id: repo_data.id,
       action: "destroy",
       priority: "high",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "destroy_category", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "destroy_category", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :destroy_category, output_name: "category_info")
@@ -411,30 +403,28 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_comment({:ok, :add, :comment, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "comment",
       section_id: repo_data.id,
       action: "add",
       priority: "low",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "create_comment", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "create_comment", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_comment, output_name: "comment_info")
   end
 
   def edit_comment({:ok, :edit, :comment, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "comment",
       section_id: repo_data.id,
       action: "edit",
       priority: "low",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "edit_comment", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "edit_comment", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :edit_comment, output_name: "comment_info")
@@ -487,15 +477,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_comment({:ok, :edit, :comment, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "comment",
       section_id: repo_data.id,
       action: "delete",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "delete_comment", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_comment", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_comment, output_name: "comment_info")
@@ -511,15 +500,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def destroy_comment({:ok, :delete, :comment, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "comment",
       section_id: repo_data.id,
       action: "destroy",
       priority: "high",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "destroy_comment", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "destroy_comment", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :destroy_comment, output_name: "comment_info")
@@ -530,15 +518,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_tag({:ok, :add, :blog_tag, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_tag",
       section_id: repo_data.id,
       action: "add",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "create_tag", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "create_tag", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_tag, output_name: "tag_info")
@@ -559,15 +546,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_tag({:ok, :edit, :blog_tag, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_tag",
       section_id: repo_data.id,
       action: "edit",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "edit_tag", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "edit_tag", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :edit_tag, output_name: "tag_info")
@@ -583,30 +569,28 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_tag({:ok, :delete, :blog_tag, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_tag",
       section_id: repo_data.id,
       action: "delete",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "delete_tag", cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_tag", cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_tag, output_name: "tag_info")
   end
 
   def add_tag_to_post({:ok, :add, :blog_tag_mapper, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_tag_mapper",
       section_id: repo_data.id,
       action: "add",
       priority: "low",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "add_tag_to_post", post_id: repo_data.post_id, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "add_tag_to_post", post_id: repo_data.post_id, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :add_tag_to_post, output_name: "post_tag_info")
@@ -631,15 +615,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def remove_post_tag({:ok, :delete, :blog_tag_mapper, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_tag_mapper",
       section_id: repo_data.id,
       action: "delete",
       priority: "low",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "remove_post_tag", post_id: repo_data.post_id, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "remove_post_tag", post_id: repo_data.post_id, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :remove_post_tag, output_name: "post_tag_info")
@@ -665,15 +648,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_bookmark({:ok, :add, :bookmark, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_tag_mapper",
       section_id: repo_data.id,
       action: "add",
       priority: "medium",
-      status: "info",
-      user_id: repo_data.user_id
-    }, %{user_action: "create_bookmark", section_id: repo_data.section_id, section: repo_data.section, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "create_bookmark", section_id: repo_data.section_id, section: repo_data.section, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: repo_data.user_id})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_bookmark, output_name: "bookmark_info")
@@ -685,15 +667,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_bookmark({:ok, :delete, :bookmark, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_tag_mapper",
       section_id: repo_data.id,
       action: "delete",
       priority: "medium",
-      status: "info",
-      user_id: repo_data.user_id
-    }, %{user_action: "delete_bookmark", section_id: repo_data.section_id, section: repo_data.section, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_bookmark", section_id: repo_data.section_id, section: repo_data.section, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: repo_data.user_id})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_bookmark, output_name: "bookmark_info")
@@ -718,15 +699,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_subscription({:ok, :add, :subscription, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "subscription",
       section_id: repo_data.id,
       action: "add",
       priority: "medium",
-      status: "info",
-      user_id: repo_data.user_id
-    }, %{user_action: "create_subscription", section_id: repo_data.section_id, section: repo_data.section, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "create_subscription", section_id: repo_data.section_id, section: repo_data.section, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: repo_data.user_id})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_subscription, output_name: "subscription_info")
@@ -746,30 +726,28 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_subscription({:ok, :delete, :subscription, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "subscription",
       section_id: repo_data.id,
       action: "delete",
       priority: "medium",
-      status: "info",
-      user_id: repo_data.user_id
-    }, %{user_action: "delete_subscription", section_id: repo_data.section_id, section: repo_data.section, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_subscription", section_id: repo_data.section_id, section: repo_data.section, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: repo_data.user_id})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_subscription, output_name: "subscription_info")
   end
 
   def create_blog_link({:ok, :add, :blog_link, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_link",
       section_id: repo_data.id,
       action: "add",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "create_blog_link", post_id: repo_data.section_id, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "create_blog_link", post_id: repo_data.section_id, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_blog_link, output_name: "blog_link_info")
@@ -781,15 +759,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def edit_blog_link({:ok, :edit, :blog_link, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_link",
       section_id: repo_data.id,
       action: "edit",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "edit_blog_link", section_id: repo_data.section_id, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "edit_blog_link", section_id: repo_data.section_id, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :edit_blog_link, output_name: "blog_link_info")
@@ -814,15 +791,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_blog_link({:ok, :delete, :blog_link, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_link",
       section_id: repo_data.id,
       action: "delete",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "delete_blog_link", section_id: repo_data.section_id, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_blog_link", section_id: repo_data.section_id, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_blog_link, output_name: "blog_link_info")
@@ -833,15 +809,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def send_notif({:ok, :add, :notif, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "notif",
       section_id: repo_data.id,
       action: "add",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "send_notif", section: repo_data.section, section_id: repo_data.section_id, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "send_notif", section: repo_data.section, section_id: repo_data.section_id, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :send_notif, output_name: "notif_info")
@@ -868,15 +843,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def create_author({:ok, :add, :blog_author, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_author",
       section_id: repo_data.id,
       action: "add",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "create_author", user_id: repo_data.user_id, post_id: repo_data.post_id, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "create_author", post_id: repo_data.post_id, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :create_author, output_name: "author_info")
@@ -901,15 +875,14 @@ defimpl MishkaApi.ContentProtocol, for: Any do
   end
 
   def delete_author({:ok, :delete, :blog_author, repo_data}, conn, allowed_fields) do
-    MishkaContent.General.Activity.create_activity_by_task(%{
+    MishkaContent.General.Activity.create_activity_by_start_child(%{
       type: "internal_api",
       section: "blog_author",
       section_id: repo_data.id,
       action: "delete",
       priority: "medium",
-      status: "info",
-      user_id: Map.get(conn.assigns, :user_id)
-    }, %{user_action: "delete_author", user_id: repo_data.user_id, post_id: repo_data.post_id, cowboy_ip: MishkaApi.cowboy_ip(conn)})
+      status: "info"
+    }, %{user_action: "delete_author", post_id: repo_data.post_id, cowboy_ip: MishkaApi.cowboy_ip(conn), user_id: Map.get(conn.assigns, :user_id)})
 
     conn
     |> json_output(repo_data: repo_data, allowed_fields: allowed_fields, action: :delete_author, output_name: "author_info")

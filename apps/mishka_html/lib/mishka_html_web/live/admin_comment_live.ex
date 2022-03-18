@@ -110,15 +110,14 @@ defmodule MishkaHtmlWeb.AdminCommentLive do
         {:noreply, socket}
 
       {:ok, :edit, @error_atom, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "comment",
           section_id: repo_data.id,
           action: "edit",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_comment_edit", post_id: repo_data.post_id, type: "admin"})
+          status: "info"
+        }, %{user_action: "live_comment_edit", post_id: repo_data.post_id, type: "admin", user_id: socket.assigns.user_id})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         socket =

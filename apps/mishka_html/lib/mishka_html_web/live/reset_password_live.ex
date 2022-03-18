@@ -72,15 +72,14 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
 
           MishkaContent.Email.EmailHelper.send(:forget_password, {repo_data.email, site_link})
 
-          MishkaContent.General.Activity.create_activity_by_task(%{
+          MishkaContent.General.Activity.create_activity_by_start_child(%{
             type: "email",
             section: "user",
             section_id: repo_data.id,
             action: "send_request",
             priority: "high",
-            status: "info",
-            user_id: repo_data.id
-          }, %{user_action: "send_reset_password", type: "client"})
+            status: "info"
+          }, %{user_action: "send_reset_password", type: "client", user_id: repo_data.id})
 
           # Send change password request notification to a user
           title = MishkaTranslator.Gettext.dgettext("html_live", "درخواست تغییر پسورد")

@@ -6,8 +6,7 @@ defmodule MishkaContent do
       section_id: nil,
       action: action,
       priority: "high",
-      status: "error",
-      user_id: nil
+      status: "error"
     }, %{
         db_rescue_struct: db_error.__struct__,
         message: Map.get(db_error, :message),

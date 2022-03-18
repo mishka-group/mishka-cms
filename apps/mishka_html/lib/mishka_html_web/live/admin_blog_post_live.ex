@@ -292,15 +292,14 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         # Send notification to subscribed category users
         blog_category_post_notification(repo_data, MishkaTranslator.Gettext.dgettext("html_live", "مطلب %{title} منتشر شد", title: repo_data.title))
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "blog_post",
           section_id: repo_data.id,
           action: "add",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_create_post", title: repo_data.title, type: "admin"})
+          status: "info"
+        }, %{user_action: "live_create_post", title: repo_data.title, type: "admin", user_id: socket.assigns.user_id})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} درست شده است."})
@@ -357,15 +356,14 @@ defmodule MishkaHtmlWeb.AdminBlogPostLive do
         # Send notification to subscribed category users
         blog_category_post_notification(repo_data, MishkaTranslator.Gettext.dgettext("html_live", "مطلب %{title} به روز رسانی مجدد شد", title: repo_data.title))
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "blog_post",
           section_id: repo_data.id,
           action: "edit",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_edit_post", title: repo_data.title, type: "admin"})
+          status: "info"
+        }, %{user_action: "live_edit_post", title: repo_data.title, type: "admin", user_id: socket.assigns.user_id})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
         Notif.notify_subscribers(%{id: repo_data.id, msg: "مطلب: #{MishkaHtml.title_sanitize(repo_data.title)} به روز شده است."})

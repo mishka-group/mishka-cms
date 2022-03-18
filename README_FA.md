@@ -80,6 +80,8 @@ https://github.com/shahryarjb
 mix deps.get
 mix deps.compile
 mix ecto.create # اول باید در فایل کانفیگ اطلاعات دیتابیس خود را وارد کنید
+mix mishka_installer.db.gen.migration #این دستور را باید در مسیر دیتابیس پروژه زده شود apps/mishka_database
+# بعد از زدن دستور بالا حتما دوباره به مسیر اصلی پروژه برگردید مثل: cd ../..
 mix ecto.migrate
 mix assets.deploy
 mix test

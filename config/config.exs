@@ -43,6 +43,10 @@ else
     show_sensitive_data_on_connection_error: true
 end
 
+config :mishka_installer, :basic,
+  repo: MishkaDatabase.Repo,
+  pubsub: MishkaHtml.PubSub
+
 
 # # Configures the endpoint
 config :mishka_html, MishkaHtmlWeb.Endpoint,

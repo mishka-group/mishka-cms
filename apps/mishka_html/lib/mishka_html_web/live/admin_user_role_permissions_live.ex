@@ -75,15 +75,14 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
         |> assign([changeset: repo_error])
 
       {:ok, :add, :permission, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "permission",
           section_id: repo_data.id,
           action: "add",
           priority: "high",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_permission_create", type: "admin"})
+          status: "info"
+        }, %{user_action: "live_permission_create", type: "admin", user_id: socket.assigns.user_id})
 
         MishkaUser.Acl.AclTask.update_role(repo_data.role_id)
         socket

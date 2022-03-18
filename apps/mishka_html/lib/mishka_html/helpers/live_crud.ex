@@ -382,15 +382,14 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
            section: section, section_id: section_id, user_id: user_id
          }) do
 
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: activity_section_by_error_atom(error_atom),
           section_id: section_id,
           action: "add",
           priority: "low",
-          status: "info",
-          user_id: user_id
-        }, %{user_action: "live_crud_subscription"})
+          status: "info"
+        }, %{user_action: "live_crud_subscription", user_id: user_id})
 
         socket
         |> assign(subscrip: true)
@@ -398,15 +397,14 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
     else
       {:error, :add, error_atom, repo_error} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: activity_section_by_error_atom(error_atom),
           section_id: section_id,
           action: "add",
           priority: "medium",
           status: "error",
-          user_id: user_id
-        }, %{user_action: "live_crud_subscription", errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params)})
+        }, %{user_action: "live_crud_subscription", errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params), user_id: user_id})
 
         socket
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطایی در ثبت اشتراک پیش آماده است.لطفا در صورت تکرار با پشتیبانی در ارتباط باشید."))
@@ -420,29 +418,27 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     require MishkaTranslator.Gettext
     case MishkaContent.General.Subscription.delete(user_id, section_id) do
       {:error, :delete, error_atom, repo_error} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: activity_section_by_error_atom(error_atom),
           section_id: section_id,
           action: "delete",
           priority: "medium",
-          status: "error",
-          user_id: user_id
-        }, %{user_action: "delete_subscription", errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params)})
+          status: "error"
+        }, %{user_action: "delete_subscription", errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params), user_id: user_id})
 
         socket
         |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "خطای در حذف اشتراک شما پیش آماده است لطفا صفحه را رفرش کنید و در صورت تکرار با پشتیبانی در تماس باشید."))
 
       {:ok, :delete, error_atom, _repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: activity_section_by_error_atom(error_atom),
           section_id: section_id,
           action: "delete",
           priority: "low",
-          status: "info",
-          user_id: user_id
-        }, %{user_action: "delete_subscription"})
+          status: "info"
+        }, %{user_action: "delete_subscription", user_id: user_id})
 
         socket
         |> assign(subscrip: false)
@@ -556,15 +552,14 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     require MishkaTranslator.Gettext
     socket = case module_selected.delete(id) do
       {:ok, :delete, error_atom, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: activity_section_by_error_atom(error_atom),
           section_id: repo_data.id,
           action: "delete",
           priority: "medium",
-          status: "info",
-          user_id: Map.get(socket.assigns, :user_id)
-        }, %{user_action: "delete_item_of_list", title: Map.get(repo_data, :title), full_name: Map.get(repo_data, :full_name)})
+          status: "info"
+        }, %{user_action: "delete_item_of_list", title: Map.get(repo_data, :title), full_name: Map.get(repo_data, :full_name), user_id: Map.get(socket.assigns, :user_id)})
 
         # It should pass conn or socket output
         after_condition.(id, socket)

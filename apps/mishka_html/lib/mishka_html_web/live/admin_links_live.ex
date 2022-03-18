@@ -57,15 +57,14 @@ defmodule MishkaHtmlWeb.AdminLinksLive do
   def handle_event("delete", %{"id" => id} = _params, socket) do
     socket = case BlogLink.delete(id) do
       {:ok, :delete, :blog_link, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_task(%{
+        MishkaContent.General.Activity.create_activity_by_start_child(%{
           type: "section",
           section: "blog_link",
           section_id: repo_data.id,
           action: "delete",
           priority: "medium",
-          status: "info",
-          user_id: socket.assigns.user_id
-        }, %{user_action: "live_delete_link", post_id: socket.assigns.post_id, type: "admin"})
+          status: "info"
+        }, %{user_action: "live_delete_link", post_id: socket.assigns.post_id, type: "admin", user_id: socket.assigns.user_id})
 
         Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "لینک: %{title} حذف شده است.", title: MishkaHtml.title_sanitize(repo_data.title))})
         socket

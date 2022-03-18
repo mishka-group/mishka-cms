@@ -70,14 +70,6 @@
                         <% time = MishkaHtmlWeb.Public.TimeConverterComponent.jalali_create(@activity.inserted_at) %>
                             <%= "#{time.day_number} #{time.month_name} سال #{time.year_number} در ساعت #{time.hour}:#{time.minute}:#{time.second}" %>
                         <div class="space20"></div>
-                        <span class="badge bg-primary"><%= MishkaTranslator.Gettext.dgettext("html_live_templates", "کاربر ثبت کننده") %></span>
-                        <%= if is_nil(@activity.user_id) do %>
-                            <%= MishkaTranslator.Gettext.dgettext("html_live_component", "ندارد") %>
-                        <% else %>
-                            <%= live_redirect MishkaTranslator.Gettext.dgettext("html_live_component", "دیدن کاربر"),
-                            to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: @activity.user_id)
-                            %>
-                        <% end %>
                     </div>
                 </div>
 

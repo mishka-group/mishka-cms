@@ -23,7 +23,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
     # show mishka logo
     mishka_logo
 
-    echo -e "${Green}Choose Environment Type:${NC}"
+    echo -e "${Green}Enter your environment type:${NC}"
     options=(prod dev)
     select menu in "${options[@]}"; do 
         ENV_TYPE=$REPLY

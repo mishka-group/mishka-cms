@@ -328,7 +328,7 @@ function check_requirements() {
     fi
     
     # check docker config file exists
-    if [ ! -f ~/.docker/config ]; then 
+    if [ ! -f ~/.docker/config.json ]; then 
         docker login
     fi
     

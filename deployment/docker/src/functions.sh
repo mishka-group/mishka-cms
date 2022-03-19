@@ -73,7 +73,9 @@ function update_config() {
     # load configs
     load_configs
 
-    
+    cp --force etc/nginx/conf/sample_conf/mishka_api.conf etc/nginx/conf/conf.d/mishka_api.conf
+    cp --force etc/nginx/conf/sample_conf/mishka_cms.conf etc/nginx/conf/conf.d/mishka_cms.conf
+
     if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then 
         if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
             cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
@@ -324,16 +326,59 @@ function check_requirements() {
         echo -e "${Red}This script must be run as root${NC}"
         exit 1
     fi
-
-    # check command git install on system
-    if ! command -v git $>/dev/null; then 
-        echo -e "${Red}git Command Not Found, ${Green}Please Install with 'sudo apt install git -y'${NC}"
-        exit 1
+    
+    # check docker config file exists
+    if [ ! -f ~/.docker/config ]; then 
+        docker login
     fi
+    
+    if [[ $OSTYPE == 'linux'* ]]; then # linux
+        # check command git install on system
+        if ! command -v git $>/dev/null; then 
+            echo -e "${Red}git Command Not Found${NC}"
+            sudo apt install git -y
+        fi
 
-    # check command git install on system
-    if ! command -v jq $>/dev/null; then 
-        echo -e "${Red}jq Command Not Found, ${Green}Please Install with 'sudo apt install jq -y'${NC}"
+        # check command jq install on system
+        if ! command -v jq $>/dev/null; then 
+            echo -e "${Red}jq Command Not Found${NC}"
+            sudo apt install jq -y
+        fi
+
+        # check command docker install on system
+        if ! command -v docker $>/dev/null; then 
+            echo -e "${Red}docker Command Not Found${NC}"
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
+        fi
+
+        # check command docker-compose install on system
+        if ! command -v docker-compose $>/dev/null; then 
+            echo -e "${Red}docker-compose Command Not Found${NC}"
+            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+        fi
+    elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
+        # check command git install on system
+        if ! command -v git $>/dev/null; then 
+            echo -e "${Red}git Command Not Found${NC}"
+            yes | brew install git
+        fi
+
+        # check command jq install on system
+        if ! command -v jq $>/dev/null; then 
+            echo -e "${Red}jq Command Not Found${NC}"
+            yes | brew install jq
+        fi
+
+        # check command docker and docker-compose install on system
+        if ! command -v docker $>/dev/null; then 
+            echo -e "${Red}docker Command Not Found${NC}"
+            brew install --cask docker
+        fi
+    else # windows
+        echo -e "${Red}Your OS is not supported${NC}"
         exit 1
     fi
 }
@@ -438,8 +483,9 @@ function dbeaver_data_renew() {
     echo -e "${Green}Database Manager Actived, for using you can run './mishka.sh db --run' command${NC}"
 }
 
-# check OS Family
-function os_detector() {
+
+# check distribution
+function dist_detector() {
     OS_FAMILY=`grep -i id_like /etc/os-release | cut -d"=" -f2`
     if [[ $OS_FAMILY =~ 'debian' ]]; then # debian family (debian, ubuntu, mint,...)
         return "0"

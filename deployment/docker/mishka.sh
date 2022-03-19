@@ -148,6 +148,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             cleanup
         fi
     else # dev
+        trap cleanup INT # trap control + c and run cleanup
         ENV_TYPE="dev"
         
         if web_server_selector -eq "0"; then # nginx
@@ -185,6 +186,12 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
 
         docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d
 
+        if [[ $(echo $?) != 0 ]]; then # run when docker got error
+            echo -e "${Red}We got error during install. please check logs. cleanup process is running now...${NC}" 
+            cleanup
+            exit 1
+        fi
+
         # print information
         print_build_output
         
@@ -193,7 +200,7 @@ else
     load_configs
     if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then  #production env  
         mishka_logo
-        echo -e "${Green}Below Options is Available for Prod:
+        echo -e "${Green}Below Options is Available for Prod (enter the name for each section):
                         update    update images with old token
                         start     run all containers
                         stop      stop one or all containers
@@ -268,6 +275,10 @@ else
                     echo -e "${Green}Mishka Cms Available on    --> $SPACE http://$CMS_DOMAIN_NAME:$CMS_PORT $END_SPACE ${NC}"
                     echo -e "${Green}Mishka Api Available on    --> $SPACE http://$API_DOMAIN_NAME:$API_PORT $END_SPACE ${NC}"
                 fi
+
+                if [[ ! ${ENV_TYPE,,} =~ ^prod$ ]]; then 
+                    echo -e "${Red}you must login into mishka_cms container then start server !${NC}"
+                fi
             ;;
 
             "stop")
@@ -323,7 +334,7 @@ else
             ;;
 
             "help")
-                echo -e "${Green}Below Options is Available:
+                echo -e "${Green}Below Options is Available (enter the name for each section):
                     update    update images with old token
                     start     run all containers
                     stop      stop one or all containers
@@ -342,11 +353,11 @@ else
         esac
     else 
         mishka_logo
-        echo -e "${Green}Below Options is Available for Dev:
+        echo -e "${Green}Below Options is Available for Dev (enter the name for each section):
                         start          all containers
                         stop           stop one or all containers
                         remove         stop and remove all containers plus network
-                        destroy        stop and remove all containers plus netwok also remove docker images, volume
+                        destroy        stop and remove all containers plus network and remove docker images, volume
                         logs           show log of specific container of all containers
                         clean          Clean up dev enviroment
                         login          log into mishka_CMS container
@@ -410,47 +421,47 @@ else
 
             "clean")
                 mishka_logo
-                echo -e "${Green}Below Options is Available for clean:
-                                --diskdb     Clean disk database like Erlang runtime db (mnesia)
-                                --deps       Clean dependency
-                                --compiled   Clean old compiled files
-                                --all        Clean disk database, dependency, mix.lock file and old compiled files${NC}"
+                echo -e "${Green}Below Options is Available for clean (enter the name for each section):
+                                diskdb     Clean disk database like Erlang runtime db (mnesia)
+                                deps       Clean dependency
+                                compiled   Clean old compiled files
+                                all        Clean disk database, dependency, mix.lock file and old compiled files${NC}"
                 options=(diskdb deps compiled all) 
                 select menu in "${options[@]}"; do 
                     break;
                 done 
 
                 case $REPLY in
-                    "--diskdb")
+                    "diskdb")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm --recursive --force ../../Mnesia.nonode@nohost
-                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh start !${NC}" 
+                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
-                    "--deps")
+                    "deps")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm --recursive --force ../../deps
-                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh start !${NC}" 
+                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
-                    "--compiled")
+                    "compiled")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm --recursive --force ../../_build
-                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh start !${NC}" 
+                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
-                    "--all")
+                    "all")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm --recursive --force ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
-                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh start !${NC}" 
+                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
                     *)
                         echo -e "${Green}you have four option to use:${NC}" 
-                        echo -e "${Green}   --diskdb${NC}" 
-                        echo -e "${Green}   --deps${NC}" 
-                        echo -e "${Green}   --compiled${NC}" 
-                        echo -e "${Green}   --all${NC}" 
+                        echo -e "${Green}   diskdb${NC}" 
+                        echo -e "${Green}   deps${NC}" 
+                        echo -e "${Green}   compiled${NC}" 
+                        echo -e "${Green}   all${NC}" 
                     ;;
                 esac
             ;;
@@ -466,20 +477,20 @@ else
 
             "db")
                 mishka_logo
-                echo -e "${Green}Below Options is Available for DB:
-                                --install    install DBeaver Package
-                                --run        run DBeaver${NC}"
+                echo -e "${Green}Below Options is Available for DB (enter the name for each section):
+                                install    install DBeaver Package
+                                run        run DBeaver${NC}"
                 options=(install run) 
                 select menu in "${options[@]}"; do 
                     break;
                 done 
 
                 case $REPLY in
-                        "--install")
+                        "install")
                             db_manager
                         ;;
 
-                        "--run")
+                        "run")
                             if netstat -nultp | egrep -w '5432' > /dev/null; then
                                 if dbeaver_checker; then 
                                 dbeaver
@@ -493,28 +504,28 @@ else
 
                         *)
                             echo -e "${Green}you have two option to use:${NC}" 
-                            echo -e "${Green}   --install${NC}" 
-                            echo -e "${Green}   --run${NC}"
+                            echo -e "${Green}   install${NC}" 
+                            echo -e "${Green}   run${NC}"
                         ;;
                 esac
             ;;
 
             "help")
-                echo -e "${Green}Below Options is Available:
+                echo -e "${Green}Below Options is Available (enter the name for each section):
                     start          all containers
                     stop           stop one or all containers
                     remove         stop and remove all containers plus network
                     destroy        stop and remove all containers plus netwok also remove docker images, volume
                     logs           show log of specific container of all containers
                     clean          Clean up dev enviroment
-                    --diskdb     Clean disk database like Erlang runtime db (mnesia)
-                    --deps       Clean dependency
-                    --compiled   Clean old compiled files
-                    --all        Clean disk database, dependency, mix.lock file and old compiled files
+                      diskdb     Clean disk database like Erlang runtime db (mnesia)
+                      deps       Clean dependency
+                      compiled   Clean old compiled files
+                      all        Clean disk database, dependency, mix.lock file and old compiled files
                     login          log into mishka_CMS container
                     db             graphical database manager with dbeaver
-                    --install    install DBeaver Package
-                    --run        run DBeaver
+                      install    install DBeaver Package
+                      run        run DBeaver
                     help      show help for mishka.sh${NC}"
             ;;
 

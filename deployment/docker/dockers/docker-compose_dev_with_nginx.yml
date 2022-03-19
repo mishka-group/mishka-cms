@@ -22,7 +22,7 @@ services:
       
          
   mishka_cms:
-    image: mishkagroup/elixir_dev:1.12.3-alpine
+    image: mishkagroup/elixir_dev:1.13.3-alpine
     container_name: mishka_cms
     restart: always
     working_dir: /app

@@ -421,7 +421,7 @@ else
                 docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
 
                 # Clean disk database, dependency, mix.lock file and old compiled files
-                cleanup
+                cleanup all
 
                 # Start Services and Delete Networks
                 docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d

@@ -373,7 +373,7 @@ else
                       install    install DBeaver Package
                       run        run DBeaver
                     help      show help for mishka.sh${NC}"
-        options=(start stop remove destroy logs clean login db help) 
+        options=(start stop remove run destroy logs clean login db) 
         select menu in "${options[@]}"; do 
             break;
         done 
@@ -409,6 +409,10 @@ else
 
             "remove")
                 docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
+            ;;
+
+            "run")
+                docker exec -it mishka_cms sh -c "iex -S mix phx.server"
             ;;
 
             "destroy")

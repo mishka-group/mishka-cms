@@ -365,16 +365,10 @@ else
                     destroy        stop and remove all containers plus netwok also remove docker images, volume
                     logs           show log of specific container of all containers
                     clean          Clean up dev enviroment
-                      diskdb     Clean disk database like Erlang runtime db (mnesia)
-                      deps       Clean dependency
-                      compiled   Clean old compiled files
-                      all        Clean disk database, dependency, mix.lock file and old compiled files
                     login          log into mishka_CMS container
                     db             graphical database manager with dbeaver
-                      install    install DBeaver Package
-                      run        run DBeaver
-                    help      show help for mishka.sh${NC}"
-        options=(start stop remove run rebuild destroy logs clean login db) 
+                    info           shows information about cms addresses and secrets${NC}"
+        options=(start stop remove run rebuild destroy logs clean login db info) 
         select menu in "${options[@]}"; do 
             break;
         done 
@@ -537,6 +531,11 @@ else
                             echo -e "${Green}   run${NC}"
                         ;;
                 esac
+            ;;
+
+            "info")
+                load_configs
+                print_build_output
             ;;
 
             *)

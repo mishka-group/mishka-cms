@@ -357,15 +357,22 @@ else
     else 
         mishka_logo
         echo -e "${Green}Below Options is Available for Dev (enter the name for each section):
-                        start          all containers
-                        stop           stop one or all containers
-                        remove         stop and remove all containers plus network
-                        destroy        stop and remove all containers plus network and remove docker images, volume
-                        logs           show log of specific container of all containers
-                        clean          Clean up dev enviroment
-                        login          log into mishka_CMS container
-                        db             graphical database manager with dbeaver
-                        help      show help for mishka.sh${NC}"
+                    start          all containers
+                    stop           stop one or all containers
+                    remove         stop and remove all containers plus network
+                    run            start phoenix server with elixir console
+                    destroy        stop and remove all containers plus netwok also remove docker images, volume
+                    logs           show log of specific container of all containers
+                    clean          Clean up dev enviroment
+                      diskdb     Clean disk database like Erlang runtime db (mnesia)
+                      deps       Clean dependency
+                      compiled   Clean old compiled files
+                      all        Clean disk database, dependency, mix.lock file and old compiled files
+                    login          log into mishka_CMS container
+                    db             graphical database manager with dbeaver
+                      install    install DBeaver Package
+                      run        run DBeaver
+                    help      show help for mishka.sh${NC}"
         options=(start stop remove destroy logs clean login db help) 
         select menu in "${options[@]}"; do 
             break;
@@ -511,25 +518,6 @@ else
                             echo -e "${Green}   run${NC}"
                         ;;
                 esac
-            ;;
-
-            "help")
-                echo -e "${Green}Below Options is Available (enter the name for each section):
-                    start          all containers
-                    stop           stop one or all containers
-                    remove         stop and remove all containers plus network
-                    destroy        stop and remove all containers plus netwok also remove docker images, volume
-                    logs           show log of specific container of all containers
-                    clean          Clean up dev enviroment
-                      diskdb     Clean disk database like Erlang runtime db (mnesia)
-                      deps       Clean dependency
-                      compiled   Clean old compiled files
-                      all        Clean disk database, dependency, mix.lock file and old compiled files
-                    login          log into mishka_CMS container
-                    db             graphical database manager with dbeaver
-                      install    install DBeaver Package
-                      run        run DBeaver
-                    help      show help for mishka.sh${NC}"
             ;;
 
             *)

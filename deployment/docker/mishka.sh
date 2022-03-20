@@ -145,10 +145,10 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             rm ../../Dockerfile
         else # if docker image was not build, we do cleanup
             echo -e "${Red}we can't make docker image, Cleanup Process is running.....${NC}" 
-            cleanup
+            purge
         fi
     else # dev
-        trap cleanup INT # trap control + c and run cleanup
+        trap purge INT # trap control + c and run cleanup
         ENV_TYPE="dev"
         
         if web_server_selector -eq "0"; then # nginx
@@ -188,7 +188,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
 
         if [[ $(echo $?) != 0 ]]; then # run when docker got error
             echo -e "${Red}We got error during install. please check logs. cleanup process is running now...${NC}" 
-            cleanup
+            purge
             exit 1
         fi
 
@@ -304,7 +304,7 @@ else
             "destroy")
                 read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (YES/NO)\e[0m: ' INPUT
                 if [[ ${INPUT,,} =~ ^yes$ ]]; then 
-                    cleanup
+                    purge
                 else 
                     echo -e "${Red} Your Operation is canceled..${NC}" 
                 fi
@@ -354,13 +354,14 @@ else
             ;;
 
         esac
-    else 
+    else  # dev stage
         mishka_logo
         echo -e "${Green}Below Options is Available for Dev (enter the name for each section):
                     start          all containers
                     stop           stop one or all containers
                     remove         stop and remove all containers plus network
                     run            start phoenix server with elixir console
+                    rebuild        remove all old files (db, dependency, compile files,..) and recreate then recompile finally start server
                     destroy        stop and remove all containers plus netwok also remove docker images, volume
                     logs           show log of specific container of all containers
                     clean          Clean up dev enviroment
@@ -373,7 +374,7 @@ else
                       install    install DBeaver Package
                       run        run DBeaver
                     help      show help for mishka.sh${NC}"
-        options=(start stop remove run destroy logs clean login db) 
+        options=(start stop remove run rebuild destroy logs clean login db) 
         select menu in "${options[@]}"; do 
             break;
         done 
@@ -414,11 +415,25 @@ else
             "run")
                 docker exec -it mishka_cms sh -c "iex -S mix phx.server"
             ;;
+            
+            "rebuild")
+                # Stop Services and Delete Networks
+                docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
+
+                # Clean disk database, dependency, mix.lock file and old compiled files
+                cleanup
+
+                # Start Services and Delete Networks
+                docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d
+
+                # compile and start server
+                dev_operations
+            ;;
 
             "destroy")
                 read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (YES/NO)\e[0m: ' INPUT
                 if [[ ${INPUT,,} =~ ^yes$ ]]; then 
-                    cleanup
+                    purge
                 else 
                     echo -e "${Red} Your Operation is canceled..${NC}" 
                 fi

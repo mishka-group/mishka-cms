@@ -399,6 +399,19 @@ function check_requirements() {
 }
 
 
+# create tables, do migrataions and compile file for first time
+function dev_operations() {
+    docker exec -it mishka_cms sh -c "mix deps.get"
+    docker exec -it mishka_cms sh -c "mix deps.compile"
+    docker exec -it mishka_cms sh -c "mix ecto.create"
+    docker exec -it mishka_cms sh -c "cd apps/mishka_database && mix mishka_installer.db.gen.migration"
+    docker exec -it mishka_cms sh -c "mix ecto.migrate"
+    docker exec -it mishka_cms sh -c "mix assets.deploy"
+    docker exec -it mishka_cms sh -c "mix run apps/mishka_database/priv/repo/seeds.exs"
+    docker exec -it mishka_cms sh -c "iex -S mix phx.server"
+}
+
+
 # set default value for variables
 function default_values() {
     # database

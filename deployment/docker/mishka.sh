@@ -186,9 +186,6 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
 
         docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d
 
-        # create tables and compile files
-        dev_operations
-
         if [[ $(echo $?) != 0 ]]; then # run when docker got error
             echo -e "${Red}We got error during install. please check logs. cleanup process is running now...${NC}" 
             cleanup
@@ -197,6 +194,9 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
 
         # print information
         print_build_output
+
+        # create tables and compile files
+        dev_operations
         
     fi 
 else 

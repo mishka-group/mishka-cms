@@ -1,0 +1,53 @@
+version: "3.9"
+
+services: 
+  mishka_cms:
+    image: mishkagroup/elixir_dev:1.13.3-alpine
+    container_name: mishka_cms
+    restart: always
+    working_dir: /app
+    command: sleep 365d
+    hostname: mishka_cms
+    networks:
+      netowrk:
+    env_file:
+      - ../etc/.mishka_cms_env
+    volumes:
+      - cms:/app/Mnesia.nonode@nohost
+      - ../../../:/app
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - mishka_db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "300m"
+      
+      
+  mishka_db:
+    image: mishkagroup/postgresql:3.14
+    container_name: mishka_db
+    hostname: mishka_db
+    restart: always
+    networks:
+      netowrk:
+    ports:
+      - "5432:5432"
+    env_file:
+      - ../etc/.mishka_cms_env
+    volumes:
+      - database:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "300m"
+
+
+networks:
+  netowrk:
+  
+
+volumes:
+  cms:
+  database:

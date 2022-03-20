@@ -136,7 +136,7 @@ function update_config() {
             sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
             sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
         else 
-            cp --force dockers/docker-compose_dev_without_nginx.yml dockers/docker-compose.yml
+            cp  --force dockers/docker-compose_dev_without_nginx.yml dockers/docker-compose.yml
         fi
 
         # change value in docker-compose.yml

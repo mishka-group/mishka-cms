@@ -182,9 +182,9 @@ function cleanup() {
                 echo -e "${Green} mishka ssl deleted..${NC}"
             fi
         else 
-            # Delete Images
-            docker image rm mishkagroup/elixir_dev:1.12.3-alpine mishkagroup/postgresql:3.14
-            echo -e "${Green} mishka images deleted..${NC}"
+            # # Delete Images
+            # docker image rm mishkagroup/elixir_dev:1.12.3-alpine mishkagroup/postgresql:3.14
+            # echo -e "${Green} mishka images deleted..${NC}"
 
             # delete build directory
             if [ -d ../../_build ]; then 
@@ -284,7 +284,9 @@ function ssl_generator() {
             openssl dhparam -out etc/ssl/letsencrypt/dhparam2048.pem 2048
         fi
 
-        echo "127.0.0.1 cms.example.com api.example.com" >> /etc/hosts
+        if ! $(grep '127.0.0.1 cms.example.com api.example.com' /etc/hosts 2>&1 > /dev/null);then
+            echo "127.0.0.1 cms.example.com api.example.com" >> /etc/hosts
+        fi
     fi
 }
 

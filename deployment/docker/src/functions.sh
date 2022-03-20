@@ -350,6 +350,10 @@ function check_requirements() {
             echo -e "${Red}docker Command Not Found${NC}"
             curl -fsSL https://get.docker.com -o get-docker.sh
             sudo sh get-docker.sh
+        else 
+            if [[ $(systemctl is-active docker) == "inactive" ]]; then 
+                sudo systemctl start docker
+            fi
         fi
 
         # check command docker-compose install on system
@@ -376,6 +380,17 @@ function check_requirements() {
         if ! command -v docker $>/dev/null; then 
             echo -e "${Red}docker Command Not Found${NC}"
             brew install --cask docker
+        else 
+            if (! docker stats --no-stream ); then
+                # On Mac OS this would be the terminal command to launch Docker
+                open /Applications/Docker.app
+                #Wait until Docker daemon is running and has completed initialisation
+                while (! docker stats --no-stream ); do
+                    # Docker takes a few seconds to initialize
+                    echo "Waiting for Docker to launch..."
+                    sleep 1
+                done
+            fi
         fi
     else # windows
         echo -e "${Red}Your OS is not supported${NC}"

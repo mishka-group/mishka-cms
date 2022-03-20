@@ -155,7 +155,7 @@ function update_config() {
 }
 
 
-function cleanup() {
+function purge() {
     if [ -f dockers/docker-compose.yml ] || [ -f $PWD/etc/.secret ]; then 
         # load configs
         load_configs
@@ -248,6 +248,43 @@ function cleanup() {
     fi
 }
 
+
+function cleanup() {
+    # load configs
+    load_configs
+
+    case $1 in 
+        "diskdb")
+            docker stop mishka_cms && docker rm mishka_cms
+            rm --recursive --force ../../Mnesia.nonode@nohost
+            echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
+        ;;
+
+        "deps")
+            docker stop mishka_cms && docker rm mishka_cms
+            rm --recursive --force ../../deps
+            echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
+        ;;
+
+        "compiled")
+            docker stop mishka_cms && docker rm mishka_cms
+            rm --recursive --force ../../_build
+            echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
+        ;;
+
+        "all")
+            docker stop mishka_cms && docker rm mishka_cms
+            rm --recursive --force ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
+            echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
+        ;;
+
+        *)
+            echo -e "${Red}$2 Does not Exist !${NC}"
+            echo -e "${Green} Using 'mishka.sh help' for more information"
+            exit 1
+        ;;
+    esac
+}
 
 function ssl_generator() {
     if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then

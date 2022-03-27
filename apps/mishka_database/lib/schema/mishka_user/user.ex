@@ -9,7 +9,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
   schema "users" do
 
     field :full_name, :string, size: 60, null: false
-    field :username, :string, size: 20, null: false
+    field :username, :string, size: 20, null: true
     field :email, :string, null: false
     field :status, UserStatusEnum, null: false, default: :registered
 
@@ -34,15 +34,13 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:full_name, :username, :email, :password_hash, :password, :status, :unconfirmed_email])
-    |> validate_required([:full_name, :username, :email, :status], message: MishkaTranslator.Gettext.dgettext("db_schema_user", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_required([:full_name, :email, :status], message: MishkaTranslator.Gettext.dgettext("db_schema_user", "فیلد مذکور نمی تواند خالی باشد"))
     |> validate_length(:full_name, min: 3, max: 60, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 60, min_number: 3))
     |> validate_length(:password, min: 8, max: 100, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 100, min_number: 8))
     |> validate_length(:username, min: 3, max: 20, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 20, min_number: 3))
     |> validate_length(:email, min: 8, max: 50, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "حداکثر تعداد کاراکتر های مجاز %{number} و حداقل %{min_number}", number: 50, min_number: 8))
 
     # |> SanitizeStrategy.changeset_input_validation(MishkaAuth.get_config_info(:input_validation_status))
-
-
 
     |> unique_constraint(:unconfirmed_email, name: :index_users_on_verified_email, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "این ایمیل از قبل در سیستم ثبت شده است."))
     |> unique_constraint(:username, name: :index_users_on_username, message: MishkaTranslator.Gettext.dgettext("db_schema_user", "این نام کاربری از قبل در سیستم ثبت شده است."))

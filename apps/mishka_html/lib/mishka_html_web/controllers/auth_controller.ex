@@ -53,6 +53,16 @@ defmodule MishkaHtmlWeb.AuthController do
     end
   end
 
+  def login(conn, %{"params" => entry}) do
+    # developer or client should send a map as params key and this map must includ struct which is your module name
+    # for example Elixir.MishkaSocial.Auth.Strategy, it should be noted, this module have to have struct under itself
+    convert_controller_to_protocol(conn, entry, :login)
+  end
+
+  def register(conn, %{"params" => entry}) do
+    convert_controller_to_protocol(conn, entry, :register)
+  end
+
   def log_out(conn, _params) do
     user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
     if live_socket_id = get_session(conn, :live_socket_id) do
@@ -256,5 +266,25 @@ defmodule MishkaHtmlWeb.AuthController do
   defp on_user_login_failure(conn, user_ip, error) do
     state = %MishkaInstaller.Reference.OnUserLoginFailure{conn: conn, ip: user_ip, endpoint: :html, error: error}
     MishkaInstaller.Hook.call(event: "on_user_login_failure", state: state)
+  end
+
+  def convert_controller_to_protocol(conn, entry, action) do
+    case behaviour_module(entry["struct"]) do
+      {:ok, module} ->
+        apply(MishkaSocial.AuthProtocol, action, [Map.merge(struct(module), convert_string_map_to_atom(entry, conn))])
+      {:error, :module_not_found} -> {:error, :convert_controller_to_protocol}
+    end
+  end
+
+  defp convert_string_map_to_atom(string_map, conn) do
+    string_map
+    |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+    |> Map.merge(%{conn: conn})
+  end
+
+  defp behaviour_module(module_name) do
+    {:ok, String.to_existing_atom(module_name)}
+  rescue
+    _ ->{:error, :module_not_found}
   end
 end

@@ -200,4 +200,10 @@ defmodule MishkaUser.User do
   end
 
   def notify_subscribers(params, _), do: params
+
+  @spec direct_create(map()) :: tuple | map
+  def direct_create(attrs) do
+    crud_add(attrs)
+    |> notify_subscribers(:user)
+  end
 end

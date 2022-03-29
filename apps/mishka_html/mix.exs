@@ -56,7 +56,8 @@ defmodule MishkaHtml.MixProject do
       {:esbuild, "~> 0.3.4", runtime: Mix.env() == :dev},
       {:sobelow, "~> 0.11.1", only: :dev},
       {:jalaali, "~> 0.4.0"},
-      {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"}
+      {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"},
+      {:mishka_social, git: "https://github.com/mishka-group/mishka_social.git"}
     ]
   end
 

@@ -27,6 +27,31 @@ config :mishka_api, :auth,
 
 config :mishka_database, ecto_repos: [MishkaDatabase.Repo]
 
+# ueberauth config can delete in developer pkg
+config :ueberauth, Ueberauth,
+base_path: "/auth",
+providers: [
+   # For now, we need normal information of a user, but in the future it  should be possible to use dynamic default_scope
+   # /auth/github?scope=user,public_repo
+  github: {Ueberauth.Strategy.Github, [default_scope: "read:user", send_redirect_uri: false]},
+  google: {Ueberauth.Strategy.Google, [
+     # For now, we need normal information of a user, but in the future it  should be possible to use dynamic default_scope
+     # /auth/google?scope=email%20profile
+     default_scope:
+     "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+   ]},
+]
+
+config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+   client_id: System.get_env("GITHUB_CLIENT_ID"),
+   client_secret: System.get_env("GITHUB_CLIENT_SECRET")
+
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+   client_id: "YOUR_CLIENT_ID",
+   client_secret: "YOUR_CLIEENT_SECRET",
+   redirect_uri: "YOUR_CALL_BACK_URL"
+
+
 if System.get_env("GITHUB_ACTIONS") do
   config :mishka_database, MishkaDatabase.Repo,
     url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",
@@ -42,11 +67,6 @@ else
     pool_size: 10,
     show_sensitive_data_on_connection_error: true
 end
-
-config :mishka_installer, :basic,
-  repo: MishkaDatabase.Repo,
-  pubsub: MishkaHtml.PubSub
-
 
 # # Configures the endpoint
 config :mishka_html, MishkaHtmlWeb.Endpoint,
@@ -100,6 +120,11 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :mishka_installer, :basic,
+  repo: MishkaDatabase.Repo,
+  pubsub: MishkaHtml.PubSub,
+  html_router: MishkaHtmlWeb.Router.Helpers
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

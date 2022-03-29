@@ -45,11 +45,13 @@ defmodule MishkaHtmlWeb.Router do
       pipe_through [:browser, :not_login]
 
       # without login and pass Capcha
-      live "/auth/login", LoginLive
       post "/auth/login", AuthController, :login
+      get "/auth/register", AuthController, :register
+      get "/auth/:provider/callback", AuthController, :register
+      live "/auth/login", LoginLive
       live "/auth/reset/:random_link", ResetPasswordLive
       live "/auth/reset", ResetPasswordLive
-      live "/auth/register", RegisterLive
+      live "/auth/one-page-register", RegisterLive
       live "/auth/reset-change-password/:random_link", ResetChangePasswordLive
     end
 

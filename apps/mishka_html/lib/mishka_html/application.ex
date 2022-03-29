@@ -13,9 +13,8 @@ defmodule MishkaHtml.Application do
       {Phoenix.PubSub, name: MishkaHtml.PubSub},
       {Task.Supervisor, name: MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor},
       # Start the Endpoint (http/https)
-      MishkaHtmlWeb.Endpoint
-      # Start a worker by calling: MishkaHtml.Worker.start_link(arg)
-      # {MishkaHtml.Worker, arg}
+      MishkaHtmlWeb.Endpoint,
+      %{id: MishkaSocial.Auth.Strategy, start: {MishkaSocial.Auth.Strategy, :start_link, [[]]}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

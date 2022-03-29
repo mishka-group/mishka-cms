@@ -8,10 +8,11 @@ defmodule MishkaHtmlWeb.LoginLive do
   end
 
   @impl true
-  def mount(_params, session, socket) do
+  def mount(params, session, socket) do
     Process.send_after(self(), :menu, 100)
     user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}
     |> MishkaDatabase.Schema.MishkaUser.User.login_changeset()
+    user_ip = get_connect_info(socket, :peer_data).address
 
     socket =
       assign(socket,
@@ -21,7 +22,9 @@ defmodule MishkaHtmlWeb.LoginLive do
         trigger_submit: false,
         changeset: user_changeset,
         user_id: Map.get(session, "user_id"),
-        self_pid: self()
+        self_pid: self(),
+        user_ip: user_ip,
+        input: params
       )
     {:ok, socket}
   end

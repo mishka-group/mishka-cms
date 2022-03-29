@@ -7,6 +7,14 @@
         <.live_component module={MishkaHtmlWeb.Admin.Public.LiveFlashComponent} id={:live_flash} flash={@flash} />
         <div class="space40"></div>
         <.live_component module={MishkaHtmlWeb.Client.Login.LoginFormComponent} id={:login_form} changeset={@changeset} trigger_submit={@trigger_submit} />
+
+        <div class="w-25 p-3 mx-auto text-center fs-2">
+          <%=
+            state = %MishkaInstaller.Reference.OnUserBeforeLogin{ip: @user_ip, assigns: assigns, output: nil, input: @input}
+            MishkaInstaller.Hook.call(event: "on_user_before_login", state: state).output
+          %>
+        </div>
+        
         <div class="space40"></div>
     </section>
 </div>

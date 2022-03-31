@@ -371,37 +371,112 @@ function check_requirements() {
         docker login
     fi
     
+
     if [[ $OSTYPE == 'linux'* ]]; then # linux
         # check command git install on system
-        if ! command -v git $>/dev/null; then 
-            echo -e "${Red}git Command Not Found${NC}"
-            sudo apt install git -y
-        fi
-
-        # check command jq install on system
-        if ! command -v jq $>/dev/null; then 
-            echo -e "${Red}jq Command Not Found${NC}"
-            sudo apt install jq -y
-        fi
-
-        # check command docker install on system
-        if ! command -v docker $>/dev/null; then 
-            echo -e "${Red}docker Command Not Found${NC}"
-            curl -fsSL https://get.docker.com -o get-docker.sh
-            sudo sh get-docker.sh
-        else 
-            if [[ $(systemctl is-active docker) == "inactive" ]]; then 
-                sudo systemctl start docker
+        #====================================================================================================
+        if [[ $dist == 'debain' ]]; then # debian family (debian, ubuntu, mint,...) 
+            if ! command -v git $>/dev/null; then 
+                echo -e "${Red}git Command Not Found${NC}"
+                sudo apt install git -y
             fi
-        fi
 
-        # check command docker-compose install on system
-        if ! command -v docker-compose $>/dev/null; then 
-            echo -e "${Red}docker-compose Command Not Found${NC}"
-            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-            sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-        fi
+            # check command jq install on system
+            if ! command -v jq $>/dev/null; then 
+                echo -e "${Red}jq Command Not Found${NC}"
+                sudo apt install jq -y
+            fi
+
+            # check command docker install on system
+            if ! command -v docker $>/dev/null; then 
+                echo -e "${Red}docker Command Not Found${NC}"
+                curl -fsSL https://get.docker.com -o get-docker.sh
+                sudo sh get-docker.sh
+            else 
+                if [[ $(systemctl is-active docker) == "inactive" ]]; then 
+                    sudo systemctl start docker
+                fi
+            fi
+
+            # check command docker-compose install on system
+            if ! command -v docker-compose $>/dev/null; then 
+                echo -e "${Red}docker-compose Command Not Found${NC}"
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+                sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            fi
+        #====================================================================================================
+        elif [[ $dist == 'redhat' ]]; then # redhat family
+            if ! command -v git $>/dev/null; then 
+                echo -e "${Red}git Command Not Found${NC}"
+                sudo yum install git -y
+            fi
+
+            # check command jq install on system
+            if ! command -v jq $>/dev/null; then 
+                echo -e "${Red}jq Command Not Found${NC}"
+                sudo yum install jq -y
+            fi
+
+            # check command docker install on system
+            if ! command -v docker $>/dev/null; then 
+                echo -e "${Red}docker Command Not Found${NC}"
+                curl -fsSL https://get.docker.com -o get-docker.sh
+                sudo sh get-docker.sh
+            else 
+                if [[ $(systemctl is-active docker) == "inactive" ]]; then 
+                    sudo systemctl start docker
+                fi
+            fi
+
+            # check command docker-compose install on system
+            if ! command -v docker-compose $>/dev/null; then 
+                echo -e "${Red}docker-compose Command Not Found${NC}"
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+                sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            fi
+        #====================================================================================================
+        elif [[ $dist == 'arch' ]]; then # for arch and manjaro
+            if ! command -v git $>/dev/null; then 
+                echo -e "${Red}git Command Not Found${NC}"
+                sudo pacman -Syy
+                sudo pacman --sync --noconfirm git
+            fi
+
+            # check command jq install on system
+            if ! command -v jq $>/dev/null; then 
+                echo -e "${Red}jq Command Not Found${NC}"
+                sudo pacman -Syy
+                sudo pacman --sync --noconfirm jq
+            fi
+
+            # check command docker install on system
+            if ! command -v docker $>/dev/null; then 
+                echo -e "${Red}docker Command Not Found${NC}"
+                sudo pacman -Syy
+                sudo pacman -S docker
+            else 
+                if [[ $(systemctl is-active docker) == "inactive" ]]; then 
+                    sudo systemctl start docker
+                fi
+            fi
+
+            # check command docker-compose install on system
+            if ! command -v docker-compose $>/dev/null; then 
+                echo -e "${Red}docker-compose Command Not Found${NC}"
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+                sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            fi
+        #====================================================================================================
+        else
+            echo -e "${Red}Your Distribution is not supported${NC}"
+            exit 1
+        fi                
+
+
+        
     elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
         # check command git install on system
         if ! command -v git $>/dev/null; then 
@@ -553,34 +628,41 @@ function dbeaver_data_renew() {
 
 # check distribution
 function dist_detector() {
-    OS_FAMILY=`grep -i id_like /etc/os-release | cut -d"=" -f2`
-    if [[ $OS_FAMILY =~ 'debian' ]]; then # debian family (debian, ubuntu, mint,...)
-        return "0"
-    else # redhat family
-        return "1"
+    if ! command -v apt $>/dev/null; then  # Debian family (debian, ubuntu, mint,...)
+        echo "debian"
+    elif ! command -v yum $>/dev/null; then # Redhat family
+        echo "redhat"
+    elif ! command -v yum $>/dev/null; then # Arch family
+        echo "arch"
+    else 
+        echo -e "${Red}Your OS is not supported${NC}"
+        exit 1
     fi
 }
 
 # check dbeaver package
 function dbeaver_checker() {
-    if os_detector; then # debian family (debian, ubuntu, mint,...)
+    dist=$(dist_detector)
+    if [[ $dist == 'debain' ]]; then # debian family (debian, ubuntu, mint,...)
         if dpkg -s dbeaver-ce 2> /dev/null 1>&2; then 
             return "0"
         else 
             return "1"
         fi 
-    else # redhat family
+    elif [[ $dist == 'redhat' ]]; then # redhat family
         if yum list --installed | grep dbeaver-ce 2> /dev/null 1>&2; then 
             return "0"
         else 
             return "1"
         fi
+    else
+        return "1"
     fi
 }
 
 # database manager for easy manage database
 function db_manager() {
-    if os_detector; then # debian family (debian, ubuntu, mint,...)
+    if [[ $dist == 'debain' ]]; then # debian family (debian, ubuntu, mint,...)
         if dbeaver_checker; then 
             dbeaver_data_renew
         else 
@@ -592,7 +674,7 @@ function db_manager() {
                 echo -e "${Red}Download Error, Please Check Your Connection${NC}"
             fi
         fi  
-    else # redhat family
+    elif [[ $dist == 'redhat' ]]; then # redhat family
         if dbeaver_checker; then 
             dbeaver_data_renew
         else 
@@ -604,6 +686,11 @@ function db_manager() {
                 echo -e "${Red}Download Error, Please Check Your Connection${NC}"
             fi
         fi  
+    elif [[ $dist == 'arch' ]]; then # for arch and manjaro
+        echo -e "${Red}check this link for install https://snapcraft.io/install/dbeaver-ce/manjaro${NC}"
+    else
+       echo -e "${Red}Your OS is not supported${NC}"
+       exit 1
     fi                
 }
 

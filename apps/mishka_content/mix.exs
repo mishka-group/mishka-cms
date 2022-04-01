@@ -30,7 +30,7 @@ defmodule MishkaContent.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mishka_installer, "~> 0.0.1"},
+      {:mishka_installer, "~> 0.0.2"},
       {:mishka_database, in_umbrella: true},
       {:bamboo, "~> 2.1.0"},
       {:bamboo_smtp, "~> 4.0.1"},

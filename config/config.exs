@@ -35,11 +35,9 @@ providers: [
    # /auth/github?scope=user,public_repo
   github: {Ueberauth.Strategy.Github, [default_scope: "read:user", send_redirect_uri: false]},
   google: {Ueberauth.Strategy.Google, [
-     # For now, we need normal information of a user, but in the future it  should be possible to use dynamic default_scope
-     # /auth/google?scope=email%20profile
      default_scope:
      "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
-   ]},
+   ]}
 ]
 
 config :ueberauth, Ueberauth.Strategy.Github.OAuth,
@@ -50,6 +48,7 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
    client_id: System.get_env("GOOGLE_CLIENT_ID"),
    client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
    redirect_uri: System.get_env("GOOGLE_REDIRECT_URI")
+
 
 
 if System.get_env("GITHUB_ACTIONS") do

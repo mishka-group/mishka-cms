@@ -57,7 +57,7 @@ defmodule MishkaHtml.MixProject do
       {:sobelow, "~> 0.11.1", only: :dev},
       {:jalaali, "~> 0.4.0"},
       {:mishka_installer, "~> 0.0.1"},
-      {:mishka_social, git: "https://github.com/mishka-group/mishka_social.git"}
+      {:mishka_social, "~> 0.0.1"}
     ]
   end
 

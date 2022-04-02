@@ -1,0 +1,937 @@
+{
+	"info": {
+		"_postman_id": "d1ce3c41-d64e-4f59-9b96-9b55a21e2a8a",
+		"name": "MishkaCms",
+		"description": "Mishka project is a real-time and also API-based CMS which is developed using [Elixir](https://elixir-lang.org/) programming language; powered by [Phoenix framework](https://phoenixframework.org/). In this project it is tried to place all the dependencies in the Elixir language and avoid using external systems, and it has been this way so far except for the database section which we used [PostgreSQL](https://www.postgresql.org/).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "MishkaAPI",
+			"item": [
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Register",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "full_name",
+											"value": "{{testFullName}}",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "{{testUsername}}",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "{{testMailAddress}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{testPassword}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"register"
+									]
+								},
+								"description": "With this endpoint, you can register in the CMS; it should be noted that you can keep the password field empty, but you cannot log in from a common way, something like user and email + password.  \nHence, there is a way to log in through social networks like GitHub and Google."
+							},
+							"response": []
+						},
+						{
+							"name": "Login (Username)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.auth.access_token);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.auth.refresh_token);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{testUsername}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{testPassword}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"login"
+									]
+								},
+								"description": "You can just log in for 5 times, after that the system do not let you before disconnecting from some of your previous token."
+							},
+							"response": []
+						},
+						{
+							"name": "Login (Email)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.auth.access_token);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.auth.refresh_token);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{testMail}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{testPassword}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"login"
+									]
+								},
+								"description": "You can just log in for 5 times, after that the system do not let you before disconnecting from some of your previous token."
+							},
+							"response": []
+						},
+						{
+							"name": "Send Verify Email code",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "some_thing",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/verify-email",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"verify-email"
+									]
+								},
+								"description": "It should be noted, when you are using code instead of URL, you need a good reason like using API side not HTML render.\n\nIt should be noted that you can apply once every six minutes."
+							},
+							"response": []
+						},
+						{
+							"name": "Verify Email",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/verify-email",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"verify-email"
+									]
+								},
+								"description": "It should be noted, when you are using code instead of URL, you need a good reason like using API side not HTML render.\n\nIt should be noted that you can apply once every six minutes."
+							},
+							"response": []
+						},
+						{
+							"name": "Verify Email by Email Link",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/verify-email-by-email-link",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"verify-email-by-email-link"
+									]
+								},
+								"description": "It should be noted that you can apply once every six minutes."
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Profile (Full Name)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "full_name",
+											"value": "newTestFullName",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/edit-profile",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"edit-profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Password",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "curent_password",
+											"value": "{{testPassword}}",
+											"type": "text"
+										},
+										{
+											"key": "new_password",
+											"value": "{{testPassword}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/change-password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"change-password"
+									]
+								},
+								"description": "All of your tokens or logged in account are forced to be disconnected after changing your password. It needs access token."
+							},
+							"response": []
+						},
+						{
+							"name": "Send Reset Password code",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{testMailAddress}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/reset-password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"reset-password"
+									]
+								},
+								"description": "This endpoint is like change password router, but you need to send code to your email and after that you can reset your password, but do not forget after changing password all your devices and token are going to be disconnected."
+							},
+							"response": []
+						},
+						{
+							"name": "Reset Password",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{testMailAddress}}",
+											"type": "text"
+										},
+										{
+											"key": "new_password",
+											"value": "{{testPassword}}",
+											"type": "text"
+										},
+										{
+											"key": "code",
+											"value": "something",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/reset-password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"reset-password"
+									]
+								},
+								"description": "This endpoint is like change password router, but you need to send code to your email and after that you can reset your password, but do not forget after changing password all your devices and token are going to be disconnected."
+							},
+							"response": []
+						},
+						{
+							"name": "User Tokens",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/user-tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"user-tokens"
+									]
+								},
+								"description": "This action just shows you how many tokens are created for your account and what are their expiry time and the other information.  \nIt does not show the tokens."
+							},
+							"response": []
+						},
+						{
+							"name": "Refresh Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.auth.access_token);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.auth.refresh_token);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{refreshToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/refresh-token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"refresh-token"
+									]
+								},
+								"description": "Every time you refresh your token, it gives you an access token and a new refresh token, hence the system always considers a last token and the others you created will be gone."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Token Expire Time",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "token",
+											"value": "{{refreshToken}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/get-token-expire-time",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"get-token-expire-time"
+									]
+								},
+								"description": "You can see the expiration of a token when its token has not yet expired\n\n**It doesn't matter you want to see refresh token expiration or access token, you must have a valid access token.**"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Token",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/delete-token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"delete-token"
+									]
+								},
+								"description": "When you delete a token which is access, you should create a new one by refresh token if you want to use it to another endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Tokens",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/delete-tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"delete-tokens"
+									]
+								},
+								"description": "When you call delete tokens, you are going to delete all the tokens even refresh token, hence all your devices are disconnected logically."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Tokens Link by Email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{testMailAddress}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/send-delete-tokens-link-by-email",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"send-delete-tokens-link-by-email"
+									]
+								},
+								"description": "It should be used when user does not access to his/her password"
+							},
+							"response": []
+						},
+						{
+							"name": "Deactive Account by Email Link",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/deactive-account-by-email-link",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"deactive-account-by-email-link"
+									]
+								},
+								"description": "For your current position, we just can send an email to user and after hitting link by user, the system just change his/her account status, not to delete information of user.  \nWe will complete this in the future"
+							},
+							"response": []
+						},
+						{
+							"name": "Send Deactive Account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/deactive-account",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"deactive-account"
+									]
+								},
+								"description": "This is a launcher for sending email, a code to user"
+							},
+							"response": []
+						},
+						{
+							"name": "Deactive Account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "something",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/deactive-account",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"deactive-account"
+									]
+								},
+								"description": "For your current position, we just can send an email to user and after hitting link by user, the system just change his/her account status, not to delete information of user.  \nWe will complete this in the future"
+							},
+							"response": []
+						},
+						{
+							"name": "Logout",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{refreshToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/logout",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"logout"
+									]
+								},
+								"description": "After you log out from the system, it deletes your device tokens which include access and refresh, the other devices still work."
+							},
+							"response": []
+						}
+					],
+					"description": "`MishkaCMS` Authentication API",
+					"auth": {
+						"type": "noauth"
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"description": "This folder contains `API` for external software and includes almost all the developed sections. This section uses Token in most “endpoints” to connect, and data send and receive are based on JSON.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "localhost:4001/api"
+		},
+		{
+			"key": "testMailAddress",
+			"value": "testmail@test.com"
+		},
+		{
+			"key": "testPassword",
+			"value": "TestUserPassword123"
+		},
+		{
+			"key": "testUsername",
+			"value": "testUser"
+		},
+		{
+			"key": "testFullName",
+			"value": "testName"
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "refreshToken",
+			"value": ""
+		}
+	]
+}

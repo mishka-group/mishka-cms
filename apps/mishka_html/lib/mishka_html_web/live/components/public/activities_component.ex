@@ -24,10 +24,10 @@ defmodule MishkaHtmlWeb.Helpers.ActivitiesComponent do
               </span>
               <%= @activities_info.section_type %>
               <span class="badge bg-warning text-dark"><%= Map.get(item.extra, @activities_info.action) %></span>
-              <%= raw MishkaTranslator.Gettext.dgettext("html_live_component", "به وسیله کاربر %{user} %{action} شد",
-                user: MishkaHtml.title_sanitize(Map.get(item, @activities_info.action_by) || "NO USER"),
-                action: "<span class=\"badge bg-#{MishkaHtml.create_action_msg(item.action).color}\">#{MishkaHtml.create_action_msg(item.action).msg}</span>"
-              ) %>
+              <%= raw MishkaTranslator.Gettext.dgettext("html_live_component", "به وسیله ") %>
+              <%= user(assigns, Map.get(item.extra, "user_id")) %>
+              <%= raw("<span class=\"badge bg-#{MishkaHtml.create_action_msg(item.action).color}\">#{MishkaHtml.create_action_msg(item.action).msg}</span>") %>
+              <%= raw MishkaTranslator.Gettext.dgettext("html_live_component", "شد") %>
             </li>
           <% end %>
         </ul>
@@ -40,6 +40,22 @@ defmodule MishkaHtmlWeb.Helpers.ActivitiesComponent do
   def activities(assigns, activities_info) do
     ~H"""
     <.live_component module={__MODULE__} id={"activity_component"} activities={@activities}, activities_info={activities_info} />
+    """
+  end
+
+  defp user(assigns, nil) do
+    ~H"""
+      <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "کاربر نامشخص") %>
+    """
+  end
+
+  defp user(assigns, user_id) do
+    ~H"""
+      <%=
+        live_redirect MishkaTranslator.Gettext.dgettext("html_live_templates", "این کاربر"),
+        to: Routes.live_path(@socket, MishkaHtmlWeb.AdminUserLive, id: user_id),
+        class: "text-warning text-decoration-none"
+      %>
     """
   end
 end

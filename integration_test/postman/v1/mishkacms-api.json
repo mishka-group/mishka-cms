@@ -1686,9 +1686,106 @@
 								"description": "This endpoint helps you to see information of comments.\n\n*   Does not need ACL\n*   Needs access token"
 							},
 							"response": []
+						},
+						{
+							"name": "Editor Post with comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"alias_link\": \"{{postAliasLink}}\",\n    \"status\": \"active\",\n    \"comment\": {\n        \"page\": \"1\",\n        \"filters\": {\n            \"section_id\": \"{{postID}}\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-post"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Post without comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-post"
+									]
+								}
+							},
+							"response": []
 						}
 					],
-					"description": "``` erlang\n\n# We have PostMan for these routers\ndef create_category(conn, params) do\ndef edit_category(conn, %{\"category_id\" => category_id})\ndef delete_category(conn, %{\"category_id\" => category_id})\ndef destroy_category(conn, %{\"category_id\" => category_id}) \ndef category(conn, %{\"category_id\" => id})\ndef category(conn, %{\"alias_link\" => alias_link})\ndef categories(conn, _params) # It loads all categories without paginate\n\ndef create_post(conn, params)\ndef edit_post(conn, %{\"post_id\" => post_id})\ndef delete_post(conn, %{\"post_id\" => post_id})\ndef destroy_post(conn, %{\"post_id\" => post_id}) \ndef posts(conn, %{\"page\" => page, \"filters\" => %{\"status\" => status}})  when status in [\"active\", \"archived\"] do\ndef post(conn, %{\"alias_link\" => alias_link, \"status\" => status, \"comment\" => %{\"page\" => _page, \"filters\" => %{\"status\" => status}}}) when status in [\"active\", \"archive\"]\ndef post(conn, %{\"alias_link\" => alias_link, \"status\" => status}) when status in [\"active\", \"archived\"]\n\ndef create_comment(conn, %{\"section_id\" => _section_id, \"description\" => _description})\ndef comment(conn, %{\"filters\" => %{\"comment_id\" => comment_id, \"status\" => status}}) when status in [\"active\", \"archived\"]\ndef comments(conn, %{\"page\" => page, \"filters\" => %{\"status\" => status} = params}) when status in [\"active\", \"archived\"]\n\n\n\n\n# We have no PostMan for these routers\ndef editor_post(conn, %{\"alias_link\" => alias_link, \"status\" => status, \"comment\" => %{\"page\" => _page, \"filters\" => _filters}})\ndef editor_post(conn, %{\"post_id\" => post_id, \"status\" => status})\ndef editor_posts(conn, %{\"page\" => page, \"filters\" => params})\ndef editor_post(conn, %{\"alias_link\" => alias_link, \"status\" => status, \"comment\" => %{\"page\" => _page, \"filters\" => _filters}})\ndef editor_post(conn, %{\"post_id\" => post_id, \"status\" => status})\ndef like_post(conn, %{\"post_id\" => post_id})\ndef delete_post_like(conn, %{\"post_id\" => post_id})\n\ndef editor_categories(conn, %{\"filters\" => params}) when is_map(params)\n\ndef editor_comment(conn, %{\"filters\" => params})\ndef editor_comments(conn, %{\"page\" => page, \"filters\" => params})\ndef edit_comment(conn, params)\ndef delete_comment(conn, %{\"comment_id\" => comment_id})\ndef delete_comment(conn, %{\"user_id\" => user_id,\"comment_id\" => comment_id})\ndef destroy_comment(conn, %{\"comment_id\" => comment_id})\ndef like_comment(conn, %{\"comment_id\" => comment_id})\ndef delete_comment_like(conn, %{\"comment_id\" => comment_id})\n\n\ndef create_tag(conn, %{\"title\" => _title, \"alias_link\" => _alias_link, \"robots\" => _robots})\ndef edit_tag(conn, %{\"tag_id\" => tag_id})\ndef delete_tag(conn, %{\"tag_id\" => tag_id})\ndef add_tag_to_post(conn, %{\"post_id\" => post_id, \"tag_id\" => tag_id})\ndef remove_post_tag(conn, %{\"post_id\" => post_id, \"tag_id\" => tag_id})\ndef tags(conn, %{\"page\" => page, \"filters\" => params})\ndef post_tags(conn, %{\"post_id\" => post_id})d\ndef tag_posts(conn, %{\"page\" => page, \"filters\" => %{\"post_status\" => post_status} = params}) when post_status in [\"active\", \"archived\"]\ndef editor_tag_posts(conn, %{\"page\" => page, \"filters\" => params})\n\n\ndef create_bookmark(conn, %{\"section\" => section, \"section_id\" => section_id})\ndef delete_bookmark(conn, %{\"section_id\" => section_id})\n\n\ndef create_subscription(conn, %{\"section\" => section, \"section_id\" => section_id})\ndef delete_subscription(conn, %{\"section_id\" => section_id})\n\ndef create_blog_link(conn, params)\ndef edit_blog_link(conn, %{\"blog_link_id\" => id} = params)\ndef delete_blog_link(conn, %{\"blog_link_id\" => id})\ndef links(conn, %{\"page\" => page, \"filters\" => %{\"status\" => status} = params}) when status in [\"active\", \"archived\"]\ndef editor_links(conn, %{\"page\" => page, \"filters\" => params})\n\n\ndef notifs(conn, %{\"type\" => \"client\", \"page\" => page, \"filters\" => params})\ndef editor_notifs(conn, %{\"page\" => page, \"filters\" => params})\ndef send_notif(conn, params)\n\n\ndef authors(conn, %{\"post_id\" => post_id})\ndef create_author(conn, params)\ndef delete_author(conn, %{\"post_id\" => post_id, \"user_id\" => user_id})\n\n\n```"
+					"description": "`MishkaCms` Content API\n\n``` erlang\n# We have PostMan for these routers\ndef create_category(conn, params) do\ndef edit_category(conn, %{\"category_id\" => category_id})\ndef delete_category(conn, %{\"category_id\" => category_id})\ndef destroy_category(conn, %{\"category_id\" => category_id}) \ndef category(conn, %{\"category_id\" => id})\ndef category(conn, %{\"alias_link\" => alias_link})\ndef categories(conn, _params) # It loads all categories without paginate\ndef create_post(conn, params)\ndef edit_post(conn, %{\"post_id\" => post_id})\ndef delete_post(conn, %{\"post_id\" => post_id})\ndef destroy_post(conn, %{\"post_id\" => post_id}) \ndef posts(conn, %{\"page\" => page, \"filters\" => %{\"status\" => status}})  when status in [\"active\", \"archived\"] do\ndef post(conn, %{\"alias_link\" => alias_link, \"status\" => status, \"comment\" => %{\"page\" => _page, \"filters\" => %{\"status\" => status}}}) when status in [\"active\", \"archive\"]\ndef post(conn, %{\"alias_link\" => alias_link, \"status\" => status}) when status in [\"active\", \"archived\"]\ndef create_comment(conn, %{\"section_id\" => _section_id, \"description\" => _description})\ndef comment(conn, %{\"filters\" => %{\"comment_id\" => comment_id, \"status\" => status}}) when status in [\"active\", \"archived\"]\ndef comments(conn, %{\"page\" => page, \"filters\" => %{\"status\" => status} = params}) when status in [\"active\", \"archived\"]\n# We have no PostMan for these routers\ndef editor_post(conn, %{\"alias_link\" => alias_link, \"status\" => status, \"comment\" => %{\"page\" => _page, \"filters\" => _filters}})\ndef editor_post(conn, %{\"post_id\" => post_id, \"status\" => status})\ndef editor_posts(conn, %{\"page\" => page, \"filters\" => params})\ndef editor_post(conn, %{\"alias_link\" => alias_link, \"status\" => status, \"comment\" => %{\"page\" => _page, \"filters\" => _filters}})\ndef editor_post(conn, %{\"post_id\" => post_id, \"status\" => status})\ndef like_post(conn, %{\"post_id\" => post_id})\ndef delete_post_like(conn, %{\"post_id\" => post_id})\ndef editor_categories(conn, %{\"filters\" => params}) when is_map(params)\ndef editor_comment(conn, %{\"filters\" => params})\ndef editor_comments(conn, %{\"page\" => page, \"filters\" => params})\ndef edit_comment(conn, params)\ndef delete_comment(conn, %{\"comment_id\" => comment_id})\ndef delete_comment(conn, %{\"user_id\" => user_id,\"comment_id\" => comment_id})\ndef destroy_comment(conn, %{\"comment_id\" => comment_id})\ndef like_comment(conn, %{\"comment_id\" => comment_id})\ndef delete_comment_like(conn, %{\"comment_id\" => comment_id})\ndef create_tag(conn, %{\"title\" => _title, \"alias_link\" => _alias_link, \"robots\" => _robots})\ndef edit_tag(conn, %{\"tag_id\" => tag_id})\ndef delete_tag(conn, %{\"tag_id\" => tag_id})\ndef add_tag_to_post(conn, %{\"post_id\" => post_id, \"tag_id\" => tag_id})\ndef remove_post_tag(conn, %{\"post_id\" => post_id, \"tag_id\" => tag_id})\ndef tags(conn, %{\"page\" => page, \"filters\" => params})\ndef post_tags(conn, %{\"post_id\" => post_id})d\ndef tag_posts(conn, %{\"page\" => page, \"filters\" => %{\"post_status\" => post_status} = params}) when post_status in [\"active\", \"archived\"]\ndef editor_tag_posts(conn, %{\"page\" => page, \"filters\" => params})\ndef create_bookmark(conn, %{\"section\" => section, \"section_id\" => section_id})\ndef delete_bookmark(conn, %{\"section_id\" => section_id})\ndef create_subscription(conn, %{\"section\" => section, \"section_id\" => section_id})\ndef delete_subscription(conn, %{\"section_id\" => section_id})\ndef create_blog_link(conn, params)\ndef edit_blog_link(conn, %{\"blog_link_id\" => id} = params)\ndef delete_blog_link(conn, %{\"blog_link_id\" => id})\ndef links(conn, %{\"page\" => page, \"filters\" => %{\"status\" => status} = params}) when status in [\"active\", \"archived\"]\ndef editor_links(conn, %{\"page\" => page, \"filters\" => params})\ndef notifs(conn, %{\"type\" => \"client\", \"page\" => page, \"filters\" => params})\ndef editor_notifs(conn, %{\"page\" => page, \"filters\" => params})\ndef send_notif(conn, params)\ndef authors(conn, %{\"post_id\" => post_id})\ndef create_author(conn, params)\ndef delete_author(conn, %{\"post_id\" => post_id, \"user_id\" => user_id})\n\n```",
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{accessToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
 				}
 			],
 			"description": "This folder contains `API` for external software and includes almost all the developed sections. This section uses Token in most “endpoints” to connect, and data send and receive are based on JSON.",

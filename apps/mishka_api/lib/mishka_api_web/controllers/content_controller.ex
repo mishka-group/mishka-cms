@@ -31,8 +31,8 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: MishkaDatabase.convert_string_map_to_atom_map(comment)})
   end
 
-  def editor_post(conn, %{"post_id" => post_id, "status" => status})do
-    Post.post(post_id, status)
+  def editor_post(conn, %{"alias_link" => alias_link, "status" => status})do
+    Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :none_comment})
   end
 

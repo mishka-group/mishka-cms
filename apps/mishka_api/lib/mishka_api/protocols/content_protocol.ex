@@ -104,7 +104,7 @@ defimpl MishkaApi.ContentProtocol, for: Any do
 
   def post(parametr, conn, %{type: :comment, comment: comment}) do
     filters =
-      Map.take(comment["filters"], Comment.allowed_fields(:string))
+      Map.take(comment[:filters] || %{}, Comment.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
 
     comments = Comment.comments(conditions: {comment["page"], 20}, filters: filters, user_id: Map.get(conn.assigns, :user_id))

@@ -1721,7 +1721,8 @@
 										"v1",
 										"editor-post"
 									]
-								}
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
 							},
 							"response": []
 						},
@@ -1740,6 +1741,15 @@
 								},
 								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"alias_link\": \"{{postAliasLink}}\",\n    \"status\": \"active\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/content/v1/editor-post",
 									"host": [
@@ -1750,7 +1760,8 @@
 										"v1",
 										"editor-post"
 									]
-								}
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
 							},
 							"response": []
 						}

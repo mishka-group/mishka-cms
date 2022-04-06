@@ -1743,7 +1743,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"alias_link\": \"{{postAliasLink}}\",\n    \"status\": \"active\"\n}",
+									"raw": "{\n    \"page\": \"1\",\n    \"filters\": []\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1751,14 +1751,53 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/content/v1/editor-post",
+									"raw": "{{baseUrl}}/content/v1/editor-posts",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"content",
 										"v1",
-										"editor-post"
+										"editor-posts"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Posts",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": \"1\",\n    \"filters\": {}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-posts",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-posts"
 									]
 								},
 								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"

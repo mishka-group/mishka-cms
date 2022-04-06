@@ -14,6 +14,8 @@ defmodule MishkaHtmlWeb.BlogPostLive do
 
   @impl true
   def mount(%{"alias_link" => alias_link}, session, socket) do
+    if connected?(socket), do: Like.subscribe()
+
     socket = case Post.post(alias_link, "active") do
       nil ->
         socket =
@@ -406,6 +408,15 @@ defmodule MishkaHtmlWeb.BlogPostLive do
         |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "چنین محتوایی وجود ندارد یا اخیرا حذف شده است."))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
     end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:post_like, :ok, _repo_record}, socket) do
+    socket =
+      socket
+      |> assign(like: Like.count_post_likes(socket.assigns.id, socket.assigns.user_id))
 
     {:noreply, socket}
   end

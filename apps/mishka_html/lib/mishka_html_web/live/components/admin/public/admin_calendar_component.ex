@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Admin.Public.CalendarComponent do
 
   def render(assigns) do
     ~H"""
-      <div phx-update="ignore">
+      <div id="calendarhook" phx-update="ignore">
         <div id="calendar" phx-hook="Calendar"></div>
       </div>
     """

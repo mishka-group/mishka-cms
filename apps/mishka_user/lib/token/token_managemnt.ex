@@ -171,12 +171,13 @@ defmodule MishkaUser.Token.TokenManagemnt do
       )
     end)
 
-    {:reply, state, new_state}
+    {:reply, new_state, new_state}
   end
 
   @impl true
   def handle_call({:delete_child_token, refresh_token}, _from, state) do
-    {:reply, state, get_token_with_rel(refresh_token, state) }
+    new_state = get_token_with_rel(refresh_token, state)
+    {:reply, new_state, new_state}
   end
 
   @impl true
@@ -278,7 +279,6 @@ defmodule MishkaUser.Token.TokenManagemnt do
     if reason != :normal do
       Logger.warn("Reason of Terminate #{inspect(reason)}")
     end
-    # TODO: send error to log server
   end
 
 

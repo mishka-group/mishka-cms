@@ -201,7 +201,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostTagsLive do
                   <input type="text" class="title-input-text form-control" name="search-tag-title" id="search-tag">
                   <div class="col space10"> </div>
                   <div class="space10"></div>
-                  <div class="col" phx-update="replace" id="search_tags">
+                  <div class="col" id="search_tags">
                       <%= for {item, color} <- Enum.zip(@search, Stream.cycle(["warning", "info" , "danger" , "success" , "primary" ])) do %>
                           <div class={"list-group-item list-group-item-#{color}"} aria-current="true">
                               <div class="d-flex w-100 justify-content-between">

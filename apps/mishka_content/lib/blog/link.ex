@@ -63,7 +63,8 @@ defmodule MishkaContent.Blog.BlogLink do
 
   @spec links([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: any
   def links(conditions: {page, page_size}, filters: filters) do
-    from(link in BlogLink) |> convert_filters_to_where(filters)
+    from(link in BlogLink)
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue

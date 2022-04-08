@@ -1499,7 +1499,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
         new_conn
         |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
         |> post(Routes.content_path(conn, :editor_comment), %{
-          "filters" => %{"comment_id" => comment_info.id, "status" => "inactive", "section" => "blog_post"}})
+          "filters" => %{"id" => comment_info.id, "status" => "inactive", "section" => "blog_post"}})
 
       assert %{
         "action" => "comment",

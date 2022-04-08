@@ -2,7 +2,6 @@ defmodule MishkaUser.Token.TokenManagemnt do
   use GenServer, restart: :temporary
 
   @refresh_interval :timer.seconds(1) # :timer.seconds(5)
-  @saving_interval :timer.seconds(300) # :timer.seconds(5)
   require Logger
   alias MishkaUser.Token.TokenDynamicSupervisor
   alias MishkaDatabase.Cache.MnesiaToken
@@ -158,6 +157,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   @impl true
   def handle_call({:delete, token}, _from, state) do
+
     new_token = get_token_info(state)
     |> Enum.reject(fn x -> x.token == token end)
 
@@ -170,6 +170,8 @@ defmodule MishkaUser.Token.TokenManagemnt do
         }
       )
     end)
+
+    schedule_delete_refresh_token_on_disk(self(), token)
 
     {:reply, new_state, new_state}
   end
@@ -258,9 +260,9 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   @impl true
-  def handle_info(:schedule_saving, stats) do
-    Logger.info("Request was sent to save Tokens on Disk")
-    # schedule_saving_token_on_disk(pid)
+  def handle_info({:schedule_delete_refresh_token, old_token}, stats) do
+    Logger.info("Request was sent to Delete refresh Token on Disk")
+    MnesiaToken.delete_token(old_token)
     {:noreply, stats}
   end
 
@@ -269,9 +271,8 @@ defmodule MishkaUser.Token.TokenManagemnt do
     Process.send_after(pid, :schedule_delete_token, @refresh_interval)
   end
 
-  @spec schedule_saving_token_on_disk(atom | pid) :: reference
-  def schedule_saving_token_on_disk(pid) do
-    Process.send_after(pid, :schedule_saving, @saving_interval)
+  def schedule_delete_refresh_token_on_disk(pid, old_token) do
+    Process.send_after(pid, {:schedule_delete_refresh_token, old_token}, 15000)
   end
 
   @impl true
@@ -286,11 +287,12 @@ defmodule MishkaUser.Token.TokenManagemnt do
           {:error, :count_refresh_token} | {:ok, :count_refresh_token}
 
   def count_refresh_token(user_id) do
-    devices = user_id
-    |> get_all()
-    |> get_token_info()
-    |> Enum.reject(fn x -> x.type == "access" end)
-    |> Enum.count()
+    devices =
+      user_id
+      |> get_all()
+      |> get_token_info()
+      |> Enum.reject(fn x -> x.type == "access" end)
+      |> Enum.count()
 
     if devices <= 5, do: {:ok, :count_refresh_token}, else: {:error, :count_refresh_token}
   end

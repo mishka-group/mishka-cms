@@ -16,16 +16,7 @@ defmodule MishkaUser.CorePlugin.Login.SuccessLogout do
 
     @spec call(OnUserAfterLogout.t()) :: {:reply, OnUserAfterLogout.t()}
     def call(%OnUserAfterLogout{} = state) do
-      create_user_permissions_on_state(state.user_id)
+      MishkaUser.Acl.AclManagement.stop(state.user_id)
       {:reply, state}
-    end
-
-    defp create_user_permissions_on_state(user_id) do
-      MishkaUser.Acl.AclManagement.save(%{
-        id: user_id,
-        user_permission: MishkaUser.User.permissions(user_id),
-        created: System.system_time(:second)},
-        user_id
-      )
     end
 end

@@ -252,13 +252,16 @@ defmodule MishkaApiWeb.ContentController do
   end
 
   def links(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in ["active", "archived"] do
-    filters = Map.take(params, BlogLink.allowed_fields(:string))
-    BlogLink.links(conditions: {page, 30}, filters: Map.merge(filters, %{"status" => status}))
+    filters =
+      Map.take(params, BlogLink.allowed_fields(:string))
+      |> MishkaDatabase.convert_string_map_to_atom_map()
+    BlogLink.links(conditions: {page, 30}, filters: filters)
     |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
   end
 
   def editor_links(conn, %{"page" => page, "filters" => params}) when is_map(params) do
     filters = Map.take(params, BlogLink.allowed_fields(:string))
+    |> MishkaDatabase.convert_string_map_to_atom_map()
     BlogLink.links(conditions: {page, 30}, filters: filters)
     |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
   end

@@ -118,7 +118,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.comments(conn, Comment.allowed_fields(:atom))
   end
 
-  def editor_comment(conn, %{"filters" => params}) when is_map(params) do
+  def editor_comment(conn, %{"filters" => %{"id" => _id} = params}) when is_map(params) do
     filters =
       Map.take(params, Comment.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
@@ -142,12 +142,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.edit_comment(conn, Comment.allowed_fields(:atom))
   end
 
-  def delete_comment(conn, %{"comment_id" => comment_id}) do
-    Comment.delete(Map.get(conn.assigns, :user_id), comment_id)
-    |> MishkaApi.ContentProtocol.delete_comment(conn, Comment.allowed_fields(:atom))
-  end
-
-  def delete_comment(conn, %{"user_id" => user_id,"comment_id" => comment_id}) do
+  def delete_comment(conn, %{"user_id" => user_id, "comment_id" => comment_id}) do
     Comment.delete(user_id, comment_id)
     |> MishkaApi.ContentProtocol.delete_comment(conn, Comment.allowed_fields(:atom))
   end

@@ -66,7 +66,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
   list_search_and_action()
 
-  delete_list_item(:users, DeleteErrorComponent, true)
+  delete_list_item(:users, DeleteErrorComponent, false)
 
   @impl true
   def handle_event("user_role", %{"role" => role_id, "user_id" => user_id, "full_name" => full_name}, socket) do

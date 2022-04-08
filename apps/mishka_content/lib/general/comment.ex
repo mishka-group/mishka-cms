@@ -105,7 +105,7 @@ defmodule MishkaContent.General.Comment do
     user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
 
     from(com in Comment,
-    join: user in assoc(com, :users),
+    left_join: user in assoc(com, :users),
     left_join: like in assoc(com, :comments_likes),
     left_join: liked_user in subquery(CommentLike.user_liked()),
     on: liked_user.user_id == ^user_id and liked_user.comment_id == com.id

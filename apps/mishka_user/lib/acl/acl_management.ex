@@ -37,6 +37,7 @@ defmodule MishkaUser.Acl.AclManagement do
     else
       {:error, :get_user_pid} ->
         AclDynamicSupervisor.start_job([id: user_id, type: "user_permission"])
+        save(%{id: user_id, user_permission: MishkaUser.User.permissions(user_id), created: System.system_time(:second)}, user_id)
         get_all(user_id)
     end
   end

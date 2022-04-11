@@ -91,7 +91,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       def handle_event("delete", %{"id" => id} = _params, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        socket = MishkaHtml.Helpers.LiveCRUD.delete_item_of_list(socket, module_selected, unquote(function), id, unquote(user_id), unquote(component), skip_list, fn x -> x end)
+        socket = MishkaHtml.Helpers.LiveCRUD.delete_item_of_list(socket, module_selected, unquote(function), id, unquote(user_id), unquote(component), skip_list, nil)
         {:noreply, socket}
       end
     end
@@ -562,7 +562,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         }, %{user_action: "delete_item_of_list", title: Map.get(repo_data, :title), full_name: Map.get(repo_data, :full_name), user_id: Map.get(socket.assigns, :user_id)})
 
         # It should pass conn or socket output
-        after_condition.(id, socket)
+        if !is_nil(after_condition), do: after_condition.(id, socket), else: socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("macro_live", "رکورد مورد نظر با موفقیت حذف گردید"))
       {:error, :delete, :forced_to_delete, _error_atom} ->
         socket

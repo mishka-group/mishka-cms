@@ -73,14 +73,14 @@ function update_config() {
     # load configs
     load_configs
 
-    cp --force etc/nginx/conf/sample_conf/mishka_api.conf etc/nginx/conf/conf.d/mishka_api.conf
-    cp --force etc/nginx/conf/sample_conf/mishka_cms.conf etc/nginx/conf/conf.d/mishka_cms.conf
+    cp -f etc/nginx/conf/sample_conf/mishka_api.conf etc/nginx/conf/conf.d/mishka_api.conf
+    cp -f etc/nginx/conf/sample_conf/mishka_cms.conf etc/nginx/conf/conf.d/mishka_cms.conf
     ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE) 
     SSL_VAR=$(to_lower_case $SSL) 
     if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then 
         if [[ $CMS_PORT == "443" ]] && [[ $SSL_VAR =~ ^yes$ ]]; then 
-            cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
-            cp --force etc/nginx/conf/sample_conf/ssl_prod.conf etc/nginx/conf/ssl.conf 
+            cp -f dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
+            cp -f etc/nginx/conf/sample_conf/ssl_prod.conf etc/nginx/conf/ssl.conf 
             # change domains 
             sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
             sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
@@ -92,7 +92,7 @@ function update_config() {
             sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
             sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
         elif [[ $CMS_PORT == "80" ]]; then 
-            cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
+            cp -f dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
             # change domains
             sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
             sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
@@ -100,7 +100,7 @@ function update_config() {
             sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
             sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
         else 
-            cp --force dockers/docker-compose_without_nginx.yml dockers/docker-compose.yml
+            cp -f dockers/docker-compose_without_nginx.yml dockers/docker-compose.yml
         fi
 
         # change value in docker-compose.yml
@@ -117,8 +117,8 @@ function update_config() {
     else 
         SSL_VAR=$(to_lower_case $SSL) 
         if [[ $CMS_PORT == "443" ]] && [[ $SSL_VAR =~ ^yes$ ]]; then 
-            cp --force dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
-            cp --force etc/nginx/conf/sample_conf/ssl_dev.conf etc/nginx/conf/ssl.conf 
+            cp -f dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
+            cp -f etc/nginx/conf/sample_conf/ssl_dev.conf etc/nginx/conf/ssl.conf 
             # change domains 
             sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
             sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
@@ -130,7 +130,7 @@ function update_config() {
             sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
             sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
         elif [[ $CMS_PORT == "80" ]]; then 
-            cp --force dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
+            cp -f dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
             # change domains
             sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
             sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
@@ -138,7 +138,7 @@ function update_config() {
             sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
             sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
         else 
-            cp  --force dockers/docker-compose_dev_without_nginx.yml dockers/docker-compose.yml
+            cp  -f dockers/docker-compose_dev_without_nginx.yml dockers/docker-compose.yml
         fi
 
         # change value in docker-compose.yml
@@ -172,7 +172,7 @@ function purge() {
                 echo -e "${Green} mishka images deleted..${NC}"
 
                 # Fresh nginx conf
-                cp --force etc/nginx/conf/sample_conf/mishka_* etc/nginx/conf/conf.d
+                cp -f etc/nginx/conf/sample_conf/mishka_* etc/nginx/conf/conf.d
             else 
                 docker image rm mishak_app:latest mishkagroup/postgresql:3.14
                 echo -e "${Green} mishka images deleted..${NC}"
@@ -190,24 +190,24 @@ function purge() {
 
             # delete build directory
             if [ -d ../../_build ]; then 
-                rm --recursive --force ../../_build
+                rm --recursive -f ../../_build
                 echo -e "${Green} mishka build directory deleted..${NC}"
             fi
 
             # delete deps directory
             if [ -d ../../deps ]; then 
-                rm --recursive --force ../../deps
+                rm --recursive -f ../../deps
                 echo -e "${Green} mishka build directory deleted..${NC}"
             fi
 
             # delete Mnesia dicretory
             if [ -d ../../Mnesia.nonode@nohost ]; then 
-                rm --recursive --force ../../Mnesia.nonode@nohost
+                rm --recursive -f ../../Mnesia.nonode@nohost
             fi 
 
             # delete Mnesia dicretory
             if [ -d ../../mix.lock ]; then 
-                rm --force ../../mix.lock
+                rm -f ../../mix.lock
             fi 
                
         fi
@@ -216,13 +216,13 @@ function purge() {
 
         # Delete Dockerfile
         if [ -f ../../Dockerfile ]; then
-            rm --force ../../Dockerfile
+            rm -f ../../Dockerfile
             echo -e "${Green} mishka Dockerfile deleted..${NC}"
         fi
 
         # Delete docker-compose
         if [ -f dockers/docker-compose.yml ]; then
-            rm --force dockers/docker-compose.yml
+            rm -f dockers/docker-compose.yml
             echo -e "${Green} mishka docker-compose.yml deleted..${NC}"
         fi
 
@@ -258,25 +258,25 @@ function cleanup() {
     case $1 in 
         "diskdb")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive --force ../../Mnesia.nonode@nohost
+            rm --recursive -f ../../Mnesia.nonode@nohost
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "deps")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive --force ../../deps
+            rm --recursive -f ../../deps
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "compiled")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive --force ../../_build
+            rm --recursive -f ../../_build
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "all")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive --force ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
+            rm --recursive -f ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
@@ -623,7 +623,7 @@ function print_build_output() {
 # remove old dir for DBeaver
 function dbeaver_data_renew() {
     if [ -d ~/.local/share/DBeaverData ]; then
-        rm --recursive --force ~/.local/share/DBeaverData
+        rm --recursive -f ~/.local/share/DBeaverData
     fi 
     tar xf etc/DBeaverData.tar.bz2 -C ~/.local/share
     echo -e "${Green}Database Manager Actived, for using you can run './mishka.sh db --run' command${NC}"

@@ -368,11 +368,6 @@ function check_requirements() {
         echo -e "${Red}This script must be run as root${NC}"
         exit 1
     fi
-
-    # check permission of onefetch
-    if ! [ -x bin/onefetch ]; then 
-        chmod +x bin/onefetch
-    fi
     
     # check docker config file exists
     if [ ! -f ~/.docker/config.json ]; then 
@@ -766,7 +761,23 @@ function web_server_selector() {
 # show mishka ascii logo
 function mishka_logo() {
     clear
-    bin/onefetch --ascii-input "$(cat docs/mishka-logo.ans)"
+
+    if [[ $OSTYPE == 'linux'* ]]; then # linux
+        # check permission of onefetch
+        if ! [ -x bin/onefetch_linux ]; then 
+            chmod +x bin/onefetch_linux
+        fi
+        bin/onefetch_linux --ascii-input "$(cat docs/mishka-logo.ans)"
+    elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
+        # check permission of onefetch
+        if ! [ -x bin/onefetch_macos ]; then 
+            chmod +x bin/onefetch_macos
+        fi
+        bin/onefetch_macos --ascii-input "$(cat docs/mishka-logo.ans)"
+    else # windows
+        echo -e "${Red}Your OS is not supported${NC}"
+        exit 1
+    fi
 }
 
 

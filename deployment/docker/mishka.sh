@@ -30,7 +30,8 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         break;
     done
 
-    if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then # convert user input to lowercase then check it
+    ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE)
+    if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then # convert user input to lowercase then check it
         cp dockers/Dockerfile ../../
 
         if web_server_selector -eq "0"; then # nginx
@@ -51,7 +52,8 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
 
             read -p $'\e[32mDo You Want to Enable SSL ? (YES/NO)  [default is YES]\e[0m: ' SSL
             SSL=${SSL:-"YES"}
-            if [[ ${SSL,,} =~ ^yes$ ]]; then 
+            SSL_VAR=$(to_lower_case $SSL)
+            if [[ $SSL_VAR =~ ^yes$ ]]; then 
                 while true; do 
                     read -p $'\e[32mEnter Your Email Address:\e[0m: ' ADMIN_EMAIL
                     if email_checker $ADMIN_EMAIL; then
@@ -90,7 +92,8 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
         echo -e "${Red}Please enable the email system for some verification, also, you will need the email server configuration!${NC}"
         read -p $'\e[32mDo You Want Enable Email System (YES/NO)[default is \'YES\']\e[0m: ' EMAIL_CONFIG
         EMAIL_CONFIG=${EMAIL_CONFIG:-"YES"}
-        if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
+        EMAIL_CONFIG_VAR=$(to_lower_case $EMAIL_CONFIG)
+        if [[ "$EMAIL_CONFIG_VAR" =~ ^yes$ ]]; then 
             email_system
         fi
 
@@ -155,7 +158,8 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             WEB_SERVER="nginx"
             read -p $'\e[32mDo You Want to Enable SSL ? (YES/NO)  [default is YES]\e[0m: ' SSL
             SSL=${SSL:-"YES"}
-            if [[ ${SSL,,} =~ ^yes$ ]]; then 
+            SSL_VAR=$(to_lower_case $SSL)
+            if [[ $SSL_VAR =~ ^yes$ ]]; then 
                 ssl_generator
             fi  
 
@@ -201,7 +205,8 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
     fi 
 else 
     load_configs
-    if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then  #production env  
+    ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE)
+    if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then  #production env  
         mishka_logo
         echo -e "${Green}Below Options is Available for Prod (enter the name for each section):
                         update    update images with old token
@@ -279,7 +284,8 @@ else
                     echo -e "${Green}Mishka Api Available on    --> $SPACE http://$API_DOMAIN_NAME:$API_PORT $END_SPACE ${NC}"
                 fi
 
-                if [[ ! ${ENV_TYPE,,} =~ ^prod$ ]]; then 
+                ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE)
+                if [[ ! $ENV_TYPE_VAR =~ ^prod$ ]]; then 
                     echo -e "${Red}you must login into mishka_cms container then start server !${NC}"
                 fi
             ;;
@@ -303,7 +309,8 @@ else
 
             "destroy")
                 read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (YES/NO)\e[0m: ' INPUT
-                if [[ ${INPUT,,} =~ ^yes$ ]]; then 
+                INPUT_VAR=$(to_lower_case $INPUT)
+                if [[ $INPUT_VAR =~ ^yes$ ]]; then 
                     purge
                 else 
                     echo -e "${Red} Your Operation is canceled..${NC}" 
@@ -313,10 +320,10 @@ else
             "email")
                 # load configs
                 load_configs
-
-                if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
+                EMAIL_CONFIG_VAR=$(to_lower_case $EMAIL_CONFIG)
+                if [[ "$EMAIL_CONFIG_VAR" =~ ^yes$ ]]; then 
                     read -p $'\e[32mDo You Want OVERWRITE Email System Config ? (YES/NO)\'\']\e[0m: ' EMAIL_CONFIG
-                    if [[ "${EMAIL_CONFIG,,}" =~ ^yes$ ]]; then 
+                    if [[ "$EMAIL_CONFIG_VAR" =~ ^yes$ ]]; then 
                         email_system
                         store_configs
                     else
@@ -426,7 +433,8 @@ else
 
             "destroy")
                 read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (YES/NO)\e[0m: ' INPUT
-                if [[ ${INPUT,,} =~ ^yes$ ]]; then 
+                INPUT_VAR=$(to_lower_case $INPUT)
+                if [[ $INPUT_VAR =~ ^yes$ ]]; then 
                     purge
                 else 
                     echo -e "${Red} Your Operation is canceled..${NC}" 

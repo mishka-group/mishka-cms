@@ -75,9 +75,10 @@ function update_config() {
 
     cp --force etc/nginx/conf/sample_conf/mishka_api.conf etc/nginx/conf/conf.d/mishka_api.conf
     cp --force etc/nginx/conf/sample_conf/mishka_cms.conf etc/nginx/conf/conf.d/mishka_cms.conf
-
-    if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then 
-        if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
+    ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE) 
+    SSL_VAR=$(to_lower_case $SSL) 
+    if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then 
+        if [[ $CMS_PORT == "443" ]] && [[ $SSL_VAR =~ ^yes$ ]]; then 
             cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
             cp --force etc/nginx/conf/sample_conf/ssl_prod.conf etc/nginx/conf/ssl.conf 
             # change domains 
@@ -114,7 +115,8 @@ function update_config() {
             exit 1
         fi
     else 
-        if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
+        SSL_VAR=$(to_lower_case $SSL) 
+        if [[ $CMS_PORT == "443" ]] && [[ $SSL_VAR =~ ^yes$ ]]; then 
             cp --force dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
             cp --force etc/nginx/conf/sample_conf/ssl_dev.conf etc/nginx/conf/ssl.conf 
             # change domains 
@@ -162,8 +164,8 @@ function purge() {
 
         # Stop Services and Delete Networks
         docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
-
-        if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then
+        ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE) 
+        if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then
             # Delete Images
             if [ -f etc/prod/letsencrypt ]; then 
                 docker image rm nginx:1.20.1-alpine mishak_app:latest mishkagroup/postgresql:3.14
@@ -287,7 +289,8 @@ function cleanup() {
 }
 
 function ssl_generator() {
-    if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then
+    ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE)
+    if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then
         local ADMIN_EMAIL=$1
         local CMS_DOMAIN_NAME=$2
         local API_DOMAIN_NAME=$3
@@ -579,7 +582,8 @@ function secret_generators() {
 # print build output
 function print_build_output() {
     echo -e "${Green}=======================================================================================================${NC}"
-    if [[ ${SSL,,} =~ ^yes$ ]]; then # convert user input to lowercase then check it
+    SSL_VAR=$(to_lower_case $SSL)
+    if [[ $SSL_VAR =~ ^yes$ ]]; then # convert user input to lowercase then check it
     echo -e "${Green}Mishka Cms Available on    --> $SPACE https://$CMS_DOMAIN_NAME $END_SPACE ${NC}"
     echo -e "${Green}Mishka Api Available on    --> $SPACE https://$API_DOMAIN_NAME $END_SPACE ${NC}" 
     else 
@@ -725,7 +729,8 @@ function email_system() {
             echo "email password: ${EMAIL_PASSWORD}"
             read -p $'\e[32mDo You Want to Proceed (YES/NO) ? [default is YES] \'\']\e[0m: ' EMAIL_CONFIRM
             EMAIL_CONFIRM=${EMAIL_CONFIRM:-"YES"}
-            if [[ "${EMAIL_CONFIRM,,}" =~ ^yes$ ]]; then
+            EMAIL_CONFIRM_VAR=$(to_lower_case $EMAIL_CONFIRM)
+            if [[ "$EMAIL_CONFIRM_VAR" =~ ^yes$ ]]; then
                 break
             else 
                 echo -e "${Red}please try again!${NC}"
@@ -739,8 +744,9 @@ function email_system() {
 
 # web server selector
 function web_server_selector() {
-    read -p $'\e[32mChoose Your Web server (Nginx or Cowboy) [default is \'Cowboy\']\e[0m: ' WEBSERVER     
-    case "${WEBSERVER,,}" in 
+    read -p $'\e[32mChoose Your Web server (Nginx or Cowboy) [default is \'Cowboy\']\e[0m: ' WEBSERVER 
+    WEBSERVER_VAR=$(to_lower_case $WEBSERVER)    
+    case "$WEBSERVER_VAR" in 
         "nginx")
              # check web server ports to close
             if netstat -nultp | egrep -w '80|443' > /dev/null; then
@@ -761,4 +767,10 @@ function web_server_selector() {
 function mishka_logo() {
     clear
     bin/onefetch --ascii-input "$(cat docs/mishka-logo.ans)"
+}
+
+
+# convert to lower case
+function to_lower_case(){
+    echo $1  | tr '[:upper:]' '[:lower:]'
 }

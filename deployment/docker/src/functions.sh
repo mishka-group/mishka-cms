@@ -371,7 +371,7 @@ function check_requirements() {
         docker login
     fi
     
-
+    dist=$(dist_detector)
     if [[ $OSTYPE == 'linux'* ]]; then # linux
         # check command git install on system
         #====================================================================================================
@@ -632,7 +632,7 @@ function dist_detector() {
         echo "debian"
     elif ! command -v yum $>/dev/null; then # Redhat family
         echo "redhat"
-    elif ! command -v yum $>/dev/null; then # Arch family
+    elif ! command -v pacman $>/dev/null; then # Arch family
         echo "arch"
     else 
         echo -e "${Red}Your OS is not supported${NC}"
@@ -662,6 +662,7 @@ function dbeaver_checker() {
 
 # database manager for easy manage database
 function db_manager() {
+    dist=$(dist_detector)
     if [[ $dist == 'debain' ]]; then # debian family (debian, ubuntu, mint,...)
         if dbeaver_checker; then 
             dbeaver_data_renew

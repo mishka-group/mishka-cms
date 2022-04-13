@@ -365,6 +365,11 @@ function check_requirements() {
         echo -e "${Red}This script must be run as root${NC}"
         exit 1
     fi
+
+    # check permission of onefetch
+    if ! [ -x bin/onefetch ]; then 
+        chmod +x bin/onefetch
+    fi
     
     # check docker config file exists
     if [ ! -f ~/.docker/config.json ]; then 

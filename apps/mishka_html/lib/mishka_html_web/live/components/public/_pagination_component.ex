@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
 
   def render(assigns) do
     ~H"""
-      <nav aria-label="Page navigation example" phx-hook="Paginate">
+      <nav aria-label="Page navigation example" id="PaginateId" phx-hook="Paginate">
         <ul class="pagination justify-content-center pagination-lg">
             <li class="page-item">
                 <a class="page-link paginationlist" phx-click="select-per-page" phx-value-page="1" phx-target={@myself}>اولین</a>

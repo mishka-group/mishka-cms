@@ -187,4 +187,9 @@ defmodule MishkaContent.Blog.Post do
   end
 
   def notify_subscribers(params, _), do: params
+
+  def delete_record(id) do
+    MishkaDatabase.Repo.get(Post, id)
+    |> MishkaDatabase.Repo.delete()
+  end
 end

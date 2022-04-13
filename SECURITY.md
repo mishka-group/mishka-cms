@@ -6,8 +6,8 @@ MishkaCms applies bug fixes only to the latest minor branch. Security patches ar
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.0.2   | Development |
-| 0.0.1   | Bug fixes and security patches|
+| 0.0.2   | Bug fixes and security patches |
+| 0.0.1   | Has been stopped|
 
 ## Reporting a Vulnerability
 

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0075b018-6042-46a3-a92c-f6c2766ee166",
+		"_postman_id": "d1ce3c41-d64e-4f59-9b96-9b55a21e2a8a",
 		"name": "MishkaCms",
 		"description": "Mishka project is a real-time and also API-based CMS which is developed using [Elixir](https://elixir-lang.org/) programming language; powered by [Phoenix framework](https://phoenixframework.org/). In this project it is tried to place all the dependencies in the Elixir language and avoid using external systems, and it has been this way so far except for the database section which we used [PostgreSQL](https://www.postgresql.org/).",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -63,12 +63,30 @@
 										"v1",
 										"register"
 									]
-								}
+								},
+								"description": "With this endpoint, you can register in the CMS; it should be noted that you can keep the password field empty, but you cannot log in from a common way, something like user and email + password.  \nHence, there is a way to log in through social networks like GitHub and Google."
 							},
 							"response": []
 						},
 						{
 							"name": "Login (Username)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.auth.access_token);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.auth.refresh_token);",
+											"    pm.collectionVariables.set(\"userId\", jsonData.user_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -97,12 +115,30 @@
 										"v1",
 										"login"
 									]
-								}
+								},
+								"description": "You can just log in for 5 times, after that the system do not let you before disconnecting from some of your previous token."
 							},
 							"response": []
 						},
 						{
 							"name": "Login (Email)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.auth.access_token);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.auth.refresh_token);",
+											"    pm.collectionVariables.set(\"userId\", jsonData.user_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -111,7 +147,7 @@
 									"formdata": [
 										{
 											"key": "email",
-											"value": "{{testMail}}",
+											"value": "{{testMailAddress}}",
 											"type": "text"
 										},
 										{
@@ -131,7 +167,48 @@
 										"v1",
 										"login"
 									]
-								}
+								},
+								"description": "You can just log in for 5 times, after that the system do not let you before disconnecting from some of your previous token."
+							},
+							"response": []
+						},
+						{
+							"name": "Send Verify Email code",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "some_thing",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/verify-email",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"verify-email"
+									]
+								},
+								"description": "It should be noted, when you are using code instead of URL, you need a good reason like using API side not HTML render.\n\nIt should be noted that you can apply once every six minutes."
 							},
 							"response": []
 						},
@@ -160,7 +237,8 @@
 										"v1",
 										"verify-email"
 									]
-								}
+								},
+								"description": "It should be noted, when you are using code instead of URL, you need a good reason like using API side not HTML render.\n\nIt should be noted that you can apply once every six minutes."
 							},
 							"response": []
 						},
@@ -189,7 +267,8 @@
 										"v1",
 										"verify-email-by-email-link"
 									]
-								}
+								},
+								"description": "It should be noted that you can apply once every six minutes."
 							},
 							"response": []
 						},
@@ -213,7 +292,7 @@
 									"formdata": [
 										{
 											"key": "full_name",
-											"value": "testFullName",
+											"value": "newTestFullName",
 											"type": "text"
 										}
 									]
@@ -272,7 +351,38 @@
 										"v1",
 										"change-password"
 									]
-								}
+								},
+								"description": "All of your tokens or logged in account are forced to be disconnected after changing your password. It needs access token."
+							},
+							"response": []
+						},
+						{
+							"name": "Send Reset Password code",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{testMailAddress}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/reset-password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"reset-password"
+									]
+								},
+								"description": "This endpoint is like change password router, but you need to send code to your email and after that you can reset your password, but do not forget after changing password all your devices and token are going to be disconnected."
 							},
 							"response": []
 						},
@@ -292,14 +402,12 @@
 										{
 											"key": "new_password",
 											"value": "{{testPassword}}",
-											"type": "text",
-											"disabled": true
+											"type": "text"
 										},
 										{
 											"key": "code",
-											"value": "",
-											"type": "text",
-											"disabled": true
+											"value": "something",
+											"type": "text"
 										}
 									]
 								},
@@ -313,7 +421,8 @@
 										"v1",
 										"reset-password"
 									]
-								}
+								},
+								"description": "This endpoint is like change password router, but you need to send code to your email and after that you can reset your password, but do not forget after changing password all your devices and token are going to be disconnected."
 							},
 							"response": []
 						},
@@ -342,12 +451,30 @@
 										"v1",
 										"user-tokens"
 									]
-								}
+								},
+								"description": "This action just shows you how many tokens are created for your account and what are their expiry time and the other information.  \nIt does not show the tokens."
 							},
 							"response": []
 						},
 						{
 							"name": "Refresh Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.auth.access_token);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.auth.refresh_token);",
+											"    pm.collectionVariables.set(\"userId\", jsonData.user_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -375,7 +502,8 @@
 										"v1",
 										"refresh-token"
 									]
-								}
+								},
+								"description": "Every time you refresh your token, it gives you an access token and a new refresh token, hence the system always considers a last token and the others you created will be gone."
 							},
 							"response": []
 						},
@@ -407,12 +535,6 @@
 											"key": "token",
 											"value": "{{refreshToken}}",
 											"type": "text"
-										},
-										{
-											"key": "token",
-											"value": "{{accessToken}}",
-											"type": "text",
-											"disabled": true
 										}
 									]
 								},
@@ -426,7 +548,8 @@
 										"v1",
 										"get-token-expire-time"
 									]
-								}
+								},
+								"description": "You can see the expiration of a token when its token has not yet expired\n\n**It doesn't matter you want to see refresh token expiration or access token, you must have a valid access token.**"
 							},
 							"response": []
 						},
@@ -465,7 +588,8 @@
 										"v1",
 										"delete-token"
 									]
-								}
+								},
+								"description": "When you delete a token which is access, you should create a new one by refresh token if you want to use it to another endpoint."
 							},
 							"response": []
 						},
@@ -486,13 +610,7 @@
 								"header": [],
 								"body": {
 									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "token",
-											"value": "{{accessToken}}",
-											"type": "text"
-										}
-									]
+									"formdata": []
 								},
 								"url": {
 									"raw": "{{baseUrl}}/auth/v1/delete-tokens",
@@ -504,7 +622,8 @@
 										"v1",
 										"delete-tokens"
 									]
-								}
+								},
+								"description": "When you call delete tokens, you are going to delete all the tokens even refresh token, hence all your devices are disconnected logically."
 							},
 							"response": []
 						},
@@ -541,23 +660,23 @@
 									"formdata": [
 										{
 											"key": "email",
-											"value": "{{testMail}}",
+											"value": "{{testMailAddress}}",
 											"type": "text"
 										}
 									]
 								},
 								"url": {
-									"raw": "{{baseUrl}}/auth/v1//send-delete-tokens-link-by-email",
+									"raw": "{{baseUrl}}/auth/v1/send-delete-tokens-link-by-email",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"auth",
 										"v1",
-										"",
 										"send-delete-tokens-link-by-email"
 									]
-								}
+								},
+								"description": "It should be used when user does not access to his/her password"
 							},
 							"response": []
 						},
@@ -586,12 +705,13 @@
 										"v1",
 										"deactive-account-by-email-link"
 									]
-								}
+								},
+								"description": "For your current position, we just can send an email to user and after hitting link by user, the system just change his/her account status, not to delete information of user.  \nWe will complete this in the future"
 							},
 							"response": []
 						},
 						{
-							"name": "Deactive Account",
+							"name": "Send Deactive Account",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -615,7 +735,48 @@
 										"v1",
 										"deactive-account"
 									]
-								}
+								},
+								"description": "This is a launcher for sending email, a code to user"
+							},
+							"response": []
+						},
+						{
+							"name": "Deactive Account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "something",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/v1/deactive-account",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"v1",
+										"deactive-account"
+									]
+								},
+								"description": "For your current position, we just can send an email to user and after hitting link by user, the system just change his/her account status, not to delete information of user.  \nWe will complete this in the future"
 							},
 							"response": []
 						},
@@ -668,7 +829,8 @@
 										"v1",
 										"logout"
 									]
-								}
+								},
+								"description": "After you log out from the system, it deletes your device tokens which include access and refresh, the other devices still work."
 							},
 							"response": []
 						}
@@ -676,6 +838,2865 @@
 					"description": "`MishkaCMS` Authentication API",
 					"auth": {
 						"type": "noauth"
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Content",
+					"item": [
+						{
+							"name": "Create Category",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"categoryID\", jsonData.category_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "Category test",
+											"type": "text"
+										},
+										{
+											"key": "short_description",
+											"value": "This is a test text for a Category API",
+											"type": "text"
+										},
+										{
+											"key": "main_image",
+											"value": "../test.png",
+											"type": "text"
+										},
+										{
+											"key": "header_image",
+											"value": "../test.png",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "This is a test text for a Category API",
+											"type": "text"
+										},
+										{
+											"key": "alias_link",
+											"value": "test-category",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/create-category",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"create-category"
+									]
+								},
+								"description": "The first step of publishing a post is category creation, hence you need to be authorized. The action of this part is `blog:edit`\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Edit category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "{{categoryID}}",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "Category test edit",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/edit-category",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"edit-category"
+									]
+								},
+								"description": "After creating a category, this endpoint helps you to edit this every time, but you need to be authorized. The action of this part is \\`blog:edit\\`\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "{{categoryID}}",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "test2",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-category",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-category"
+									]
+								},
+								"description": "After creating a category, this endpoint helps you to change status of a post to `soft_delete` this every time, but you need to be authorized. The action of this part is `blog:edit`  \nit does not delete your post from database.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Destroy Category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "{{categoryID}}",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "test2",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/destroy-category",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"destroy-category"
+									]
+								},
+								"description": "After creating a category, this endpoint helps you to delete a post every time you want, but you need to be authorized. The action of this part is `blog:edit`  \nit deletes your post from database and you cannot undo.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "{{categoryID}}",
+											"type": "text"
+										},
+										{
+											"key": "alias_link",
+											"value": "trahi-sakhte-rahbordi4",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/category",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"category"
+									]
+								},
+								"description": "This endpoint helps you to a category and it's information of the `cms`.\n\n*   Does not need any ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Categories",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"filters\": {\n        \"status\": \"active\",\n        \"show_location\": true\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/categories",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"categories"
+									]
+								},
+								"description": "This endpoint helps you to show all categories and their information of the `cms`.\n\n*   Does not need any ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Categories",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"filters\": {\n        \"show_location\": true\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-categories",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-categories"
+									]
+								},
+								"description": "This endpoint helps you to show all categories and their information of the `cms`.\n\n*   Need any ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Post",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"postID\", jsonData.post_info.id);",
+											"    pm.collectionVariables.set(\"postAliasLink\", jsonData.post_info.alias_link);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "this is a post test title",
+											"type": "text"
+										},
+										{
+											"key": "short_description",
+											"value": "this is a post short description",
+											"type": "text"
+										},
+										{
+											"key": "main_image",
+											"value": "../image.png",
+											"type": "text"
+										},
+										{
+											"key": "header_image",
+											"value": "../image.png",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "this is a post description",
+											"type": "text"
+										},
+										{
+											"key": "alias_link",
+											"value": "post-2-test",
+											"type": "text"
+										},
+										{
+											"key": "category_id",
+											"value": "{{categoryID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/create-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"create-post"
+									]
+								},
+								"description": "It should be noted that your content management at least needs one category to let you create a new post. Every new post should have a CategoryID\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Post",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "edited post 1",
+											"type": "text"
+										},
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/edit-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"edit-post"
+									]
+								},
+								"description": "*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Post",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-post"
+									]
+								},
+								"description": "*   Needs ACL\n*   Needs access token\n*   It just edits the post status to `soft_delete`, it does not delete your post from database."
+							},
+							"response": []
+						},
+						{
+							"name": "Destroy Post",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/destroy-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"destroy-post"
+									]
+								},
+								"description": "*   Needs ACL\n*   Needs access token\n*   It deletes your post from database"
+							},
+							"response": []
+						},
+						{
+							"name": "Posts",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": 1,\n    \"filters\": {\n        \"status\": \"active\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/posts",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"posts"
+									]
+								},
+								"description": "This endpoint helps you to see information of all post were created\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Post",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "alias_link",
+											"value": "{{postAliasLink}}",
+											"type": "text"
+										},
+										{
+											"key": "status",
+											"value": "active",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"post"
+									]
+								},
+								"description": "This endpoint helps you to see information of a post were created\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Comment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"commentID\", jsonData.comment_info.id);",
+											"    pm.collectionVariables.set(\"commentUserID\", jsonData.comment_info.user_id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "this is a test",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/create-comment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"create-comment"
+									]
+								},
+								"description": "This endpoint helps you to send a comment for a post.\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Comment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"commentID\", jsonData.comment_info.id);",
+											"    pm.collectionVariables.set(\"commentUserID\", jsonData.comment_info.user_id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "this is a test 2 after edit",
+											"type": "text"
+										},
+										{
+											"key": "id",
+											"value": "{{commentID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/edit-comment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"edit-comment"
+									]
+								},
+								"description": "This endpoint helps you to send a comment for a post.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Comment",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"filters\": {\n        \"comment_id\": \"{{commentID}}\",\n        \"status\": \"active\",\n        \"section\": \"blog_post\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/comment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"comment"
+									]
+								},
+								"description": "This endpoint helps you to see information of a comment.\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Comment",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"filters\": {\n        \"id\": \"{{commentID}}\",\n        \"section\": \"blog_post\",\n        \"status\": \"active\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-comment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-comment"
+									]
+								},
+								"description": "This endpoint helps you to see information of a comment.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Comments",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": 1,\n    \"filters\": {\n        \"id\": \"{{commentID}}\",\n        \"status\": \"active\",\n        \"section\": \"blog_post\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/comments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"comments"
+									]
+								},
+								"description": "This endpoint helps you to see information of comments.\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "user_id",
+											"value": "{{commentUserID}}",
+											"type": "text"
+										},
+										{
+											"key": "comment_id",
+											"value": "{{commentID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-comment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-comment"
+									]
+								},
+								"description": "This endpoint helps you to see information of comments.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Destroy Comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "user_id",
+											"value": "{{commentUserID}}",
+											"type": "text"
+										},
+										{
+											"key": "comment_id",
+											"value": "{{commentID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/destroy-comment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"destroy-comment"
+									]
+								},
+								"description": "This endpoint helps you to see information of comments.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Comments",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": 1,\n    \"filters\": {\n        \"status\": \"active\",\n        \"section\": \"blog_post\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-comments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-comments"
+									]
+								},
+								"description": "This endpoint helps you to see information of comments.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Post with comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"alias_link\": \"{{postAliasLink}}\",\n    \"status\": \"active\",\n    \"comment\": {\n        \"page\": \"1\",\n        \"filters\": {\n            \"section_id\": \"{{postID}}\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-post"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Post without comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"alias_link\": \"{{postAliasLink}}\",\n    \"status\": \"active\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-post"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Posts",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": \"1\",\n    \"filters\": {}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-posts",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-posts"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Tag",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"tagID\", jsonData.tag_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "Tag one",
+											"type": "text"
+										},
+										{
+											"key": "alias_link",
+											"value": "tag-one",
+											"type": "text"
+										},
+										{
+											"key": "robots",
+											"value": "IndexFollow",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/create-tag",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"create-tag"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token\n    \n\n### Robots\n\n1.  IndexFollow\n2.  IndexNoFollow\n3.  NoIndexFollow:\n4.  NoIndexNoFollow"
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Tag",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"tagID\", jsonData.tag_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "Tag edited one",
+											"type": "text"
+										},
+										{
+											"key": "tag_id",
+											"value": "{{tagID}}",
+											"type": "text"
+										},
+										{
+											"key": "custom_title",
+											"value": "Tag edited one",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/edit-tag",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"edit-tag"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token\n    \n\n### Robots\n\n1.  IndexFollow\n2.  IndexNoFollow\n3.  NoIndexFollow:\n4.  NoIndexNoFollow"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Tag",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"tagID\", jsonData.tag_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "tag_id",
+											"value": "{{tagID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-tag",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-tag"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"tagID\", jsonData.tag_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": 1,\n    \"filters\": {\n        \"robots\": \"IndexFollow\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/tags",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"tags"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Add Tag To Post",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"tagID\", jsonData.tag_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "tag_id",
+											"value": "{{tagID}}",
+											"type": "text"
+										},
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/add-tag-to-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"add-tag-to-post"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Post Tag",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"tagID\", jsonData.tag_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "tag_id",
+											"value": "{{tagID}}",
+											"type": "text"
+										},
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/remove-post-tag",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"remove-post-tag"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Post Tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"tagID\", jsonData.tag_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/post-tags",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"post-tags"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Tag Posts",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": \"1\",\n    \"filters\": {\n        \"id\": \"{{tagID}}\",\n        \"post_status\": \"active\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/tag-posts",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"tag-posts"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Tag Posts",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": \"1\",\n    \"filters\": {\n        \"id\": \"{{tagID}}\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-tag-posts",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-tag-posts"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Like Post",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/like-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"like-post"
+									]
+								},
+								"description": "This endpoint helps you to like a post\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "UnLike Post",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-like-post",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-like-post"
+									]
+								},
+								"description": "This endpoint helps you to unlike a post\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Like Comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "comment_id",
+											"value": "{{commentID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/like-comment",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"like-comment"
+									]
+								},
+								"description": "This endpoint helps you to like a comment\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "UnLike Comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "comment_id",
+											"value": "{{commentID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-comment-like",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-comment-like"
+									]
+								},
+								"description": "This endpoint helps you to unlike a comment\n\n*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Create ‌‌Bookmark",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "section",
+											"value": "blog_post",
+											"type": "text"
+										},
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/create-bookmark",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"create-bookmark"
+									]
+								},
+								"description": "*   Does not need ACL\n*   Needs access token\n    \n\n## section\n\n1.  `blog_post`"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete ‌‌Bookmark",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-bookmark",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-bookmark"
+									]
+								},
+								"description": "*   Does not need ACL\n*   Needs access token\n    \n\n## section\n\n1.  `blog_post`"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Subscription",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "section",
+											"value": "blog_post",
+											"type": "text"
+										},
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/create-subscription",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"create-subscription"
+									]
+								},
+								"description": "*   Does not need ACL\n*   Needs access token\n    \n\n## section\n\n1.  `blog_post`\n2.  `blog_category`"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Subscription",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-subscription",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-subscription"
+									]
+								},
+								"description": "*   Does not need ACL\n*   Needs access token\n    \n\n## section\n\n1.  `blog_post`\n2.  `blog_category`"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Blog Link",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"postLinkId\", jsonData.blog_link_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "short_description",
+											"value": "this is short link description",
+											"type": "text"
+										},
+										{
+											"key": "status",
+											"value": "active",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "bottom",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "how to imput link for a post",
+											"type": "text"
+										},
+										{
+											"key": "link",
+											"value": "https://github.com/mishka-group",
+											"type": "text"
+										},
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/create-blog-link",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"create-blog-link"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token\n    \n\n## Type\n\n1.  bottom\n2.  inside\n3.  featured"
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Blog Link",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"postLinkId\", jsonData.blog_link_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "short_description",
+											"value": "this is short link description - edited",
+											"type": "text"
+										},
+										{
+											"key": "status",
+											"value": "active",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "bottom",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "how to imput link for a post",
+											"type": "text"
+										},
+										{
+											"key": "link",
+											"value": "https://github.com/mishka-group",
+											"type": "text"
+										},
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										},
+										{
+											"key": "blog_link_id",
+											"value": "{{postLinkId}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/edit-blog-link",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"edit-blog-link"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token\n    \n\n## Type\n\n1.  bottom\n2.  inside\n3.  featured"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Blog Link",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"postLinkId\", jsonData.blog_link_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "blog_link_id",
+											"value": "{{postLinkId}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-blog-link",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-blog-link"
+									]
+								},
+								"description": "This endpoint needs `blog:editor` promotion to let you send request, hence change your test user role before testing.\n\n*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Links",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"postLinkId\", jsonData.blog_link_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": \"1\",\n    \"filters\": {\n        \"status\": \"active\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/links",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"links"
+									]
+								},
+								"description": "*   Does not Need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Links",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"postLinkId\", jsonData.blog_link_info.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": \"1\",\n    \"filters\": {\n        \"robots\": \"IndexFollow\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-links",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-links"
+									]
+								},
+								"description": "*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Send Notif",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "status",
+											"value": "active",
+											"type": "text"
+										},
+										{
+											"key": "section",
+											"value": "blog_post",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "client",
+											"type": "text"
+										},
+										{
+											"key": "target",
+											"value": "all",
+											"type": "text"
+										},
+										{
+											"key": "section_id",
+											"value": "{{postID}}",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "New notif for new post",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "this is a new post description",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/send-notif",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"send-notif"
+									]
+								},
+								"description": "*   Needs ACL\n*   Needs access token\n    \n\n## Notif Section\n\n1.  `blog_post`\n2.  `admin`\n3.  `user_only`\n4.  `public`\n    \n\n## Notif Type\n\n1.  `client`\n2.  `admin`\n    \n\n## Notif Target\n\n1.  `all`\n2.  `mobile`\n3.  `android`\n4.  `ios`\n5.  `cli`"
+							},
+							"response": []
+						},
+						{
+							"name": "Notifs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": \"1\",\n    \"type\": \"client\",\n    \"filters\": {\n        \"robots\": \"IndexFollow\",\n        \"target\": \"all\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/notifs",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"notifs"
+									]
+								},
+								"description": "*   Does not need ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Editor Notifs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"page\": \"1\",\n    \"type\": \"client\",\n    \"filters\": {\n        \"robots\": \"IndexFollow\",\n        \"target\": \"all\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/editor-notifs",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"editor-notifs"
+									]
+								},
+								"description": "*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Author",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										},
+										{
+											"key": "user_id",
+											"value": "{{userId}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/create-author",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"create-author"
+									]
+								},
+								"description": "*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Author",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										},
+										{
+											"key": "user_id",
+											"value": "{{userId}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/delete-author",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"delete-author"
+									]
+								},
+								"description": "*   Needs ACL\n*   Needs access token"
+							},
+							"response": []
+						},
+						{
+							"name": "Authors",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "post_id",
+											"value": "{{postID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/content/v1/authors",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"content",
+										"v1",
+										"authors"
+									]
+								},
+								"description": "*   Does not Need ACL\n*   Needs access token"
+							},
+							"response": []
+						}
+					],
+					"description": "`MishkaCms` Content API",
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{accessToken}}",
+								"type": "string"
+							}
+						]
 					},
 					"event": [
 						{
@@ -773,6 +3794,45 @@
 		{
 			"key": "refreshToken",
 			"value": ""
+		},
+		{
+			"key": "categoryID",
+			"value": ""
+		},
+		{
+			"key": "postID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "postAliasLink",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "commentID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "commentUserID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tagID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "postLinkId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
 		}
 	]
 }

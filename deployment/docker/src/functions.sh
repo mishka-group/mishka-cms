@@ -744,7 +744,7 @@ function web_server_selector() {
     case "$WEBSERVER_VAR" in 
         "nginx")
              # check web server ports to close
-            if netstat -nultp | egrep -w '80|443' > /dev/null; then
+            if check_ports; then
                 echo -e "${Red}another apps using port 80 or 443, please kill the apps and rerun mishka.sh !${NC}"
                 exit 1
             fi 
@@ -784,4 +784,25 @@ function mishka_logo() {
 # convert to lower case
 function to_lower_case(){
     echo $1  | tr '[:upper:]' '[:lower:]'
+}
+
+
+# check ports is open
+function check_ports(){
+    if [[ $OSTYPE == 'linux'* ]]; then # linux
+        if netstat -nultp | egrep -w '80|443' > /dev/null; then 
+            return 0
+        else 
+            return 1
+        fi
+    elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
+       if netstat -anvp tcp | awk 'NR<3 || /LISTEN/' | egrep -w '80|443' > /dev/null; then 
+            return 0
+        else 
+            return 1
+        fi
+    else # windows
+        echo -e "${Red}Your OS is not supported${NC}"
+        exit 1
+    fi
 }

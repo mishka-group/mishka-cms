@@ -55,104 +55,11 @@ In the near future the features related to the CMS will be explained in forms of
 
 ### Required versions:
 
-- Elixir 1.13.0 (compiled with Erlang/OTP 24)
+- Elixir 1.13.3+ (compiled with Erlang/OTP 24)
 - PostgreSQL v13
 
-### Implementation:
-
-After installing the dependencies above, now you can run the project using the following commands:
-
-```elixir
-mix deps.get
-mix deps.compile
-mix ecto.create # (first you have to define your database information in the config file)
-mix mishka_installer.db.gen.migration # Before running this command, please go to apps/mishka_database
-# After running top command please come back to root of the project like: cd ../..
-mix ecto.migrate
-mix assets.deploy
-mix test
-mix run apps/mishka_database/priv/repo/seeds.exs # in case you want content and test user to be made, run one time only
-iex -S mix phx.server # every time you want to run the server
-```
-
----
-
 ### Install and run in a few clicks:
-
--	Download the 1st stage of the project or clone from Git
--	in the next step, please go to the `cd mishka-cms/deployment/docker` directory
--	now run `chmod +x mishka.sh` command
--	and in this stage you can start setup using the ` ./mishka.sh –build` command
-
-You install and run the program in two environments. First is `dev` and all the settings will be set automatically in the program; in this form the Mishka program will be accessible on the `127.0.0.1` local address.
-
-> In case you do not enter anything and hit Enter key, as default the `Dev` will run.  
-> Note: when the program is run in this state, it will not ask for any input while installing.
-
-```elixir
-Choose Environment Type ['prod or dev, defualt is dev']
-```
-
-After choosing the installation type, the Image starts to be made. When the operation is done successfully, the following message appears:
-
--	the green part addresses related to the program
--	the yellow part username and password for the database
--	the red part the keys related to the program
--	to run the Mishka `CMS` you can enter the following address in your browser:
-`127.0.0.1:000` and also `API` with `4001` port.
-
-The 2nd method is `prod`. The setting will be asked step by step. In case you do not enter any values and hit `enter` the default values will be added to the settings. 
-In the terminal in multiple steps, the username, password, and database name of the program that you are going to connect will be asked from you and also the username, password for the PostgreSQL database which will be used as the `root` user in the database.
-
-> **Note**: in this method, it is recommended to enter values in each required step so that avoid further security problems for the program. In this stage you have to enter your preferred IP address, domain name or subdomain. The `IP` address can be related to the internal or external network, such as a server.
-
-### Example:
-```elixir
-127.0.0.1
-192.168.1.10
-172.16.16.10
-10.0.5.150
-94.94.94.94
-86.86.86.86
-.
-.
-.
-example.com
-test.example.com
-```
-
-> **Note**: in case you entered IP address and at the end of the operation, the program will be accessible in the port `4000` for the `CMS` and `4001` to the `API.` If not, the next step will be shown to get the address for the API service. 
-
-
-> Note: the name for the API domain or subdomain should be different from the previous `CMS` related stages. 
-
-```elixir
-api.example.com
-test2.example.com
-```
-
----
-
-After finishing the operation, you enter the shown addresses in the browser. We have to mention that after installation process being successful you see the admin panel images which is at the end of this article and also if you enter `API` section address, the following error appears:
-
-```
- {"errors":{detail":"Not Found"}}
-```
-
----
-
-### Activating SSL for the production environment
-In case you activated a domain or subdomain for the CMS and API address, you will be sent to the next stage, in which you will be asked a question related to SSL activation.
-
-```elixir
-Message: Do You Want to Enable SSL? (YES/NO) [default is Yes]:
-```
-
-In case the answer to the question above is `YES"`, in the next step you will be asked an email address so when the SSL certificate was about to expire, you will receive an email from `Let'secrypt`.
-
-#### Enter Your Email Address:
-In case the answer of the question above is anything but `YES`, the SSL certificate will not be generated for your domains.
-
+We have prepared multiple ways to install and run the CMS in a few clicks to support different environments. Please see [the MsihkaCms installation wiki](https://github.com/mishka-group/mishka-cms/wiki/Installation).
 
 ### Images of the Admin Panel
 

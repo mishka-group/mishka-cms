@@ -49,7 +49,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
     field :show_location, :boolean, null: true
 
     belongs_to :blog_categories, MishkaDatabase.Schema.MishkaContent.Blog.Category, foreign_key: :category_id, type: :binary_id
-    has_many :blog_authors, MishkaDatabase.Schema.MishkaContent.BlogAuthor, foreign_key: :post_id
+    has_many :blog_authors, MishkaDatabase.Schema.MishkaContent.BlogAuthor, foreign_key: :post_id, on_delete: :nothing
 
     has_many :blog_likes, MishkaDatabase.Schema.MishkaContent.BlogLike, foreign_key: :post_id
     has_many :blog_tags_mappers, MishkaDatabase.Schema.MishkaContent.BlogTagMapper, foreign_key: :post_id, on_delete: :delete_all

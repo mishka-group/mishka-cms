@@ -20,7 +20,7 @@ defmodule MishkaHtml.Helpers.ListItemComponent do
                     </thead>
                     <tbody>
                         <%= for {list_item, color} <- Enum.zip(@list, Stream.cycle(["wlist", "glist"])) do %>
-                        <tr class={"list-component-item #{if(color == "glist", do: "odd-list-of-blog-posts align-middle", else: "align-middle")}"}>
+                        <tr id={Map.get(list_item, :id) || Ecto.UUID.generate} class={"list-component-item #{if(color == "glist", do: "odd-list-of-blog-posts align-middle", else: "align-middle")}"}>
                             <%= for field_item <- get_list_headers(@fields) do %>
                                 <td class="col list-item-value">
                                     <%= if field_item.form == "custom" do %>

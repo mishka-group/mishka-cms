@@ -24,31 +24,31 @@ defmodule MishkaContent.Blog.Like do
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_add, 1}
   def create(attrs) do
     crud_add(attrs)
-    |> notify_subscribers(:like)
+    |> notify_subscribers(:post_like)
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_add, 1}
   def create(attrs, allowed_fields) do
     crud_add(attrs, allowed_fields)
-    |> notify_subscribers(:like)
+    |> notify_subscribers(:post_like)
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_edit, 1}
   def edit(attrs) do
     crud_edit(attrs)
-    |> notify_subscribers(:like)
+    |> notify_subscribers(:post_like)
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_edit, 1}
   def edit(attrs, allowed_fields) do
     crud_edit(attrs, allowed_fields)
-    |> notify_subscribers(:like)
+    |> notify_subscribers(:post_like)
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_delete, 1}
   def delete(id) do
     crud_delete(id)
-    |> notify_subscribers(:like)
+    |> notify_subscribers(:post_like)
   end
 
   @doc delegate_to: {MishkaDeveloperTools.DB.CRUD, :crud_get_record, 1}

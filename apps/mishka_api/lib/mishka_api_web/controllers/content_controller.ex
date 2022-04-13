@@ -10,7 +10,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.posts(conn)
   end
 
-  def editor_posts(conn, %{"page" => page, "filters" => params}) do
+  def editor_posts(conn, %{"page" => page, "filters" => params}) when is_map(params) do
     filters = Map.take(params, Post.allowed_fields(:string))
     Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: Map.get(conn.assigns, :user_id))
     |> MishkaApi.ContentProtocol.posts(conn)
@@ -31,8 +31,8 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: MishkaDatabase.convert_string_map_to_atom_map(comment)})
   end
 
-  def editor_post(conn, %{"post_id" => post_id, "status" => status})do
-    Post.post(post_id, status)
+  def editor_post(conn, %{"alias_link" => alias_link, "status" => status})do
+    Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :none_comment})
   end
 
@@ -118,7 +118,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.comments(conn, Comment.allowed_fields(:atom))
   end
 
-  def editor_comment(conn, %{"filters" => params}) do
+  def editor_comment(conn, %{"filters" => %{"id" => _id} = params}) when is_map(params) do
     filters =
       Map.take(params, Comment.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
@@ -126,7 +126,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.comment(conn, Comment.allowed_fields(:atom))
   end
 
-  def editor_comments(conn, %{"page" => page, "filters" => params}) do
+  def editor_comments(conn, %{"page" => page, "filters" => params}) when is_map(params) do
     filters = Map.take(params, Comment.allowed_fields(:string))
     Comment.comments(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: Map.get(conn.assigns, :user_id))
     |> MishkaApi.ContentProtocol.comments(conn, Comment.allowed_fields(:atom))
@@ -142,12 +142,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.edit_comment(conn, Comment.allowed_fields(:atom))
   end
 
-  def delete_comment(conn, %{"comment_id" => comment_id}) do
-    Comment.delete(Map.get(conn.assigns, :user_id), comment_id)
-    |> MishkaApi.ContentProtocol.delete_comment(conn, Comment.allowed_fields(:atom))
-  end
-
-  def delete_comment(conn, %{"user_id" => user_id,"comment_id" => comment_id}) do
+  def delete_comment(conn, %{"user_id" => user_id, "comment_id" => comment_id}) do
     Comment.delete(user_id, comment_id)
     |> MishkaApi.ContentProtocol.delete_comment(conn, Comment.allowed_fields(:atom))
   end
@@ -192,7 +187,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.remove_post_tag(conn, TagMapper.allowed_fields(:atom))
   end
 
-  def tags(conn, %{"page" => page, "filters" => params}) do
+  def tags(conn, %{"page" => page, "filters" => params}) when is_map(params) do
     filters =
       Map.take(params, Tag.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
@@ -213,7 +208,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.tag_posts(conn, Tag.allowed_fields(:atom))
   end
 
-  def editor_tag_posts(conn, %{"page" => page, "filters" => params}) do
+  def editor_tag_posts(conn, %{"page" => page, "filters" => params}) when is_map(params) do
     filters =
       Map.take(params, Tag.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
@@ -257,18 +252,21 @@ defmodule MishkaApiWeb.ContentController do
   end
 
   def links(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in ["active", "archived"] do
-    filters = Map.take(params, BlogLink.allowed_fields(:string))
-    BlogLink.links(conditions: {page, 30}, filters: Map.merge(filters, %{"status" => status}))
-    |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
-  end
-
-  def editor_links(conn, %{"page" => page, "filters" => params}) do
-    filters = Map.take(params, BlogLink.allowed_fields(:string))
+    filters =
+      Map.take(params, BlogLink.allowed_fields(:string))
+      |> MishkaDatabase.convert_string_map_to_atom_map()
     BlogLink.links(conditions: {page, 30}, filters: filters)
     |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
   end
 
-  def notifs(conn, %{"type" => "client", "page" => page, "filters" => params}) do
+  def editor_links(conn, %{"page" => page, "filters" => params}) when is_map(params) do
+    filters = Map.take(params, BlogLink.allowed_fields(:string))
+    |> MishkaDatabase.convert_string_map_to_atom_map()
+    BlogLink.links(conditions: {page, 30}, filters: filters)
+    |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
+  end
+
+  def notifs(conn, %{"type" => "client", "page" => page, "filters" => params}) when is_map(params) do
     filters =
       Map.take(params, Notif.allowed_fields(:string))
       |> Map.merge(%{"user_id" => Map.get(conn.assigns, :user_id)})
@@ -277,7 +275,7 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.notifs(conn, Notif.allowed_fields(:atom))
   end
 
-  def editor_notifs(conn, %{"page" => page, "filters" => params}) do
+  def editor_notifs(conn, %{"page" => page, "filters" => params}) when is_map(params) do
     filters =
       Map.take(params, Notif.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()

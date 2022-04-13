@@ -44,7 +44,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifsLive do
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت اعلانات"),
         notifs: Notif.notifs(conditions: {1, 10}, filters: %{})
       )
-    {:ok, socket, temporary_assigns: [categories: []]}
+    {:ok, socket, temporary_assigns: [notifs: []]}
   end
 
   # Live CRUD and Paginate
@@ -52,7 +52,7 @@ defmodule MishkaHtmlWeb.AdminBlogNotifsLive do
 
   list_search_and_action()
 
-  delete_list_item(:notifs, DeleteErrorComponent, false)
+  delete_list_item(:notifs, MishkaHtmlWeb.AdminBlogNotifsLive, false)
 
   selected_menue("MishkaHtmlWeb.AdminBlogNotifsLive")
 

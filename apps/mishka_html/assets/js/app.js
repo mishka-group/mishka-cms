@@ -222,6 +222,15 @@ Hooks.Editor = {
   }
 }
 
+Hooks.DeleteFlashMessage = {
+    mounted() {
+      this.handleEvent("delete_flash_message", ({id}) => {
+        const element = document.getElementById(id);
+        element.remove();
+      });
+    }
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}})
 

@@ -10,6 +10,10 @@ defmodule MishkaHtmlWeb.HomeLive do
 
   @impl true
   def mount(_params, session, socket) do
+    if connected?(socket) do
+      subscribe()
+      Post.subscribe()
+    end
     Process.send_after(self(), :menu, 100)
     socket =
       assign(socket,
@@ -35,8 +39,23 @@ defmodule MishkaHtmlWeb.HomeLive do
   end
 
   @impl true
+  def handle_info({:post, :ok, _repo_record}, socket) do
+    {:noreply, update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)}
+  end
+
+  @impl true
   def handle_info(_params, socket) do
     {:noreply, socket}
+  end
+
+  defp update_post_temporary_assigns(socket, page, _filters, user_id) do
+    update(socket, :posts, fn _posts ->
+      Post.posts(conditions: {page, socket.assigns.page_size}, filters: %{}, user_id: user_id)
+    end)
+  end
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "client_home")
   end
 
   defp seo_tags(socket) do

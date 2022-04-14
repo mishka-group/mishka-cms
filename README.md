@@ -50,12 +50,6 @@ https://github.com/mishka-group/mishka-cms/issues
 
 ---
 
-After releasing 1.0.0 package version, the production state for the docker will also be place in the packages sections which will be ready to be used for your projects. In case you want to cooperate in our project and have no idea where to start, you can contact us through the following profile address: 
-
-https://github.com/shahryarjb
-
----
-
 In the near future the features related to the CMS will be explained in forms of video and text articles and if you want to test in projects, you just have to hit `mix test` command in the Elixir console and then this section will be connected to the “action” part in GitHub automatically.
 
 ### Required versions:

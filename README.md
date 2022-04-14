@@ -3,6 +3,11 @@ Mishka project is a real-time and also API-based CMS which is developed using [E
 
 > This is a free and open-source CMS and now is in the development and testing phase. Please use it with caution in your actual projects. If you are not familiar with Elixir and its deployment, do not worry! You can use the ready-made docker packages for the project that carry out all the actions needed for implementation on your system in the product development phase.
 
+
+![mishka-cms-admin](https://user-images.githubusercontent.com/8413604/129250846-35abcf82-bb65-432b-98be-e7a025607415.png)
+
+
+
 ## Project Sub-systems:
 
 Mishka CMS is made in form of Domain-driven design (DDD) which has got 6 sub-systems so far; some of which are not fully developed now. The following are the sub-systems:
@@ -61,10 +66,3 @@ In the near future the features related to the CMS will be explained in forms of
 ### Install and run in a few clicks:
 We have prepared multiple ways to install and run the CMS in a few clicks to support different environments. Please see [the MsihkaCms installation wiki](https://github.com/mishka-group/mishka-cms/wiki/Installation).
 
-### Images of the Admin Panel
-
-![mishka-cms-admin](https://user-images.githubusercontent.com/8413604/129250846-35abcf82-bb65-432b-98be-e7a025607415.png)
-
-### Images of the Site sample template
-
-![mishka-cms-home-page](https://user-images.githubusercontent.com/8413604/129250980-ce45c35e-389a-435a-bf95-2829c7323862.png)

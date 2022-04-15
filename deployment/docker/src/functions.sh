@@ -82,34 +82,34 @@ function update_config() {
             cp -f dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
             cp -f etc/nginx/conf/sample_conf/ssl_prod.conf etc/nginx/conf/ssl.conf 
             # change domains 
-            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            custom_sed 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
-            sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-            sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_PORT~443\ ssl\ http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~MISHKA_API_PORT~443\ ssl\ http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # enable ssl 
-            sed -i 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
-            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
-            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
+            custom_sed 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            custom_sed 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
         elif [[ $CMS_PORT == "80" ]]; then 
             cp -f dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
             # change domains
-            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            custom_sed 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
-            sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-            sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            custom_sed 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
         else 
             cp -f dockers/docker-compose_without_nginx.yml dockers/docker-compose.yml
         fi
 
         # change value in docker-compose.yml
         if [ -f $PWD/etc/.secret ]; then 
-            sed -i 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
-            sed -i 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
-            sed -i 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
-            sed -i 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
-            sed -i 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
+            custom_sed 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
+            custom_sed 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
         else 
             echo -e "${Red}.secret file not found, Operation cenceled, Please use 'mishka.sh --build' for install app${NC}"
             exit 1
@@ -120,34 +120,34 @@ function update_config() {
             cp -f dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
             cp -f etc/nginx/conf/sample_conf/ssl_dev.conf etc/nginx/conf/ssl.conf 
             # change domains 
-            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            custom_sed 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
-            sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-            sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_PORT~443\ ssl\ http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~MISHKA_API_PORT~443\ ssl\ http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # enable ssl 
-            sed -i 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
-            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
-            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
+            custom_sed 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            custom_sed 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
         elif [[ $CMS_PORT == "80" ]]; then 
             cp -f dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
             # change domains
-            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            custom_sed 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
-            sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-            sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            custom_sed 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
         else 
             cp  -f dockers/docker-compose_dev_without_nginx.yml dockers/docker-compose.yml
         fi
 
         # change value in docker-compose.yml
         if [ -f $PWD/etc/.secret ]; then 
-            sed -i 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
-            sed -i 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
-            sed -i 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
-            sed -i 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
-            sed -i 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
+            custom_sed 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
+            custom_sed 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
         else 
             echo -e "${Red}.secret file not found, Operation cenceled, Please use 'mishka.sh --build' for install app${NC}"
             exit 1
@@ -190,19 +190,19 @@ function purge() {
 
             # delete build directory
             if [ -d ../../_build ]; then 
-                rm --recursive -f ../../_build
+                rm -rf ../../_build
                 echo -e "${Green} mishka build directory deleted..${NC}"
             fi
 
             # delete deps directory
             if [ -d ../../deps ]; then 
-                rm --recursive -f ../../deps
+                rm -rf ../../deps
                 echo -e "${Green} mishka build directory deleted..${NC}"
             fi
 
             # delete Mnesia dicretory
             if [ -d ../../Mnesia.nonode@nohost ]; then 
-                rm --recursive -f ../../Mnesia.nonode@nohost
+                rm -rf ../../Mnesia.nonode@nohost
             fi 
 
             # delete Mnesia dicretory
@@ -258,25 +258,25 @@ function cleanup() {
     case $1 in 
         "diskdb")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive -f ../../Mnesia.nonode@nohost
+            rm -rf ../../Mnesia.nonode@nohost
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "deps")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive -f ../../deps
+            rm -rf ../../deps
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "compiled")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive -f ../../_build
+            rm -rf ../../_build
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "all")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive -f ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
+            rm -rf ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
@@ -364,7 +364,7 @@ function email_checker() {
 function check_requirements() {
 
     # check root user
-    if [[ $EUID -ne 0 ]]; then 
+    if [[ $EUID -ne 0 ]] && [[ $OSTYPE != 'darwin'* ]]; then 
         echo -e "${Red}This script must be run as root${NC}"
         exit 1
     fi
@@ -563,13 +563,13 @@ function default_values() {
 # create new token
 function secret_generators() {
     TOKEN_JWT_KEY=`dd if=/dev/urandom bs=32 count=1 | base64 | sed 's/+/-/g; s/\//_/g; s/=//g'`
-    SECRET_CURRENT_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo` 
-    SECRET_REFRESH_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo`
-    SECRET_ACCESS_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo`
-    SECRET_KEY_BASE=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-    SECRET_KEY_BASE_HTML=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-    SECRET_KEY_BASE_API=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-    LIVE_VIEW_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 32 | tr -d '\n'; echo`
+    SECRET_CURRENT_TOKEN_SALT=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 30 | xargs` 
+    SECRET_REFRESH_TOKEN_SALT=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 30 | xargs`
+    SECRET_ACCESS_TOKEN_SALT=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 30 | xargs`
+    SECRET_KEY_BASE=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 64 | xargs`
+    SECRET_KEY_BASE_HTML=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 64 | xargs`
+    SECRET_KEY_BASE_API=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 64 | xargs`
+    LIVE_VIEW_SALT=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 32 | xargs`
 }
 
 
@@ -623,7 +623,7 @@ function print_build_output() {
 # remove old dir for DBeaver
 function dbeaver_data_renew() {
     if [ -d ~/.local/share/DBeaverData ]; then
-        rm --recursive -f ~/.local/share/DBeaverData
+        rm -rf ~/.local/share/DBeaverData
     fi 
     tar xf etc/DBeaverData.tar.bz2 -C ~/.local/share
     echo -e "${Green}Database Manager Actived, for using you can run './mishka.sh db --run' command${NC}"
@@ -801,6 +801,20 @@ function check_ports(){
         else 
             return 1
         fi
+    else # windows
+        echo -e "${Red}Your OS is not supported${NC}"
+        exit 1
+    fi
+}
+
+# change string in file
+function custom_sed(){
+    local STRING=$1
+    local FILE=$2
+    if [[ $OSTYPE == 'linux'* ]]; then # linux
+        sed -i "$STRING" "$FILE"
+    elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
+        sed -i '' -e "$STRING" "$FILE"
     else # windows
         echo -e "${Red}Your OS is not supported${NC}"
         exit 1

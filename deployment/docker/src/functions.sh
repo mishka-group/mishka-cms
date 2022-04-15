@@ -73,79 +73,81 @@ function update_config() {
     # load configs
     load_configs
 
-    cp --force etc/nginx/conf/sample_conf/mishka_api.conf etc/nginx/conf/conf.d/mishka_api.conf
-    cp --force etc/nginx/conf/sample_conf/mishka_cms.conf etc/nginx/conf/conf.d/mishka_cms.conf
-
-    if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then 
-        if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
-            cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
-            cp --force etc/nginx/conf/sample_conf/ssl_prod.conf etc/nginx/conf/ssl.conf 
+    cp -f etc/nginx/conf/sample_conf/mishka_api.conf etc/nginx/conf/conf.d/mishka_api.conf
+    cp -f etc/nginx/conf/sample_conf/mishka_cms.conf etc/nginx/conf/conf.d/mishka_cms.conf
+    ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE) 
+    SSL_VAR=$(to_lower_case $SSL) 
+    if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then 
+        if [[ $CMS_PORT == "443" ]] && [[ $SSL_VAR =~ ^yes$ ]]; then 
+            cp -f dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
+            cp -f etc/nginx/conf/sample_conf/ssl_prod.conf etc/nginx/conf/ssl.conf 
             # change domains 
-            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            custom_sed 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
-            sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-            sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_PORT~443\ ssl\ http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~MISHKA_API_PORT~443\ ssl\ http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # enable ssl 
-            sed -i 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
-            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
-            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
+            custom_sed 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            custom_sed 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
         elif [[ $CMS_PORT == "80" ]]; then 
-            cp --force dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
+            cp -f dockers/docker-compose_with_nginx.yml dockers/docker-compose.yml
             # change domains
-            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            custom_sed 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
-            sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-            sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            custom_sed 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
         else 
-            cp --force dockers/docker-compose_without_nginx.yml dockers/docker-compose.yml
+            cp -f dockers/docker-compose_without_nginx.yml dockers/docker-compose.yml
         fi
 
         # change value in docker-compose.yml
         if [ -f $PWD/etc/.secret ]; then 
-            sed -i 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
-            sed -i 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
-            sed -i 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
-            sed -i 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
-            sed -i 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
+            custom_sed 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
+            custom_sed 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
         else 
             echo -e "${Red}.secret file not found, Operation cenceled, Please use 'mishka.sh --build' for install app${NC}"
             exit 1
         fi
     else 
-        if [[ $CMS_PORT == "443" ]] && [[ ${SSL,,} =~ ^yes$ ]]; then 
-            cp --force dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
-            cp --force etc/nginx/conf/sample_conf/ssl_dev.conf etc/nginx/conf/ssl.conf 
+        SSL_VAR=$(to_lower_case $SSL) 
+        if [[ $CMS_PORT == "443" ]] && [[ $SSL_VAR =~ ^yes$ ]]; then 
+            cp -f dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
+            cp -f etc/nginx/conf/sample_conf/ssl_dev.conf etc/nginx/conf/ssl.conf 
             # change domains 
-            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            custom_sed 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
-            sed -i 's~MISHKA_CMS_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-            sed -i 's~MISHKA_API_PORT~443 ssl http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_PORT~443\ ssl\ http2~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~MISHKA_API_PORT~443\ ssl\ http2~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # enable ssl 
-            sed -i 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
-            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
-            sed -i 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~SITE_NAME~'$CMS_DOMAIN_NAME'~' ./etc/nginx/conf/ssl.conf
+            custom_sed 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            custom_sed 's~#include~include~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
         elif [[ $CMS_PORT == "80" ]]; then 
-            cp --force dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
+            cp -f dockers/docker-compose_dev_with_nginx.yml dockers/docker-compose.yml
             # change domains
-            sed -i 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
-            sed -i 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
+            custom_sed 's~MISHKA_CMS_DOMAIN_NAME~'${CMS_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_cms.conf
+            custom_sed 's~MISHKA_API_DOMAIN_NAME~'${API_DOMAIN_NAME}'~' ./etc/nginx/conf/conf.d/mishka_api.conf
             # change ports
-            sed -i 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
-            sed -i 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
+            custom_sed 's~MISHKA_CMS_PORT~80~' ./etc/nginx/conf/conf.d/mishka_cms.conf 
+            custom_sed 's~MISHKA_API_PORT~80~' ./etc/nginx/conf/conf.d/mishka_api.conf 
         else 
-            cp  --force dockers/docker-compose_dev_without_nginx.yml dockers/docker-compose.yml
+            cp  -f dockers/docker-compose_dev_without_nginx.yml dockers/docker-compose.yml
         fi
 
         # change value in docker-compose.yml
         if [ -f $PWD/etc/.secret ]; then 
-            sed -i 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
-            sed -i 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
-            sed -i 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
-            sed -i 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
-            sed -i 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_USER=mishka_user~DATABASE_USER='${DATABASE_USER}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_PASSWORD=mishka_password~DATABASE_PASSWORD='${DATABASE_PASSWORD}'~' dockers/docker-compose.yml 
+            custom_sed 's~DATABASE_NAME=mishka_database~DATABASE_NAME='${DATABASE_NAME}'~' dockers/docker-compose.yml 
+            custom_sed 's~POSTGRES_USER=postgres~POSTGRES_USER='${POSTGRES_USER}'~' dockers/docker-compose.yml 
+            custom_sed 's~POSTGRES_PASSWORD=postgres~POSTGRES_PASSWORD='${POSTGRES_PASSWORD}'~' dockers/docker-compose.yml 
         else 
             echo -e "${Red}.secret file not found, Operation cenceled, Please use 'mishka.sh --build' for install app${NC}"
             exit 1
@@ -162,15 +164,15 @@ function purge() {
 
         # Stop Services and Delete Networks
         docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
-
-        if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then
+        ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE) 
+        if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then
             # Delete Images
             if [ -f etc/prod/letsencrypt ]; then 
                 docker image rm nginx:1.20.1-alpine mishak_app:latest mishkagroup/postgresql:3.14
                 echo -e "${Green} mishka images deleted..${NC}"
 
                 # Fresh nginx conf
-                cp --force etc/nginx/conf/sample_conf/mishka_* etc/nginx/conf/conf.d
+                cp -f etc/nginx/conf/sample_conf/mishka_* etc/nginx/conf/conf.d
             else 
                 docker image rm mishak_app:latest mishkagroup/postgresql:3.14
                 echo -e "${Green} mishka images deleted..${NC}"
@@ -188,24 +190,24 @@ function purge() {
 
             # delete build directory
             if [ -d ../../_build ]; then 
-                rm --recursive --force ../../_build
+                rm -rf ../../_build
                 echo -e "${Green} mishka build directory deleted..${NC}"
             fi
 
             # delete deps directory
             if [ -d ../../deps ]; then 
-                rm --recursive --force ../../deps
+                rm -rf ../../deps
                 echo -e "${Green} mishka build directory deleted..${NC}"
             fi
 
             # delete Mnesia dicretory
             if [ -d ../../Mnesia.nonode@nohost ]; then 
-                rm --recursive --force ../../Mnesia.nonode@nohost
+                rm -rf ../../Mnesia.nonode@nohost
             fi 
 
             # delete Mnesia dicretory
             if [ -d ../../mix.lock ]; then 
-                rm --force ../../mix.lock
+                rm -f ../../mix.lock
             fi 
                
         fi
@@ -214,13 +216,13 @@ function purge() {
 
         # Delete Dockerfile
         if [ -f ../../Dockerfile ]; then
-            rm --force ../../Dockerfile
+            rm -f ../../Dockerfile
             echo -e "${Green} mishka Dockerfile deleted..${NC}"
         fi
 
         # Delete docker-compose
         if [ -f dockers/docker-compose.yml ]; then
-            rm --force dockers/docker-compose.yml
+            rm -f dockers/docker-compose.yml
             echo -e "${Green} mishka docker-compose.yml deleted..${NC}"
         fi
 
@@ -256,25 +258,25 @@ function cleanup() {
     case $1 in 
         "diskdb")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive --force ../../Mnesia.nonode@nohost
+            rm -rf ../../Mnesia.nonode@nohost
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "deps")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive --force ../../deps
+            rm -rf ../../deps
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "compiled")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive --force ../../_build
+            rm -rf ../../_build
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
         "all")
             docker stop mishka_cms && docker rm mishka_cms
-            rm --recursive --force ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
+            rm -rf ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
@@ -287,7 +289,8 @@ function cleanup() {
 }
 
 function ssl_generator() {
-    if [[ ${ENV_TYPE,,} =~ ^prod$ ]]; then
+    ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE)
+    if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then
         local ADMIN_EMAIL=$1
         local CMS_DOMAIN_NAME=$2
         local API_DOMAIN_NAME=$3
@@ -361,7 +364,7 @@ function email_checker() {
 function check_requirements() {
 
     # check root user
-    if [[ $EUID -ne 0 ]]; then 
+    if [[ $EUID -ne 0 ]] && [[ $OSTYPE != 'darwin'* ]]; then 
         echo -e "${Red}This script must be run as root${NC}"
         exit 1
     fi
@@ -371,37 +374,112 @@ function check_requirements() {
         docker login
     fi
     
+    dist=$(dist_detector)
     if [[ $OSTYPE == 'linux'* ]]; then # linux
         # check command git install on system
-        if ! command -v git $>/dev/null; then 
-            echo -e "${Red}git Command Not Found${NC}"
-            sudo apt install git -y
-        fi
-
-        # check command jq install on system
-        if ! command -v jq $>/dev/null; then 
-            echo -e "${Red}jq Command Not Found${NC}"
-            sudo apt install jq -y
-        fi
-
-        # check command docker install on system
-        if ! command -v docker $>/dev/null; then 
-            echo -e "${Red}docker Command Not Found${NC}"
-            curl -fsSL https://get.docker.com -o get-docker.sh
-            sudo sh get-docker.sh
-        else 
-            if [[ $(systemctl is-active docker) == "inactive" ]]; then 
-                sudo systemctl start docker
+        #====================================================================================================
+        if [[ $dist == 'debain' ]]; then # debian family (debian, ubuntu, mint,...) 
+            if ! command -v git $>/dev/null; then 
+                echo -e "${Red}git Command Not Found${NC}"
+                sudo apt install git -y
             fi
-        fi
 
-        # check command docker-compose install on system
-        if ! command -v docker-compose $>/dev/null; then 
-            echo -e "${Red}docker-compose Command Not Found${NC}"
-            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-            sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-        fi
+            # check command jq install on system
+            if ! command -v jq $>/dev/null; then 
+                echo -e "${Red}jq Command Not Found${NC}"
+                sudo apt install jq -y
+            fi
+
+            # check command docker install on system
+            if ! command -v docker $>/dev/null; then 
+                echo -e "${Red}docker Command Not Found${NC}"
+                curl -fsSL https://get.docker.com -o get-docker.sh
+                sudo sh get-docker.sh
+            else 
+                if [[ $(systemctl is-active docker) == "inactive" ]]; then 
+                    sudo systemctl start docker
+                fi
+            fi
+
+            # check command docker-compose install on system
+            if ! command -v docker-compose $>/dev/null; then 
+                echo -e "${Red}docker-compose Command Not Found${NC}"
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+                sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            fi
+        #====================================================================================================
+        elif [[ $dist == 'redhat' ]]; then # redhat family
+            if ! command -v git $>/dev/null; then 
+                echo -e "${Red}git Command Not Found${NC}"
+                sudo yum install git -y
+            fi
+
+            # check command jq install on system
+            if ! command -v jq $>/dev/null; then 
+                echo -e "${Red}jq Command Not Found${NC}"
+                sudo yum install jq -y
+            fi
+
+            # check command docker install on system
+            if ! command -v docker $>/dev/null; then 
+                echo -e "${Red}docker Command Not Found${NC}"
+                curl -fsSL https://get.docker.com -o get-docker.sh
+                sudo sh get-docker.sh
+            else 
+                if [[ $(systemctl is-active docker) == "inactive" ]]; then 
+                    sudo systemctl start docker
+                fi
+            fi
+
+            # check command docker-compose install on system
+            if ! command -v docker-compose $>/dev/null; then 
+                echo -e "${Red}docker-compose Command Not Found${NC}"
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+                sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            fi
+        #====================================================================================================
+        elif [[ $dist == 'arch' ]]; then # for arch and manjaro
+            if ! command -v git $>/dev/null; then 
+                echo -e "${Red}git Command Not Found${NC}"
+                sudo pacman -Syy
+                sudo pacman --sync --noconfirm git
+            fi
+
+            # check command jq install on system
+            if ! command -v jq $>/dev/null; then 
+                echo -e "${Red}jq Command Not Found${NC}"
+                sudo pacman -Syy
+                sudo pacman --sync --noconfirm jq
+            fi
+
+            # check command docker install on system
+            if ! command -v docker $>/dev/null; then 
+                echo -e "${Red}docker Command Not Found${NC}"
+                sudo pacman -Syy
+                sudo pacman -S docker
+            else 
+                if [[ $(systemctl is-active docker) == "inactive" ]]; then 
+                    sudo systemctl start docker
+                fi
+            fi
+
+            # check command docker-compose install on system
+            if ! command -v docker-compose $>/dev/null; then 
+                echo -e "${Red}docker-compose Command Not Found${NC}"
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+                sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+            fi
+        #====================================================================================================
+        else
+            echo -e "${Red}Your Distribution is not supported${NC}"
+            exit 1
+        fi                
+
+
+        
     elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
         # check command git install on system
         if ! command -v git $>/dev/null; then 
@@ -485,13 +563,13 @@ function default_values() {
 # create new token
 function secret_generators() {
     TOKEN_JWT_KEY=`dd if=/dev/urandom bs=32 count=1 | base64 | sed 's/+/-/g; s/\//_/g; s/=//g'`
-    SECRET_CURRENT_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo` 
-    SECRET_REFRESH_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo`
-    SECRET_ACCESS_TOKEN_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 30 | tr -d '\n'; echo`
-    SECRET_KEY_BASE=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-    SECRET_KEY_BASE_HTML=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-    SECRET_KEY_BASE_API=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 64 | tr -d '\n'; echo`
-    LIVE_VIEW_SALT=`strings /dev/urandom | grep -o '[[:alpha:]]' | head -n 32 | tr -d '\n'; echo`
+    SECRET_CURRENT_TOKEN_SALT=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 30 | xargs` 
+    SECRET_REFRESH_TOKEN_SALT=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 30 | xargs`
+    SECRET_ACCESS_TOKEN_SALT=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 30 | xargs`
+    SECRET_KEY_BASE=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 64 | xargs`
+    SECRET_KEY_BASE_HTML=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 64 | xargs`
+    SECRET_KEY_BASE_API=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 64 | xargs`
+    LIVE_VIEW_SALT=`LC_CTYPE=C tr -dc A-Za-z0-9= < /dev/urandom | head -c 32 | xargs`
 }
 
 
@@ -499,7 +577,8 @@ function secret_generators() {
 # print build output
 function print_build_output() {
     echo -e "${Green}=======================================================================================================${NC}"
-    if [[ ${SSL,,} =~ ^yes$ ]]; then # convert user input to lowercase then check it
+    SSL_VAR=$(to_lower_case $SSL)
+    if [[ $SSL_VAR =~ ^yes$ ]]; then # convert user input to lowercase then check it
     echo -e "${Green}Mishka Cms Available on    --> $SPACE https://$CMS_DOMAIN_NAME $END_SPACE ${NC}"
     echo -e "${Green}Mishka Api Available on    --> $SPACE https://$API_DOMAIN_NAME $END_SPACE ${NC}" 
     else 
@@ -544,7 +623,7 @@ function print_build_output() {
 # remove old dir for DBeaver
 function dbeaver_data_renew() {
     if [ -d ~/.local/share/DBeaverData ]; then
-        rm --recursive --force ~/.local/share/DBeaverData
+        rm -rf ~/.local/share/DBeaverData
     fi 
     tar xf etc/DBeaverData.tar.bz2 -C ~/.local/share
     echo -e "${Green}Database Manager Actived, for using you can run './mishka.sh db --run' command${NC}"
@@ -553,34 +632,42 @@ function dbeaver_data_renew() {
 
 # check distribution
 function dist_detector() {
-    OS_FAMILY=`grep -i id_like /etc/os-release | cut -d"=" -f2`
-    if [[ $OS_FAMILY =~ 'debian' ]]; then # debian family (debian, ubuntu, mint,...)
-        return "0"
-    else # redhat family
-        return "1"
+    if ! command -v apt $>/dev/null; then  # Debian family (debian, ubuntu, mint,...)
+        echo "debian"
+    elif ! command -v yum $>/dev/null; then # Redhat family
+        echo "redhat"
+    elif ! command -v pacman $>/dev/null; then # Arch family
+        echo "arch"
+    else 
+        echo -e "${Red}Your OS is not supported${NC}"
+        exit 1
     fi
 }
 
 # check dbeaver package
 function dbeaver_checker() {
-    if os_detector; then # debian family (debian, ubuntu, mint,...)
+    dist=$(dist_detector)
+    if [[ $dist == 'debain' ]]; then # debian family (debian, ubuntu, mint,...)
         if dpkg -s dbeaver-ce 2> /dev/null 1>&2; then 
             return "0"
         else 
             return "1"
         fi 
-    else # redhat family
+    elif [[ $dist == 'redhat' ]]; then # redhat family
         if yum list --installed | grep dbeaver-ce 2> /dev/null 1>&2; then 
             return "0"
         else 
             return "1"
         fi
+    else
+        return "1"
     fi
 }
 
 # database manager for easy manage database
 function db_manager() {
-    if os_detector; then # debian family (debian, ubuntu, mint,...)
+    dist=$(dist_detector)
+    if [[ $dist == 'debain' ]]; then # debian family (debian, ubuntu, mint,...)
         if dbeaver_checker; then 
             dbeaver_data_renew
         else 
@@ -592,7 +679,7 @@ function db_manager() {
                 echo -e "${Red}Download Error, Please Check Your Connection${NC}"
             fi
         fi  
-    else # redhat family
+    elif [[ $dist == 'redhat' ]]; then # redhat family
         if dbeaver_checker; then 
             dbeaver_data_renew
         else 
@@ -604,6 +691,11 @@ function db_manager() {
                 echo -e "${Red}Download Error, Please Check Your Connection${NC}"
             fi
         fi  
+    elif [[ $dist == 'arch' ]]; then # for arch and manjaro
+        echo -e "${Red}check this link for install https://snapcraft.io/install/dbeaver-ce/manjaro${NC}"
+    else
+       echo -e "${Red}Your OS is not supported${NC}"
+       exit 1
     fi                
 }
 
@@ -632,7 +724,8 @@ function email_system() {
             echo "email password: ${EMAIL_PASSWORD}"
             read -p $'\e[32mDo You Want to Proceed (YES/NO) ? [default is YES] \'\']\e[0m: ' EMAIL_CONFIRM
             EMAIL_CONFIRM=${EMAIL_CONFIRM:-"YES"}
-            if [[ "${EMAIL_CONFIRM,,}" =~ ^yes$ ]]; then
+            EMAIL_CONFIRM_VAR=$(to_lower_case $EMAIL_CONFIRM)
+            if [[ "$EMAIL_CONFIRM_VAR" =~ ^yes$ ]]; then
                 break
             else 
                 echo -e "${Red}please try again!${NC}"
@@ -646,11 +739,12 @@ function email_system() {
 
 # web server selector
 function web_server_selector() {
-    read -p $'\e[32mChoose Your Web server (Nginx or Cowboy) [default is \'Cowboy\']\e[0m: ' WEBSERVER     
-    case "${WEBSERVER,,}" in 
+    read -p $'\e[32mChoose Your Web server (Nginx or Cowboy) [default is \'Cowboy\']\e[0m: ' WEBSERVER 
+    WEBSERVER_VAR=$(to_lower_case $WEBSERVER)    
+    case "$WEBSERVER_VAR" in 
         "nginx")
              # check web server ports to close
-            if netstat -nultp | egrep -w '80|443' > /dev/null; then
+            if check_ports; then
                 echo -e "${Red}another apps using port 80 or 443, please kill the apps and rerun mishka.sh !${NC}"
                 exit 1
             fi 
@@ -667,5 +761,62 @@ function web_server_selector() {
 # show mishka ascii logo
 function mishka_logo() {
     clear
-    bin/onefetch --ascii-input "$(cat docs/mishka-logo.ans)"
+
+    if [[ $OSTYPE == 'linux'* ]]; then # linux
+        # check permission of onefetch
+        if ! [ -x bin/onefetch_linux ]; then 
+            chmod +x bin/onefetch_linux
+        fi
+        bin/onefetch_linux --ascii-input "$(cat docs/mishka-logo.ans)"
+    elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
+        # check permission of onefetch
+        if ! [ -x bin/onefetch_macos ]; then 
+            chmod +x bin/onefetch_macos
+        fi
+        bin/onefetch_macos --ascii-input "$(cat docs/mishka-logo.ans)"
+    else # windows
+        echo -e "${Red}Your OS is not supported${NC}"
+        exit 1
+    fi
+}
+
+
+# convert to lower case
+function to_lower_case(){
+    echo $1  | tr '[:upper:]' '[:lower:]'
+}
+
+
+# check ports is open
+function check_ports(){
+    if [[ $OSTYPE == 'linux'* ]]; then # linux
+        if netstat -nultp | egrep -w '80|443' > /dev/null; then 
+            return 0
+        else 
+            return 1
+        fi
+    elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
+       if netstat -anvp tcp | awk 'NR<3 || /LISTEN/' | egrep -w '80|443' > /dev/null; then 
+            return 0
+        else 
+            return 1
+        fi
+    else # windows
+        echo -e "${Red}Your OS is not supported${NC}"
+        exit 1
+    fi
+}
+
+# change string in file
+function custom_sed(){
+    local STRING=$1
+    local FILE=$2
+    if [[ $OSTYPE == 'linux'* ]]; then # linux
+        sed -i "$STRING" "$FILE"
+    elif [[ $OSTYPE == 'darwin'* ]]; then # MacOS
+        sed -i '' -e "$STRING" "$FILE"
+    else # windows
+        echo -e "${Red}Your OS is not supported${NC}"
+        exit 1
+    fi
 }

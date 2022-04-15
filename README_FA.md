@@ -10,6 +10,9 @@
 ---
 </div>
 
+
+![mishka-cms-admin](https://user-images.githubusercontent.com/8413604/129250846-35abcf82-bb65-432b-98be-e7a025607415.png)
+
 <div dir="rtl">
 
 ## زیر سیستم های پروژه:
@@ -48,10 +51,6 @@
 
 [https://github.com/mishka-group/mishka-cms/issues](https://github.com/mishka-group/mishka-cms/issues)
 
-> بعد از انتشار ورژن 0.0.1 پکیج حالت پروداکشن برای داکر نیز در بخش پکیج ها قرار می گیرد که آماده استفاده در پروژه های شما می باشد. در صورتی که می خواهید در پروژه همکاری کنید و نمی دانید از کجا شروع کنید. می توانید با پروفایل زیر در ارتباط باشید
-https://github.com/shahryarjb
-
-
 ---
 
 > در آینده امکانات مربوط به این سیستم مدیریت محتوا در مطالب و ویدیو های بیشتر توضیح داده می شود و اگر می خواهید تست در پروژه انجام دهید کافی هست در کنسول الیکسیر دستور `mix test` را بزنید بعدا این بخش به قسمت action گیتهاب متصل خواهد شد تا کار برای شما خودکار گردد
@@ -76,10 +75,3 @@ https://github.com/shahryarjb
 
 ---
 
-### تصویر از پنل ادمین
-
-![mishka-cms-admin](https://user-images.githubusercontent.com/8413604/129250846-35abcf82-bb65-432b-98be-e7a025607415.png)
-
-### تصویر از قالب نمونه سایت
-
-![mishka-cms-home-page](https://user-images.githubusercontent.com/8413604/129250980-ce45c35e-389a-435a-bf95-2829c7323862.png)

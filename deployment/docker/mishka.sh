@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -e -x
+# set  -e -x
 
 # color variables
 source src/variables.sh 
@@ -161,13 +161,19 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             SSL_VAR=$(to_lower_case $SSL)
             if [[ $SSL_VAR =~ ^yes$ ]]; then 
                 ssl_generator
+                CMS_PORT="443"
+                API_PORT="443" 
+                PROTOCOL="https"
+            else 
+                CMS_PORT="80"
+                API_PORT="80" 
+                PROTOCOL="http"
             fi  
 
             CMS_DOMAIN_NAME="cms.example.com"       
             API_DOMAIN_NAME="api.example.com" 
-            CMS_PORT="443"
-            API_PORT="443" 
-            PROTOCOL="https"     
+
+                 
         else 
             WEB_SERVER="cowboy"
         fi 
@@ -465,25 +471,25 @@ else
                 case $REPLY in
                     "diskdb")
                         docker stop mishka_cms && docker rm mishka_cms
-                        rm --recursive --force ../../Mnesia.nonode@nohost
+                        rm -rf ../../Mnesia.nonode@nohost
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
                     "deps")
                         docker stop mishka_cms && docker rm mishka_cms
-                        rm --recursive --force ../../deps
+                        rm -rf ../../deps
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
                     "compiled")
                         docker stop mishka_cms && docker rm mishka_cms
-                        rm --recursive --force ../../_build
+                        rm -rf ../../_build
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
                     "all")
                         docker stop mishka_cms && docker rm mishka_cms
-                        rm --recursive --force ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
+                        rm -rf ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 

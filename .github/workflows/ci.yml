@@ -12,6 +12,7 @@ jobs:
   ci:
     env:
       GITHUB_ACTION: true
+      MIX_ENV: test
 
     strategy:
       fail-fast: false
@@ -73,6 +74,7 @@ jobs:
 
       - name: Run mix ecto.setup
         env:
+          MIX_ENV: test
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
           DATABASE_DEVELOPERT_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_developer_tools_test
           DATABASE_USER: postgres
@@ -89,6 +91,7 @@ jobs:
 
       - name: Run test with temporary information
         env:
+          MIX_ENV: test
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_test
           DATABASE_DEVELOPERT_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/mishka_developer_tools_test
           DATABASE_USER: postgres

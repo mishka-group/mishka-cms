@@ -51,21 +51,14 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
 
 
 
-if System.get_env("GITHUB_ACTIONS") do
-  config :mishka_database, MishkaDatabase.Repo,
-    url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/mishka_test",
-    pool: Ecto.Adapters.SQL.Sandbox,
-    pool_size: 10,
-    show_sensitive_data_on_connection_error: true
-else
-  config :mishka_database, MishkaDatabase.Repo,
-    database: System.get_env("DATABASE_NAME"),
-    username: System.get_env("DATABASE_USER"),
-    password: System.get_env("DATABASE_PASSWORD"),
-    hostname: System.get_env("DATABASE_HOST"),
-    pool_size: 10,
-    show_sensitive_data_on_connection_error: true
-end
+
+config :mishka_database, MishkaDatabase.Repo,
+  database: System.get_env("DATABASE_NAME") || "mishka_test",
+  username: System.get_env("DATABASE_USER") || "postgres",
+  password: System.get_env("DATABASE_PASSWORD") || "postgres",
+  hostname: System.get_env("DATABASE_HOST") || "localhost",
+  pool_size: 10,
+  show_sensitive_data_on_connection_error: true
 
 # # Configures the endpoint
 config :mishka_html, MishkaHtmlWeb.Endpoint,

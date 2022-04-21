@@ -4,13 +4,13 @@ defmodule MishkaDatabase.MixProject do
   def project do
     [
       app: :mishka_database,
-      version: "0.1.0",
+      version: "0.0.2",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       aliases: aliases(),
       lockfile: "../../mix.lock",
-      elixir: "~> 1.11",
+      elixir: "~> 1.13",
       compilers: [:gettext | Mix.compilers()],
       start_permanent: Mix.env() == :prod,
       deps: deps()

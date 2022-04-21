@@ -1,16 +1,20 @@
 defmodule MishkaCms.Umbrella.MixProject do
   use Mix.Project
 
+  @version "0.0.2"
+
   def project do
     [
       apps_path: "apps",
-      version: "0.1.0",
+      version: @version,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
       name: "MishkaCms",
       source_url: "https://github.com/mishka-group/mishka-cms",
-      homepage_url: "https://trangell.com/",
+      homepage_url: "https://mishka.group/",
+      description: description(),
+      package: package(),
       dialyzer: [
         list_unused_filters: true
       ],
@@ -34,6 +38,19 @@ defmodule MishkaCms.Umbrella.MixProject do
       "assets.deploy": ["esbuild default --minify", "phx.digest"],
       setup: ["cmd mix setup"],
       "ecto.setup": ["ecto.drop", "ecto.create", "ecto.migrate"],
+    ]
+  end
+
+  defp description() do
+    "MishkaCms an open source and real time API base CMS Powered by Elixir and Phoenix"
+  end
+
+  defp package() do
+    [
+      files: ~w(apps config .formatter.exs mix.exs LICENSE README*),
+      licenses: ["Apache License 2.0"],
+      maintainers: ["Shahryar Tavakkoli", "Mojtaba Naseri"],
+      links: %{"GitHub" => "https://github.com/mishka-group/mishka-cms"}
     ]
   end
 end

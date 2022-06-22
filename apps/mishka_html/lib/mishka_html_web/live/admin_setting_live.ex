@@ -1,7 +1,7 @@
 defmodule MishkaHtmlWeb.AdminSettingLive do
   use MishkaHtmlWeb, :live_view
   alias MishkaInstaller.Database.SettingSchema
-  alias MishkaDatabase.Public.Setting
+  alias MishkaInstaller.Setting
   @error_atom :setting
 
   use MishkaHtml.Helpers.LiveCRUD,

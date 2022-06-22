@@ -59,3 +59,11 @@ Dockerfile_postgres
 init_db.sh
 
 mix.lock
+
+
+# Migration
+apps/mishka_database/priv/repo/migrations/20220622100108_setting_migration.exs
+apps/mishka_database/priv/repo/migrations/20220622100110_plugin_migration.exs
+apps/mishka_database/priv/repo/migrations/20220622100112_oban_migration.exs
+apps/mishka_database/priv/repo/migrations/20220622100114_dependency_migration.exs
+apps/mishka_database/priv/repo/migrations/20220622100116_activity_migration.exs

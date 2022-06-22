@@ -117,9 +117,9 @@ config :mishka_installer, :basic,
   repo: MishkaDatabase.Repo,
   pubsub: MishkaHtml.PubSub,
   html_router: MishkaHtmlWeb.Router.Helpers,
-  project_path: "/Users/shahryar/Desktop/mishka-cms",
+  project_path: System.get_env("PROJECT_PATH"),
   mix: MishkaInstaller.MixProject,
-  mix_path: "/Users/shahryar/Desktop/mishka-cms/apps/mishka_file/mix.exs",
+  mix_path: System.get_env("MIX_PATH"),
   gettext: MishkaTranslator.Gettext
 
 

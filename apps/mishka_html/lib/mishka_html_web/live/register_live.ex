@@ -54,7 +54,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
         {:error, :verify, msg} ->
           on_user_after_save_failure({:error, :verify, msg}, socket.assigns.user_ip, socket).conn
           |> put_flash(:error, msg)
-          |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
+          |> push_event("update_recaptcha", %{client_side_code: MishkaInstaller.Helper.Setting.get("google_captcha")["client"]})
       end
 
     {:noreply, socket}
@@ -73,7 +73,7 @@ defmodule MishkaHtmlWeb.RegisterLive do
     changeset = user_changeset(filtered_params)
 
     socket =
-      if(changeset.valid?, do: push_event(socket, "update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")}), else: socket)
+      if(changeset.valid?, do: push_event(socket, "update_recaptcha", %{client_side_code: MishkaInstaller.Helper.Setting.get("google_captcha")["client"]}), else: socket)
       |> assign(changeset: changeset)
 
     {:noreply, socket}

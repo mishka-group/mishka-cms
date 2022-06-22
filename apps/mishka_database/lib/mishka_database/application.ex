@@ -11,8 +11,6 @@ defmodule MishkaDatabase.Application do
       MishkaDatabase.Repo,
       {MishkaDatabase.Cache.MnesiaToken, []},
       {MishkaDatabase.Cache.RandomCode, []},
-      {MishkaDatabase.Cache.SettingCache, []},
-      {Task.Supervisor, name: MishkaDatabase.Public.ReStartSettingAgentTaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

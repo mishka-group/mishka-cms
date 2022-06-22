@@ -1,11 +1,11 @@
 defmodule MishkaHtmlWeb.AdminSettingsLive do
   use MishkaHtmlWeb, :live_view
 
-  alias MishkaDatabase.Public.Setting
+  alias MishkaInstaller.Setting
   @section_title MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات")
 
   use MishkaHtml.Helpers.LiveCRUD,
-      module: MishkaDatabase.Public.Setting,
+      module: MishkaInstaller.Setting,
       redirect: __MODULE__,
       router: Routes
 

@@ -8,16 +8,16 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
 
   schema "blog_links" do
 
-    field(:short_description, :string, null: true)
-    field(:status, ContentStatusEnum, null: false)
-    field(:type, BlogLinkType, null: false)
-    field(:title, :string, size: 200, null: false)
-    field(:link, :string, size: 350, null: false)
-    field(:short_link, :string, size: 350, null: true)
+    field(:short_description, :string)
+    field(:status, ContentStatusEnum)
+    field(:type, BlogLinkType)
+    field(:title, :string)
+    field(:link, :string)
+    field(:short_link, :string)
 
-    field(:robots, ContentRobotsEnum, null: false, default: :IndexFollow)
+    field(:robots, ContentRobotsEnum, default: :IndexFollow)
 
-    field(:section_id, :binary_id, null: false)
+    field(:section_id, :binary_id)
 
     timestamps(type: :utc_datetime)
   end

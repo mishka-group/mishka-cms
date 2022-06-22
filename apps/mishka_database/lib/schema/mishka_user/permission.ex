@@ -6,7 +6,7 @@ defmodule MishkaDatabase.Schema.MishkaUser.Permission do
   @foreign_key_type :binary_id
 
   schema "permissions" do
-    field(:value, :string, null: false)
+    field(:value, :string)
 
     belongs_to :roles, MishkaDatabase.Schema.MishkaUser.Role, foreign_key: :role_id, type: :binary_id
     timestamps(type: :utc_datetime)

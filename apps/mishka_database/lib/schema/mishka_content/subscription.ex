@@ -8,11 +8,11 @@ defmodule MishkaDatabase.Schema.MishkaContent.Subscription do
 
   schema "subscriptions" do
 
-    field(:status, ContentStatusEnum, null: false, default: :active)
-    field(:section, SubscriptionSection, null: false, null: false)
-    field(:section_id, :binary_id, primary_key: false, null: false)
-    field(:expire_time, :utc_datetime, null: true)
-    field(:extra, :map, null: true)
+    field(:status, ContentStatusEnum, default: :active)
+    field(:section, SubscriptionSection)
+    field(:section_id, :binary_id, primary_key: false)
+    field(:expire_time, :utc_datetime)
+    field(:extra, :map)
 
     belongs_to :users, MishkaDatabase.Schema.MishkaUser.User, foreign_key: :user_id, type: :binary_id
 

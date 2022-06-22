@@ -27,7 +27,7 @@ defmodule MishkaUser.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mishka_installer, "~> 0.0.2"},
+      {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"},
       {:mishka_database, in_umbrella: true},
       {:mishka_translator, in_umbrella: true},
       {:mishka_content, in_umbrella: true},
@@ -35,7 +35,7 @@ defmodule MishkaUser.MixProject do
       {:guardian, "~> 2.2"},
       {:phoenix, "~> 1.6", override: true},
       {:jose, "~> 1.11"},
-      {:finch, "~> 0.8.1"}
+      {:finch, "~> 0.12.0"}
     ]
   end
 end

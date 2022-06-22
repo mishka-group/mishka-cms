@@ -8,7 +8,7 @@ defmodule MishkaDatabase.Schema.MishkaContent.UserNotifStatus do
 
   schema "user_notif_statuses" do
 
-    field(:type, NotifStatusType, null: false, default: :read)
+    field(:type, NotifStatusType, default: :read)
     belongs_to :notifs, MishkaDatabase.Schema.MishkaContent.Notif, foreign_key: :notif_id, type: :binary_id
     belongs_to :users, MishkaDatabase.Schema.MishkaUser.User, foreign_key: :user_id, type: :binary_id
 

@@ -8,10 +8,10 @@ defmodule MishkaDatabase.Schema.MishkaContent.Bookmark do
 
   schema "bookmarks" do
 
-    field(:status, ContentStatusEnum, null: false, default: :active)
-    field(:section, BookmarkSection, null: false, null: false)
-    field(:section_id, :binary_id, primary_key: false, null: false)
-    field(:extra, :map, null: true)
+    field(:status, ContentStatusEnum, default: :active)
+    field(:section, BookmarkSection)
+    field(:section_id, :binary_id, primary_key: false)
+    field(:extra, :map)
 
     belongs_to :users, MishkaDatabase.Schema.MishkaUser.User, foreign_key: :user_id, type: :binary_id
 

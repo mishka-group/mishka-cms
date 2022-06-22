@@ -8,12 +8,12 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogTag do
 
   schema "blog_tags" do
 
-    field(:title, :string, size: 200, null: false)
-    field(:alias_link, :string, size: 200, null: false)
-    field(:meta_keywords, :string, size: 200, null: true)
-    field(:meta_description, :string, size: 164, null: true)
-    field(:custom_title, :string, size: 200, null: true)
-    field(:robots, ContentRobotsEnum, null: false)
+    field(:title, :string)
+    field(:alias_link, :string)
+    field(:meta_keywords, :string)
+    field(:meta_description, :string)
+    field(:custom_title, :string)
+    field(:robots, ContentRobotsEnum)
 
     has_many :blog_tags_mappers, MishkaDatabase.Schema.MishkaContent.BlogTagMapper, foreign_key: :tag_id, on_delete: :delete_all
 

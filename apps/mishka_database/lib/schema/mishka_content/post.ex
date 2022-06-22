@@ -19,34 +19,34 @@ defmodule MishkaDatabase.Schema.MishkaContent.Blog.Post do
 
   schema "blog_posts" do
 
-    field :title, :string, size: 200, null: false
-    field :short_description, :string, size: 350, null: false
-    field :main_image, :string, size: 200, null: false
-    field :header_image, :string, size: 200, null: true
-    field :description, :string, null: false
-    field :status, ContentStatusEnum, null: false, default: :active
-    field :priority, ContentPriorityEnum, null: false, default: :none
-    field :location, :string, size: 200, null: true
-    field :unpublish, :utc_datetime, null: true
-    field :alias_link, :string, size: 200, null: false
-    field :meta_keywords, :string, size: 200, null: true
-    field :meta_description, :string, size: 164, null: true
-    field :custom_title, :string, size: 200, null: true
-    field :robots, ContentRobotsEnum, null: false, default: :IndexFollow
-    field :post_visibility, PostVisibility, null: false, default: :show
-    field :allow_commenting, :boolean, null: true
-    field :allow_liking, :boolean, null: true
-    field :allow_printing, :boolean, null: true
-    field :allow_reporting, :boolean, null: true
-    field :allow_social_sharing, :boolean, null: true
-    field :allow_bookmarking, :boolean, null: true
-    field :allow_subscription, :boolean, null: true
-    field :show_hits, :boolean, null: true
-    field :show_time, :boolean, null: true
-    field :show_authors, :boolean, null: true
-    field :show_category, :boolean, null: true
-    field :show_links, :boolean, null: true
-    field :show_location, :boolean, null: true
+    field :title, :string
+    field :short_description, :string
+    field :main_image, :string
+    field :header_image, :string
+    field :description, :string
+    field :status, ContentStatusEnum, default: :active
+    field :priority, ContentPriorityEnum, default: :none
+    field :location, :string
+    field :unpublish, :utc_datetime
+    field :alias_link, :string
+    field :meta_keywords, :string
+    field :meta_description, :string
+    field :custom_title, :string
+    field :robots, ContentRobotsEnum, default: :IndexFollow
+    field :post_visibility, PostVisibility, default: :show
+    field :allow_commenting, :boolean
+    field :allow_liking, :boolean
+    field :allow_printing, :boolean
+    field :allow_reporting, :boolean
+    field :allow_social_sharing, :boolean
+    field :allow_bookmarking, :boolean
+    field :allow_subscription, :boolean
+    field :show_hits, :boolean
+    field :show_time, :boolean
+    field :show_authors, :boolean
+    field :show_category, :boolean
+    field :show_links, :boolean
+    field :show_location, :boolean
 
     belongs_to :blog_categories, MishkaDatabase.Schema.MishkaContent.Blog.Category, foreign_key: :category_id, type: :binary_id
     has_many :blog_authors, MishkaDatabase.Schema.MishkaContent.BlogAuthor, foreign_key: :post_id, on_delete: :nothing

@@ -15,7 +15,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
     Process.send_after(self(), :menu, 100)
     socket =
       socket
-      |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
+      |> push_event("update_recaptcha", %{client_side_code: MishkaInstaller.Helper.Setting.get("google_captcha")["client"]})
       |> assign(
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "فراموشی پسورد"),
         seo_tags: seo_tags(socket),
@@ -103,7 +103,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
       {:error, :verify, msg} ->
         socket
         |> put_flash(:error, msg)
-        |> push_event("update_recaptcha", %{client_side_code: System.get_env("CAPTCHA_CLIENT_SIDE_CODE")})
+        |> push_event("update_recaptcha", %{client_side_code: MishkaInstaller.Helper.Setting.get("google_captcha")["client"]})
     end
 
     {:noreply, socket}

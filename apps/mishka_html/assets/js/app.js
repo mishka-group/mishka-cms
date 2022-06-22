@@ -128,7 +128,9 @@ function onClick(client_side_code) {
 Hooks.GooglereCAPTCHA = {
   mounted() {
     this.handleEvent("update_recaptcha", ({client_side_code}) => {
-      onClick(client_side_code)
+      if (client_side_code != null) {
+        onClick(client_side_code)
+      }
     });
   }
 }

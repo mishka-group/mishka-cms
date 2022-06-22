@@ -27,7 +27,7 @@ defmodule MishkaTranslator.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:gettext, "~> 0.18.2"}
+      {:gettext, "~> 0.19.1"}
     ]
   end
 end

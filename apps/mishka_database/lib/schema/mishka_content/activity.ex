@@ -8,13 +8,13 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
 
   schema "activities" do
 
-    field(:type, ActivitiesTypeEnum, null: false)
-    field(:section, ActivitiesSection, null: false)
-    field(:section_id, :binary_id, primary_key: false, null: true)
-    field(:priority, ContentPriorityEnum, null: false)
-    field(:status, ActivitiesStatusEnum, null: false)
-    field(:action, ActivitiesAction, null: false)
-    field(:extra, :map, null: true)
+    field(:type, ActivitiesTypeEnum)
+    field(:section, ActivitiesSection)
+    field(:section_id, :binary_id, primary_key: false)
+    field(:priority, ContentPriorityEnum)
+    field(:status, ActivitiesStatusEnum)
+    field(:action, ActivitiesAction)
+    field(:extra, :map)
 
     timestamps(type: :utc_datetime)
   end

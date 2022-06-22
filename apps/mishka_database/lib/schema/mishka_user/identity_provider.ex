@@ -8,9 +8,9 @@ defmodule MishkaDatabase.Schema.MishkaUser.IdentityProvider do
 
   schema "identities" do
 
-    field :provider_uid, :string, null: true
-    field :token, :string, null: true
-    field :identity_provider, UserIdentityProviderEnum, null: false, default: :self
+    field :provider_uid, :string
+    field :token, :string
+    field :identity_provider, UserIdentityProviderEnum, default: :self
 
     belongs_to :users, MishkaDatabase.Schema.MishkaUser.User, foreign_key: :user_id, type: :binary_id
     timestamps(type: :utc_datetime)

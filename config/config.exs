@@ -116,7 +116,12 @@ config :phoenix, :json_library, Jason
 config :mishka_installer, :basic,
   repo: MishkaDatabase.Repo,
   pubsub: MishkaHtml.PubSub,
-  html_router: MishkaHtmlWeb.Router.Helpers
+  html_router: MishkaHtmlWeb.Router.Helpers,
+  project_path: "/Users/shahryar/Desktop/mishka-cms",
+  mix: MishkaInstaller.MixProject,
+  mix_path: "/Users/shahryar/Desktop/mishka-cms/apps/mishka_file/mix.exs",
+  gettext: MishkaTranslator.Gettext
+
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -8,15 +8,15 @@ defmodule MishkaDatabase.Schema.MishkaContent.Notif do
 
   schema "notifs" do
 
-    field(:status, ContentStatusEnum, null: false, default: :active)
-    field(:section, NotifSection, null: false)
-    field(:type, NotifType, null: false)
-    field(:target, NotifTarget, null: false)
-    field(:section_id, :binary_id, primary_key: false, null: true)
-    field(:title, :string, size: 350, null: false)
-    field(:description, :string, null: false)
-    field(:expire_time, :utc_datetime, null: true)
-    field(:extra, :map, null: true)
+    field(:status, ContentStatusEnum, default: :active)
+    field(:section, NotifSection)
+    field(:type, NotifType)
+    field(:target, NotifTarget)
+    field(:section_id, :binary_id, primary_key: false)
+    field(:title, :string)
+    field(:description, :string)
+    field(:expire_time, :utc_datetime)
+    field(:extra, :map)
 
     belongs_to :users, MishkaDatabase.Schema.MishkaUser.User, foreign_key: :user_id, type: :binary_id
     has_many :user_notif_statuses, MishkaDatabase.Schema.MishkaContent.UserNotifStatus, foreign_key: :notif_id

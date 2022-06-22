@@ -8,14 +8,14 @@ defmodule MishkaDatabase.Schema.MishkaUser.User do
 
   schema "users" do
 
-    field :full_name, :string, size: 60, null: false
-    field :username, :string, size: 20, null: true
-    field :email, :string, null: false
-    field :status, UserStatusEnum, null: false, default: :registered
+    field :full_name, :string
+    field :username, :string
+    field :email, :string
+    field :status, UserStatusEnum, default: :registered
 
-    field :password_hash, :string, null: true
+    field :password_hash, :string
     field :password, :string, virtual: true
-    field :unconfirmed_email, :string, null: true
+    field :unconfirmed_email, :string
 
     has_many :identities, MishkaDatabase.Schema.MishkaUser.IdentityProvider, foreign_key: :user_id
     has_many :users_roles, MishkaDatabase.Schema.MishkaUser.UserRole, foreign_key: :user_id, on_delete: :delete_all

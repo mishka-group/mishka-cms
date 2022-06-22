@@ -6,8 +6,8 @@ defmodule MishkaDatabase.Schema.MishkaUser.Role do
   @foreign_key_type :binary_id
 
   schema "roles" do
-    field :name, :string, null: false
-    field :display_name, :string, null: false
+    field :name, :string
+    field :display_name, :string
 
     has_many :users_roles, MishkaDatabase.Schema.MishkaUser.UserRole, foreign_key: :role_id, on_delete: :delete_all
     has_many :permissions, MishkaDatabase.Schema.MishkaUser.Permission, foreign_key: :role_id, on_delete: :delete_all

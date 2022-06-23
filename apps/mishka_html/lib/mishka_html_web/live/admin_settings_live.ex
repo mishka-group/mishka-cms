@@ -60,12 +60,11 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
 
   def section_fields() do
     [
-      ListItemComponent.select_field("section", [1, 4], "col header1", MishkaTranslator.Gettext.dgettext("html_live_component", "بخش"),
-      [
-        {MishkaTranslator.Gettext.dgettext("html_live", "عمومی"), "public"}
-      ],
+      ListItemComponent.text_field("name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام بخش"),
+      {true, true, true}, &MishkaHtml.title_sanitize/1),
+      ListItemComponent.time_field("updated_at", [1], "col header5", MishkaTranslator.Gettext.dgettext("html_live",  "به روز رسانی"), false,
       {true, false, false}),
-      ListItemComponent.time_field("inserted_at", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "تاریخ ثبت"), false,
+      ListItemComponent.time_field("inserted_at", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
       {true, false, false})
     ]
   end

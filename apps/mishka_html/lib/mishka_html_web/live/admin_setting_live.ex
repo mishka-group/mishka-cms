@@ -135,7 +135,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
   end
 
   @impl true
-  def handle_event("save", %{"setting" => params} = full_params, socket) do
+  def handle_event("save", %{"setting_schema" => params} = full_params, socket) do
     configs = if(create_configs(full_params, :map) != %{}, do: create_configs(full_params, :map), else: nil)
     socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
       [] -> socket
@@ -221,7 +221,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         }, %{user_action: "live_create_setting", type: "admin", user_id: socket.assigns.user_id})
 
         if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
-        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات بخش: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.section))})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات بخش: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.name))})
 
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات مورد نظر ساخته شد."))
@@ -251,7 +251,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
           status: "info",
         }, %{user_action: "live_edit_setting", type: "admin", user_id: socket.assigns.user_id})
 
-        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات بخش: %{title} به روز شده است.", title: MishkaHtml.full_name_sanitize(repo_data.section))})
+        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات بخش: %{title} به روز شده است.", title: MishkaHtml.full_name_sanitize(repo_data.name))})
         socket
         |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات مورد نظر به روز رسانی شد"))
         |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
@@ -273,7 +273,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
   end
 
   defp creata_setting_state(repo_data) do
-    Map.drop(repo_data, [:__struct__, :__meta__, :inserted_at, :updated_at, :id])
+    Map.drop(repo_data, [:__struct__, :__meta__, :inserted_at, :updated_at, :id, :configs])
     |> Map.to_list()
     |> Enum.map(fn {key, value} ->
       %{
@@ -291,24 +291,13 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
 
   def basic_menu_list() do
     [
-      %{type: "section", status: [
+      %{type: "name", status: [
         %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
       ],
-      options: [
-        {MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات عمومی"), :public},
-      ],
-      form: "select",
-      class: "col-sm-4",
+      form: "text",
+      class: "col-sm-3",
       title: MishkaTranslator.Gettext.dgettext("html_live", "بخش"),
-      description: MishkaTranslator.Gettext.dgettext("html_live", "شما برای هر بخش از سایت می توانید فقط یک تنظیمات وارد کنید.")},
-
-      %{type: "configs", status: [
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
-      ],
-      form: "add_field",
-      class: "col-sm-4",
-      title: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات"),
-      description: MishkaTranslator.Gettext.dgettext("html_live", "شما در این بخش می توانید تنظیماتی که می خواهید را با اسم سفارشی خودتان وارد کنید. لازم به ذکر هست از تغییر اسم تنظیمات پیشفرض که موقع نصب به سیستم شما خودکار اضافه شدن به شدت پرهیز کنید.")},
+      description: MishkaTranslator.Gettext.dgettext("html_live", "نام تنظیمات هر بخش را وارد کنید")}
     ]
   end
 end

@@ -2981,3 +2981,11 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   font-family: tahoma; color: #6a85b5;
   padding-bottom: 10px;
 }
+
+.home-post-like-bookmarks-header-type-banner a:hover,
+.client-home-normal-post-article a:hover,
+.client-home-normal-post-article a,
+.container-fluid.home-image-post a,
+.home-post-like-bookmarks-header-type-banner a {
+  color: #fff;
+}

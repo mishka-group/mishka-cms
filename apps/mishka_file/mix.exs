@@ -27,7 +27,7 @@ defmodule MishkaFile.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mishka_translator, in_umbrella: true},
+      {:mishka_translator, in_umbrella: true}
     ]
   end
 end

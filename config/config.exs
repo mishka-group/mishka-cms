@@ -41,7 +41,8 @@ config :mishka_html, MishkaHtmlWeb.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE_HTML"),
   render_errors: [view: MishkaHtmlWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: MishkaHtml.PubSub,
-  live_view: [signing_salt: System.get_env("LIVE_VIEW_SALT")]
+  live_view: [signing_salt: System.get_env("LIVE_VIEW_SALT")],
+  reloadable_apps: [:mishka_installer]
 
 
 
@@ -49,7 +50,8 @@ config :mishka_api, MishkaApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: System.get_env("SECRET_KEY_BASE_API"),
   render_errors: [view: MishkaApiWeb.ErrorView, accepts: ~w(json), layout: false],
-  pubsub_server: MishkaApi.PubSub
+  pubsub_server: MishkaApi.PubSub,
+  reloadable_apps: [:mishka_installer]
 
 
 
@@ -93,7 +95,7 @@ config :mishka_installer, :basic,
   pubsub: MishkaHtml.PubSub,
   html_router: MishkaHtmlWeb.Router.Helpers,
   project_path: System.get_env("PROJECT_PATH"),
-  mix: MishkaInstaller.MixProject,
+  mix: MishkaFile.MixProject,
   mix_path: System.get_env("MIX_PATH"),
   gettext: MishkaTranslator.Gettext
 

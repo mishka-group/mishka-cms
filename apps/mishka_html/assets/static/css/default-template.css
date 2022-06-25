@@ -3048,3 +3048,8 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   font-size: 12px;
   cursor: pointer;
 }
+
+#dep-installed-plugins a.dropdown-item {
+  color: #000;
+  font-size: 14px;
+}

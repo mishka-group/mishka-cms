@@ -298,7 +298,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
   def change_password({:ok, :change_password, info}, conn, allowed_fields) do
     # clean all the token otp
-    MishkaUser.Token.TokenManagemnt.stop(info.id)
+    MishkaUser.Token.TokenManagemnt.delete(info.id)
     # clean all the token on disc
     MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(info.id)
     # delete all user's Acl
@@ -405,7 +405,6 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       user_tokens_info:
 
       MishkaUser.Token.TokenManagemnt.get_all(user_info.id)
-      |> MishkaUser.Token.TokenManagemnt.get_token_info()
       |> Enum.map(fn x ->
         %{
           access_expires_in: x.access_expires_in,
@@ -519,7 +518,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
          {:ok, :edit, :user, _user_edit_info} <- MishkaUser.User.edit(%{id: user_info.id, password: password}) do
 
           # clean all the token OTP
-          MishkaUser.Token.TokenManagemnt.stop(user_info.id)
+          MishkaUser.Token.TokenManagemnt.delete(user_info.id)
           # clean all the token on disc
           MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(user_info.id)
           # delete all randome codes of user
@@ -709,7 +708,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
 
           RandomCode.delete_code(code, user_info.email)
           MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(user_info.id)
-          MishkaUser.Token.TokenManagemnt.stop(user_info.id)
+          MishkaUser.Token.TokenManagemnt.delete(user_info.id)
 
           MishkaContent.General.Activity.create_activity_by_start_child(%{
             type: "internal_api",

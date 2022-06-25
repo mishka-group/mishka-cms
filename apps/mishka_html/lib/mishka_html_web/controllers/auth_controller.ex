@@ -149,7 +149,7 @@ defmodule MishkaHtmlWeb.AuthController do
         }, %{user_action: "deactive_account", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip)), user_id: repo_data.id})
 
         # clean all the token OTP
-        MishkaUser.Token.TokenManagemnt.stop(user_info.id)
+        MishkaUser.Token.TokenManagemnt.delete(user_info.id)
         # clean all the token on disc
         MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(user_info.id)
         # delete all randome codes of user
@@ -211,7 +211,7 @@ defmodule MishkaHtmlWeb.AuthController do
         }, %{user_action: "delete_tokens", cowboy_ip: to_string(:inet_parse.ntoa(conn.remote_ip)), user_id: repo_data.id})
 
         # clean all the token OTP
-        MishkaUser.Token.TokenManagemnt.stop(repo_data.id)
+        MishkaUser.Token.TokenManagemnt.delete(repo_data.id)
         # clean all the token on disc
         MishkaDatabase.Cache.MnesiaToken.delete_all_user_tokens(repo_data.id)
         # delete all randome codes of user

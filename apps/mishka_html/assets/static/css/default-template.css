@@ -2982,10 +2982,69 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   padding-bottom: 10px;
 }
 
+.admin-home-mishka-insatller .card-text {
+  min-height: 45px;
+}
+
+.admin-home-mishka-insatller .card-body code,
+.admin-home-mishka-insatller .card-title code {
+  background-color: transparent;
+}
+
+.admin-home-mishka-insatller .card-title {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.admin-home-mishka-insatller .card-body {
+  /* It should be changed when multi languages is supported */
+  direction: ltr;
+}
+
+.admin-home-mishka-insatller .card-body p{
+  /* It should be changed when multi languages is supported */
+  font-size: 12px;
+}
+
+.admin-home-mishka-insatller .card-body a{
+  bottom: 10px;
+  position: absolute;
+  font-size: 12px;
+}
+
+.admin-home-mishka-insatller .card {
+  min-height: 157px;
+  background: transparent;
+}
+
+.admin-home-mishka-insatller input {
+  direction: ltr;
+}
+
+.admin-home-mishka-insatller a,
 .home-post-like-bookmarks-header-type-banner a:hover,
 .client-home-normal-post-article a:hover,
 .client-home-normal-post-article a,
 .container-fluid.home-image-post a,
 .home-post-like-bookmarks-header-type-banner a {
   color: #fff;
+}
+
+#all_loaded_app {
+  font-size: 16px;
+  direction: ltr;
+}
+
+#dep-installed-plugins .bd-callout.bd-callout-info p {
+  font-size: 14px;
+  text-align: justify;
+}
+
+#dep-icon-getter span {
+  margin: 0 8px;
+}
+
+.dep-link {
+  font-size: 12px;
+  cursor: pointer;
 }

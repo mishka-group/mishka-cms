@@ -184,13 +184,19 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
 
   def tab(assigns, :installer) do
     ~H"""
-      <div class="col">
+      <div class="col admin-home-mishka-insatller">
         <h3 class="admin-dashbord-h3-right-side-title vazir"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "داشبورد مدیریت افزونه ها") %></h3>
         <span class="admin-dashbord-right-side-text vazir">
-        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "شما در این بخش می توانید افزونه های دلخواه خود را نصب و مدیریت نمایید") %>
+        <%= MishkaTranslator.Gettext.dgettext("html_live_component", "شما در این بخش می توانید افزونه های دلخواه خود را نصب و مدیریت نمایید. لازم به ذکر است چندین راه برای نصب یک افزونه برای شما فراهم شده است") %>
         </span>
         <div class="clearfix"></div>
         <div class="col space20"> </div>
+        <hr>
+        <div class="container h-25 d-inline-block"></div>
+
+        <%= live_render(@socket, MishkaInstaller.Installer.Live.DepGetter, id: :admin_installer) %>
+
+        <div class="container h-25 d-inline-block"></div>
       </div>
     """
   end
@@ -198,7 +204,7 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
   def tab(assigns, :support) do
     ~H"""
     <div class="col">
-      3
+      <div class="alert alert-info" role="alert"><%= MishkaTranslator.Gettext.dgettext("html_live_component", "این امکان در آینده فعال می شود") %></div>
     </div>
     """
   end

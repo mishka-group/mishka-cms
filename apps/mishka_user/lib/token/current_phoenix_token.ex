@@ -14,23 +14,20 @@ defmodule MishkaUser.Token.CurrentPhoenixToken do
 
   @spec save_token(map()) :: {:ok, :save_token, nonempty_binary}
   def save_token(user_info) do
-    MishkaUser.Token.TokenDynamicSupervisor.start_job([id: user_info.id, type: "token"])
     {:ok, type, token} = create_token(user_info.id, :current)
     TokenManagemnt.save(%{
       id: user_info.id,
       token_info:
-        [
-          %{
-            token_id: Ecto.UUID.generate,
-            type: Atom.to_string(type),
-            token: token,
-            os: "linux",
-            create_time: System.system_time(:second),
-            last_used: System.system_time(:second),
-            access_expires_in: token_expire_time(:current).unix_time,
-            rel: nil
-          }
-        ]
+        %{
+          token_id: Ecto.UUID.generate,
+          type: Atom.to_string(type),
+          token: token,
+          os: "linux",
+          create_time: System.system_time(:second),
+          last_used: System.system_time(:second),
+          access_expires_in: token_expire_time(:current).unix_time,
+          rel: nil
+        }
     }, user_info.id)
 
     {:ok, :save_token, token}

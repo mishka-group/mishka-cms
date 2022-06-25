@@ -112,8 +112,6 @@ defmodule MishkaUser.Token.JWTToken do
   @spec create_refresh_acsses_token(atom | %{id: any}) :: result()
 
   def create_refresh_acsses_token(user_info) do
-    MishkaUser.Token.TokenDynamicSupervisor.start_job([id: user_info.id, type: "token"])
-
     case TokenManagemnt.count_refresh_token(user_info.id) do
       {:ok, :count_refresh_token}->
         refresh_token_id = Ecto.UUID.generate
@@ -162,18 +160,16 @@ defmodule MishkaUser.Token.JWTToken do
     TokenManagemnt.save(%{
       id: element.id,
       token_info:
-        [
-          %{
-            token_id: element.token_id,
-            type: element.type,
-            token: element.token,
-            os: element.os,
-            create_time: element.create_time,
-            last_used: element.create_time,
-            access_expires_in: element.exp,
-            rel: element.rel
-          }
-        ]
+        %{
+          token_id: element.token_id,
+          type: element.type,
+          token: element.token,
+          os: element.os,
+          create_time: element.create_time,
+          last_used: element.create_time,
+          access_expires_in: element.exp,
+          rel: element.rel
+        }
     }, user_id)
   end
 

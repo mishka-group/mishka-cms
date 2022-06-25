@@ -55,9 +55,6 @@ defmodule MishkaUser.Token.PhoenixToken do
   defp delete_old_token({:error, error_function, :refresh, action}, _token), do: {:error, error_function, action}
 
   defp create_new_refresh_token({:ok, :delete_old_token, clime}) do
-
-    MishkaUser.Token.TokenDynamicSupervisor.start_job([id: clime["id"], type: "token"])
-
     case TokenManagemnt.count_refresh_token(clime["id"]) do
       {:ok, :count_refresh_token}->
 
@@ -150,18 +147,16 @@ defmodule MishkaUser.Token.PhoenixToken do
     TokenManagemnt.save(%{
       id: element.id,
       token_info:
-        [
-          %{
-            token_id: element.token_id,
-            type: element.type,
-            token: element.token,
-            os: element.os,
-            create_time: element.create_time,
-            last_used: element.create_time,
-            access_expires_in: element.exp,
-            rel: element.rel
-          }
-        ]
+        %{
+          token_id: element.token_id,
+          type: element.type,
+          token: element.token,
+          os: element.os,
+          create_time: element.create_time,
+          last_used: element.create_time,
+          access_expires_in: element.exp,
+          rel: element.rel
+        }
     }, user_id)
   end
 

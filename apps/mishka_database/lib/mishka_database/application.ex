@@ -9,7 +9,7 @@ defmodule MishkaDatabase.Application do
   def start(_type, _args) do
     children = [
       MishkaDatabase.Repo,
-      {MishkaDatabase.Cache.MnesiaToken, []},
+      {MishkaUser.Token.MnesiaToken, []},
       {MishkaDatabase.Cache.RandomCode, []},
     ]
 

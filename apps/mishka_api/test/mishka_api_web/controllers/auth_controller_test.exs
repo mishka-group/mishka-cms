@@ -2,7 +2,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
   use MishkaApiWeb.ConnCase, async: true
 
   setup_all do
-    start_supervised(MishkaDatabase.Cache.MnesiaToken)
+    start_supervised(MishkaUser.Token.MnesiaToken)
     :ok
   end
 

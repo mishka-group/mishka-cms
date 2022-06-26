@@ -16,7 +16,7 @@ defmodule MishkaApiWeb.ContentControllerTest do
 
 
   setup_all do
-    start_supervised(MishkaDatabase.Cache.MnesiaToken)
+    start_supervised(MishkaUser.Token.MnesiaToken)
     :ok
   end
 

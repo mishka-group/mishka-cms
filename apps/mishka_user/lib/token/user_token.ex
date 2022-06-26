@@ -58,6 +58,24 @@ defmodule MishkaUser.Token.UserToken do
     |> MishkaDatabase.Repo.delete_all
   end
 
+  def delete_expire_token() do
+    stream =
+      from(t in UserToken, where: t.expire_time < ^DateTime.utc_now)
+      |> MishkaDatabase.Repo.stream()
+
+    MishkaDatabase.Repo.transaction(fn() ->
+      Enum.to_list(stream)
+    end)
+    |> case do
+      {:ok, list} ->
+        list
+        |> Task.async_stream(&delete(&1.id), max_concurrency: 10)
+        |> Stream.run
+      error ->
+        IO.inspect(error)
+    end
+  end
+
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: UserToken.__schema__(:fields)
   def allowed_fields(:string), do: UserToken.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

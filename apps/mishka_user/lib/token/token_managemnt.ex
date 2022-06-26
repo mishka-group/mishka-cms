@@ -1,17 +1,12 @@
 defmodule MishkaUser.Token.TokenManagemnt do
   use GenServer, restart: :temporary
   require Logger
-  alias MishkaDatabase.Cache.MnesiaToken
+  alias MishkaUser.Token.MnesiaToken
   @ets_table :user_token_ets_state
 
   @type params() :: map()
   @type id() :: String.t()
   @type token() :: String.t()
-
-  ##########################################
-  # 1. create handle_info to delete expired token every 24 hours with Registery
-  ##########################################
-
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
@@ -58,10 +53,9 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   def get_token(user_id, token) do
-    # TODO: update update_last_used System.system_time(:second)
     case ETS.Set.match_object(table(), {:"$1", user_id, %{token: token}}) do
       {:ok, [{_token_id, ^user_id, token_info}]} ->
-        # TODO: update update_last_used System.system_time(:second)
+        save(%{token_info: Map.merge(token_info, %{last_used: System.system_time(:second)})}, user_id)
         token_info
       _ -> nil
     end

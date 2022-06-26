@@ -73,12 +73,11 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @impl true
   def init(state) do
     Logger.info("Token OTP server was started")
-    # TODO: sync dn token with ets
     # TODO: delete expierd token from ets
     # TODO: delete expierd token from db
     # TODO: after rejection db and ets chech is there any token for user if not so do MishkaUser.Acl.AclManagement.stop(item.id) and MishkaContent.Cache.BookmarkManagement.stop(item.id)
-    table = ETS.Set.new!(name: @ets_table,protection: :public,read_concurrency: true,write_concurrency: true)
-    {:ok, Map.merge(state, %{set: table})}
+    table = ETS.Set.new!(name: @ets_table, protection: :public, read_concurrency: true, write_concurrency: true)
+    {:ok, Map.merge(state, %{set: table}), {:continue, :sync_with_database}}
   end
 
   @impl true
@@ -87,6 +86,28 @@ defmodule MishkaUser.Token.TokenManagemnt do
     if reason != :normal do
       Logger.warn("Reason of Terminate #{inspect(reason)}")
     end
+  end
+
+  @impl true
+  def handle_continue(:sync_with_database, state) do
+    UserToken.revaluation_ets_token(&save(
+      %{
+        id: &1.user_id,
+        token_info:
+          %{
+            token_id: &1.id,
+            type: "refresh",
+            token: &1.token,
+            os: "linux",
+            create_time: &1.inserted_at,
+            last_used: &1.updated_at,
+            access_expires_in: &1.expire_time |> DateTime.to_unix(),
+            rel: nil
+          }
+      },
+      &1.user_id
+    ))
+    {:noreply, state}
   end
 
   defp table() do

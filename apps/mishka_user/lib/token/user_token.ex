@@ -73,6 +73,15 @@ defmodule MishkaUser.Token.UserToken do
     end)
   end
 
+  def revaluation_ets_token(action) do
+    stream = from(t in UserToken) |> MishkaDatabase.Repo.stream()
+    MishkaDatabase.Repo.transaction(fn() ->
+      stream
+      |> Task.async_stream(action, max_concurrency: 10)
+      |> Stream.run
+    end)
+  end
+
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: UserToken.__schema__(:fields)
   def allowed_fields(:string), do: UserToken.__schema__(:fields) |> Enum.map(&Atom.to_string/1)

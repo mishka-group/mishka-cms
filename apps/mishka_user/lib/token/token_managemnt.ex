@@ -1,7 +1,7 @@
 defmodule MishkaUser.Token.TokenManagemnt do
   use GenServer, restart: :temporary
   require Logger
-  alias MishkaUser.Token.MnesiaToken
+  alias MishkaUser.Token.UserToken
   @ets_table :user_token_ets_state
 
   @type params() :: map()
@@ -13,7 +13,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   def save(user_token, user_id) do
-    save_token_on_disk(user_token)
+    save_token_on_db(user_token)
     ETS.Set.put!(table(), {String.to_atom(user_token.token_info.token_id), user_id, user_token.token_info})
   end
 
@@ -73,7 +73,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @impl true
   def init(state) do
     Logger.info("Token OTP server was started")
-    # TODO: sync Mnesia token with ets MnesiaToken.get_token_by_user_id(user_id)
+    # TODO: sync Mnesia token with ets
     # TODO: delete expierd token from ets
     # TODO: delete expierd token from mnesia
     # TODO: after rejection mnesia and ets chech is there any token for user if not so do MishkaUser.Acl.AclManagement.stop(item.id) and MishkaContent.Cache.BookmarkManagement.stop(item.id)
@@ -98,16 +98,21 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
-  defp save_token_on_disk(%{id: user_id, token_info: %{type: "refresh"} = token_info}) do
-    MnesiaToken.save_different_node(
-      token_info.token_id,
-      user_id,
-      token_info.token,
-      token_info.access_expires_in,
-      token_info.create_time,
-      token_info.os
-    )
+  defp save_token_on_db(%{id: user_id, token_info: %{type: "refresh"} = token_info}) do
+    Task.Supervisor.start_child(MnesiaTokenTask, fn ->
+      MnesiaToken.create(%{
+        id: token_info.token_id,
+        token: token_info.token,
+        type: "refresh",
+        expire_time: token_info.access_expires_in,
+        extra: %{
+          os: token_info.os,
+          create_time: token_info.create_time
+        },
+        user_id: user_id,
+      })
+    end)
   end
 
-  defp save_token_on_disk(user_token), do: user_token
+  defp save_token_on_db(user_token), do: user_token
 end

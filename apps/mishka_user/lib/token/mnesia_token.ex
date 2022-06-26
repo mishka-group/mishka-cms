@@ -3,6 +3,10 @@ defmodule MishkaUser.Token.MnesiaToken do
   alias :mnesia, as: Mnesia
   require Logger
 
+  # delete_token
+  # delete_all_user_tokens
+  # save_different_node
+
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end

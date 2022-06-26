@@ -13,7 +13,7 @@ defmodule MishkaUser.Token.MnesiaToken do
   end
 
   def save_different_node(token_id, user_id, token, exp, create_time, os) do
-    Task.Supervisor.start_child(__MODULE__, fn ->
+    Task.Supervisor.start_child(MnesiaTokenTask, fn ->
       save(token_id, user_id, token, exp, create_time, os)
     end)
   end

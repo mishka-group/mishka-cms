@@ -40,7 +40,9 @@ defmodule MishkaUser.Token.UserToken do
   end
 
   def show_by_user_id(user_id) do
-    crud_get_by_field("user_id", user_id)
+    from(t in UserToken, where: t.user_id == ^user_id)
+    |> fields()
+    |> MishkaDatabase.Repo.all()
   end
 
   def delete_by_token(token) when is_binary(token) do
@@ -58,22 +60,17 @@ defmodule MishkaUser.Token.UserToken do
     |> MishkaDatabase.Repo.delete_all
   end
 
+  # Ref: https://elixirforum.com/t/48594
   def delete_expire_token() do
     stream =
       from(t in UserToken, where: t.expire_time < ^DateTime.utc_now)
       |> MishkaDatabase.Repo.stream()
 
     MishkaDatabase.Repo.transaction(fn() ->
-      Enum.to_list(stream)
+      stream
+      |> Task.async_stream(&delete(&1.id), max_concurrency: 10)
+      |> Stream.run
     end)
-    |> case do
-      {:ok, list} ->
-        list
-        |> Task.async_stream(&delete(&1.id), max_concurrency: 10)
-        |> Stream.run
-      error ->
-        IO.inspect(error)
-    end
   end
 
   @spec allowed_fields(:atom | :string) :: nil | list
@@ -87,4 +84,18 @@ defmodule MishkaUser.Token.UserToken do
   end
 
   def notify_subscribers(params, _), do: params
+
+  defp fields(query) do
+    from [t] in query,
+    order_by: [desc: t.inserted_at, desc: t.id],
+    select: %{
+      id: t.id,
+      token: t.token,
+      type: t.type,
+      expire_time: t.expire_time,
+      extra: t.extra,
+      inserted_at: t.inserted_at,
+      updated_at: t.updated_at,
+    }
+  end
 end

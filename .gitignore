@@ -71,3 +71,4 @@ apps/mishka_database/priv/repo/migrations/20220622100116_activity_migration.exs
 # Prevent test folder
 **/deployment/extensions
 **/Mnesia.nonode@nohost
+.elixir_ls

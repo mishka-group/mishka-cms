@@ -8,7 +8,7 @@ defmodule MishkaUser.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Task.Supervisor, name: MnesiaTokenTask},
+      {Task.Supervisor, name: MishkaUser.Token.UserToken},
       MishkaUser.Token.TokenManagemnt,
       {Registry, keys: :unique, name: MishkaUser.Acl.AclRegistry},
       {DynamicSupervisor, [strategy: :one_for_one, name: MishkaUser.Acl.AclOtpRunner]},

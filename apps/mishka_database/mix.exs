@@ -20,7 +20,7 @@ defmodule MishkaDatabase.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :mnesia, :mishka_translator, :phoenix_pubsub],
+      extra_applications: [:logger, :mishka_translator, :phoenix_pubsub],
       mod: {MishkaDatabase.Application, []}
     ]
   end

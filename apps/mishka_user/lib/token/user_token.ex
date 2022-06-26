@@ -44,6 +44,11 @@ defmodule MishkaUser.Token.UserToken do
     |> MishkaDatabase.Repo.delete_all
   end
 
+  def delete_by_user_id(user_id) do
+    from(t in UserToken, where: t.user_id == ^user_id)
+    |> MishkaDatabase.Repo.delete_all
+  end
+
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: UserToken.__schema__(:fields)
   def allowed_fields(:string), do: UserToken.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
@@ -58,38 +63,4 @@ defmodule MishkaUser.Token.UserToken do
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
-
-  # def delete_token(token) do
-  #   Mnesia.transaction(fn -> Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [{:"==", :"$3", "#{token}"}], [:"$$"]}]) end)
-  #   |> case do
-  #     {:atomic, data} ->
-  #       Enum.map(data, fn [id, _user_id, _token, _exp_time, _create_time, _os] -> Mnesia.dirty_delete(Token, id) end)
-  #       :ok
-  #     _ -> :ok
-  #   end
-  # end
-
-  # def delete_expierd_token(user_id) do
-  #   Mnesia.transaction(fn -> Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [{:"==", :"$2", "#{user_id}"}], [:"$$"]}]) end)
-  #   |> case do
-  #     {:atomic, data} when is_list(data) ->
-  #       Enum.map(data, fn [id, _user_id, _token, access_expires_in, _create_time, _os] ->
-  #         if access_expires_in <= System.system_time(:second) do
-  #           Mnesia.dirty_delete(Token, id)
-  #         end
-  #         :ok
-  #       end)
-  #     _ -> :ok
-  #   end
-  # end
-
-  # def delete_all_user_tokens(user_id) do
-  #   Mnesia.transaction(fn -> Mnesia.select(Token, [{{Token, :"$1", :"$2", :"$3", :"$4", :"$5", :"$6"}, [{:"==", :"$2", "#{user_id}"}], [:"$$"]}]) end)
-  #   |> case do
-  #     {:atomic, data} when is_list(data)->
-  #       Enum.map(data, fn [id, _user_id, _token, _access_expires_in, _create_time, _os] -> Mnesia.dirty_delete(Token, id) end)
-  #       :ok
-  #     _ -> :ok
-  #   end
-  # end
 end

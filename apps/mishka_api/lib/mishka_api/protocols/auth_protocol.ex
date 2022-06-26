@@ -300,7 +300,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     # clean all the token otp
     MishkaUser.Token.TokenManagemnt.delete(info.id)
     # clean all the token on disc
-    MishkaUser.Token.UserToken.delete_all_user_tokens(info.id)
+    MishkaUser.Token.UserToken.delete_by_user_id(info.id)
     # delete all user's Acl
     MishkaUser.Acl.AclManagement.stop(info.id)
 
@@ -520,7 +520,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
           # clean all the token OTP
           MishkaUser.Token.TokenManagemnt.delete(user_info.id)
           # clean all the token on disc
-          MishkaUser.Token.UserToken.delete_all_user_tokens(user_info.id)
+          MishkaUser.Token.UserToken.delete_by_user_id(user_info.id)
           # delete all randome codes of user
           RandomCode.delete_code(code, email)
           # delete all user's ACL
@@ -565,7 +565,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   def delete_token(token, user_id, conn) do
     if token.type == "refresh" do
       MishkaUser.Token.TokenManagemnt.delete_child_token(user_id, token.token)
-      MishkaUser.Token.UserToken.delete_token(token)
+      MishkaUser.Token.UserToken.delete_by_token(token)
     end
 
     MishkaUser.Token.TokenManagemnt.delete_token(user_id, token.token)
@@ -707,7 +707,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
          {:ok, :edit, _error_tag, repo_data} <- MishkaUser.User.edit(%{id: user_info.id, status: :inactive}) do
 
           RandomCode.delete_code(code, user_info.email)
-          MishkaUser.Token.UserToken.delete_all_user_tokens(user_info.id)
+          MishkaUser.Token.UserToken.delete_by_user_id(user_info.id)
           MishkaUser.Token.TokenManagemnt.delete(user_info.id)
 
           MishkaContent.General.Activity.create_activity_by_start_child(%{

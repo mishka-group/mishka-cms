@@ -151,7 +151,7 @@ defmodule MishkaHtmlWeb.AuthController do
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.delete(user_info.id)
         # clean all the token on disc
-        MishkaUser.Token.MnesiaToken.delete_all_user_tokens(user_info.id)
+        MishkaUser.Token.UserToken.delete_all_user_tokens(user_info.id)
         # delete all randome codes of user
         RandomCode.delete_code(code, user_info.email)
         # delete all user's ACL
@@ -213,7 +213,7 @@ defmodule MishkaHtmlWeb.AuthController do
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.delete(repo_data.id)
         # clean all the token on disc
-        MishkaUser.Token.MnesiaToken.delete_all_user_tokens(repo_data.id)
+        MishkaUser.Token.UserToken.delete_all_user_tokens(repo_data.id)
         # delete all randome codes of user
         RandomCode.delete_code(code, repo_data.email)
         # delete all user's ACL

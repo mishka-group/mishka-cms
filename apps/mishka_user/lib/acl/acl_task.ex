@@ -50,7 +50,7 @@ defmodule MishkaUser.Acl.AclTask do
           # clean all the token otp
           MishkaUser.Token.TokenManagemnt.delete(x.user_id)
           # clean all the token on disc
-          MishkaUser.Token.MnesiaToken.delete_all_user_tokens(x.user_id)
+          MishkaUser.Token.UserToken.delete_all_user_tokens(x.user_id)
           # delete all user's Acl
           MishkaUser.Acl.AclManagement.stop(x.user_id)
           x.user_id

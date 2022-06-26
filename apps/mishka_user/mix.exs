@@ -12,14 +12,15 @@ defmodule MishkaUser.MixProject do
       elixir: "~> 1.13",
       compilers: [:gettext | Mix.compilers()],
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      xref: [exclude: [MishkaDatabase.Schema.MishkaUser.UserToken]]
     ]
   end
 
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :mishka_database, :phoenix, :mnesia, :mishka_content, :mishka_translator, :jose],
+      extra_applications: [:logger, :phoenix, :mnesia, :jose],
       mod: {MishkaUser.Application, []}
     ]
   end

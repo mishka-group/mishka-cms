@@ -73,8 +73,20 @@ defmodule MishkaUser.Token.UserToken do
     end)
   end
 
-  def revaluation_ets_token(action) do
-    stream = from(t in UserToken) |> MishkaDatabase.Repo.stream()
+  def revaluation_user_token_as_stream(action) do
+    from(t in UserToken)
+    |> MishkaDatabase.Repo.stream()
+    |> run_action_repo_stream(action)
+  end
+
+  def revaluation_user_token_as_stream(action, filters) do
+    from(t in UserToken)
+    |> convert_filters_to_where(filters)
+    |> MishkaDatabase.Repo.stream()
+    |> run_action_repo_stream(action)
+  end
+
+  defp run_action_repo_stream(stream, action) do
     MishkaDatabase.Repo.transaction(fn() ->
       stream
       |> Task.async_stream(action, max_concurrency: 10)
@@ -106,5 +118,11 @@ defmodule MishkaUser.Token.UserToken do
       inserted_at: t.inserted_at,
       updated_at: t.updated_at,
     }
+  end
+
+  defp convert_filters_to_where(query, filters) do
+    Enum.reduce(filters, query, fn {key, value}, query ->
+      from [t] in query, where: field(t, ^key) == ^value
+    end)
   end
 end

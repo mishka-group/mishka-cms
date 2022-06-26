@@ -122,7 +122,12 @@ defmodule MishkaUser.Token.UserToken do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from [t] in query, where: field(t, ^key) == ^value
+      case key do
+        :expire_time ->
+          from [t] in query, where: field(t, ^key) > ^value
+        _ ->
+          from [t] in query, where: field(t, ^key) == ^value
+      end
     end)
   end
 end

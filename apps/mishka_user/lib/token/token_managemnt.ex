@@ -110,7 +110,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
           }
       },
       &1.user_id
-    ))
+    ), %{expire_time: DateTime.utc_now()})
     {:noreply, state}
   end
 

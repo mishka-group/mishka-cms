@@ -39,6 +39,10 @@ defmodule MishkaUser.Token.UserToken do
     crud_get_by_field("token", token)
   end
 
+  def show_by_user_id(user_id) do
+    crud_get_by_field("user_id", user_id)
+  end
+
   def delete_by_token(token) do
     from(t in UserToken, where: t.token == ^token)
     |> MishkaDatabase.Repo.delete_all
@@ -57,10 +61,5 @@ defmodule MishkaUser.Token.UserToken do
   def notify_subscribers({:ok, _, :user_token, repo_data} = params, type_send) do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "user_token", {type_send, :ok, repo_data})
     params
-  end
-
-
-  def start_link(args \\ []) do
-    GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 end

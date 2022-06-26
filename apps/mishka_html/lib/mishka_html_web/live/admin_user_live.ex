@@ -4,6 +4,24 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   alias MishkaUser.User
   @error_atom :user
   @allowed_fields_output ["full_name", "username", "email", "status", "id"]
+  @drop_list [
+    :__struct__,
+    :__meta__,
+    :activities,
+    :blog_likes,
+    :bookmarks,
+    :comments,
+    :identities,
+    :inserted_at,
+    :updated_at,
+    :notifs,
+    :password_hash,
+    :roles,
+    :subscriptions,
+    :users_roles,
+    :id,
+    :user_tokens
+  ]
   alias MishkaContent.Cache.ContentDraftManagement
 
   use MishkaHtml.Helpers.LiveCRUD,
@@ -170,7 +188,7 @@ defmodule MishkaHtmlWeb.AdminUserLive do
   end
 
   defp creata_user_state(repo_data) do
-    Map.drop(repo_data, [:__struct__, :__meta__, :activities, :blog_likes, :bookmarks, :comments, :identities, :inserted_at, :updated_at, :notifs, :password_hash, :roles, :subscriptions, :users_roles, :id])
+    Map.drop(repo_data, @drop_list)
     |> Map.to_list()
     |> Enum.map(fn {key, value} ->
       %{

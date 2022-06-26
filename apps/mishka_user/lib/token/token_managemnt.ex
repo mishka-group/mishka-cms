@@ -33,12 +33,12 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   def delete(user_id) do
-    # TODO: delete all the token of mnesia => refresh
+    # TODO: delete all the token of db => refresh
     ETS.Set.match_delete(table(), {:_, user_id, :_})
   end
 
   def delete_token(user_id, token) do
-    # TODO: delete all the token of mnesia => refresh
+    # TODO: delete all the token of db => refresh
     ETS.Set.match_delete(table(), {:_, user_id, %{token: token}})
     get_all(user_id)
   end
@@ -73,10 +73,10 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @impl true
   def init(state) do
     Logger.info("Token OTP server was started")
-    # TODO: sync Mnesia token with ets
+    # TODO: sync dn token with ets
     # TODO: delete expierd token from ets
-    # TODO: delete expierd token from mnesia
-    # TODO: after rejection mnesia and ets chech is there any token for user if not so do MishkaUser.Acl.AclManagement.stop(item.id) and MishkaContent.Cache.BookmarkManagement.stop(item.id)
+    # TODO: delete expierd token from db
+    # TODO: after rejection db and ets chech is there any token for user if not so do MishkaUser.Acl.AclManagement.stop(item.id) and MishkaContent.Cache.BookmarkManagement.stop(item.id)
     table = ETS.Set.new!(name: @ets_table,protection: :public,read_concurrency: true,write_concurrency: true)
     {:ok, Map.merge(state, %{set: table})}
   end
@@ -99,7 +99,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   defp save_token_on_db(%{id: user_id, token_info: %{type: "refresh"} = token_info}) do
-    Task.Supervisor.start_child(MnesiaTokenTask, fn ->
+    Task.Supervisor.start_child(MishkaUser.Token.UserToken, fn ->
       UserToken.create(%{
         id: token_info.token_id,
         token: token_info.token,

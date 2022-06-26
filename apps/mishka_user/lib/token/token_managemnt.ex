@@ -104,7 +104,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
         id: token_info.token_id,
         token: token_info.token,
         type: "refresh",
-        expire_time: token_info.access_expires_in,
+        expire_time: DateTime.from_unix(token_info.access_expires_in),
         extra: %{
           os: token_info.os,
           create_time: token_info.create_time

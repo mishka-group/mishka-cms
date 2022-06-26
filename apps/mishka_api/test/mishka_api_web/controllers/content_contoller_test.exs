@@ -16,7 +16,6 @@ defmodule MishkaApiWeb.ContentControllerTest do
 
 
   setup_all do
-    start_supervised(MishkaUser.Token.UserToken)
     :ok
   end
 

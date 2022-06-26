@@ -62,7 +62,7 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
         # clean all the token OTP
         MishkaUser.Token.TokenManagemnt.delete(user_info.id)
         # clean all the token on disc
-        MishkaUser.Token.UserToken.delete_all_user_tokens(user_info.id)
+        MishkaUser.Token.UserToken.delete_by_user_id(user_info.id)
         # delete all randome codes of user
         RandomCode.delete_code(socket.assigns.random_link, repo_data.email)
         # delete all user's ACL

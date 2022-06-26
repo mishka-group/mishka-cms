@@ -100,7 +100,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   defp save_token_on_db(%{id: user_id, token_info: %{type: "refresh"} = token_info}) do
     Task.Supervisor.start_child(MnesiaTokenTask, fn ->
-      MnesiaToken.create(%{
+      UserToken.create(%{
         id: token_info.token_id,
         token: token_info.token,
         type: "refresh",

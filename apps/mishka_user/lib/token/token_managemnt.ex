@@ -33,12 +33,16 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   def delete(user_id) do
-    # TODO: delete all the token of db => refresh
+    Task.Supervisor.start_child(UserToken, fn ->
+      UserToken.revaluation_user_token_as_stream(&(UserToken.delete(&1.id)), %{user_id: user_id})
+    end)
     ETS.Set.match_delete(table(), {:_, user_id, :_})
   end
 
   def delete_token(user_id, token) do
-    # TODO: delete all the token of db => refresh
+    Task.Supervisor.start_child(UserToken, fn ->
+      UserToken.revaluation_user_token_as_stream(&(UserToken.delete(&1.id)), %{token: token})
+    end)
     ETS.Set.match_delete(table(), {:_, user_id, %{token: token}})
     get_all(user_id)
   end
@@ -90,7 +94,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   @impl true
   def handle_continue(:sync_with_database, state) do
-    UserToken.revaluation_ets_token(&save(
+    UserToken.revaluation_user_token_as_stream(&save(
       %{
         id: &1.user_id,
         token_info:
@@ -120,7 +124,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   defp save_token_on_db(%{id: user_id, token_info: %{type: "refresh"} = token_info}) do
-    Task.Supervisor.start_child(MishkaUser.Token.UserToken, fn ->
+    Task.Supervisor.start_child(UserToken, fn ->
       UserToken.create(%{
         id: token_info.token_id,
         token: token_info.token,

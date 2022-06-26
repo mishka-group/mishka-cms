@@ -43,12 +43,17 @@ defmodule MishkaUser.Token.UserToken do
     crud_get_by_field("user_id", user_id)
   end
 
-  def delete_by_token(token) do
+  def delete_by_token(token) when is_binary(token) do
     from(t in UserToken, where: t.token == ^token)
     |> MishkaDatabase.Repo.delete_all
   end
 
-  def delete_by_user_id(user_id) do
+  def delete_by_token(token_info) do
+    from(t in UserToken, where: t.token == ^token_info.token)
+    |> MishkaDatabase.Repo.delete_all
+  end
+
+  def delete_by_user_id(user_id) when is_binary(user_id) do
     from(t in UserToken, where: t.user_id == ^user_id)
     |> MishkaDatabase.Repo.delete_all
   end
@@ -62,4 +67,6 @@ defmodule MishkaUser.Token.UserToken do
     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "user_token", {type_send, :ok, repo_data})
     params
   end
+
+  def notify_subscribers(params, _), do: params
 end

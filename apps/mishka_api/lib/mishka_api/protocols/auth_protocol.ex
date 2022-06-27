@@ -552,13 +552,13 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         Map.take(user_info, allowed_fields_output |> Enum.map(&String.to_existing_atom/1)),
       user_tokens_info:
         MishkaUser.Token.TokenManagemnt.get_all(user_info.id)
-        |> Enum.map(fn x ->
+        |> Enum.map(fn {_user_id, _user_token, token_info} ->
           %{
-            access_expires_in: x.access_expires_in,
-            create_time: x.create_time,
-            last_used: x.last_used,
-            os: x.os,
-            type: x.type
+            access_expires_in: token_info.access_expires_in,
+            create_time: token_info.create_time,
+            last_used: token_info.last_used,
+            os: token_info.os,
+            type: token_info.type
           }
         end)
     })

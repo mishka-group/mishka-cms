@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.Client.Home.NormalBlockComponent do
   use MishkaHtmlWeb, :live_component
 
-
   def render(assigns) do
     ~H"""
     <article class="col-sm-3 home-blog-posts-normal-with-body rtl home-image-post">

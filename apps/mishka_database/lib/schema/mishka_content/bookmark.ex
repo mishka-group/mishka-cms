@@ -7,13 +7,15 @@ defmodule MishkaDatabase.Schema.MishkaContent.Bookmark do
   @foreign_key_type :binary_id
 
   schema "bookmarks" do
-
     field(:status, ContentStatusEnum, default: :active)
     field(:section, BookmarkSection)
     field(:section_id, :binary_id, primary_key: false)
     field(:extra, :map)
 
-    belongs_to :users, MishkaDatabase.Schema.MishkaUser.User, foreign_key: :user_id, type: :binary_id
+    belongs_to(:users, MishkaDatabase.Schema.MishkaUser.User,
+      foreign_key: :user_id,
+      type: :binary_id
+    )
 
     timestamps(type: :utc_datetime)
   end
@@ -25,11 +27,23 @@ defmodule MishkaDatabase.Schema.MishkaContent.Bookmark do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_required(@all_required,
+      message:
+        MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد")
+    )
     |> MishkaDatabase.validate_binary_id(:user_id)
     |> MishkaDatabase.validate_binary_id(:section_id)
-    |> foreign_key_constraint(:user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"))
-    |> unique_constraint(:section, name: :index_bookmarks_on_section_and_section_id_and_user_id, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این بخش قبلا بوکمارک شده است"))
+    |> foreign_key_constraint(:user_id,
+      message:
+        MishkaTranslator.Gettext.dgettext(
+          "db_schema_content",
+          "ممکن است فیلد مذکور اشتباه باشد یا برای حذف آن اگر اقدام می کنید برای آن وابستگی وجود داشته باشد"
+        )
+    )
+    |> unique_constraint(:section,
+      name: :index_bookmarks_on_section_and_section_id_and_user_id,
+      message:
+        MishkaTranslator.Gettext.dgettext("db_schema_content", "این بخش قبلا بوکمارک شده است")
+    )
   end
-
 end

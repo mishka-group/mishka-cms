@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.LoginLive do
   use MishkaHtmlWeb, :live_view
 
-
   @impl true
   def render(assigns) do
     Phoenix.View.render(MishkaHtmlWeb.ClientAuthView, "login_live.html", assigns)
@@ -10,8 +9,11 @@ defmodule MishkaHtmlWeb.LoginLive do
   @impl true
   def mount(params, session, socket) do
     Process.send_after(self(), :menu, 100)
-    user_changeset = %MishkaDatabase.Schema.MishkaUser.User{}
-    |> MishkaDatabase.Schema.MishkaUser.User.login_changeset()
+
+    user_changeset =
+      %MishkaDatabase.Schema.MishkaUser.User{}
+      |> MishkaDatabase.Schema.MishkaUser.User.login_changeset()
+
     user_ip = get_connect_info(socket, :peer_data).address
 
     socket =
@@ -26,6 +28,7 @@ defmodule MishkaHtmlWeb.LoginLive do
         user_ip: user_ip,
         input: params
       )
+
     {:ok, socket}
   end
 
@@ -40,6 +43,7 @@ defmodule MishkaHtmlWeb.LoginLive do
         changeset: changeset,
         trigger_submit: changeset.valid?
       )
+
     {:noreply, socket}
   end
 
@@ -49,16 +53,24 @@ defmodule MishkaHtmlWeb.LoginLive do
     changeset = user_changeset(filtered_params)
 
     socket =
-      if(changeset.valid?, do: push_event(socket, "update_recaptcha", %{client_side_code: MishkaInstaller.Helper.Setting.get("google_captcha")["client"]}), else: socket)
-      |> assign(
-        changeset: changeset
+      if(changeset.valid?,
+        do:
+          push_event(socket, "update_recaptcha", %{
+            client_side_code: MishkaInstaller.Helper.Setting.get("google_captcha")["client"]
+          }),
+        else: socket
       )
+      |> assign(changeset: changeset)
+
     {:noreply, socket}
   end
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.LoginLive", socket.assigns.self_pid})
+    ClientMenuAndNotif.notify_subscribers(
+      {:menu, "Elixir.MishkaHtmlWeb.LoginLive", socket.assigns.self_pid}
+    )
+
     {:noreply, socket}
   end
 
@@ -75,6 +87,7 @@ defmodule MishkaHtmlWeb.LoginLive do
 
   defp seo_tags(socket) do
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+
     %{
       image: "#{site_link}/images/mylogo.png",
       title: "ورود کاربران",

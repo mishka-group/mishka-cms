@@ -25,7 +25,7 @@ defmodule MishkaContent.Cache.BookmarkManagement do
       GenServer.cast(pid, {:push, element, section_id})
     else
       {:error, :get_user_pid} ->
-        BookmarkDynamicSupervisor.start_job([id: user_id, type: "user_bookmarks"])
+        BookmarkDynamicSupervisor.start_job(id: user_id, type: "user_bookmarks")
         save(element, user_id, section_id)
     end
   end
@@ -36,7 +36,7 @@ defmodule MishkaContent.Cache.BookmarkManagement do
       GenServer.call(pid, :pop)
     else
       {:error, :get_user_pid} ->
-        BookmarkDynamicSupervisor.start_job([id: user_id, type: "user_bookmarks"])
+        BookmarkDynamicSupervisor.start_job(id: user_id, type: "user_bookmarks")
         get_all(user_id)
     end
   end
@@ -47,7 +47,7 @@ defmodule MishkaContent.Cache.BookmarkManagement do
       GenServer.call(pid, {:pop, section_id})
     else
       {:error, :get_user_pid} ->
-        BookmarkDynamicSupervisor.start_job([id: user_id, type: "user_bookmarks"])
+        BookmarkDynamicSupervisor.start_job(id: user_id, type: "user_bookmarks")
         get_record(user_id, section_id)
     end
   end
@@ -62,7 +62,7 @@ defmodule MishkaContent.Cache.BookmarkManagement do
       GenServer.cast(pid, :delete)
     else
       {:error, :get_user_pid} ->
-        BookmarkDynamicSupervisor.start_job([id: user_id, type: "user_bookmarks"])
+        BookmarkDynamicSupervisor.start_job(id: user_id, type: "user_bookmarks")
         delete(user_id)
     end
   end
@@ -73,7 +73,7 @@ defmodule MishkaContent.Cache.BookmarkManagement do
       GenServer.cast(pid, {:delete, section_id})
     else
       {:error, :get_user_pid} ->
-        BookmarkDynamicSupervisor.start_job([id: user_id, type: "user_bookmarks"])
+        BookmarkDynamicSupervisor.start_job(id: user_id, type: "user_bookmarks")
         delete(user_id, section_id)
     end
   end
@@ -84,7 +84,7 @@ defmodule MishkaContent.Cache.BookmarkManagement do
       GenServer.cast(pid, :stop)
     else
       {:error, :get_user_pid} ->
-        BookmarkDynamicSupervisor.start_job([id: user_id, type: "user_bookmarks"])
+        BookmarkDynamicSupervisor.start_job(id: user_id, type: "user_bookmarks")
         stop(user_id)
     end
   end
@@ -111,7 +111,7 @@ defmodule MishkaContent.Cache.BookmarkManagement do
 
   @impl true
   def handle_cast({:push, element, section_id}, state) do
-    new_bookmarks = Enum.reject(state.user_bookmarks, fn bk -> bk.section_id == section_id  end)
+    new_bookmarks = Enum.reject(state.user_bookmarks, fn bk -> bk.section_id == section_id end)
     {:noreply, %{id: state.id, user_bookmarks: [element | new_bookmarks]}}
   end
 
@@ -122,7 +122,7 @@ defmodule MishkaContent.Cache.BookmarkManagement do
 
   @impl true
   def handle_cast({:delete, section_id}, state) do
-    new_state = Enum.reject(state.user_bookmarks, fn bk -> bk.section_id == section_id  end)
+    new_state = Enum.reject(state.user_bookmarks, fn bk -> bk.section_id == section_id end)
     {:noreply, %{id: state.id, user_bookmarks: new_state}}
   end
 
@@ -131,7 +131,6 @@ defmodule MishkaContent.Cache.BookmarkManagement do
     Logger.info("OTP User Bookmark server was stoped and clean State")
     {:stop, :normal, stats}
   end
-
 
   @impl true
   def terminate(reason, _state) do

@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.Admin.Form.UploadComponent do
   use MishkaHtmlWeb, :live_component
 
-
   def render(assigns) do
     ~H"""
         <div class="col-sm-6 admin-upload-form vazir">

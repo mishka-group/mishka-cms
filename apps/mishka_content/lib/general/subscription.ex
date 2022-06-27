@@ -2,12 +2,13 @@ defmodule MishkaContent.General.Subscription do
   alias MishkaDatabase.Schema.MishkaContent.Subscription
 
   import Ecto.Query
-  use MishkaDeveloperTools.DB.CRUD,
-          module: Subscription,
-          error_atom: :subscription,
-          repo: MishkaDatabase.Repo
 
-  @type data_uuid() :: Ecto.UUID.t
+  use MishkaDeveloperTools.DB.CRUD,
+    module: Subscription,
+    error_atom: :subscription,
+    repo: MishkaDatabase.Repo
+
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :subscription
   @type repo_data() :: Ecto.Schema.t()
@@ -72,20 +73,32 @@ defmodule MishkaContent.General.Subscription do
   end
 
   @spec show_by_section_id(String.t()) ::
-          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+          {:error, :get_record_by_field, error_tag()}
+          | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_section_id(section_id) do
     crud_get_by_field("section_id", section_id)
   end
 
-  @spec subscriptions([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
+  @spec subscriptions([
+          {:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()},
+          ...
+        ]) :: Scrivener.Page.t()
   def subscriptions(conditions: {page, page_size}, filters: filters) do
-    from(sub in Subscription, join: user in assoc(sub, :users)) |> convert_filters_to_where(filters)
+    from(sub in Subscription, join: user in assoc(sub, :users))
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
     db_error ->
       MishkaContent.db_content_activity_error("subscription", "read", db_error)
-      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+
+      %Scrivener.Page{
+        entries: [],
+        page_number: 1,
+        page_size: page_size,
+        total_entries: 0,
+        total_pages: 1
+      }
   end
 
   defp convert_filters_to_where(query, filters) do
@@ -99,29 +112,30 @@ defmodule MishkaContent.General.Subscription do
           like = "%#{value}%"
           from([sub, user] in query, where: like(user.full_name, ^like))
 
-        _ -> from [sub, user] in query, where: field(sub, ^key) == ^value
+        _ ->
+          from([sub, user] in query, where: field(sub, ^key) == ^value)
       end
     end)
   end
 
   defp fields(query) do
-    from [sub, user] in query,
-    order_by: [desc: sub.inserted_at, desc: sub.id],
-    select: %{
-      id: sub.id,
-      status: sub.status,
-      section: sub.section,
-      section_id: sub.section_id,
-      expire_time: sub.expire_time,
-      extra: sub.extra,
-      user_full_name: user.full_name,
-      user_id: user.id,
-      username: user.username,
-      inserted_at: sub.inserted_at,
-      updated_at: sub.updated_at
-    }
+    from([sub, user] in query,
+      order_by: [desc: sub.inserted_at, desc: sub.id],
+      select: %{
+        id: sub.id,
+        status: sub.status,
+        section: sub.section,
+        section_id: sub.section_id,
+        expire_time: sub.expire_time,
+        extra: sub.extra,
+        user_full_name: user.full_name,
+        user_id: user.id,
+        username: user.username,
+        inserted_at: sub.inserted_at,
+        updated_at: sub.updated_at
+      }
+    )
   end
-
 
   def send_notif_to_subscribed_users(section, section_id, notif_info) do
     from(sub in Subscription,

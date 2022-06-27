@@ -29,7 +29,6 @@ defmodule MishkaApiWeb.Router do
     post "/logout", AuthController, :logout
     post "/refresh-token", AuthController, :refresh_token
 
-
     # these action do not need to token check
     post "/register", AuthController, :register
     post "/login", AuthController, :login
@@ -63,7 +62,6 @@ defmodule MishkaApiWeb.Router do
     post "/editor-categories", ContentController, :editor_categories
     post "/category", ContentController, :category
 
-
     post "/create-post", ContentController, :create_post
     post "/edit-post", ContentController, :edit_post
     post "/delete-post", ContentController, :delete_post
@@ -73,10 +71,8 @@ defmodule MishkaApiWeb.Router do
     post "/post", ContentController, :post
     post "/editor-post", ContentController, :editor_post
 
-
     post "/like-post", ContentController, :like_post
     post "/delete-like-post", ContentController, :delete_post_like
-
 
     post "/comment", ContentController, :comment
     post "/editor-comment", ContentController, :editor_comment
@@ -87,10 +83,8 @@ defmodule MishkaApiWeb.Router do
     post "/delete-comment", ContentController, :delete_comment
     post "/destroy-comment", ContentController, :destroy_comment
 
-
     post "/like-comment", ContentController, :like_comment
     post "/delete-comment-like", ContentController, :delete_comment_like
-
 
     post "/create-tag", ContentController, :create_tag
     post "/edit-tag", ContentController, :edit_tag
@@ -102,13 +96,11 @@ defmodule MishkaApiWeb.Router do
     post "/editor-tag-posts", ContentController, :editor_tag_posts
     post "/post-tags", ContentController, :post_tags
 
-
     post "/create-bookmark", ContentController, :create_bookmark
     post "/delete-bookmark", ContentController, :delete_bookmark
 
     post "/create-subscription", ContentController, :create_subscription
     post "/delete-subscription", ContentController, :delete_subscription
-
 
     post "/create-blog-link", ContentController, :create_blog_link
     post "/edit-blog-link", ContentController, :edit_blog_link
@@ -116,22 +108,19 @@ defmodule MishkaApiWeb.Router do
     post "/links", ContentController, :links
     post "/editor-links", ContentController, :editor_links
 
-
     post "/notifs", ContentController, :notifs
     post "/editor-notifs", ContentController, :editor_notifs
     post "/send-notif", ContentController, :send_notif
 
-
     post "/authors", ContentController, :authors
     post "/create-author", ContentController, :create_author
     post "/delete-author", ContentController, :delete_author
-
   end
 
   @impl Plug.ErrorHandler
   def handle_errors(conn, %{kind: kind, reason: reason, stack: _stack}) do
-    if !is_nil(Map.get(reason, :conn)), do:
-        MishkaContent.General.Activity.router_catch(conn, kind, reason)
+    if !is_nil(Map.get(reason, :conn)),
+      do: MishkaContent.General.Activity.router_catch(conn, kind, reason)
   after
     conn
   end

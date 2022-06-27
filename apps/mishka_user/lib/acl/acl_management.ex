@@ -25,7 +25,7 @@ defmodule MishkaUser.Acl.AclManagement do
       GenServer.cast(pid, {:push, element})
     else
       {:error, :get_user_pid} ->
-        AclDynamicSupervisor.start_job([id: user_id, type: "user_permission"])
+        AclDynamicSupervisor.start_job(id: user_id, type: "user_permission")
         save(element, user_id)
     end
   end
@@ -36,8 +36,17 @@ defmodule MishkaUser.Acl.AclManagement do
       GenServer.call(pid, :pop)
     else
       {:error, :get_user_pid} ->
-        AclDynamicSupervisor.start_job([id: user_id, type: "user_permission"])
-        save(%{id: user_id, user_permission: MishkaUser.User.permissions(user_id), created: System.system_time(:second)}, user_id)
+        AclDynamicSupervisor.start_job(id: user_id, type: "user_permission")
+
+        save(
+          %{
+            id: user_id,
+            user_permission: MishkaUser.User.permissions(user_id),
+            created: System.system_time(:second)
+          },
+          user_id
+        )
+
         get_all(user_id)
     end
   end
@@ -48,7 +57,7 @@ defmodule MishkaUser.Acl.AclManagement do
       GenServer.call(pid, :delete)
     else
       {:error, :get_user_pid} ->
-        AclDynamicSupervisor.start_job([id: user_id, type: "user_permission"])
+        AclDynamicSupervisor.start_job(id: user_id, type: "user_permission")
         delete(user_id)
     end
   end
@@ -59,7 +68,7 @@ defmodule MishkaUser.Acl.AclManagement do
       GenServer.cast(pid, :stop)
     else
       {:error, :get_user_pid} ->
-        AclDynamicSupervisor.start_job([id: user_id, type: "user_permission"])
+        AclDynamicSupervisor.start_job(id: user_id, type: "user_permission")
         stop(user_id)
     end
   end
@@ -95,12 +104,12 @@ defmodule MishkaUser.Acl.AclManagement do
 
   @impl true
   def handle_info({:update_user_permissions, user_id}, _state) do
-    new_state =
-      %{
-        id: user_id,
-        user_permission: MishkaUser.User.permissions(user_id),
-        created: System.system_time(:second)
-      }
+    new_state = %{
+      id: user_id,
+      user_permission: MishkaUser.User.permissions(user_id),
+      created: System.system_time(:second)
+    }
+
     {:noreply, new_state}
   end
 
@@ -109,6 +118,7 @@ defmodule MishkaUser.Acl.AclManagement do
     if reason != :normal do
       Logger.warn("Reason of Terminate #{inspect(reason)}")
     end
+
     # TODO: send error to log server
   end
 

@@ -2,7 +2,6 @@ defmodule MishkaHtmlWeb.Router do
   use MishkaHtmlWeb, :router
   use Plug.ErrorHandler
 
-
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -107,13 +106,13 @@ defmodule MishkaHtmlWeb.Router do
 
   @impl Plug.ErrorHandler
   def handle_errors(conn, %{kind: kind, reason: reason, stack: _stack}) do
-    if !is_nil(Map.get(reason, :conn)), do:
-        MishkaContent.General.Activity.router_catch(conn, kind, reason)
+    if !is_nil(Map.get(reason, :conn)),
+      do: MishkaContent.General.Activity.router_catch(conn, kind, reason)
   after
     conn
   end
 
-  if Mix.env == :dev do
+  if Mix.env() == :dev do
     # If using Phoenix
     forward "/sent_emails", Bamboo.SentEmailViewerPlug
   end

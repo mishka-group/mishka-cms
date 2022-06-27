@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
   use MishkaHtmlWeb, :live_component
 
-
   def render(assigns) do
     ~H"""
       <main class="form-signin vazir">
@@ -84,5 +83,4 @@ defmodule MishkaHtmlWeb.Client.Register.RegisterFormComponent do
       </main>
     """
   end
-
 end

@@ -13,7 +13,6 @@ import Config
 #   url: [host: System.get_env("CMS_DOMAIN_NAME"), port: System.get_env("CMS_PORT")],
 #   cache_static_manifest: "priv/static/cache_manifest.json"
 
-
 # config :mishka_api, MishkaApiWeb.Endpoint,
 #   url: [host: System.get_env("API_DOMAIN_NAME"), port: System.get_env("API_PORT")]
 

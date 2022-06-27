@@ -2,8 +2,7 @@ defmodule MishkaUser.Acl.AclTask do
   use GenServer
   require Logger
 
-  @type data_uuid() :: Ecto.UUID.t
-
+  @type data_uuid() :: Ecto.UUID.t()
 
   @spec start_link(keyword() | list() | tuple() | map()) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(args \\ []) do
@@ -29,12 +28,15 @@ defmodule MishkaUser.Acl.AclTask do
   @impl true
   def handle_cast({:update_role, role_id}, state) do
     {:ok, records} = MishkaUser.Acl.UserRole.roles(role_id)
+
     Enum.map(records, fn x ->
       case MishkaUser.Acl.AclDynamicSupervisor.get_user_pid(x.user_id) do
         {:ok, :get_user_pid, pid} ->
           Process.send_after(pid, {:update_user_permissions, x.user_id}, 100)
           x.user_id
-        _ -> nil
+
+        _ ->
+          nil
       end
     end)
 
@@ -44,6 +46,7 @@ defmodule MishkaUser.Acl.AclTask do
   @impl true
   def handle_cast({:delete_role, role_id}, state) do
     {:ok, records} = MishkaUser.Acl.UserRole.roles(role_id)
+
     Enum.map(records, fn x ->
       case MishkaUser.Acl.AclDynamicSupervisor.get_user_pid(x.user_id) do
         {:ok, :get_user_pid, _pid} ->
@@ -54,10 +57,12 @@ defmodule MishkaUser.Acl.AclTask do
           # delete all user's Acl
           MishkaUser.Acl.AclManagement.stop(x.user_id)
           x.user_id
-        _ -> nil
+
+        _ ->
+          nil
       end
     end)
+
     {:noreply, state}
   end
-
 end

@@ -1,15 +1,14 @@
 defmodule MishkaContent.General.CommentLike do
-
   alias MishkaDatabase.Schema.MishkaContent.CommentLike
 
-
   import Ecto.Query
-  use MishkaDeveloperTools.DB.CRUD,
-          module: CommentLike,
-          error_atom: :comment_like,
-          repo: MishkaDatabase.Repo
 
-  @type data_uuid() :: Ecto.UUID.t
+  use MishkaDeveloperTools.DB.CRUD,
+    module: CommentLike,
+    error_atom: :comment_like,
+    repo: MishkaDatabase.Repo
+
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :comment_like
   @type repo_data() :: Ecto.Schema.t()
@@ -80,11 +79,11 @@ defmodule MishkaContent.General.CommentLike do
       {:error, :show_by_user_and_comment_id, :cast_error}
   end
 
-
   @spec user_liked :: Ecto.Query.t()
   def user_liked() do
     from(like in CommentLike,
-    select: %{comment_id: like.comment_id, user_id: like.user_id})
+      select: %{comment_id: like.comment_id, user_id: like.user_id}
+    )
   end
 
   @spec allowed_fields(:atom | :string) :: nil | list

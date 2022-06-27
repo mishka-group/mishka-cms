@@ -4,13 +4,12 @@ defmodule MishkaDatabase do
   """
   import Ecto.Changeset
 
-
   @spec translate_errors(Ecto.Changeset.t()) :: %{optional(atom) => [binary | map]}
   def translate_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
-        Enum.reduce(opts, msg, fn {key, value}, acc ->
-          String.replace(acc, "%{#{key}}", to_string(value))
-        end)
+      Enum.reduce(opts, msg, fn {key, value}, acc ->
+        String.replace(acc, "%{#{key}}", to_string(value))
+      end)
     end)
   end
 
@@ -18,7 +17,7 @@ defmodule MishkaDatabase do
   def convert_string_map_to_atom_map(map) do
     map
     |> Map.new(fn {k, v} ->
-        {String.to_existing_atom(k), v}
+      {String.to_existing_atom(k), v}
     end)
   end
 
@@ -32,7 +31,7 @@ defmodule MishkaDatabase do
     end)
   end
 
-  @spec uuid(any) :: {:error, :uuid} | {:ok, :uuid, Ecto.UUID.t}
+  @spec uuid(any) :: {:error, :uuid} | {:ok, :uuid, Ecto.UUID.t()}
   def uuid(id) do
     case Ecto.UUID.cast(id) do
       {:ok, record_id} -> {:ok, :uuid, record_id}

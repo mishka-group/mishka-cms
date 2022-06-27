@@ -1,12 +1,14 @@
 defmodule MishkaContent.Cache.ContentDraftDynamicSupervisor do
-
   def start_job(args) do
-    DynamicSupervisor.start_child(MishkaContent.Cache.ContentDraftOtpRunner, {MishkaContent.Cache.ContentDraftManagement, args})
+    DynamicSupervisor.start_child(
+      MishkaContent.Cache.ContentDraftOtpRunner,
+      {MishkaContent.Cache.ContentDraftManagement, args}
+    )
   end
 
   def running_imports(section: section) do
     match_all = {:"$1", :"$2", :"$3"}
-    guards = [{:"==", :"$3", section}]
+    guards = [{:==, :"$3", section}]
     map_result = [%{id: :"$1", pid: :"$2", section: :"$3"}]
     Registry.select(MishkaContent.Cache.ContentDraftRegistry, [{match_all, guards, map_result}])
   end

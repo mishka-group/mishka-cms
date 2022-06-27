@@ -1,13 +1,13 @@
 defmodule MishkaUser.Acl.UserRole do
   alias MishkaDatabase.Schema.MishkaUser.UserRole
   import Ecto.Query
+
   use MishkaDeveloperTools.DB.CRUD,
-          module: UserRole,
-          error_atom: :user_role,
-          repo: MishkaDatabase.Repo
+    module: UserRole,
+    error_atom: :user_role,
+    repo: MishkaDatabase.Repo
 
-
-  @type data_uuid() :: Ecto.UUID.t
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :user_role
   @type repo_data() :: Ecto.Schema.t()
@@ -46,11 +46,11 @@ defmodule MishkaUser.Acl.UserRole do
   end
 
   @spec show_by_user_id(data_uuid()) ::
-  {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+          {:error, :get_record_by_field, error_tag()}
+          | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_user_id(user_id) do
     crud_get_by_field("user_id", user_id)
   end
-
 
   @spec delete_user_role(data_uuid()) ::
           {:error, :delete_user_role, :not_found}
@@ -66,13 +66,18 @@ defmodule MishkaUser.Acl.UserRole do
 
   @spec roles(data_uuid()) :: any
   def roles(role_id) do
-    stream = from(u in UserRole, where: u.role_id == ^role_id,
-    select: %{
-      id: u.id, user_id: u.user_id, role_id: u.role_id
-    })
-    |> MishkaDatabase.Repo.stream()
+    stream =
+      from(u in UserRole,
+        where: u.role_id == ^role_id,
+        select: %{
+          id: u.id,
+          user_id: u.user_id,
+          role_id: u.role_id
+        }
+      )
+      |> MishkaDatabase.Repo.stream()
 
-    MishkaDatabase.Repo.transaction(fn() ->
+    MishkaDatabase.Repo.transaction(fn ->
       Enum.to_list(stream)
     end)
   end

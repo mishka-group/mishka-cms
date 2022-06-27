@@ -14,7 +14,9 @@ defmodule MishkaHtmlWeb.HomeLive do
       subscribe()
       Post.subscribe()
     end
+
     Process.send_after(self(), :menu, 100)
+
     socket =
       assign(socket,
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "صفحه اصلی وب سایت تگرگ"),
@@ -24,8 +26,14 @@ defmodule MishkaHtmlWeb.HomeLive do
         page_size: 12,
         filters: %{},
         page: 1,
-        posts: Post.posts(conditions: {1, 12}, filters: %{}, user_id: Map.get(session, "user_id")),
-        featured_posts: Post.posts(conditions: {1, 5}, filters: %{priority: "featured"}, user_id: Map.get(session, "user_id")),
+        posts:
+          Post.posts(conditions: {1, 12}, filters: %{}, user_id: Map.get(session, "user_id")),
+        featured_posts:
+          Post.posts(
+            conditions: {1, 5},
+            filters: %{priority: "featured"},
+            user_id: Map.get(session, "user_id")
+          ),
         self_pid: self()
       )
 
@@ -34,13 +42,22 @@ defmodule MishkaHtmlWeb.HomeLive do
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.HomeLive", socket.assigns.self_pid})
+    ClientMenuAndNotif.notify_subscribers(
+      {:menu, "Elixir.MishkaHtmlWeb.HomeLive", socket.assigns.self_pid}
+    )
+
     {:noreply, socket}
   end
 
   @impl true
   def handle_info({:post, :ok, _repo_record}, socket) do
-    {:noreply, update_post_temporary_assigns(socket, socket.assigns.page, socket.assigns.filters, socket.assigns.user_id)}
+    {:noreply,
+     update_post_temporary_assigns(
+       socket,
+       socket.assigns.page,
+       socket.assigns.filters,
+       socket.assigns.user_id
+     )}
   end
 
   @impl true
@@ -60,6 +77,7 @@ defmodule MishkaHtmlWeb.HomeLive do
 
   defp seo_tags(socket) do
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+
     %{
       image: "#{site_link}/images/mylogo.png",
       title: "صفحه اصلی وب سایت تگرگ",

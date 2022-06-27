@@ -28,50 +28,51 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
   end
 
   def handle_event("select-per-page", %{"page" => page}, socket) do
-    socket = case Map.get(socket.assigns, :alias_link) do
-      nil ->
-        push_patch(socket,
-          to:
-            Routes.live_path(
-              socket,
-              socket.assigns.pagination_url,
-              page: page,
-              params: socket.assigns.filters,
-              count: socket.assigns.count
-            )
-        )
-        |> push_event("jump_to_top_page", %{})
+    socket =
+      case Map.get(socket.assigns, :alias_link) do
+        nil ->
+          push_patch(socket,
+            to:
+              Routes.live_path(
+                socket,
+                socket.assigns.pagination_url,
+                page: page,
+                params: socket.assigns.filters,
+                count: socket.assigns.count
+              )
+          )
+          |> push_event("jump_to_top_page", %{})
 
-      alias_link ->
-        push_patch(socket,
-          to:
-            Routes.live_path(
-              socket,
-              socket.assigns.pagination_url,
-              alias_link,
-              page: page,
-              params: socket.assigns.filters,
-              count: socket.assigns.count
-            )
-        )
-        |> push_event("jump_to_top_page", %{})
-    end
-
-
+        alias_link ->
+          push_patch(socket,
+            to:
+              Routes.live_path(
+                socket,
+                socket.assigns.pagination_url,
+                alias_link,
+                page: page,
+                params: socket.assigns.filters,
+                count: socket.assigns.count
+              )
+          )
+          |> push_event("jump_to_top_page", %{})
+      end
 
     {:noreply, socket}
   end
 
   def navigation(page_router_number, total_pages) do
     start_number = compare_with_pagenumber(integer_geter(page_router_number), total_pages)
+
     (start_number - 3)..(start_number + 5)
-    |> Enum.to_list
-    |> Enum.filter(fn(x) -> x <= total_pages end)
-    |> Enum.filter(fn(x) -> x > 0 end)
+    |> Enum.to_list()
+    |> Enum.filter(fn x -> x <= total_pages end)
+    |> Enum.filter(fn x -> x > 0 end)
   end
 
   @spec compare_with_pagenumber(any, any) :: any
-  def compare_with_pagenumber(page_router_number, total_pages) when page_router_number <= total_pages do
+  def compare_with_pagenumber(page_router_number, total_pages)
+      when page_router_number <= total_pages do
     page_router_number
     |> integer_geter
   end
@@ -79,9 +80,10 @@ defmodule MishkaHtmlWeb.Public.PaginationComponent do
   def compare_with_pagenumber(_page_router_number, _total_pages), do: 1
 
   def integer_geter(string) do
-    output = "#{string}"
-    |> String.replace(~r/[^\d]/, "")
+    output =
+      "#{string}"
+      |> String.replace(~r/[^\d]/, "")
+
     if output == "", do: 1, else: String.to_integer(output)
   end
-
 end

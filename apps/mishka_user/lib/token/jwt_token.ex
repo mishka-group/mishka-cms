@@ -2,7 +2,7 @@ defmodule MishkaUser.Token.JWTToken do
   alias MishkaUser.Guardian
   alias MishkaUser.Token.TokenManagemnt
 
-  @refresh_token_time 1124000
+  @refresh_token_time 1_124_000
   @access_token_time 3600
 
   @type token() :: String.t()
@@ -12,7 +12,6 @@ defmodule MishkaUser.Token.JWTToken do
   @type result() :: map() | tuple() | atom()
   @type time() :: integer()
 
-
   @spec create_token(id(), params(), time(), String.t()) :: {:ok, atom, binary, map}
 
   def create_token(id, params \\ %{}, time, type) when type in ["access", "refresh", "current"] do
@@ -20,15 +19,15 @@ defmodule MishkaUser.Token.JWTToken do
     {:ok, String.to_atom(type), token, clime}
   end
 
-
-
-  @spec encode_and_sign_token(id(), params(), time(), String.t()) :: {:error, any} | {:ok, binary, map}
+  @spec encode_and_sign_token(id(), params(), time(), String.t()) ::
+          {:error, any} | {:ok, binary, map}
 
   def encode_and_sign_token(id, params, time, type) do
-    Guardian.encode_and_sign(%{id: "#{id}"}, Map.merge(%{some: "claim"}, params), token_type: type, ttl: {time, :seconds})
+    Guardian.encode_and_sign(%{id: "#{id}"}, Map.merge(%{some: "claim"}, params),
+      token_type: type,
+      ttl: {time, :seconds}
+    )
   end
-
-
 
   @spec refresh_token(token()) ::
           {:error, :more_device}
@@ -38,7 +37,6 @@ defmodule MishkaUser.Token.JWTToken do
   def refresh_token(token) do
     case Guardian.refresh(token, ttl: {@refresh_token_time, :seconds}) do
       {:ok, {_old_token, %{"typ" => "refresh"}}, {new_token, new_clime}} ->
-
         {:ok, :verify_token, new_token, new_clime}
         |> verify_refresh_token_on_state(token)
         |> delete_old_token(token)
@@ -50,15 +48,14 @@ defmodule MishkaUser.Token.JWTToken do
     end
   end
 
-
   defp verify_refresh_token_on_state({:ok, :verify_token, new_token, new_clime}, token) do
     {:ok, %{id: id}} = get_id_from_climes(new_clime)
+
     case TokenManagemnt.get_token(id, token) do
       nil -> {:error, :verify_token, :token_otp_state}
       _data -> {:ok, :verify_token, new_token, new_clime}
     end
   end
-
 
   defp delete_old_token({:ok, :verify_token, _new_token, new_clime}, token) do
     {:ok, %{id: id}} = get_id_from_climes(new_clime)
@@ -68,7 +65,8 @@ defmodule MishkaUser.Token.JWTToken do
     {:ok, :delete_old_token, new_clime}
   end
 
-  defp delete_old_token({:error, error_function, action}, _token), do: {:error, error_function, :refresh, action}
+  defp delete_old_token({:error, error_function, action}, _token),
+    do: {:error, error_function, :refresh, action}
 
   defp create_new_refresh_token({:ok, :delete_old_token, clime}) do
     {:ok, %{id: id}} = get_id_from_climes(clime)
@@ -79,13 +77,12 @@ defmodule MishkaUser.Token.JWTToken do
     {:error, error_function, :refresh, :token_otp_state}
   end
 
-  defp create_new_refresh_token({:error, error_function, :refresh, action}), do: {:error, error_function, :refresh, action}
-
+  defp create_new_refresh_token({:error, error_function, :refresh, action}),
+    do: {:error, error_function, :refresh, action}
 
   @spec get_id_from_climes(id() | maybe_improper_list | map) :: {:ok, %{id: any}}
 
   def get_id_from_climes(climes), do: Guardian.resource_from_claims(climes)
-
 
   @spec verify_token(token(), atom()) ::
           {:error, :verify_token, atom(), result()} | {:ok, :verify_token, atom(), map}
@@ -100,67 +97,84 @@ defmodule MishkaUser.Token.JWTToken do
 
   defp verify_token_on_state({:ok, :verify_token, type, claims}, token) do
     {:ok, %{id: id}} = get_id_from_climes(claims)
+
     case TokenManagemnt.get_token(id, token) do
       nil -> {:error, :verify_token, type, :token_otp_state}
       _clime -> {:ok, :verify_token, type, Map.merge(claims, %{"id" => id})}
     end
   end
 
-  defp verify_token_on_state({:error, :verify_token, type, action}, _token), do: {:error, :verify_token, type, action}
-
+  defp verify_token_on_state({:error, :verify_token, type, action}, _token),
+    do: {:error, :verify_token, type, action}
 
   @spec create_refresh_acsses_token(atom | %{id: any}) :: result()
 
   def create_refresh_acsses_token(user_info) do
     case TokenManagemnt.count_refresh_token(user_info.id) do
-      {:ok, :count_refresh_token}->
-        refresh_token_id = Ecto.UUID.generate
+      {:ok, :count_refresh_token} ->
+        refresh_token_id = Ecto.UUID.generate()
+
         [
-          %{user_id: user_info.id, time: token_time("refresh"), type: "refresh", token_id: refresh_token_id},
-          %{user_id: user_info.id, time: token_time("access"), type: "access", token_id: Ecto.UUID.generate},
+          %{
+            user_id: user_info.id,
+            time: token_time("refresh"),
+            type: "refresh",
+            token_id: refresh_token_id
+          },
+          %{
+            user_id: user_info.id,
+            time: token_time("access"),
+            type: "access",
+            token_id: Ecto.UUID.generate()
+          }
         ]
         |> Enum.map(fn x ->
           {:ok, action_atom, token, clime} =
-            create_token(x.user_id, %{token_id: Ecto.UUID.generate}, x.time, x.type)
-              rel = if x.type == "access", do: refresh_token_id, else: nil
-              save_token(
-                %{
-                  id: x.user_id,
-                  token_id: x.token_id,
-                  type: x.type,
-                  token: token,
-                  os: "linux",
-                  create_time: clime["iat"],
-                  last_used: clime["iat"],
-                  exp: clime["exp"],
-                  rel: rel
-                  }, x.user_id
-                )
+            create_token(x.user_id, %{token_id: Ecto.UUID.generate()}, x.time, x.type)
 
-            {:ok, action_atom, token, Map.merge(clime, %{"id" => x.user_id})}
+          rel = if x.type == "access", do: refresh_token_id, else: nil
+
+          save_token(
+            %{
+              id: x.user_id,
+              token_id: x.token_id,
+              type: x.type,
+              token: token,
+              os: "linux",
+              create_time: clime["iat"],
+              last_used: clime["iat"],
+              exp: clime["exp"],
+              rel: rel
+            },
+            x.user_id
+          )
+
+          {:ok, action_atom, token, Map.merge(clime, %{"id" => x.user_id})}
         end)
         |> get_refresh_and_access_token()
 
-     _ ->
-      {:error, :more_device}
+      _ ->
+        {:error, :more_device}
     end
   end
 
-  defp get_refresh_and_access_token([{:ok, :refresh, refresh_token, refresh_clime}, {:ok, :access, access_token, access_clime}]) do
+  defp get_refresh_and_access_token([
+         {:ok, :refresh, refresh_token, refresh_clime},
+         {:ok, :access, access_token, access_clime}
+       ]) do
     %{
       refresh_token: %{token: refresh_token, clime: refresh_clime},
-      access_token:  %{token: access_token, clime: access_clime}
+      access_token: %{token: access_token, clime: access_clime}
     }
   end
-
 
   @spec save_token(user_info(), id()) :: :ok
 
   def save_token(element, user_id) do
-    TokenManagemnt.save(%{
-      id: element.id,
-      token_info:
-        %{
+    TokenManagemnt.save(
+      %{
+        id: element.id,
+        token_info: %{
           token_id: element.token_id,
           type: element.type,
           token: element.token,
@@ -170,12 +184,13 @@ defmodule MishkaUser.Token.JWTToken do
           access_expires_in: element.exp,
           rel: element.rel
         }
-    }, user_id)
+      },
+      user_id
+    )
   end
 
   defp token_time("access"), do: @access_token_time
   defp token_time("refresh"), do: @refresh_token_time
-
 
   @spec delete_refresh_token(token()) ::
           {:ok, :delete_refresh_token}
@@ -184,7 +199,6 @@ defmodule MishkaUser.Token.JWTToken do
   def delete_refresh_token(token) do
     case refresh_delete_token(token) do
       {:ok, :delete_old_token, _new_clime} -> {:ok, :delete_refresh_token}
-
       {:error, _error_function, :refresh, action} -> {:error, :delete_refresh_token, action}
     end
   end
@@ -192,7 +206,6 @@ defmodule MishkaUser.Token.JWTToken do
   defp refresh_delete_token(token) do
     case Guardian.refresh(token, ttl: {@refresh_token_time, :seconds}) do
       {:ok, {_old_token, %{"typ" => "refresh"}}, {new_token, new_clime}} ->
-
         {:ok, :verify_token, new_token, new_clime}
         |> verify_refresh_token_on_state(token)
         |> delete_old_token(token)
@@ -202,5 +215,4 @@ defmodule MishkaUser.Token.JWTToken do
         |> delete_old_token(token)
     end
   end
-
 end

@@ -8,13 +8,12 @@ defmodule MishkaUser.User do
   alias MishkaDatabase.Schema.MishkaUser.User
 
   use MishkaDeveloperTools.DB.CRUD,
-          module: User,
-          error_atom: :user,
-          repo: MishkaDatabase.Repo
-
+    module: User,
+    error_atom: :user,
+    repo: MishkaDatabase.Repo
 
   # MishkaUser.User custom Typespecs
-  @type data_uuid() :: Ecto.UUID.t
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :user
   @type email() :: String.t()
@@ -24,7 +23,6 @@ defmodule MishkaUser.User do
   @type password() :: String.t()
 
   @behaviour MishkaDeveloperTools.DB.CRUD
-
 
   def subscribe do
     Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "user")
@@ -69,13 +67,13 @@ defmodule MishkaUser.User do
     crud_get_record(id)
   end
 
-
   @doc """
     this function starts push notification in this module.
   """
 
   @spec show_by_email(email()) ::
-          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+          {:error, :get_record_by_field, error_tag()}
+          | {:ok, :get_record_by_field, error_tag(), repo_data()}
 
   def show_by_email(email) do
     crud_get_by_field("email", email)
@@ -86,22 +84,22 @@ defmodule MishkaUser.User do
   """
 
   @spec show_by_username(username()) ::
-          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+          {:error, :get_record_by_field, error_tag()}
+          | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_username(username) do
     crud_get_by_field("username", username)
   end
-
 
   @doc """
     this function starts push notification in this module.
   """
 
   @spec show_by_unconfirmed_email(email()) ::
-          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+          {:error, :get_record_by_field, error_tag()}
+          | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_unconfirmed_email(email) do
     crud_get_by_field("unconfirmed_email", email)
   end
-
 
   @spec check_password(repo_data(), password()) ::
           {:error, :check_password, :user} | {:ok, :check_password, :user}
@@ -111,7 +109,6 @@ defmodule MishkaUser.User do
       _ -> {:error, :check_password, :user}
     end
   end
-
 
   @spec active?(atom()) :: {:error, :active?, atom()} | {:ok, :active?, :active | :inactive}
   def active?(user_status) do
@@ -125,13 +122,16 @@ defmodule MishkaUser.User do
 
   @spec permissions(data_uuid()) :: list()
   def permissions(id) do
-    query = from user in User,
-      where: user.id == ^id,
-      join: roles in assoc(user, :roles),
-      join: permissions in assoc(roles, :permissions),
-      select: %{
-        value: permissions.value,
-      }
+    query =
+      from(user in User,
+        where: user.id == ^id,
+        join: roles in assoc(user, :roles),
+        join: permissions in assoc(roles, :permissions),
+        select: %{
+          value: permissions.value
+        }
+      )
+
     MishkaDatabase.Repo.all(query)
   rescue
     db_error ->
@@ -139,54 +139,67 @@ defmodule MishkaUser.User do
       []
   end
 
-  @spec users([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
+  @spec users([
+          {:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()},
+          ...
+        ]) :: Scrivener.Page.t()
   def users(conditions: {page, page_size}, filters: filters) do
-    from(u in User, left_join: roles in assoc(u, :roles)) |> convert_filters_to_where(filters)
+    from(u in User, left_join: roles in assoc(u, :roles))
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
     db_error ->
       MishkaContent.db_content_activity_error("user", "read", db_error)
-      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+
+      %Scrivener.Page{
+        entries: [],
+        page_number: 1,
+        page_size: page_size,
+        total_entries: 0,
+        total_pages: 1
+      }
   end
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
       case key do
         :role ->
-          from [u, roles] in query, where: field(roles, :id) == ^value
+          from([u, roles] in query, where: field(roles, :id) == ^value)
 
         :full_name ->
           like = "%#{value}%"
-          from [u, roles] in query, where: like(u.full_name, ^like)
+          from([u, roles] in query, where: like(u.full_name, ^like))
 
         :username ->
           like = "%#{value}%"
-          from [u, roles] in query, where: like(u.username, ^like)
+          from([u, roles] in query, where: like(u.username, ^like))
 
         :email ->
           like = "%#{value}%"
-          from [u, roles] in query, where: like(u.email, ^like)
+          from([u, roles] in query, where: like(u.email, ^like))
 
-        _ -> from [u, roles] in query, where: field(u, ^key) == ^value
+        _ ->
+          from([u, roles] in query, where: field(u, ^key) == ^value)
       end
     end)
   end
 
   defp fields(query) do
-    from [u, roles] in query,
-    order_by: [desc: u.inserted_at, desc: u.id],
-    select: %{
-      id: u.id,
-      full_name: u.full_name,
-      username: u.username,
-      email: u.email,
-      status: u.status,
-      unconfirmed_email: u.unconfirmed_email,
-      inserted_at: u.inserted_at,
-      updated_at: u.updated_at,
-      roles: roles
-    }
+    from([u, roles] in query,
+      order_by: [desc: u.inserted_at, desc: u.id],
+      select: %{
+        id: u.id,
+        full_name: u.full_name,
+        username: u.username,
+        email: u.email,
+        status: u.status,
+        unconfirmed_email: u.unconfirmed_email,
+        inserted_at: u.inserted_at,
+        updated_at: u.updated_at,
+        roles: roles
+      }
+    )
   end
 
   @spec allowed_fields(:atom | :string) :: nil | list

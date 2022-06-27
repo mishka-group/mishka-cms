@@ -1,10 +1,46 @@
 defmodule MishkaHtml do
-
-  @persian_characters ["ء" , "ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "چ", "ش", "س", "ی", "ب", "ل", "ا", "ت", "ن", "م", "ک", "گ", "پ", "‍‍‍ظ", "ط", "ز", "ر", "ذ", "ژ", "د", "و", "آ", "ي", "ئ"]
+  @persian_characters [
+    "ء",
+    "ض",
+    "ص",
+    "ث",
+    "ق",
+    "ف",
+    "غ",
+    "ع",
+    "ه",
+    "خ",
+    "ح",
+    "ج",
+    "چ",
+    "ش",
+    "س",
+    "ی",
+    "ب",
+    "ل",
+    "ا",
+    "ت",
+    "ن",
+    "م",
+    "ک",
+    "گ",
+    "پ",
+    "‍‍‍ظ",
+    "ط",
+    "ز",
+    "ر",
+    "ذ",
+    "ژ",
+    "د",
+    "و",
+    "آ",
+    "ي",
+    "ئ"
+  ]
   def list_tag_to_string(list, join) do
-      list
-      |> Enum.map(&to_string/1)
-      |> Enum.join(join)
+    list
+    |> Enum.map(&to_string/1)
+    |> Enum.join(join)
   end
 
   def email_sanitize(email) do
@@ -30,7 +66,9 @@ defmodule MishkaHtml do
 
   def title_sanitize(title) do
     HtmlSanitizeEx.strip_tags("#{title}")
-    |> slugify_none_nil(["_", ".", "#", "?", "؟", "(", ")", ")", "(", "!", "!"] ++ @persian_characters)
+    |> slugify_none_nil(
+      ["_", ".", "#", "?", "؟", "(", ")", ")", "(", "!", "!"] ++ @persian_characters
+    )
     |> String.replace("-", " ")
     |> String.trim()
   end
@@ -54,7 +92,7 @@ defmodule MishkaHtml do
     Enum.map(needed_field, fn menu ->
       if !Enum.member?(Map.keys(user_inputs), menu.type), do: menu.title
     end)
-    |> Enum.filter(& !is_nil(&1))
+    |> Enum.filter(&(!is_nil(&1)))
   end
 
   import MishkaTranslator.Gettext
@@ -65,15 +103,53 @@ defmodule MishkaHtml do
 
   def create_action_msg(action) do
     case action do
-      :add -> %{color: "success", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "درست")}
-      :edit -> %{color: "primary", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش")}
-      :delete -> %{color: "danger", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "حذف با پرچم")}
-      :destroy -> %{color: "dark", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "حذف کامل")}
-      :read -> %{color: "info", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "خوانده")}
-      :send_request -> %{color: "light", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ارسال درخواست")}
-      :receive_request -> %{color: "light", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "دریافت درخواست")}
-      :other -> %{color: "warning", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "مورد عملیات دیگر")}
-      :auth -> %{color: "secondary", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش دسترسی")}
+      :add ->
+        %{color: "success", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "درست")}
+
+      :edit ->
+        %{
+          color: "primary",
+          msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش")
+        }
+
+      :delete ->
+        %{
+          color: "danger",
+          msg: MishkaTranslator.Gettext.dgettext("html_live_component", "حذف با پرچم")
+        }
+
+      :destroy ->
+        %{
+          color: "dark",
+          msg: MishkaTranslator.Gettext.dgettext("html_live_component", "حذف کامل")
+        }
+
+      :read ->
+        %{color: "info", msg: MishkaTranslator.Gettext.dgettext("html_live_component", "خوانده")}
+
+      :send_request ->
+        %{
+          color: "light",
+          msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ارسال درخواست")
+        }
+
+      :receive_request ->
+        %{
+          color: "light",
+          msg: MishkaTranslator.Gettext.dgettext("html_live_component", "دریافت درخواست")
+        }
+
+      :other ->
+        %{
+          color: "warning",
+          msg: MishkaTranslator.Gettext.dgettext("html_live_component", "مورد عملیات دیگر")
+        }
+
+      :auth ->
+        %{
+          color: "secondary",
+          msg: MishkaTranslator.Gettext.dgettext("html_live_component", "ویرایش دسترسی")
+        }
     end
   end
 

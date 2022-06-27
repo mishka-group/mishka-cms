@@ -5,10 +5,9 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   @section_title MishkaTranslator.Gettext.dgettext("html_live", "نقش های کاربری")
 
   use MishkaHtml.Helpers.LiveCRUD,
-      module: MishkaUser.Acl.Role,
-      redirect: __MODULE__,
-      router: Routes
-
+    module: MishkaUser.Acl.Role,
+    redirect: __MODULE__,
+    router: Routes
 
   @impl true
   def render(assigns) do
@@ -32,19 +31,21 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
+
     socket =
       assign(socket,
-      page_size: 10,
-      filters: %{},
-      page: 1,
-      open_modal: false,
-      component: nil,
-      user_id: Map.get(session, "user_id"),
-      page_title: @section_title,
-      body_color: "#a29ac3cf",
-      user_ip: get_connect_info(socket, :peer_data).address,
-      roles: Role.roles(conditions: {1, 10}, filters: %{})
-    )
+        page_size: 10,
+        filters: %{},
+        page: 1,
+        open_modal: false,
+        component: nil,
+        user_id: Map.get(session, "user_id"),
+        page_title: @section_title,
+        body_color: "#a29ac3cf",
+        user_ip: get_connect_info(socket, :peer_data).address,
+        roles: Role.roles(conditions: {1, 10}, filters: %{})
+      )
+
     {:ok, socket, temporary_assigns: [roles: []]}
   end
 
@@ -54,13 +55,20 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
   list_search_and_action()
 
   delete_list_item(:roles, DeleteErrorComponent, false,
-  do: fn role_id, socket ->
-    state = %MishkaInstaller.Reference.OnUserAfterDeleteRole{role_id: role_id, ip: socket.assigns.user_ip, endpoint: :html, conn: socket}
-    MishkaInstaller.Hook.call(event: "on_user_after_delete_role", state: state).conn
-  end,
-  before: fn x ->
-    MishkaUser.Acl.AclTask.delete_role(x)
-  end)
+    do: fn role_id, socket ->
+      state = %MishkaInstaller.Reference.OnUserAfterDeleteRole{
+        role_id: role_id,
+        ip: socket.assigns.user_ip,
+        endpoint: :html,
+        conn: socket
+      }
+
+      MishkaInstaller.Hook.call(event: "on_user_after_delete_role", state: state).conn
+    end,
+    before: fn x ->
+      MishkaUser.Acl.AclTask.delete_role(x)
+    end
+  )
 
   selected_menue("MishkaHtmlWeb.AdminUserRolesLive")
 
@@ -68,12 +76,30 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
 
   def section_fields() do
     [
-      ListItemComponent.text_field("name", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "نام"),
-      {true, false, true}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.text_field("display_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام نمایش"),
-      {true, false, true}, &MishkaHtml.username_sanitize/1),
-      ListItemComponent.time_field("inserted_at", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
-      {true, false, false})
+      ListItemComponent.text_field(
+        "name",
+        [1],
+        "col header1",
+        MishkaTranslator.Gettext.dgettext("html_live", "نام"),
+        {true, false, true},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.text_field(
+        "display_name",
+        [1],
+        "col header2",
+        MishkaTranslator.Gettext.dgettext("html_live", "نام نمایش"),
+        {true, false, true},
+        &MishkaHtml.username_sanitize/1
+      ),
+      ListItemComponent.time_field(
+        "inserted_at",
+        [1],
+        "col header3",
+        MishkaTranslator.Gettext.dgettext("html_live", "ثبت"),
+        false,
+        {true, false, false}
+      )
     ]
   end
 
@@ -96,13 +122,13 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
           %{
             method: :delete,
             router: nil,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "حذف"),
             class: "btn btn-outline-danger vazir"
           },
           %{
             method: :redirect_key,
             router: MishkaHtmlWeb.AdminUserRolePermissionsLive,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "مدیریت دسترسی ها"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "مدیریت دسترسی ها"),
             class: "btn btn-outline-info vazir",
             action: :id
           }
@@ -113,11 +139,10 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
         title: MishkaTranslator.Gettext.dgettext("html_live_templates", "نقش ها"),
         section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "نقش"),
         action: :section,
-        action_by: :section,
+        action_by: :section
       },
       custom_operations: nil,
-      description:
-      ~H"""
+      description: ~H"""
         <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "در این بخش شما می توانید نقش های کاربری را بسازید و به هر نقش یک سری سطوح دسترسی مخصوص به سایت را تخصیص بدهید. لازم به ذکر است بعد از ساخت نقش و تخصیص یک یا چند دسترسی به آن حال می توانید وارد مدیریت کاربران شده و یک کاربر را به یک نقش خاص تخصیص بدهید. در زمانی شما از نقش ها استفاده می کنید که می خواهید برخی از بخش های سایت خود را به گروه کاربری خاصی اجازه دسترسی بدهید.") %>
         <div class="space30"></div>
       """

@@ -1,14 +1,14 @@
 defmodule MishkaContent.General.UserNotifStatus do
-
   alias MishkaDatabase.Schema.MishkaContent.UserNotifStatus
 
   import Ecto.Query
-  use MishkaDeveloperTools.DB.CRUD,
-          module: UserNotifStatus,
-          error_atom: :user_notif_status,
-          repo: MishkaDatabase.Repo
 
-  @type data_uuid() :: Ecto.UUID.t
+  use MishkaDeveloperTools.DB.CRUD,
+    module: UserNotifStatus,
+    error_atom: :user_notif_status,
+    repo: MishkaDatabase.Repo
+
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :subscription
   @type repo_data() :: Ecto.Schema.t()
@@ -49,6 +49,7 @@ defmodule MishkaContent.General.UserNotifStatus do
   @spec user_read_or_skipped :: Ecto.Query.t()
   def user_read_or_skipped() do
     from(status in UserNotifStatus,
-    select: %{notif_id: status.notif_id, user_id: status.user_id, status_type: status.type})
+      select: %{notif_id: status.notif_id, user_id: status.user_id, status_type: status.type}
+    )
   end
 end

@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
   use MishkaHtmlWeb, :live_component
 
-
   def render(assigns) do
     ~H"""
       <div class="col admin-home-quickmenu-center-block vazir">
@@ -40,11 +39,13 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
   end
 
   def handle_event("blog-posts", _, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))}
+    {:noreply,
+     push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))}
   end
 
   def handle_event("blog-categories", _, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))}
+    {:noreply,
+     push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogCategoriesLive))}
   end
 
   def handle_event("seo-setting", _, socket) do
@@ -56,11 +57,13 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.QuickmenuMenuComponent do
   end
 
   def handle_event("comments", _, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminCommentsLive))}
+    {:noreply,
+     push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminCommentsLive))}
   end
 
   def handle_event("subscriptions", _, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))}
+    {:noreply,
+     push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminSubscriptionsLive))}
   end
 
   def tab(assigns, :home) do

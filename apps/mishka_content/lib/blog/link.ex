@@ -1,14 +1,14 @@
 defmodule MishkaContent.Blog.BlogLink do
   alias MishkaDatabase.Schema.MishkaContent.BlogLink
 
-
   import Ecto.Query
-  use MishkaDeveloperTools.DB.CRUD,
-          module: BlogLink,
-          error_atom: :blog_link,
-          repo: MishkaDatabase.Repo
 
-  @type data_uuid() :: Ecto.UUID.t
+  use MishkaDeveloperTools.DB.CRUD,
+    module: BlogLink,
+    error_atom: :blog_link,
+    repo: MishkaDatabase.Repo
+
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :blog_link
   @type repo_data() :: Ecto.Schema.t()
@@ -56,12 +56,16 @@ defmodule MishkaContent.Blog.BlogLink do
   end
 
   @spec show_by_short_link(String.t()) ::
-          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+          {:error, :get_record_by_field, error_tag()}
+          | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_short_link(short_link) do
     crud_get_by_field("short_link", short_link)
   end
 
-  @spec links([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: any
+  @spec links([
+          {:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()},
+          ...
+        ]) :: any
   def links(conditions: {page, page_size}, filters: filters) do
     from(link in BlogLink)
     |> convert_filters_to_where(filters)
@@ -70,11 +74,19 @@ defmodule MishkaContent.Blog.BlogLink do
   rescue
     db_error ->
       MishkaContent.db_content_activity_error("blog_link", "read", db_error)
-      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+
+      %Scrivener.Page{
+        entries: [],
+        page_number: 1,
+        page_size: page_size,
+        total_entries: 0,
+        total_pages: 1
+      }
   end
 
   def links(filters: filters) do
-    from(link in BlogLink) |> convert_filters_to_where(filters)
+    from(link in BlogLink)
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.all()
   rescue
@@ -85,24 +97,25 @@ defmodule MishkaContent.Blog.BlogLink do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from link in query, where: field(link, ^key) == ^value
+      from(link in query, where: field(link, ^key) == ^value)
     end)
   end
 
   defp fields(query) do
-    from [link] in query,
-    order_by: [desc: link.inserted_at, desc: link.id],
-    select: %{
-      id: link.id,
-      short_description: link.short_description,
-      status: link.status,
-      type: link.type,
-      title: link.title,
-      link: link.link,
-      short_link: link.short_link,
-      robots: link.robots,
-      section_id: link.section_id,
-    }
+    from([link] in query,
+      order_by: [desc: link.inserted_at, desc: link.id],
+      select: %{
+        id: link.id,
+        short_description: link.short_description,
+        status: link.status,
+        type: link.type,
+        title: link.title,
+        link: link.link,
+        short_link: link.short_link,
+        robots: link.robots,
+        section_id: link.section_id
+      }
+    )
   end
 
   @spec notify_subscribers(tuple(), atom() | String.t()) :: tuple() | map()

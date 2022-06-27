@@ -1,5 +1,4 @@
 defmodule MishkaUser.Token.Token do
-
   alias MishkaUser.Token.{PhoenixToken, JWTToken, CurrentPhoenixToken}
 
   @type token() :: String.t()
@@ -8,8 +7,6 @@ defmodule MishkaUser.Token.Token do
   @type result() :: map() | tuple() | atom()
   @type clime() :: map() | tuple() | struct()
 
-
-
   @spec create_token(
           atom | user_info(),
           :current | :jwt_token | :phoenix_token
@@ -17,7 +14,10 @@ defmodule MishkaUser.Token.Token do
           {:error, :more_device}
           | {:ok, :save_token, nonempty_binary}
           | {:error, :verify_token, :refresh, :expired | :invalid | :missing | :token_otp_state}
-          | %{access_token: %{clime: clime(), token: token()}, refresh_token: %{clime: clime(), token: token()}}
+          | %{
+              access_token: %{clime: clime(), token: token()},
+              refresh_token: %{clime: clime(), token: token()}
+            }
 
   def create_token(user_info, :phoenix_token) do
     # save tokens on disk db
@@ -50,8 +50,6 @@ defmodule MishkaUser.Token.Token do
     JWTToken.refresh_token(refresh_token)
   end
 
-
-
   @spec verify_access_token(binary, :jwt_token | :phoenix_token) ::
           {:error, :verify_token, atom, result()} | {:ok, :verify_token, atom, map}
 
@@ -62,8 +60,6 @@ defmodule MishkaUser.Token.Token do
   def verify_access_token(token, :jwt_token) do
     JWTToken.verify_token(token, :access)
   end
-
-
 
   @spec delete_token(binary, :jwt_token | :phoenix_token) ::
           {:ok, :delete_refresh_token}
@@ -92,5 +88,4 @@ defmodule MishkaUser.Token.Token do
       _ -> {:error, type, :invalid}
     end
   end
-
 end

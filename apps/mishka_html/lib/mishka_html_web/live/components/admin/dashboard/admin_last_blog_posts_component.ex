@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.Admin.Dashboard.LastBlogPostsComponent do
   use MishkaHtmlWeb, :live_component
 
-
   def render(assigns) do
     ~H"""
       <div class="container rtl">

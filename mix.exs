@@ -19,7 +19,8 @@ defmodule MishkaCms.Umbrella.MixProject do
         list_unused_filters: true
       ],
       docs: [
-        main: "MishkaCms", # The main page in the docs
+        # The main page in the docs
+        main: "MishkaCms"
         # logo: "path/to/logo.png",
         # extras: ["README.md"]
       ]
@@ -37,7 +38,7 @@ defmodule MishkaCms.Umbrella.MixProject do
     [
       "assets.deploy": ["esbuild default --minify", "phx.digest"],
       setup: ["cmd mix setup"],
-      "ecto.setup": ["ecto.drop", "ecto.create", "ecto.migrate"],
+      "ecto.setup": ["ecto.drop", "ecto.create", "ecto.migrate"]
     ]
   end
 

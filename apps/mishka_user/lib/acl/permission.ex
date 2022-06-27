@@ -7,12 +7,11 @@ defmodule MishkaUser.Acl.Permission do
   import Ecto.Query
 
   use MishkaDeveloperTools.DB.CRUD,
-          module: Permission,
-          error_atom: :permission,
-          repo: MishkaDatabase.Repo
+    module: Permission,
+    error_atom: :permission,
+    repo: MishkaDatabase.Repo
 
-
-  @type data_uuid() :: Ecto.UUID.t
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :permission
   @type repo_data() :: Ecto.Schema.t()
@@ -70,8 +69,8 @@ defmodule MishkaUser.Acl.Permission do
         role_id: permission.role_id,
         role_name: role.name,
         role_display_name: role.display_name
-
-      })
+      }
+    )
     |> MishkaDatabase.Repo.all()
   rescue
     db_error ->

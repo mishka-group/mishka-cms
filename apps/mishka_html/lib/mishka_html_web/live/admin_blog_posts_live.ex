@@ -7,10 +7,10 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
   @section_title MishkaTranslator.Gettext.dgettext("html_live", "مدیریت مطالب")
 
   use MishkaHtml.Helpers.LiveCRUD,
-      module: MishkaContent.Blog.Post,
-      redirect: __MODULE__,
-      router: Routes,
-      skip_list: ["category_title"]
+    module: MishkaContent.Blog.Post,
+    redirect: __MODULE__,
+    router: Routes,
+    skip_list: ["category_title"]
 
   @impl true
   def render(assigns) do
@@ -33,9 +33,11 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do: Post.subscribe(); Activity.subscribe()
+    if connected?(socket), do: Post.subscribe()
+    Activity.subscribe()
     Process.send_after(self(), :menu, 100)
     user_id = Map.get(session, "user_id")
+
     socket =
       assign(socket,
         page_size: 10,
@@ -50,6 +52,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
         fpost: Post.posts(conditions: {1, 5}, filters: %{priority: :featured}, user_id: user_id),
         activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_post"})
       )
+
     {:ok, socket, temporary_assigns: [posts: []]}
   end
 
@@ -65,6 +68,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
     socket =
       socket
       |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostLive, id: id))
+
     {:noreply, socket}
   end
 
@@ -72,15 +76,23 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   @impl true
   def handle_info({:activity, :ok, repo_record}, socket) do
-    socket = case repo_record.__meta__.state do
-      :loaded ->
-        socket
-        |> assign(
-          activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_post"}),
-          posts: Post.posts(conditions: {socket.assigns.page, socket.assigns.page_size}, filters: socket.assigns.filters, user_id: socket.assigns.user_id)
-        )
-       _ ->  socket
-    end
+    socket =
+      case repo_record.__meta__.state do
+        :loaded ->
+          socket
+          |> assign(
+            activities: Activity.activities(conditions: {1, 5}, filters: %{section: "blog_post"}),
+            posts:
+              Post.posts(
+                conditions: {socket.assigns.page, socket.assigns.page_size},
+                filters: socket.assigns.filters,
+                user_id: socket.assigns.user_id
+              )
+          )
+
+        _ ->
+          socket
+      end
 
     {:noreply, socket}
   end
@@ -89,45 +101,95 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
 
   def section_fields() do
     [
-      ListItemComponent.upload_field("main_image", [1], "col-sm-2 header1", MishkaTranslator.Gettext.dgettext("html_live",  "تصویر"),
-      {true, true, false}),
-      ListItemComponent.text_field("title", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
-      {false, true, true}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.link_field("title", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
-      {MishkaHtmlWeb.AdminBlogPostLive, :id},
-      {true, false, false}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.link_field("category_title", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "مجموعه"),
-      {MishkaHtmlWeb.AdminBlogCategoryLive, :category_id},
-      {true, false, false}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.text_field("category_title", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "مجموعه"),
-      {false, true, true}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.select_field("status", [1, 4], "col header4", MishkaTranslator.Gettext.dgettext("html_live",  "وضعیت"),
-      [
-        {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), "inactive"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "فعال"), "active"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), "archived"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "حذف با پرچم"), "soft_delete"}
-      ],
-      {true, true, true}),
-      ListItemComponent.select_field("priority", [1, 4], "col header5", MishkaTranslator.Gettext.dgettext("html_live",  "اولویت"),
-      [
-        {MishkaTranslator.Gettext.dgettext("html_live", "ندارد"), "none"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "پایین"), "low"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "متوسط"), "medium"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "بالا"), "high"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "ویژه"), "featured"}
-      ],
-      {true, true, true}),
-      ListItemComponent.select_field("robots", [3, 5, 6], "col header6", MishkaTranslator.Gettext.dgettext("html_live",  "رباط"),
-      [
-        {"IndexFollow", "IndexFollow"},
-        {"IndexNoFollow", "IndexNoFollow"},
-        {"NoIndexFollow", "NoIndexFollow"},
-        {"NoIndexNoFollow", "NoIndexNoFollow"}
-      ],
-      {true, true, true}),
-      ListItemComponent.time_field("updated_at", [1], "col header7", MishkaTranslator.Gettext.dgettext("html_live",  "به روز رسانی"), false,
-      {true, false, false})
+      ListItemComponent.upload_field(
+        "main_image",
+        [1],
+        "col-sm-2 header1",
+        MishkaTranslator.Gettext.dgettext("html_live", "تصویر"),
+        {true, true, false}
+      ),
+      ListItemComponent.text_field(
+        "title",
+        [1],
+        "col header2",
+        MishkaTranslator.Gettext.dgettext("html_live", "تیتر"),
+        {false, true, true},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.link_field(
+        "title",
+        [1],
+        "col header2",
+        MishkaTranslator.Gettext.dgettext("html_live", "تیتر"),
+        {MishkaHtmlWeb.AdminBlogPostLive, :id},
+        {true, false, false},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.link_field(
+        "category_title",
+        [1],
+        "col header3",
+        MishkaTranslator.Gettext.dgettext("html_live", "مجموعه"),
+        {MishkaHtmlWeb.AdminBlogCategoryLive, :category_id},
+        {true, false, false},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.text_field(
+        "category_title",
+        [1],
+        "col header3",
+        MishkaTranslator.Gettext.dgettext("html_live", "مجموعه"),
+        {false, true, true},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.select_field(
+        "status",
+        [1, 4],
+        "col header4",
+        MishkaTranslator.Gettext.dgettext("html_live", "وضعیت"),
+        [
+          {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), "inactive"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "فعال"), "active"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), "archived"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "حذف با پرچم"), "soft_delete"}
+        ],
+        {true, true, true}
+      ),
+      ListItemComponent.select_field(
+        "priority",
+        [1, 4],
+        "col header5",
+        MishkaTranslator.Gettext.dgettext("html_live", "اولویت"),
+        [
+          {MishkaTranslator.Gettext.dgettext("html_live", "ندارد"), "none"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "پایین"), "low"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "متوسط"), "medium"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "بالا"), "high"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "ویژه"), "featured"}
+        ],
+        {true, true, true}
+      ),
+      ListItemComponent.select_field(
+        "robots",
+        [3, 5, 6],
+        "col header6",
+        MishkaTranslator.Gettext.dgettext("html_live", "رباط"),
+        [
+          {"IndexFollow", "IndexFollow"},
+          {"IndexNoFollow", "IndexNoFollow"},
+          {"NoIndexFollow", "NoIndexFollow"},
+          {"NoIndexNoFollow", "NoIndexNoFollow"}
+        ],
+        {true, true, true}
+      ),
+      ListItemComponent.time_field(
+        "updated_at",
+        [1],
+        "col header7",
+        MishkaTranslator.Gettext.dgettext("html_live", "به روز رسانی"),
+        false,
+        {true, false, false}
+      )
     ]
   end
 
@@ -159,43 +221,43 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
             title: MishkaTranslator.Gettext.dgettext("html_live_templates", "برچسب ها"),
             router: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogTagsLive),
             class: "btn btn-outline-warning"
-          },
+          }
         ],
         list_item: [
           %{
             method: :delete,
             router: nil,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "حذف"),
             class: "btn btn-outline-primary vazir"
           },
           %{
             method: :redirect_keys,
             router: MishkaHtmlWeb.AdminCommentsLive,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "نظرات"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "نظرات"),
             class: "btn btn-outline-success vazir",
             keys: [
               {:section_id, :id},
-              {:count, "30"},
+              {:count, "30"}
             ]
           },
           %{
             method: :redirect,
             router: MishkaHtmlWeb.AdminBlogPostAuthorsLive,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "نویسندگان"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "نویسندگان"),
             class: "btn btn-outline-secondary vazir",
             action: :id
           },
           %{
             method: :redirect,
             router: MishkaHtmlWeb.AdminBlogPostTagsLive,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "برچسب ها"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "برچسب ها"),
             class: "btn btn-warning vazir",
             action: :id
           },
           %{
             method: :redirect,
             router: MishkaHtmlWeb.AdminLinksLive,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "لینک ها"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "لینک ها"),
             class: "btn btn-outline-info vazir",
             action: :id
           }
@@ -203,13 +265,16 @@ defmodule MishkaHtmlWeb.AdminBlogPostsLive do
       },
       title: @section_title,
       activities_info: %{
-        title: MishkaTranslator.Gettext.dgettext("html_live_component", "آخرین فعالیت ها در تولید محتوا"),
+        title:
+          MishkaTranslator.Gettext.dgettext(
+            "html_live_component",
+            "آخرین فعالیت ها در تولید محتوا"
+          ),
         section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "مطلب"),
         action: :title,
-        action_by: :full_name,
+        action_by: :full_name
       },
-      description:
-      ~H"""
+      description: ~H"""
         <%= MishkaTranslator.Gettext.dgettext("html_live_component", "شما در این بخش می توانید مطالب ارسالی در سایت را مدیریت و ویرایش نمایید.") %>
         <div class="space20"></div>
         <hr>

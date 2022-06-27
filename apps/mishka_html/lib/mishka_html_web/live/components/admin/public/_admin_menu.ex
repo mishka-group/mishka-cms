@@ -6,14 +6,16 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
   def mount(_params, session, socket) do
     if connected?(socket), do: subscribe()
     Process.send_after(self(), :update, 10)
+
     socket =
       assign(socket,
         user_id: Map.get(session, "user_id"),
         current_token: Map.get(session, "current_token"),
         menu_name: nil
       )
+
     {:ok, socket}
-   end
+  end
 
   def render(assigns) do
     ~H"""
@@ -63,6 +65,7 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
 
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 10000)
+
     socket.assigns.current_token
     |> verify_token()
     |> acl_check(socket)
@@ -72,9 +75,11 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
 
   defp verify_token(current_token) do
     case CurrentPhoenixToken.verify_token(current_token, :current) do
-      {:ok, :verify_token, :current, current_token_info} -> {:ok, :verify_token, current_token_info["id"], current_token}
+      {:ok, :verify_token, :current, current_token_info} ->
+        {:ok, :verify_token, current_token_info["id"], current_token}
 
-      _ -> {:error, :verify_token}
+      _ ->
+        {:error, :verify_token}
     end
   end
 
@@ -89,27 +94,28 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
   end
 
   defp acl_check({:ok, :verify_token, user_id, current_token}, socket) do
-    acl_got = Map.get(MishkaUser.Acl.Action.actions, socket.assigns.menu_name)
+    acl_got = Map.get(MishkaUser.Acl.Action.actions(), socket.assigns.menu_name)
 
     socket =
       with {:acl_check, false, action} <- {:acl_check, is_nil(acl_got), acl_got},
-         {:permittes?, true} <- {:permittes?, MishkaUser.Acl.Access.permittes?(action, user_id)} do
-
-          socket
-          |> assign(user_id: user_id, current_token: current_token)
-
+           {:permittes?, true} <- {:permittes?, MishkaUser.Acl.Access.permittes?(action, user_id)} do
+        socket
+        |> assign(user_id: user_id, current_token: current_token)
       else
         {:acl_check, true, nil} ->
-
           socket
           |> assign(user_id: user_id, current_token: current_token)
 
         {:permittes?, false} ->
-
           socket
-          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live_component", "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید."))
+          |> put_flash(
+            :warning,
+            MishkaTranslator.Gettext.dgettext(
+              "html_live_component",
+              "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید."
+            )
+          )
           |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.HomeLive))
-
       end
 
     {:noreply, socket}
@@ -120,6 +126,6 @@ defmodule MishkaHtmlWeb.Admin.Public.AdminMenu do
   end
 
   def notify_subscribers(notif) when is_tuple(notif) do
-     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "admin_menu", notif)
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "admin_menu", notif)
   end
 end

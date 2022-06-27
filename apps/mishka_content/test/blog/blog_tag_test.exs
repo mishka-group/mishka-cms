@@ -18,9 +18,8 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
     "short_description" => "Test category description",
     "main_image" => "https://test.com/png.png",
     "description" => "Test category description",
-    "alias_link" => "test-category-test",
+    "alias_link" => "test-category-test"
   }
-
 
   @post_info %{
     "title" => "Test Post",
@@ -30,7 +29,7 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
     "status" => :active,
     "priority" => :none,
     "alias_link" => "test-post-test",
-    "robots" => :IndexFollow,
+    "robots" => :IndexFollow
   }
 
   @tag_info %{
@@ -39,9 +38,8 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
     meta_keywords: "tag1",
     meta_description: "tag1",
     custom_title: "tag1",
-    robots: :IndexFollow,
+    robots: :IndexFollow
   }
-
 
   setup _context do
     {:ok, :add, :category, category_data} = Category.create(@category_info)
@@ -66,37 +64,48 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
     end
 
     test "link some tag to a post", context do
+      tags =
+        Enum.map(Enum.shuffle(1..5), fn item ->
+          {:ok, :add, :blog_tag, tag} =
+            assert Tag.create(
+                     Map.merge(@tag_info, %{
+                       title: "tag#{item}",
+                       custom_title: "tag#{item}",
+                       alias_link: "tag#{item}"
+                     })
+                   )
 
-      tags = Enum.map(Enum.shuffle(1..5), fn item ->
-        {:ok, :add, :blog_tag, tag} = assert Tag.create(Map.merge(@tag_info, %{
-          title: "tag#{item}",
-          custom_title: "tag#{item}",
-          alias_link: "tag#{item}",
-        }))
-        tag.id
-      end)
-      |> Enum.map(fn id ->
-        {:ok, :add, :blog_tag_mapper, tag_info} = assert TagMapper.create(%{
-          post_id: context.post_info.id,
-          tag_id: id
+          tag.id
+        end)
+        |> Enum.map(fn id ->
+          {:ok, :add, :blog_tag_mapper, tag_info} =
+            assert TagMapper.create(%{
+                     post_id: context.post_info.id,
+                     tag_id: id
+                   })
+
+          tag_info.tag_id
+        end)
+
+      post_info2 =
+        Map.merge(@post_info, %{
+          "category_id" => context.category_info.id,
+          "title" => "Test Post 2",
+          "alias_link" => "test-post-test2"
         })
-        tag_info.tag_id
-      end)
 
-
-      post_info2 = Map.merge(@post_info, %{
-        "category_id" => context.category_info.id,
-        "title" => "Test Post 2",
-        "alias_link" => "test-post-test2",
-      })
       {:ok, :add, :post, post_info2} = Post.create(post_info2)
 
-      {:ok, :add, :blog_tag_mapper, _tag_info} = assert TagMapper.create(%{
-        post_id: post_info2.id,
-        tag_id: List.first(tags)
-      })
+      {:ok, :add, :blog_tag_mapper, _tag_info} =
+        assert TagMapper.create(%{
+                 post_id: post_info2.id,
+                 tag_id: List.first(tags)
+               })
 
-      2 = assert length(Tag.tag_posts(conditions: {1, 20}, filters: %{id: List.first(tags)}).entries)
+      2 =
+        assert length(
+                 Tag.tag_posts(conditions: {1, 20}, filters: %{id: List.first(tags)}).entries
+               )
 
       5 = assert length(Tag.post_tags(context.post_info.id))
     end
@@ -105,8 +114,14 @@ defmodule MishkaContentTest.Blog.BlogTagTest do
   describe "UnHappy | Blog Tag CRUD DB ಠ╭╮ಠ" do
     test "link some tag to a post", context do
       0 = assert length(Tag.post_tags(context.post_info.id))
-      0 = assert length(Tag.tag_posts(conditions: {1, 20}, filters: %{id: Ecto.UUID.generate}).entries)
-      {:error, :add, :blog_tag_mapper, _tag_info} = assert TagMapper.create(%{post_id: Ecto.UUID.generate})
+
+      0 =
+        assert length(
+                 Tag.tag_posts(conditions: {1, 20}, filters: %{id: Ecto.UUID.generate()}).entries
+               )
+
+      {:error, :add, :blog_tag_mapper, _tag_info} =
+        assert TagMapper.create(%{post_id: Ecto.UUID.generate()})
     end
 
     test "create a tag", _context do

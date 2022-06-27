@@ -6,10 +6,10 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   alias MishkaContent.General.Activity
 
   use MishkaHtml.Helpers.LiveCRUD,
-      module: MishkaUser.User,
-      redirect: __MODULE__,
-      router: Routes,
-      skip_list: ["role"]
+    module: MishkaUser.User,
+    redirect: __MODULE__,
+    router: Routes,
+    skip_list: ["role"]
 
   @impl true
   def render(assigns) do
@@ -32,8 +32,10 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do: User.subscribe(); Activity.subscribe()
+    if connected?(socket), do: User.subscribe()
+    Activity.subscribe()
     Process.send_after(self(), :menu, 100)
+
     socket =
       assign(socket,
         page_size: 10,
@@ -42,12 +44,13 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         open_modal: false,
         component: nil,
         user_id: Map.get(session, "user_id"),
-        page_title:  @section_title,
+        page_title: @section_title,
         body_color: "#a29ac3cf",
         users: User.users(conditions: {1, 10}, filters: %{}),
         roles: MishkaUser.Acl.Role.roles(conditions: {1, 10}, filters: %{}),
         activities: Activity.activities(conditions: {1, 5}, filters: %{section: "user"})
       )
+
     {:ok, socket, temporary_assigns: [users: []]}
   end
 
@@ -59,8 +62,13 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
     socket =
       assign(socket,
         roles: MishkaUser.Acl.Role.roles(conditions: {1, 10}, filters: %{name: params["name"]}),
-        users: User.users(conditions: {socket.assigns.page, socket.assigns.page_size}, filters: user_filter(socket.assigns.filters))
+        users:
+          User.users(
+            conditions: {socket.assigns.page, socket.assigns.page_size},
+            filters: user_filter(socket.assigns.filters)
+          )
       )
+
     {:noreply, socket}
   end
 
@@ -69,24 +77,53 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
   delete_list_item(:users, DeleteErrorComponent, false)
 
   @impl true
-  def handle_event("user_role", %{"role" => role_id, "user_id" => user_id, "full_name" => full_name}, socket) do
+  def handle_event(
+        "user_role",
+        %{"role" => role_id, "user_id" => user_id, "full_name" => full_name},
+        socket
+      ) do
     case role_id do
       "delete_user_role" ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: "user",
-          section_id: user_id,
-          action: "auth",
-          priority: "medium",
-          status: "info"
-        }, %{user_action: "live_delete_user_role", type: "admin", full_name: full_name, user_id: Map.get(socket.assigns, :user_id)})
+        MishkaContent.General.Activity.create_activity_by_start_child(
+          %{
+            type: "section",
+            section: "user",
+            section_id: user_id,
+            action: "auth",
+            priority: "medium",
+            status: "info"
+          },
+          %{
+            user_action: "live_delete_user_role",
+            type: "admin",
+            full_name: full_name,
+            user_id: Map.get(socket.assigns, :user_id)
+          }
+        )
 
         title = MishkaTranslator.Gettext.dgettext("html_live", "نقش کاربری شما حذف شد")
-        description = MishkaTranslator.Gettext.dgettext("html_live", "دسترسی حساب کاربری شما تغییر کرده است. این به منظور مسدود شدن شما نمی باشد. بلکه نقش کاربری از قبل داده شده پاک گردیده است. لازم به ذکر است این تغییرات به وسیله مدیریت وب سایت انجام شده است.")
-        MishkaContent.General.Notif.send_notification(%{section: :user_only, type: :client, target: :all, title: title, description: description}, user_id, :repo_task)
+
+        description =
+          MishkaTranslator.Gettext.dgettext(
+            "html_live",
+            "دسترسی حساب کاربری شما تغییر کرده است. این به منظور مسدود شدن شما نمی باشد. بلکه نقش کاربری از قبل داده شده پاک گردیده است. لازم به ذکر است این تغییرات به وسیله مدیریت وب سایت انجام شده است."
+          )
+
+        MishkaContent.General.Notif.send_notification(
+          %{
+            section: :user_only,
+            type: :client,
+            target: :all,
+            title: title,
+            description: description
+          },
+          user_id,
+          :repo_task
+        )
 
         MishkaUser.Acl.UserRole.delete_user_role(user_id)
         MishkaUser.Acl.AclManagement.stop(user_id)
+
       _record ->
         create_or_edit_user_role(user_id, role_id, full_name, socket)
     end
@@ -96,15 +133,22 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
   @impl true
   def handle_info({:activity, :ok, repo_record}, socket) do
-    socket = case repo_record.__meta__.state do
-      :loaded ->
-        socket
-        |> assign(
-          activities: Activity.activities(conditions: {1, 5}, filters: %{section: "user"}),
-          users: User.users(conditions: {socket.assigns.page, socket.assigns.page_size}, filters: socket.assigns.filters)
-        )
-       _ ->  socket
-    end
+    socket =
+      case repo_record.__meta__.state do
+        :loaded ->
+          socket
+          |> assign(
+            activities: Activity.activities(conditions: {1, 5}, filters: %{section: "user"}),
+            users:
+              User.users(
+                conditions: {socket.assigns.page, socket.assigns.page_size},
+                filters: socket.assigns.filters
+              )
+          )
+
+        _ ->
+          socket
+      end
 
     {:noreply, socket}
   end
@@ -122,19 +166,25 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
 
   defp user_filter(_params), do: %{}
 
-
   defp create_or_edit_user_role(user_id, role_id, full_name, socket) do
     case MishkaUser.Acl.UserRole.show_by_user_id(user_id) do
       {:error, _, _repo_error} ->
-
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: "user",
-          section_id: user_id,
-          action: "auth",
-          priority: "medium",
-          status: "info"
-        }, %{user_action: "live_create_or_edit_user_role", type: "admin", full_name: full_name, user_id: Map.get(socket.assigns, :user_id)})
+        MishkaContent.General.Activity.create_activity_by_start_child(
+          %{
+            type: "section",
+            section: "user",
+            section_id: user_id,
+            action: "auth",
+            priority: "medium",
+            status: "info"
+          },
+          %{
+            user_action: "live_create_or_edit_user_role",
+            type: "admin",
+            full_name: full_name,
+            user_id: Map.get(socket.assigns, :user_id)
+          }
+        )
 
         MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
 
@@ -144,13 +194,25 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
     end
 
     title = MishkaTranslator.Gettext.dgettext("html_live", "نقش کاربری شما تغییر داده شد")
-    description = MishkaTranslator.Gettext.dgettext("html_live", "دسترسی کاربری شما به وسیله مدیریت وب سایت تغییر پیدا کرد. در صورت مشکل لطفا با پشتیبان ما در ارتباط باشید")
-    MishkaContent.General.Notif.send_notification(%{section: :user_only, type: :client, target: :all, title: title, description: description}, user_id, :repo_task)
 
-    MishkaUser.Acl.AclManagement.save(%{
-      id: user_id,
-      user_permission: MishkaUser.User.permissions(user_id),
-      created: System.system_time(:second)},
+    description =
+      MishkaTranslator.Gettext.dgettext(
+        "html_live",
+        "دسترسی کاربری شما به وسیله مدیریت وب سایت تغییر پیدا کرد. در صورت مشکل لطفا با پشتیبان ما در ارتباط باشید"
+      )
+
+    MishkaContent.General.Notif.send_notification(
+      %{section: :user_only, type: :client, target: :all, title: title, description: description},
+      user_id,
+      :repo_task
+    )
+
+    MishkaUser.Acl.AclManagement.save(
+      %{
+        id: user_id,
+        user_permission: MishkaUser.User.permissions(user_id),
+        created: System.system_time(:second)
+      },
       user_id
     )
   end
@@ -162,27 +224,62 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
     </div>
     """
   end
+
   def section_fields() do
     [
-      ListItemComponent.custom_field("user_image", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "تصویر"), user_temporary_image(),
-      {true, false, false}),
-      ListItemComponent.text_field("full_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام کامل"),
-      {true, true, true}, &MishkaHtml.full_name_sanitize/1),
-      ListItemComponent.text_field("username", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "نام کاربری"),
-      {true, true, true}, &MishkaHtml.username_sanitize/1),
-      ListItemComponent.text_field("email", [1], "col-sm header4", MishkaTranslator.Gettext.dgettext("html_live",  "ایمیل"),
-      {true, true, true}, &MishkaHtml.email_sanitize/1),
-      ListItemComponent.select_field("status", [1, 4], "col header5", MishkaTranslator.Gettext.dgettext("html_live",  "وضعیت"),
-      [
-        {MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شده"), "registered"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "فعال شده"), "active"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), "inactive"},
-        {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), "archived"},
-      ],
-      {true, true, true}),
-      ListItemComponent.select_field("role", [1, 4], "col header5", MishkaTranslator.Gettext.dgettext("html_live",  "نقش"),
-      Enum.map(MishkaUser.Acl.Role.roles(), fn role -> {role.display_name, role.id} end),
-      {false, false, true})
+      ListItemComponent.custom_field(
+        "user_image",
+        [1],
+        "col header1",
+        MishkaTranslator.Gettext.dgettext("html_live", "تصویر"),
+        user_temporary_image(),
+        {true, false, false}
+      ),
+      ListItemComponent.text_field(
+        "full_name",
+        [1],
+        "col header2",
+        MishkaTranslator.Gettext.dgettext("html_live", "نام کامل"),
+        {true, true, true},
+        &MishkaHtml.full_name_sanitize/1
+      ),
+      ListItemComponent.text_field(
+        "username",
+        [1],
+        "col header3",
+        MishkaTranslator.Gettext.dgettext("html_live", "نام کاربری"),
+        {true, true, true},
+        &MishkaHtml.username_sanitize/1
+      ),
+      ListItemComponent.text_field(
+        "email",
+        [1],
+        "col-sm header4",
+        MishkaTranslator.Gettext.dgettext("html_live", "ایمیل"),
+        {true, true, true},
+        &MishkaHtml.email_sanitize/1
+      ),
+      ListItemComponent.select_field(
+        "status",
+        [1, 4],
+        "col header5",
+        MishkaTranslator.Gettext.dgettext("html_live", "وضعیت"),
+        [
+          {MishkaTranslator.Gettext.dgettext("html_live", "ثبت نام شده"), "registered"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "فعال شده"), "active"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "غیر فعال"), "inactive"},
+          {MishkaTranslator.Gettext.dgettext("html_live", "آرشیو شده"), "archived"}
+        ],
+        {true, true, true}
+      ),
+      ListItemComponent.select_field(
+        "role",
+        [1, 4],
+        "col header5",
+        MishkaTranslator.Gettext.dgettext("html_live", "نقش"),
+        Enum.map(MishkaUser.Acl.Role.roles(), fn role -> {role.display_name, role.id} end),
+        {false, false, true}
+      )
     ]
   end
 
@@ -210,13 +307,13 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
           %{
             method: :delete,
             router: nil,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "حذف"),
             class: "btn btn-outline-primary vazir"
           },
           %{
             method: :redirect_key,
             router: MishkaHtmlWeb.AdminUserLive,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "ویرایش"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "ویرایش"),
             class: "btn btn-outline-danger vazir",
             action: :id,
             key: :id
@@ -228,11 +325,10 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         title: MishkaTranslator.Gettext.dgettext("html_live_templates", "کاربران"),
         section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "کاربر"),
         action: :full_name,
-        action_by: :full_name,
+        action_by: :full_name
       },
       custom_operations: [:roles, :id, :full_name],
-      description:
-      ~H"""
+      description: ~H"""
         <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید کاربران سایت را مدیریت نمایید.") %>
         <div class="space30"></div>
       """

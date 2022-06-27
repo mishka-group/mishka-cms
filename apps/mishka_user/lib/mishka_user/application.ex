@@ -14,8 +14,14 @@ defmodule MishkaUser.Application do
       {DynamicSupervisor, [strategy: :one_for_one, name: MishkaUser.Acl.AclOtpRunner]},
       {MishkaUser.Acl.AclTask, []},
       {Finch, name: MyHttpClient},
-      %{id: MishkaUser.CorePlugin.Login.SuccessLogin, start: {MishkaUser.CorePlugin.Login.SuccessLogin, :start_link, [[]]}},
-      %{id: MishkaUser.CorePlugin.Login.SuccessLogout, start: {MishkaUser.CorePlugin.Login.SuccessLogout, :start_link, [[]]}}
+      %{
+        id: MishkaUser.CorePlugin.Login.SuccessLogin,
+        start: {MishkaUser.CorePlugin.Login.SuccessLogin, :start_link, [[]]}
+      },
+      %{
+        id: MishkaUser.CorePlugin.Login.SuccessLogout,
+        start: {MishkaUser.CorePlugin.Login.SuccessLogout, :start_link, [[]]}
+      }
     ]
 
     opts = [strategy: :one_for_one, name: MishkaUser.Supervisor]

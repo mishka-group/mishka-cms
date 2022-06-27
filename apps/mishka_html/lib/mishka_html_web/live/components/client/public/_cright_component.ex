@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.Client.Public.CrightComponent do
   use MishkaHtmlWeb, :live_component
 
-
   def render(assigns) do
     ~H"""
       <div id="cright-inside">
@@ -11,5 +10,4 @@ defmodule MishkaHtmlWeb.Client.Public.CrightComponent do
       </div>
     """
   end
-
 end

@@ -16,9 +16,10 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
   @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
+
     socket =
       assign(socket,
-        dynamic_form:  create_menu_list(basic_menu_list(), []),
+        dynamic_form: create_menu_list(basic_menu_list(), []),
         page_title: MishkaTranslator.Gettext.dgettext("html_live", "ساخت نقش"),
         body_color: "#a29ac3cf",
         basic_menu: false,
@@ -27,7 +28,9 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
         drafts: ContentDraftManagement.drafts_by_section(section: "role"),
         draft_id: nil,
         user_ip: get_connect_info(socket, :peer_data).address,
-        changeset: role_changeset())
+        changeset: role_changeset()
+      )
+
     {:ok, socket}
   end
 
@@ -40,51 +43,73 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
 
   @impl true
   def handle_event("save", %{"role" => params}, socket) do
-    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
-      [] -> socket
-      fields_list ->
+    socket =
+      case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
+        [] ->
+          socket
 
-        socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
+        fields_list ->
+          socket
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
          (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
          ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
-    end
+      end
 
-    socket = case Role.create(params) do
-      {:error, :add, :role, repo_error} ->
-        socket
-        |> assign([changeset: repo_error])
+    socket =
+      case Role.create(params) do
+        {:error, :add, :role, repo_error} ->
+          socket
+          |> assign(changeset: repo_error)
 
-      {:ok, :add, :role, repo_data} ->
-        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "نقش: %{title} درست شده است.", title: repo_data.name)})
-        state = %MishkaInstaller.Reference.OnUserAfterSaveRole{role_id: repo_data.id, ip: socket.assigns.user_ip, endpoint: :html, conn: socket}
-        MishkaInstaller.Hook.call(event: "on_user_after_save_role", state: state).conn
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نقش مورد نظر ساخته شد."))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))
-    end
+        {:ok, :add, :role, repo_data} ->
+          Notif.notify_subscribers(%{
+            id: repo_data.id,
+            msg:
+              MishkaTranslator.Gettext.dgettext("html_live", "نقش: %{title} درست شده است.",
+                title: repo_data.name
+              )
+          })
+
+          state = %MishkaInstaller.Reference.OnUserAfterSaveRole{
+            role_id: repo_data.id,
+            ip: socket.assigns.user_ip,
+            endpoint: :html,
+            conn: socket
+          }
+
+          MishkaInstaller.Hook.call(event: "on_user_after_save_role", state: state).conn
+          |> put_flash(
+            :info,
+            MishkaTranslator.Gettext.dgettext("html_live", "نقش مورد نظر ساخته شد.")
+          )
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))
+      end
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("save", _params, socket) do
-    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
-      [] -> socket
-      fields_list ->
+    socket =
+      case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
+        [] ->
+          socket
 
-        socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
+        fields_list ->
+          socket
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
          (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
          ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
-    end
+      end
+
     {:noreply, socket}
   end
 
@@ -92,7 +117,8 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
 
   defp role_changeset(params \\ %{}) do
     MishkaDatabase.Schema.MishkaUser.Role.changeset(
-      %MishkaDatabase.Schema.MishkaUser.Role{}, params
+      %MishkaDatabase.Schema.MishkaUser.Role{},
+      params
     )
   end
 
@@ -102,23 +128,48 @@ defmodule MishkaHtmlWeb.AdminUserRoleLive do
 
   def basic_menu_list() do
     [
-      %{type: "name", status: [
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"), class: "badge bg-success"}
-      ],
-      form: "text",
-      class: "col-sm-3",
-      title: MishkaTranslator.Gettext.dgettext("html_live", "نام نقش"),
-      description: MishkaTranslator.Gettext.dgettext("html_live", "برای ایجاد هر دسترسی نیاز به معرفی نقش می باشد که هر نقش داری یک نام است")},
-
-      %{type: "display_name", status: [
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"},
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"), class: "badge bg-success"}
-      ],
-      form: "text",
-      class: "col-sm-3",
-      title: MishkaTranslator.Gettext.dgettext("html_live", "نام نمایشی"),
-      description: MishkaTranslator.Gettext.dgettext("html_live", "این فیلد نیز همانند نام هر نقش برای دسترسی ایجاد می شود و بیشتر برای شناسایی به کد شورت کد استفاده می گردد.")}
+      %{
+        type: "name",
+        status: [
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"),
+            class: "badge bg-danger"
+          },
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"),
+            class: "badge bg-success"
+          }
+        ],
+        form: "text",
+        class: "col-sm-3",
+        title: MishkaTranslator.Gettext.dgettext("html_live", "نام نقش"),
+        description:
+          MishkaTranslator.Gettext.dgettext(
+            "html_live",
+            "برای ایجاد هر دسترسی نیاز به معرفی نقش می باشد که هر نقش داری یک نام است"
+          )
+      },
+      %{
+        type: "display_name",
+        status: [
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"),
+            class: "badge bg-danger"
+          },
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live", "یکتا"),
+            class: "badge bg-success"
+          }
+        ],
+        form: "text",
+        class: "col-sm-3",
+        title: MishkaTranslator.Gettext.dgettext("html_live", "نام نمایشی"),
+        description:
+          MishkaTranslator.Gettext.dgettext(
+            "html_live",
+            "این فیلد نیز همانند نام هر نقش برای دسترسی ایجاد می شود و بیشتر برای شناسایی به کد شورت کد استفاده می گردد."
+          )
+      }
     ]
   end
 end

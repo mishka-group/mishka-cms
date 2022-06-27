@@ -5,9 +5,9 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
   @error_atom :setting
 
   use MishkaHtml.Helpers.LiveCRUD,
-      module: MishkaDatabase.Public.Setting,
-      redirect: __MODULE__,
-      router: Routes
+    module: MishkaDatabase.Public.Setting,
+    redirect: __MODULE__,
+    router: Routes
 
   @impl true
   def render(assigns) do
@@ -17,6 +17,7 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
   @impl true
   def mount(_params, session, socket) do
     Process.send_after(self(), :menu, 100)
+
     socket =
       assign(socket,
         dynamic_form: [],
@@ -28,7 +29,8 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
         draft_id: nil,
         configs: [{"", ""}],
         draft_state: [],
-        changeset: setting_changeset())
+        changeset: setting_changeset()
+      )
 
     {:ok, socket}
   end
@@ -37,39 +39,49 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
   def handle_params(%{"id" => id}, _url, socket) do
     all_field = create_menu_list(basic_menu_list(), [])
 
-    socket = case Setting.show_by_id(id) do
-      {:error, :get_record_by_id, @error_atom} ->
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین نمظیماتی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
+    socket =
+      case Setting.show_by_id(id) do
+        {:error, :get_record_by_id, @error_atom} ->
+          socket
+          |> put_flash(
+            :warning,
+            MishkaTranslator.Gettext.dgettext(
+              "html_live",
+              "چنین نمظیماتی وجود ندارد یا ممکن است از قبل حذف شده باشد."
+            )
+          )
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
 
-      {:ok, :get_record_by_id, @error_atom, repo_data} ->
+        {:ok, :get_record_by_id, @error_atom, repo_data} ->
+          user_info =
+            Enum.map(all_field, fn field ->
+              record =
+                Enum.find(creata_setting_state(repo_data), fn user -> user.type == field.type end)
 
-        user_info = Enum.map(all_field, fn field ->
-         record = Enum.find(creata_setting_state(repo_data), fn user -> user.type == field.type end)
-         Map.merge(field, %{value: if(is_nil(record), do: nil, else: record.value)})
-        end)
-        |> Enum.reject(fn x -> x.value == nil end)
+              Map.merge(field, %{value: if(is_nil(record), do: nil, else: record.value)})
+            end)
+            |> Enum.reject(fn x -> x.value == nil end)
 
-        draft_state = repo_data.configs
-        |> Map.to_list()
-        |> Enum.with_index(fn element, index -> {index, element} end)
-        |> Enum.map(fn {item, {field, value}} ->
-          [
-            {"input-name-#{item + 1}", field},
-            {"input-value-#{item + 1}", value}
-          ]
-        end)
-        |> Enum.concat()
+          draft_state =
+            repo_data.configs
+            |> Map.to_list()
+            |> Enum.with_index(fn element, index -> {index, element} end)
+            |> Enum.map(fn {item, {field, value}} ->
+              [
+                {"input-name-#{item + 1}", field},
+                {"input-value-#{item + 1}", value}
+              ]
+            end)
+            |> Enum.concat()
 
-        socket
-        |> assign([
-          dynamic_form: user_info,
-          id: repo_data.id,
-          configs: Map.to_list(repo_data.configs),
-          draft_state: draft_state
-        ])
-    end
+          socket
+          |> assign(
+            dynamic_form: user_info,
+            id: repo_data.id,
+            configs: Map.to_list(repo_data.configs),
+            draft_state: draft_state
+          )
+      end
 
     {:noreply, socket}
   end
@@ -90,37 +102,37 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
 
   @impl true
   def handle_event("delete_user_form", %{"id" => id}, socket) do
-
-    user_fields = socket.assigns.draft_state
-    |> Enum.reject(fn {key, _value} -> key == id end)
-    |> Enum.filter(fn {key, _value} -> String.slice(key, 0..5) == "input-" end)
+    user_fields =
+      socket.assigns.draft_state
+      |> Enum.reject(fn {key, _value} -> key == id end)
+      |> Enum.filter(fn {key, _value} -> String.slice(key, 0..5) == "input-" end)
 
     configs = create_configs(user_fields, :list)
 
-    draft_state = configs
-    |> Map.to_list()
-    |> Enum.with_index(fn element, index -> {index, element} end)
-    |> Enum.map(fn {item, {field, value}} ->
-      [
-        {"input-name-#{item + 1}", field},
-        {"input-value-#{item + 1}", value}
-      ]
-    end)
-    |> Enum.concat()
-
+    draft_state =
+      configs
+      |> Map.to_list()
+      |> Enum.with_index(fn element, index -> {index, element} end)
+      |> Enum.map(fn {item, {field, value}} ->
+        [
+          {"input-name-#{item + 1}", field},
+          {"input-value-#{item + 1}", value}
+        ]
+      end)
+      |> Enum.concat()
 
     socket =
       socket
-      |> assign(draft_state: draft_state, configs: configs |> Map.to_list)
+      |> assign(draft_state: draft_state, configs: configs |> Map.to_list())
 
     {:noreply, socket}
   end
 
-
   @impl true
   def handle_event("draft", params, socket) do
-    configs = params
-    |> Map.drop(["setting", "_target", "_csrf_token"])
+    configs =
+      params
+      |> Map.drop(["setting", "_target", "_csrf_token"])
 
     socket =
       socket
@@ -136,44 +148,54 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
 
   @impl true
   def handle_event("save", %{"setting_schema" => params} = full_params, socket) do
-    configs = if(create_configs(full_params, :map) != %{}, do: create_configs(full_params, :map), else: nil)
-    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
-      [] -> socket
-      fields_list ->
-        socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
+    configs =
+      if(create_configs(full_params, :map) != %{},
+        do: create_configs(full_params, :map),
+        else: nil
+      )
+
+    socket =
+      case MishkaHtml.html_form_required_fields(basic_menu_list(), params) do
+        [] ->
+          socket
+
+        fields_list ->
+          socket
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
          (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
          ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
-    end
+      end
 
     case socket.assigns.id do
       nil -> create_setting(socket, params: {Map.merge(params, %{"configs" => configs})})
-      id ->  edit_setting(socket, params: {Map.merge(params, %{"configs" => configs}), id})
+      id -> edit_setting(socket, params: {Map.merge(params, %{"configs" => configs}), id})
     end
   end
 
   @impl true
   def handle_event("save", _params, socket) do
-    socket = case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
-      [] -> socket
-      fields_list ->
+    socket =
+      case MishkaHtml.html_form_required_fields(basic_menu_list(), []) do
+        [] ->
+          socket
 
-        socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
+        fields_list ->
+          socket
+          |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "
         متاسفانه شما چند فیلد ضروری را به لیست خود اضافه نکردید از جمله:
          (%{list_tag})
          برای اضافه کردن تمامی نیازمندی ها روی دکمه
          \"فیلد های ضروری\"
           کلیک کنید
          ", list_tag: MishkaHtml.list_tag_to_string(fields_list, ", ")))
-    end
+      end
+
     {:noreply, socket}
   end
-
 
   selected_menue("MishkaHtmlWeb.AdminSettingLive")
 
@@ -189,86 +211,130 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
 
   defp create_configs(params) do
     user_fields =
-    params
-    |> Enum.filter(fn {key, _value} -> String.slice(key, 0..5) == "input-" end)
+      params
+      |> Enum.filter(fn {key, _value} -> String.slice(key, 0..5) == "input-" end)
 
     Enum.map(user_fields, fn {key, field_name} ->
       if String.slice(key, 0..10) == "input-name-" do
         ["input", "name", number] = String.split(key, "-")
-        {_value_key, value_value} = Enum.find(user_fields, fn {user_key, _user_value} -> user_key == "input-value-#{number}" end)
+
+        {_value_key, value_value} =
+          Enum.find(user_fields, fn {user_key, _user_value} ->
+            user_key == "input-value-#{number}"
+          end)
+
         {field_name, value_value}
       end
     end)
     |> Enum.reject(&is_nil/1)
     |> Enum.reject(fn {key, value} -> key == "" or value == "" end)
-    |> Map.new
+    |> Map.new()
   end
 
   defp create_setting(socket, params: {params}) do
-    socket = case Setting.create(params) do
-      {:error, :add, :setting, repo_error} ->
-        socket
-        |> assign([changeset: repo_error])
+    socket =
+      case Setting.create(params) do
+        {:error, :add, :setting, repo_error} ->
+          socket
+          |> assign(changeset: repo_error)
 
-      {:ok, :add, :setting, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: "setting",
-          section_id: repo_data.id,
-          action: "add",
-          priority: "medium",
-          status: "info"
-        }, %{user_action: "live_create_setting", type: "admin", user_id: socket.assigns.user_id})
+        {:ok, :add, :setting, repo_data} ->
+          MishkaContent.General.Activity.create_activity_by_start_child(
+            %{
+              type: "section",
+              section: "setting",
+              section_id: repo_data.id,
+              action: "add",
+              priority: "medium",
+              status: "info"
+            },
+            %{user_action: "live_create_setting", type: "admin", user_id: socket.assigns.user_id}
+          )
 
-        if(!is_nil(Map.get(socket.assigns, :draft_id)), do: MishkaContent.Cache.ContentDraftManagement.delete_record(id: socket.assigns.draft_id))
-        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات بخش: %{title} درست شده است.", title: MishkaHtml.full_name_sanitize(repo_data.name))})
+          if(!is_nil(Map.get(socket.assigns, :draft_id)),
+            do:
+              MishkaContent.Cache.ContentDraftManagement.delete_record(
+                id: socket.assigns.draft_id
+              )
+          )
 
-        socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات مورد نظر ساخته شد."))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
+          Notif.notify_subscribers(%{
+            id: repo_data.id,
+            msg:
+              MishkaTranslator.Gettext.dgettext(
+                "html_live",
+                "تنظیمات بخش: %{title} درست شده است.",
+                title: MishkaHtml.full_name_sanitize(repo_data.name)
+              )
+          })
 
-    end
+          socket
+          |> put_flash(
+            :info,
+            MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات مورد نظر ساخته شد.")
+          )
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
+      end
 
     {:noreply, socket}
   end
 
-
   defp edit_setting(socket, params: {params, id}) do
-    socket = case Setting.edit(Map.merge(params, %{"id" => id})) do
-      {:error, :edit, :setting, repo_error} ->
-        socket
-        |> assign([
-          changeset: repo_error,
-        ])
+    socket =
+      case Setting.edit(Map.merge(params, %{"id" => id})) do
+        {:error, :edit, :setting, repo_error} ->
+          socket
+          |> assign(changeset: repo_error)
 
-      {:ok, :edit, :setting, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: "setting",
-          section_id: repo_data.id,
-          action: "edit",
-          priority: "medium",
-          status: "info",
-        }, %{user_action: "live_edit_setting", type: "admin", user_id: socket.assigns.user_id})
+        {:ok, :edit, :setting, repo_data} ->
+          MishkaContent.General.Activity.create_activity_by_start_child(
+            %{
+              type: "section",
+              section: "setting",
+              section_id: repo_data.id,
+              action: "edit",
+              priority: "medium",
+              status: "info"
+            },
+            %{user_action: "live_edit_setting", type: "admin", user_id: socket.assigns.user_id}
+          )
 
-        Notif.notify_subscribers(%{id: repo_data.id, msg: MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات بخش: %{title} به روز شده است.", title: MishkaHtml.full_name_sanitize(repo_data.name))})
-        socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات مورد نظر به روز رسانی شد"))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
+          Notif.notify_subscribers(%{
+            id: repo_data.id,
+            msg:
+              MishkaTranslator.Gettext.dgettext(
+                "html_live",
+                "تنظیمات بخش: %{title} به روز شده است.",
+                title: MishkaHtml.full_name_sanitize(repo_data.name)
+              )
+          })
 
-      {:error, :edit, :uuid, _error_tag} ->
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "چنین تنظیماتی وجود ندارد یا ممکن است از قبل حذف شده باشد."))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
+          socket
+          |> put_flash(
+            :info,
+            MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات مورد نظر به روز رسانی شد")
+          )
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
 
-    end
+        {:error, :edit, :uuid, _error_tag} ->
+          socket
+          |> put_flash(
+            :warning,
+            MishkaTranslator.Gettext.dgettext(
+              "html_live",
+              "چنین تنظیماتی وجود ندارد یا ممکن است از قبل حذف شده باشد."
+            )
+          )
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminSettingsLive))
+      end
 
     {:noreply, socket}
   end
 
   defp setting_changeset(params \\ %{}) do
     SettingSchema.changeset(
-      %SettingSchema{}, params
+      %SettingSchema{},
+      params
     )
   end
 
@@ -291,13 +357,20 @@ defmodule MishkaHtmlWeb.AdminSettingLive do
 
   def basic_menu_list() do
     [
-      %{type: "name", status: [
-        %{title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"), class: "badge bg-danger"}
-      ],
-      form: "text",
-      class: "col-sm-3",
-      title: MishkaTranslator.Gettext.dgettext("html_live", "بخش"),
-      description: MishkaTranslator.Gettext.dgettext("html_live", "نام تنظیمات هر بخش را وارد کنید")}
+      %{
+        type: "name",
+        status: [
+          %{
+            title: MishkaTranslator.Gettext.dgettext("html_live", "ضروری"),
+            class: "badge bg-danger"
+          }
+        ],
+        form: "text",
+        class: "col-sm-3",
+        title: MishkaTranslator.Gettext.dgettext("html_live", "بخش"),
+        description:
+          MishkaTranslator.Gettext.dgettext("html_live", "نام تنظیمات هر بخش را وارد کنید")
+      }
     ]
   end
 end

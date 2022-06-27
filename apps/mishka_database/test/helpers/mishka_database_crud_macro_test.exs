@@ -1,10 +1,11 @@
 defmodule MishkaDatabase.Helpers.CrudMacroTest do
   use ExUnit.Case, async: true
   doctest MishkaDatabase
+
   use MishkaDeveloperTools.DB.CRUD,
-                        module: MishkaDatabase.Schema.MishkaUser.User,
-                        error_atom: :user,
-                        repo: MishkaDatabase.Repo
+    module: MishkaDatabase.Schema.MishkaUser.User,
+    error_atom: :user,
+    repo: MishkaDatabase.Repo
 
   setup do
     # Explicitly get a connection before each test
@@ -17,7 +18,7 @@ defmodule MishkaDatabase.Helpers.CrudMacroTest do
     email: "user_name_@gmail.com",
     password: "pass1Test",
     status: 1,
-    unconfirmed_email: "user_name_#{Enum.random(100000..999999)}@gmail.com",
+    unconfirmed_email: "user_name_#{Enum.random(100_000..999_999)}@gmail.com"
   }
 
   @false_user_info %{
@@ -39,13 +40,17 @@ defmodule MishkaDatabase.Helpers.CrudMacroTest do
     test "crud edit without strong parameter (user right info)" do
       allowed_fields = [:full_name, :username, :email, :status]
       {:ok, :add, :user, data} = assert crud_add(@right_user_info, allowed_fields)
-      {:ok, :edit, :user, _edit_data} = assert crud_edit(Map.merge(@right_user_info,%{id: data.id}))
+
+      {:ok, :edit, :user, _edit_data} =
+        assert crud_edit(Map.merge(@right_user_info, %{id: data.id}))
     end
 
     test "crud edit with strong parameter (user right info)" do
       allowed_fields = [:id, :full_name, :username, :email, :status]
       {:ok, :add, :user, data} = assert crud_add(@right_user_info)
-      {:ok, :edit, :user, _edit_data} = assert crud_edit(Map.merge(@right_user_info, %{id: data.id}), allowed_fields)
+
+      {:ok, :edit, :user, _edit_data} =
+        assert crud_edit(Map.merge(@right_user_info, %{id: data.id}), allowed_fields)
     end
 
     test "crud delete (user right info)" do
@@ -60,14 +65,11 @@ defmodule MishkaDatabase.Helpers.CrudMacroTest do
 
     test "get record by field (user right info)" do
       {:ok, :add, :user, data} = assert crud_add(@right_user_info)
-      {:ok, :get_record_by_field, :user, _record_info} = assert crud_get_by_field("email", data.email)
+
+      {:ok, :get_record_by_field, :user, _record_info} =
+        assert crud_get_by_field("email", data.email)
     end
   end
-
-
-
-
-
 
   describe "UnHappy | CRUD Macro with users DB ಠ╭╮ಠ" do
     test "crud add without strong parameter (user false info)" do
@@ -82,21 +84,28 @@ defmodule MishkaDatabase.Helpers.CrudMacroTest do
     test "crud edit without strong parameter (user right info)" do
       allowed_fields = [:full_name, :username, :email, :status]
       {:ok, :add, :user, data} = assert crud_add(@right_user_info, allowed_fields)
-      {:error, :edit, :user, _changeset} = assert crud_edit(Map.merge(@false_user_info,%{id: data.id, full_name: "f"}))
+
+      {:error, :edit, :user, _changeset} =
+        assert crud_edit(Map.merge(@false_user_info, %{id: data.id, full_name: "f"}))
     end
 
     test "crud edit with strong parameter (user right info)" do
       allowed_fields = [:id, :full_name, :username, :email, :status]
       {:ok, :add, :user, data} = assert crud_add(@right_user_info)
-      {:error, :edit, :user, _changeset} = assert crud_edit(Map.merge(@false_user_info, %{id: data.id, full_name: "f"}), allowed_fields)
+
+      {:error, :edit, :user, _changeset} =
+        assert crud_edit(
+                 Map.merge(@false_user_info, %{id: data.id, full_name: "f"}),
+                 allowed_fields
+               )
     end
 
     test "crud delete (user false info)" do
-      {:error, :delete, :get_record_by_id, :user} = assert crud_delete(Ecto.UUID.generate)
+      {:error, :delete, :get_record_by_id, :user} = assert crud_delete(Ecto.UUID.generate())
     end
 
     test "get record by id (user false info)" do
-      {:error, :get_record_by_id, :user} = assert crud_get_record(Ecto.UUID.generate)
+      {:error, :get_record_by_id, :user} = assert crud_get_record(Ecto.UUID.generate())
     end
 
     test "get record by field (user false info)" do

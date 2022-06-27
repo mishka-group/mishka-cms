@@ -4,34 +4,58 @@ defmodule MishkaApiWeb.ContentController do
   alias MishkaContent.Blog.{Category, Post, Like, Tag, TagMapper, BlogLink, Author}
   alias MishkaContent.General.{Comment, CommentLike, Bookmark, Notif, Subscription}
 
-  def posts(conn, %{"page" => page, "filters" => %{"status" => status} = params})  when status in ["active", "archived"] do
+  def posts(conn, %{"page" => page, "filters" => %{"status" => status} = params})
+      when status in ["active", "archived"] do
     filters = Map.take(params, Post.allowed_fields(:string))
-    Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: Map.get(conn.assigns, :user_id))
+
+    Post.posts(
+      conditions: {page, 20},
+      filters: MishkaDatabase.convert_string_map_to_atom_map(filters),
+      user_id: Map.get(conn.assigns, :user_id)
+    )
     |> MishkaApi.ContentProtocol.posts(conn)
   end
 
   def editor_posts(conn, %{"page" => page, "filters" => params}) when is_map(params) do
     filters = Map.take(params, Post.allowed_fields(:string))
-    Post.posts(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: Map.get(conn.assigns, :user_id))
+
+    Post.posts(
+      conditions: {page, 20},
+      filters: MishkaDatabase.convert_string_map_to_atom_map(filters),
+      user_id: Map.get(conn.assigns, :user_id)
+    )
     |> MishkaApi.ContentProtocol.posts(conn)
   end
 
-  def post(conn, %{"alias_link" => alias_link, "status" => status, "comment" => %{"page" => _page, "filters" => %{"status" => status}} = comment}) when status in ["active", "archive"] do
+  def post(conn, %{
+        "alias_link" => alias_link,
+        "status" => status,
+        "comment" => %{"page" => _page, "filters" => %{"status" => status}} = comment
+      })
+      when status in ["active", "archive"] do
     Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: comment})
   end
 
-  def post(conn, %{"alias_link" => alias_link, "status" => status}) when status in ["active", "archived"] do
+  def post(conn, %{"alias_link" => alias_link, "status" => status})
+      when status in ["active", "archived"] do
     Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :none_comment})
   end
 
-  def editor_post(conn, %{"alias_link" => alias_link, "status" => status, "comment" => %{"page" => _page, "filters" => _filters} = comment})do
+  def editor_post(conn, %{
+        "alias_link" => alias_link,
+        "status" => status,
+        "comment" => %{"page" => _page, "filters" => _filters} = comment
+      }) do
     Post.post(alias_link, status)
-    |> MishkaApi.ContentProtocol.post(conn, %{type: :comment, comment: MishkaDatabase.convert_string_map_to_atom_map(comment)})
+    |> MishkaApi.ContentProtocol.post(conn, %{
+      type: :comment,
+      comment: MishkaDatabase.convert_string_map_to_atom_map(comment)
+    })
   end
 
-  def editor_post(conn, %{"alias_link" => alias_link, "status" => status})do
+  def editor_post(conn, %{"alias_link" => alias_link, "status" => status}) do
     Post.post(alias_link, status)
     |> MishkaApi.ContentProtocol.post(conn, %{type: :none_comment})
   end
@@ -75,6 +99,7 @@ defmodule MishkaApiWeb.ContentController do
     Category.categories(filters: %{status: :active})
     |> MishkaApi.ContentProtocol.categories(conn)
   end
+
   def create_category(conn, params) do
     Category.create(params, Category.allowed_fields(:string))
     |> MishkaApi.ContentProtocol.create_category(conn, Category.allowed_fields(:atom))
@@ -105,16 +130,26 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.delete_post_like(conn, Like.allowed_fields(:atom))
   end
 
-  def comment(conn, %{"filters" => %{"comment_id" => comment_id, "status" => status}}) when status in ["active", "archived"] do
-    Comment.comment(filters: %{id: comment_id, status: status}, user_id: Map.get(conn.assigns, :user_id))
+  def comment(conn, %{"filters" => %{"comment_id" => comment_id, "status" => status}})
+      when status in ["active", "archived"] do
+    Comment.comment(
+      filters: %{id: comment_id, status: status},
+      user_id: Map.get(conn.assigns, :user_id)
+    )
     |> MishkaApi.ContentProtocol.comment(conn, Comment.allowed_fields(:atom))
   end
 
-  def comments(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in ["active", "archived"] do
+  def comments(conn, %{"page" => page, "filters" => %{"status" => status} = params})
+      when status in ["active", "archived"] do
     filters =
       Map.take(params, Comment.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
-    Comment.comments(conditions: {page, 20}, filters: filters, user_id: Map.get(conn.assigns, :user_id))
+
+    Comment.comments(
+      conditions: {page, 20},
+      filters: filters,
+      user_id: Map.get(conn.assigns, :user_id)
+    )
     |> MishkaApi.ContentProtocol.comments(conn, Comment.allowed_fields(:atom))
   end
 
@@ -122,18 +157,32 @@ defmodule MishkaApiWeb.ContentController do
     filters =
       Map.take(params, Comment.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
+
     Comment.comment(filters: filters, user_id: Map.get(conn.assigns, :user_id))
     |> MishkaApi.ContentProtocol.comment(conn, Comment.allowed_fields(:atom))
   end
 
   def editor_comments(conn, %{"page" => page, "filters" => params}) when is_map(params) do
     filters = Map.take(params, Comment.allowed_fields(:string))
-    Comment.comments(conditions: {page, 20}, filters: MishkaDatabase.convert_string_map_to_atom_map(filters), user_id: Map.get(conn.assigns, :user_id))
+
+    Comment.comments(
+      conditions: {page, 20},
+      filters: MishkaDatabase.convert_string_map_to_atom_map(filters),
+      user_id: Map.get(conn.assigns, :user_id)
+    )
     |> MishkaApi.ContentProtocol.comments(conn, Comment.allowed_fields(:atom))
   end
 
   def create_comment(conn, %{"section_id" => _section_id, "description" => _description} = params) do
-    Comment.create(Map.merge(params, %{"priority" => "none", "section" => "blog_post", "status" => "active", "user_id" => Map.get(conn.assigns, :user_id)}), Comment.allowed_fields(:string))
+    Comment.create(
+      Map.merge(params, %{
+        "priority" => "none",
+        "section" => "blog_post",
+        "status" => "active",
+        "user_id" => Map.get(conn.assigns, :user_id)
+      }),
+      Comment.allowed_fields(:string)
+    )
     |> MishkaApi.ContentProtocol.create_comment(conn, Comment.allowed_fields(:atom))
   end
 
@@ -162,19 +211,22 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.delete_comment_like(conn, CommentLike.allowed_fields(:atom))
   end
 
-  def create_tag(conn, %{"title" => _title, "alias_link" => _alias_link, "robots" => _robots} = params) do
-     Tag.create(params, Tag.allowed_fields(:string))
-     |> MishkaApi.ContentProtocol.create_tag(conn, Tag.allowed_fields(:atom))
+  def create_tag(
+        conn,
+        %{"title" => _title, "alias_link" => _alias_link, "robots" => _robots} = params
+      ) do
+    Tag.create(params, Tag.allowed_fields(:string))
+    |> MishkaApi.ContentProtocol.create_tag(conn, Tag.allowed_fields(:atom))
   end
 
   def edit_tag(conn, %{"tag_id" => tag_id} = params) do
     Tag.edit(Map.merge(params, %{"id" => tag_id}), Tag.allowed_fields(:string))
-     |> MishkaApi.ContentProtocol.edit_tag(conn, Tag.allowed_fields(:atom))
+    |> MishkaApi.ContentProtocol.edit_tag(conn, Tag.allowed_fields(:atom))
   end
 
   def delete_tag(conn, %{"tag_id" => tag_id}) do
     Tag.delete(tag_id)
-     |> MishkaApi.ContentProtocol.delete_tag(conn, Tag.allowed_fields(:atom))
+    |> MishkaApi.ContentProtocol.delete_tag(conn, Tag.allowed_fields(:atom))
   end
 
   def add_tag_to_post(conn, %{"post_id" => post_id, "tag_id" => tag_id}) do
@@ -191,6 +243,7 @@ defmodule MishkaApiWeb.ContentController do
     filters =
       Map.take(params, Tag.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
+
     Tag.tags(conditions: {page, 30}, filters: filters)
     |> MishkaApi.ContentProtocol.tags(conn, Tag.allowed_fields(:atom))
   end
@@ -200,10 +253,12 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.post_tags(conn, Tag.allowed_fields(:atom))
   end
 
-  def tag_posts(conn, %{"page" => page, "filters" => %{"post_status" => post_status} = params}) when post_status in ["active", "archived"] do
+  def tag_posts(conn, %{"page" => page, "filters" => %{"post_status" => post_status} = params})
+      when post_status in ["active", "archived"] do
     filters =
       Map.take(params, Tag.allowed_fields(:string) ++ ["post_status"])
       |> MishkaDatabase.convert_string_map_to_atom_map()
+
     Tag.tag_posts(conditions: {page, 20}, filters: filters)
     |> MishkaApi.ContentProtocol.tag_posts(conn, Tag.allowed_fields(:atom))
   end
@@ -212,12 +267,18 @@ defmodule MishkaApiWeb.ContentController do
     filters =
       Map.take(params, Tag.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
+
     Tag.tag_posts(conditions: {page, 20}, filters: filters)
     |> MishkaApi.ContentProtocol.tag_posts(conn, Tag.allowed_fields(:atom))
   end
 
   def create_bookmark(conn, %{"section" => section, "section_id" => section_id}) do
-    Bookmark.create(%{"status" => "active", "section" => section, "section_id" => section_id, "user_id" => Map.get(conn.assigns, :user_id)})
+    Bookmark.create(%{
+      "status" => "active",
+      "section" => section,
+      "section_id" => section_id,
+      "user_id" => Map.get(conn.assigns, :user_id)
+    })
     |> MishkaApi.ContentProtocol.create_bookmark(conn, Bookmark.allowed_fields(:atom))
   end
 
@@ -227,7 +288,11 @@ defmodule MishkaApiWeb.ContentController do
   end
 
   def create_subscription(conn, %{"section" => section, "section_id" => section_id}) do
-    Subscription.create(%{"section" => section, "section_id" => section_id, "user_id" => Map.get(conn.assigns, :user_id)})
+    Subscription.create(%{
+      "section" => section,
+      "section_id" => section_id,
+      "user_id" => Map.get(conn.assigns, :user_id)
+    })
     |> MishkaApi.ContentProtocol.create_subscription(conn, Subscription.allowed_fields(:atom))
   end
 
@@ -251,26 +316,32 @@ defmodule MishkaApiWeb.ContentController do
     |> MishkaApi.ContentProtocol.delete_blog_link(conn, BlogLink.allowed_fields(:atom))
   end
 
-  def links(conn, %{"page" => page, "filters" => %{"status" => status} = params}) when status in ["active", "archived"] do
+  def links(conn, %{"page" => page, "filters" => %{"status" => status} = params})
+      when status in ["active", "archived"] do
     filters =
       Map.take(params, BlogLink.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
+
     BlogLink.links(conditions: {page, 30}, filters: filters)
     |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
   end
 
   def editor_links(conn, %{"page" => page, "filters" => params}) when is_map(params) do
-    filters = Map.take(params, BlogLink.allowed_fields(:string))
-    |> MishkaDatabase.convert_string_map_to_atom_map()
+    filters =
+      Map.take(params, BlogLink.allowed_fields(:string))
+      |> MishkaDatabase.convert_string_map_to_atom_map()
+
     BlogLink.links(conditions: {page, 30}, filters: filters)
     |> MishkaApi.ContentProtocol.links(conn, BlogLink.allowed_fields(:atom))
   end
 
-  def notifs(conn, %{"type" => "client", "page" => page, "filters" => params}) when is_map(params) do
+  def notifs(conn, %{"type" => "client", "page" => page, "filters" => params})
+      when is_map(params) do
     filters =
       Map.take(params, Notif.allowed_fields(:string))
       |> Map.merge(%{"user_id" => Map.get(conn.assigns, :user_id)})
       |> MishkaDatabase.convert_string_map_to_atom_map()
+
     Notif.notifs(conditions: {page, 30, :client}, filters: filters)
     |> MishkaApi.ContentProtocol.notifs(conn, Notif.allowed_fields(:atom))
   end
@@ -279,6 +350,7 @@ defmodule MishkaApiWeb.ContentController do
     filters =
       Map.take(params, Notif.allowed_fields(:string))
       |> MishkaDatabase.convert_string_map_to_atom_map()
+
     Notif.notifs(conditions: {page, 30}, filters: filters)
     |> MishkaApi.ContentProtocol.notifs(conn, Notif.allowed_fields(:atom))
   end

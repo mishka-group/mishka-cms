@@ -7,7 +7,6 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogTag do
   @foreign_key_type :binary_id
 
   schema "blog_tags" do
-
     field(:title, :string)
     field(:alias_link, :string)
     field(:meta_keywords, :string)
@@ -15,8 +14,10 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogTag do
     field(:custom_title, :string)
     field(:robots, ContentRobotsEnum)
 
-    has_many :blog_tags_mappers, MishkaDatabase.Schema.MishkaContent.BlogTagMapper, foreign_key: :tag_id, on_delete: :delete_all
-
+    has_many(:blog_tags_mappers, MishkaDatabase.Schema.MishkaContent.BlogTagMapper,
+      foreign_key: :tag_id,
+      on_delete: :delete_all
+    )
 
     timestamps(type: :utc_datetime)
   end
@@ -28,13 +29,62 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogTag do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@required_fields, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
-    |> validate_length(:title, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
-    |> validate_length(:alias_link, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
-    |> validate_length(:meta_keywords, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
-    |> validate_length(:meta_description, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 164))
-    |> validate_length(:custom_title, max: 200, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "حداکثر تعداد کاراکتر های مجاز %{number} می باشد", number: 200))
-    |> unique_constraint(:alias_link, name: :index_blog_tags_on_alias_link, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این لینک از قبل انتخاب شده است لطفا لینک دیگیری وارد کنید"))
+    |> validate_required(@required_fields,
+      message:
+        MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد")
+    )
+    |> validate_length(:title,
+      max: 200,
+      message:
+        MishkaTranslator.Gettext.dgettext(
+          "db_schema_content",
+          "حداکثر تعداد کاراکتر های مجاز %{number} می باشد",
+          number: 200
+        )
+    )
+    |> validate_length(:alias_link,
+      max: 200,
+      message:
+        MishkaTranslator.Gettext.dgettext(
+          "db_schema_content",
+          "حداکثر تعداد کاراکتر های مجاز %{number} می باشد",
+          number: 200
+        )
+    )
+    |> validate_length(:meta_keywords,
+      max: 200,
+      message:
+        MishkaTranslator.Gettext.dgettext(
+          "db_schema_content",
+          "حداکثر تعداد کاراکتر های مجاز %{number} می باشد",
+          number: 200
+        )
+    )
+    |> validate_length(:meta_description,
+      max: 200,
+      message:
+        MishkaTranslator.Gettext.dgettext(
+          "db_schema_content",
+          "حداکثر تعداد کاراکتر های مجاز %{number} می باشد",
+          number: 164
+        )
+    )
+    |> validate_length(:custom_title,
+      max: 200,
+      message:
+        MishkaTranslator.Gettext.dgettext(
+          "db_schema_content",
+          "حداکثر تعداد کاراکتر های مجاز %{number} می باشد",
+          number: 200
+        )
+    )
+    |> unique_constraint(:alias_link,
+      name: :index_blog_tags_on_alias_link,
+      message:
+        MishkaTranslator.Gettext.dgettext(
+          "db_schema_content",
+          "این لینک از قبل انتخاب شده است لطفا لینک دیگیری وارد کنید"
+        )
+    )
   end
-
 end

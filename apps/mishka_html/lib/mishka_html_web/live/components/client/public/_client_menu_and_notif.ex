@@ -1,4 +1,3 @@
-
 defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   use MishkaHtmlWeb, :live_view
   alias MishkaUser.Token.CurrentPhoenixToken
@@ -6,7 +5,8 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do: subscribe(); Notif.subscribe()
+    if connected?(socket), do: subscribe()
+    Notif.subscribe()
     Process.send_after(self(), :update, 10)
     user_id = Map.get(session, "user_id")
     if !is_nil(user_id), do: Process.send_after(self(), {:count_notif, user_id}, 1000)
@@ -20,8 +20,9 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
         notif_count: 0,
         show_notif: false
       )
+
     {:ok, socket}
-   end
+  end
 
   @impl true
   def render(assigns) do
@@ -127,8 +128,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   @impl true
   def handle_event("show_notif", _params, socket) do
     # it can be cached after first click, but for new! we do not need it
-    socket =
-      show_or_close_notif(socket.assigns.notifs, socket.assigns.show_notif, socket)
+    socket = show_or_close_notif(socket.assigns.notifs, socket.assigns.show_notif, socket)
 
     {:noreply, socket}
   end
@@ -136,14 +136,24 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   @impl true
   def handle_event("show_notif_navigate", %{"id" => id}, socket) do
     notif =
-      Notif.notifs(conditions: {1, 1, :client}, filters: %{id: id, user_id: socket.assigns.user_id, target: :all, type: :client, status: :active})
+      Notif.notifs(
+        conditions: {1, 1, :client},
+        filters: %{
+          id: id,
+          user_id: socket.assigns.user_id,
+          target: :all,
+          type: :client,
+          status: :active
+        }
+      )
+
     {:noreply, MishkaHtmlWeb.NotifsLive.notif_link(socket, notif, socket.assigns.user_id)}
   end
 
   @impl true
   def handle_info({:menu, name, self_pid}, socket) do
     if socket.parent_pid == self_pid do
-     {:noreply, assign(socket, :menu_name, name)}
+      {:noreply, assign(socket, :menu_name, name)}
     else
       {:noreply, socket}
     end
@@ -152,6 +162,7 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 10000)
+
     socket.assigns.current_token
     |> verify_token()
     |> acl_check(socket)
@@ -159,25 +170,38 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
   @impl true
   def handle_info({:count_notif, user_id}, socket) do
-    socket = if(socket.assigns.user_id == user_id, do: assign(socket, notif_count: Notif.count_un_read(socket.assigns.user_id)), else: socket)
+    socket =
+      if(socket.assigns.user_id == user_id,
+        do: assign(socket, notif_count: Notif.count_un_read(socket.assigns.user_id)),
+        else: socket
+      )
+
     {:noreply, socket}
   end
 
   @impl true
   def handle_info({:notif, :ok, repo_record}, socket) do
-    socket = if repo_record.user_id == socket.assigns.user_id or is_nil(repo_record.user_id) do
-      notifs = MishkaContent.General.Notif.notifs(conditions: {1, 6, :client}, filters: %{
-        user_id: socket.assigns.user_id,
-        target: :all,
-        type: :client,
-        status: :active
-      })
+    socket =
+      if repo_record.user_id == socket.assigns.user_id or is_nil(repo_record.user_id) do
+        notifs =
+          MishkaContent.General.Notif.notifs(
+            conditions: {1, 6, :client},
+            filters: %{
+              user_id: socket.assigns.user_id,
+              target: :all,
+              type: :client,
+              status: :active
+            }
+          )
 
-      socket
-      |> assign(notifs: notifs.entries, notif_count: Notif.count_un_read(socket.assigns.user_id))
-    else
-      socket
-    end
+        socket
+        |> assign(
+          notifs: notifs.entries,
+          notif_count: Notif.count_un_read(socket.assigns.user_id)
+        )
+      else
+        socket
+      end
 
     {:noreply, socket}
   end
@@ -191,9 +215,11 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
 
   defp verify_token(current_token) do
     case CurrentPhoenixToken.verify_token(current_token, :current) do
-      {:ok, :verify_token, :current, current_token_info} -> {:ok, :verify_token, current_token_info["id"], current_token}
+      {:ok, :verify_token, :current, current_token_info} ->
+        {:ok, :verify_token, current_token_info["id"], current_token}
 
-      _ -> {:error, :verify_token}
+      _ ->
+        {:error, :verify_token}
     end
   end
 
@@ -208,27 +234,28 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   end
 
   defp acl_check({:ok, :verify_token, user_id, current_token}, socket) do
-    acl_got = Map.get(MishkaUser.Acl.Action.actions, socket.assigns.menu_name)
+    acl_got = Map.get(MishkaUser.Acl.Action.actions(), socket.assigns.menu_name)
 
     socket =
       with {:acl_check, false, action} <- {:acl_check, is_nil(acl_got), acl_got},
-         {:permittes?, true} <- {:permittes?, MishkaUser.Acl.Access.permittes?(action, user_id)} do
-
-          socket
-          |> assign(user_id: user_id, current_token: current_token)
-
+           {:permittes?, true} <- {:permittes?, MishkaUser.Acl.Access.permittes?(action, user_id)} do
+        socket
+        |> assign(user_id: user_id, current_token: current_token)
       else
         {:acl_check, true, nil} ->
-
           socket
           |> assign(user_id: user_id, current_token: current_token)
 
         {:permittes?, false} ->
-
           socket
-          |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live_component", "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید."))
+          |> put_flash(
+            :warning,
+            MishkaTranslator.Gettext.dgettext(
+              "html_live_component",
+              "شما به این صفحه دسترسی ندارید یا ممکن است دسترسی شما تغییر کرده باشد لطفا دوباره وارد سایت شوید."
+            )
+          )
           |> redirect(to: Routes.live_path(socket, MishkaHtmlWeb.HomeLive))
-
       end
 
     {:noreply, socket}
@@ -238,23 +265,29 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
     if(router_name == menu_name, do: "active", else: "")
   end
 
-  defp show_or_close_notif(notif, show_notif, socket) when not is_nil(notif) and show_notif == true do
+  defp show_or_close_notif(notif, show_notif, socket)
+       when not is_nil(notif) and show_notif == true do
     socket
     |> assign(show_notif: false)
   end
 
-  defp show_or_close_notif(notif, show_notif, socket) when not is_nil(notif) and show_notif == false do
+  defp show_or_close_notif(notif, show_notif, socket)
+       when not is_nil(notif) and show_notif == false do
     socket
     |> assign(show_notif: true)
   end
 
   defp show_or_close_notif(notif, _show_notif, socket) when is_nil(notif) do
-    notifs = MishkaContent.General.Notif.notifs(conditions: {1, 6, :client}, filters: %{
-      user_id: socket.assigns.user_id,
-      target: :all,
-      type: :client,
-      status: :active
-    })
+    notifs =
+      MishkaContent.General.Notif.notifs(
+        conditions: {1, 6, :client},
+        filters: %{
+          user_id: socket.assigns.user_id,
+          target: :all,
+          type: :client,
+          status: :active
+        }
+      )
 
     socket
     |> assign(notifs: notifs.entries, show_notif: true)
@@ -265,6 +298,6 @@ defmodule MishkaHtmlWeb.Client.Public.ClientMenuAndNotif do
   end
 
   def notify_subscribers(notif) when is_tuple(notif) do
-     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_menu_and_notif", notif)
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "client_menu_and_notif", notif)
   end
 end

@@ -4,13 +4,13 @@ defmodule MishkaContent.General.Comment do
   alias MishkaContent.General.Notif
 
   import Ecto.Query
+
   use MishkaDeveloperTools.DB.CRUD,
-          module: Comment,
-          error_atom: :comment,
-          repo: MishkaDatabase.Repo
+    module: Comment,
+    error_atom: :comment,
+    repo: MishkaDatabase.Repo
 
-
-  @type data_uuid() :: Ecto.UUID.t
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :comment
   @type repo_data() :: Ecto.Schema.t()
@@ -75,21 +75,28 @@ defmodule MishkaContent.General.Comment do
   end
 
   @spec show_by_user_id(data_uuid()) ::
-          {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+          {:error, :get_record_by_field, error_tag()}
+          | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_user_id(user_id) do
     crud_get_by_field("user_id", user_id)
   end
 
-  @spec comments([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()} | {:user_id, nil | data_uuid()}, ...]) ::
+  @spec comments([
+          {:conditions, {integer() | String.t(), integer() | String.t()}}
+          | {:filters, map()}
+          | {:user_id, nil | data_uuid()},
+          ...
+        ]) ::
           Scrivener.Page.t()
-  def comments(conditions: {page, page_size}, filters: filters, user_id: user_id) when is_binary(user_id) or is_nil(user_id) do
-    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
+  def comments(conditions: {page, page_size}, filters: filters, user_id: user_id)
+      when is_binary(user_id) or is_nil(user_id) do
+    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate())
 
     from(com in Comment,
-    join: user in assoc(com, :users),
-    left_join: like in assoc(com, :comments_likes),
-    left_join: liked_user in subquery(CommentLike.user_liked()),
-    on: liked_user.user_id == ^user_id and liked_user.comment_id == com.id
+      join: user in assoc(com, :users),
+      left_join: like in assoc(com, :comments_likes),
+      left_join: liked_user in subquery(CommentLike.user_liked()),
+      on: liked_user.user_id == ^user_id and liked_user.comment_id == com.id
     )
     |> convert_filters_to_where(filters)
     |> fields()
@@ -97,18 +104,25 @@ defmodule MishkaContent.General.Comment do
   rescue
     db_error ->
       MishkaContent.db_content_activity_error("comment", "read", db_error)
-      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+
+      %Scrivener.Page{
+        entries: [],
+        page_number: 1,
+        page_size: page_size,
+        total_entries: 0,
+        total_pages: 1
+      }
   end
 
   @spec comment([{:filters, map()} | {:user_id, data_uuid()}, ...]) :: map() | nil
   def comment(filters: filters, user_id: user_id) do
-    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
+    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate())
 
     from(com in Comment,
-    left_join: user in assoc(com, :users),
-    left_join: like in assoc(com, :comments_likes),
-    left_join: liked_user in subquery(CommentLike.user_liked()),
-    on: liked_user.user_id == ^user_id and liked_user.comment_id == com.id
+      left_join: user in assoc(com, :users),
+      left_join: like in assoc(com, :comments_likes),
+      left_join: liked_user in subquery(CommentLike.user_liked()),
+      on: liked_user.user_id == ^user_id and liked_user.comment_id == com.id
     )
     |> convert_filters_to_where(filters)
     |> fields()
@@ -121,31 +135,31 @@ defmodule MishkaContent.General.Comment do
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from [com, user, like, liked_user] in query, where: field(com, ^key) == ^value
+      from([com, user, like, liked_user] in query, where: field(com, ^key) == ^value)
     end)
   end
 
   defp fields(query) do
-    from [com, user, like, liked_user] in query,
-    order_by: [desc: com.inserted_at, desc: com.id],
-    group_by: [com.id, user.id, like.comment_id, liked_user.comment_id, liked_user.user_id],
-    select: %{
-      id: com.id,
-      description: com.description,
-      status: com.status,
-      priority: com.priority,
-      sub: com.sub,
-      section: com.section,
-      section_id: com.section_id,
-      updated_at: com.updated_at,
-      inserted_at: com.inserted_at,
-
-      user_id: user.id,
-      user_full_name: user.full_name,
-      user_username: user.username,
-      like_count: count(like.id),
-      liked_user: liked_user
-    }
+    from([com, user, like, liked_user] in query,
+      order_by: [desc: com.inserted_at, desc: com.id],
+      group_by: [com.id, user.id, like.comment_id, liked_user.comment_id, liked_user.user_id],
+      select: %{
+        id: com.id,
+        description: com.description,
+        status: com.status,
+        priority: com.priority,
+        sub: com.sub,
+        section: com.section,
+        section_id: com.section_id,
+        updated_at: com.updated_at,
+        inserted_at: com.inserted_at,
+        user_id: user.id,
+        user_full_name: user.full_name,
+        user_username: user.username,
+        like_count: count(like.id),
+        liked_user: liked_user
+      }
+    )
   end
 
   @spec allowed_fields(:atom | :string) :: nil | list
@@ -163,15 +177,18 @@ defmodule MishkaContent.General.Comment do
   def send_notification?(comment_id, user_id, title, description) do
     with {:ok, :get_record_by_id, _error_tag, record_info} <- show_by_id(comment_id),
          {:same_user?, false} <- {:same_user?, record_info.user_id == user_id} do
-
-          Notif.send_notification(%{
-            section: :blog_post,
-            section_id: record_info.section_id,
-            type: :client,
-            target: :all,
-            title: title,
-            description: description
-          }, record_info.user_id, :repo_task)
+      Notif.send_notification(
+        %{
+          section: :blog_post,
+          section_id: record_info.section_id,
+          type: :client,
+          target: :all,
+          title: title,
+          description: description
+        },
+        record_info.user_id,
+        :repo_task
+      )
     else
       _ -> {:error, :send_notification?}
     end

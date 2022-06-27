@@ -24,6 +24,7 @@ defmodule MishkaHtmlWeb.Helpers.TimeConverterComponent do
 
   def miladi_to_jalaali(datetime) do
     {:ok, jalaali_datetime} = DateTime.convert(datetime, Jalaali.Calendar)
+
     jalaali_datetime
     |> DateTime.to_string()
     |> String.replace("Z", "")
@@ -31,11 +32,17 @@ defmodule MishkaHtmlWeb.Helpers.TimeConverterComponent do
 
   def jalali_create(time_need, "number") do
     {:ok, jalaali_date} = DateTime.convert(time_need, Jalaali.Calendar)
-    %{day_number: jalaali_date.day, month_name: jalaali_date.month, year_number: jalaali_date.year}
+
+    %{
+      day_number: jalaali_date.day,
+      month_name: jalaali_date.month,
+      year_number: jalaali_date.year
+    }
   end
 
   def jalali_create(time_need) do
     {:ok, jalaali_date} = DateTime.convert(time_need, Jalaali.Calendar)
+
     %{
       day_number: jalaali_date.day,
       month_name: get_month(jalaali_date.month),

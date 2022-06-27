@@ -30,84 +30,112 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
 
   @impl true
   def mount(%{"post_id" => post_id}, session, socket) do
-    socket = case MishkaContent.Blog.Post.show_by_id(post_id) do
-      {:ok, :get_record_by_id, _error_tag, _record} ->
-        Process.send_after(self(), :menu, 100)
-        assign(socket,
-          page_size: 20,
-          filters: %{},
-          page_title: @section_title,
-          body_color: "#a29ac3cf",
-          user_id: Map.get(session, "user_id"),
-          authors: Author.authors(post_id),
-          search_author: [],
-          post_id: post_id
-        )
+    socket =
+      case MishkaContent.Blog.Post.show_by_id(post_id) do
+        {:ok, :get_record_by_id, _error_tag, _record} ->
+          Process.send_after(self(), :menu, 100)
 
-      _ ->
-        socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "چنین مطلبی وجود ندارد یا از قبل حذف شده است."))
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
-    end
+          assign(socket,
+            page_size: 20,
+            filters: %{},
+            page_title: @section_title,
+            body_color: "#a29ac3cf",
+            user_id: Map.get(session, "user_id"),
+            authors: Author.authors(post_id),
+            search_author: [],
+            post_id: post_id
+          )
+
+        _ ->
+          socket
+          |> put_flash(
+            :error,
+            MishkaTranslator.Gettext.dgettext(
+              "html_live",
+              "چنین مطلبی وجود ندارد یا از قبل حذف شده است."
+            )
+          )
+          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogPostsLive))
+      end
 
     {:ok, socket}
   end
 
   @impl true
   def handle_event("add_author", %{"user-id" => user_id}, socket) do
-    socket = case Author.create(%{post_id: socket.assigns.post_id, user_id: user_id}) do
-      {:ok, :add, :blog_author, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: "blog_author",
-          section_id: repo_data.id,
-          action: "add",
-          priority: "medium",
-          status: "info"
-        }, %{user_action: "live_add_author", type: "admin", user_id: socket.assigns.user_id})
+    socket =
+      case Author.create(%{post_id: socket.assigns.post_id, user_id: user_id}) do
+        {:ok, :add, :blog_author, repo_data} ->
+          MishkaContent.General.Activity.create_activity_by_start_child(
+            %{
+              type: "section",
+              section: "blog_author",
+              section_id: repo_data.id,
+              action: "add",
+              priority: "medium",
+              status: "info"
+            },
+            %{user_action: "live_add_author", type: "admin", user_id: socket.assigns.user_id}
+          )
 
-        socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت ثبت شد."))
+          socket
+          |> put_flash(
+            :info,
+            MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت ثبت شد.")
+          )
 
-      _ ->
-        socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "کاربر تکراری امکان ثبت ندارد. یا ممکن است در موقع ثبت کاربر مذکور حذف شده باشد."))
-    end
-    |> push_redirect(to: Routes.live_path(socket, __MODULE__, socket.assigns.post_id))
+        _ ->
+          socket
+          |> put_flash(
+            :error,
+            MishkaTranslator.Gettext.dgettext(
+              "html_live",
+              "کاربر تکراری امکان ثبت ندارد. یا ممکن است در موقع ثبت کاربر مذکور حذف شده باشد."
+            )
+          )
+      end
+      |> push_redirect(to: Routes.live_path(socket, __MODULE__, socket.assigns.post_id))
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    socket = case Author.delete(id) do
-      {:ok, :delete, :blog_author, repo_data} ->
+    socket =
+      case Author.delete(id) do
+        {:ok, :delete, :blog_author, repo_data} ->
+          MishkaContent.General.Activity.create_activity_by_start_child(
+            %{
+              type: "section",
+              section: "blog_author",
+              section_id: repo_data.id,
+              action: "delete",
+              priority: "medium",
+              status: "info"
+            },
+            %{user_action: "live_delete_author", type: "admin", user_id: socket.assigns.user_id}
+          )
 
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: "blog_author",
-          section_id: repo_data.id,
-          action: "delete",
-          priority: "medium",
-          status: "info"
-        }, %{user_action: "live_delete_author", type: "admin", user_id: socket.assigns.user_id})
+          socket
+          |> put_flash(
+            :info,
+            MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت حذف شد")
+          )
+          |> assign(authors: Author.authors(repo_data.post_id))
 
-        socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "نویسنده با موفقت حذف شد"))
-        |> assign(authors: Author.authors(repo_data.post_id))
-
-      _ ->
-
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "خطایی در حذف نویسنده پیش آمده است."))
-    end
+        _ ->
+          socket
+          |> put_flash(
+            :warning,
+            MishkaTranslator.Gettext.dgettext("html_live", "خطایی در حذف نویسنده پیش آمده است.")
+          )
+      end
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("search_user", %{"full_name" => full_name, "role" => role}, socket) do
-
     filters =
       [{:full_name, full_name}, {:role, role}]
       |> Enum.reject(fn {_k, v} -> v == "" end)
@@ -121,7 +149,6 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
 
     {:noreply, socket}
   end
-
 
   selected_menue("MishkaHtmlWeb.AdminBlogPostAuthorsLive")
 
@@ -141,13 +168,31 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
 
   def section_fields() do
     [
-      ListItemComponent.custom_field("author_image", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "تصویر"), author_temporary_image(),
-      {true, false, false}),
-      ListItemComponent.link_field("user_full_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نویسنده"),
-      {MishkaHtmlWeb.AdminUserLive, :user_id},
-      {true, false, false}, &MishkaHtml.full_name_sanitize/1),
-      ListItemComponent.time_field("inserted_at", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
-      {true, false, false})
+      ListItemComponent.custom_field(
+        "author_image",
+        [1],
+        "col header1",
+        MishkaTranslator.Gettext.dgettext("html_live", "تصویر"),
+        author_temporary_image(),
+        {true, false, false}
+      ),
+      ListItemComponent.link_field(
+        "user_full_name",
+        [1],
+        "col header2",
+        MishkaTranslator.Gettext.dgettext("html_live", "نویسنده"),
+        {MishkaHtmlWeb.AdminUserLive, :user_id},
+        {true, false, false},
+        &MishkaHtml.full_name_sanitize/1
+      ),
+      ListItemComponent.time_field(
+        "inserted_at",
+        [1],
+        "col header3",
+        MishkaTranslator.Gettext.dgettext("html_live", "ثبت"),
+        false,
+        {true, false, false}
+      )
     ]
   end
 
@@ -165,7 +210,7 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
           %{
             method: :delete,
             router: nil,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "حذف"),
             class: "btn btn-outline-danger vazir"
           }
         ]
@@ -175,11 +220,10 @@ defmodule MishkaHtmlWeb.AdminBlogPostAuthorsLive do
         title: MishkaTranslator.Gettext.dgettext("html_live_component", "نویسندگان"),
         section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "نویسنده"),
         action: :section,
-        action_by: :section,
+        action_by: :section
       },
       custom_operations: nil,
-      description:
-      ~H"""
+      description: ~H"""
         <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "در این بخش می توانید به تعداد نویسندگان یک مطلب اضافه یا کم کنید.") %>
         <div class="space30"></div>
         <div class="clearfix"></div>

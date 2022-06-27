@@ -13,5 +13,4 @@ defmodule MishkaHtmlWeb.Client.Public.HeaderComponent do
       </header>
     """
   end
-
 end

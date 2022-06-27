@@ -37,46 +37,49 @@ defmodule MishkaDatabase.Cache.RandomCode do
     GenServer.cast(__MODULE__, :stop)
   end
 
-
   @impl true
   def init(state) do
     Logger.info("OTP RandomCode server was started")
     {:ok, state}
   end
 
-
   @impl true
   def handle_call({:get_user, email, code}, _from, state) do
     system_time = System.system_time(:second)
-    random_code = Enum.find(state, fn x -> x.email == email end)
-    |> case do
-      nil -> {:error, :get_user, :no_data}
-      data when data.code == code and data.exp >= system_time ->
-        {:ok, :get_user, data.code, data.email}
 
-      data when data.code == code and data.exp <= system_time ->
-        {:error, :get_user, :time}
+    random_code =
+      Enum.find(state, fn x -> x.email == email end)
+      |> case do
+        nil ->
+          {:error, :get_user, :no_data}
 
-      _ -> {:error, :get_user, :different_code}
-    end
+        data when data.code == code and data.exp >= system_time ->
+          {:ok, :get_user, data.code, data.email}
 
+        data when data.code == code and data.exp <= system_time ->
+          {:error, :get_user, :time}
+
+        _ ->
+          {:error, :get_user, :different_code}
+      end
 
     {:reply, [random_code], state}
   end
 
-
   @impl true
   def handle_call({:get_code_with_email, email}, _from, state) do
-    selected_state = state
-    |> Enum.find(fn x -> x.email == email end)
+    selected_state =
+      state
+      |> Enum.find(fn x -> x.email == email end)
 
     {:reply, selected_state, state}
   end
 
   @impl true
   def handle_call({:get_code_with_code, code}, _from, state) do
-    selected_state = state
-    |> Enum.find(fn x -> x.code == code end)
+    selected_state =
+      state
+      |> Enum.find(fn x -> x.code == code end)
 
     {:reply, selected_state, state}
   end
@@ -92,20 +95,22 @@ defmodule MishkaDatabase.Cache.RandomCode do
         {:noreply, state ++ [%{email: email, code: "#{code}", exp: exp_time}]}
 
       data ->
-        new_state = state
-        |> Enum.reject(fn x -> x.email == data.email end)
+        new_state =
+          state
+          |> Enum.reject(fn x -> x.email == data.email end)
+
         {:noreply, new_state ++ [%{email: email, code: "#{code}", exp: exp_time}]}
     end
   end
 
-
   @impl true
   def handle_cast({:delete_code, _code, email}, state) do
-    new_state = state
-    |> Enum.reject(fn x -> x.email == email end)
+    new_state =
+      state
+      |> Enum.reject(fn x -> x.email == email end)
+
     {:noreply, new_state}
   end
-
 
   @impl true
   def handle_cast(:stop, stats) do
@@ -113,11 +118,12 @@ defmodule MishkaDatabase.Cache.RandomCode do
     {:stop, :normal, stats}
   end
 
-
   @impl true
-  def handle_info(:reject_expired_code,  state) do
-    new_state = state
-    |> Enum.reject(fn x -> x.exp <= System.system_time(:second) end)
+  def handle_info(:reject_expired_code, state) do
+    new_state =
+      state
+      |> Enum.reject(fn x -> x.exp <= System.system_time(:second) end)
+
     {:noreply, new_state}
   end
 

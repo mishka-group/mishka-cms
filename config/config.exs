@@ -21,9 +21,7 @@ config :mishka_translator, MishkaTranslator.Gettext,
   default_locale: "fa",
   locales: ~w(en fa)
 
-
-config :mishka_api, :auth,
-  token_type: :jwt_token
+config :mishka_api, :auth, token_type: :jwt_token
 
 config :mishka_database, ecto_repos: [MishkaDatabase.Repo]
 
@@ -44,8 +42,6 @@ config :mishka_html, MishkaHtmlWeb.Endpoint,
   live_view: [signing_salt: System.get_env("LIVE_VIEW_SALT")],
   reloadable_apps: [:mishka_installer]
 
-
-
 config :mishka_api, MishkaApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: System.get_env("SECRET_KEY_BASE_API"),
@@ -53,17 +49,15 @@ config :mishka_api, MishkaApiWeb.Endpoint,
   pubsub_server: MishkaApi.PubSub,
   reloadable_apps: [:mishka_installer]
 
-
-
 config :mishka_user, MishkaUser.Guardian,
   issuer: "mishka_user",
   allowed_algos: ["HS256"],
   secret_key: %{
-  "alg" => "HS256",
-  "k" => "#{System.get_env("TOKEN_JWT_KEY")}",
-  "kty" => "oct",
-  "use" => "sig"
-}
+    "alg" => "HS256",
+    "k" => "#{System.get_env("TOKEN_JWT_KEY")}",
+    "kty" => "oct",
+    "use" => "sig"
+  }
 
 email_config = [
   adapter: Bamboo.SMTPAdapter,
@@ -75,11 +69,16 @@ email_config = [
   no_mx_lookups: true,
   auth: :always
 ]
+
 if System.get_env("EMAIL_PORT") == "587" or is_nil(System.get_env("EMAIL_PORT")) do
-  config :mishka_content, MishkaContent.Email.Mailer,
-    email_config ++ [port: 587, tls: :if_available, allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"]]
+  config :mishka_content,
+         MishkaContent.Email.Mailer,
+         email_config ++
+           [port: 587, tls: :if_available, allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"]]
 else
-  config :mishka_content, MishkaContent.Email.Mailer, email_config ++ [port: 465, tls: :never, ssl: true,]
+  config :mishka_content,
+         MishkaContent.Email.Mailer,
+         email_config ++ [port: 465, tls: :never, ssl: true]
 end
 
 # Configures Elixir's Logger
@@ -100,17 +99,21 @@ config :mishka_installer, :basic,
   gettext: MishkaTranslator.Gettext,
   oban_config: [
     repo: MishkaDatabase.Repo,
-    queues: [default: [limit: 50], compile_events: [limit: 1], update_events: [limit: 1], expire_token: [limit: 50]],
+    queues: [
+      default: [limit: 50],
+      compile_events: [limit: 1],
+      update_events: [limit: 1],
+      expire_token: [limit: 50]
+    ],
     plugins: [
       Oban.Plugins.Pruner,
       {Oban.Plugins.Cron,
        crontab: [
          {"*/5 * * * *", MishkaInstaller.DepUpdateJob},
-         {"0 0 * * *", MishkaUser.Worker.ExpireTokenWorker},
+         {"0 0 * * *", MishkaUser.Worker.ExpireTokenWorker}
        ]}
     ]
   ]
-
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -7,11 +7,15 @@ import Config
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :mishka_html, MishkaHtmlWeb.Endpoint,
-  url: [scheme: System.get_env("PROTOCOL"), host: System.get_env("CMS_DOMAIN_NAME"), port: System.get_env("CMS_PORT")],
+  url: [
+    scheme: System.get_env("PROTOCOL"),
+    host: System.get_env("CMS_DOMAIN_NAME"),
+    port: System.get_env("CMS_PORT")
+  ],
   http: [
-      port: String.to_integer(System.get_env("PORT") || "4000"),
-      transport_options: [socket_opts: [:inet6]]
-    ],
+    port: String.to_integer(System.get_env("PORT") || "4000"),
+    transport_options: [socket_opts: [:inet6]]
+  ],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -28,11 +32,15 @@ config :mishka_html, MishkaHtmlWeb.Endpoint,
   ]
 
 config :mishka_api, MishkaApiWeb.Endpoint,
-  url: [scheme: System.get_env("PROTOCOL"), host: System.get_env("API_DOMAIN_NAME"), port: System.get_env("API_PORT")],
-    http: [
-      port: String.to_integer(System.get_env("PORT") || "4001"),
-      transport_options: [socket_opts: [:inet6]]
-    ],
+  url: [
+    scheme: System.get_env("PROTOCOL"),
+    host: System.get_env("API_DOMAIN_NAME"),
+    port: System.get_env("API_PORT")
+  ],
+  http: [
+    port: String.to_integer(System.get_env("PORT") || "4001"),
+    transport_options: [socket_opts: [:inet6]]
+  ],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,

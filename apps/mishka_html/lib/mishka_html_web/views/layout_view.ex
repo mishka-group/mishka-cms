@@ -2,8 +2,17 @@ defmodule MishkaHtmlWeb.LayoutView do
   use MishkaHtmlWeb, :view
 
   # SEO tags function should have all required fields
-  def seo_tags(%{image: _image, title: _title, description: _description, type: _type, keywords: _keywords, link: _link} = tags) do
-    raw ("#{seo_tags_converter(tags, :basic_tag)} #{seo_tags_converter(tags, :social_tag)} ")
+  def seo_tags(
+        %{
+          image: _image,
+          title: _title,
+          description: _description,
+          type: _type,
+          keywords: _keywords,
+          link: _link
+        } = tags
+      ) do
+    raw("#{seo_tags_converter(tags, :basic_tag)} #{seo_tags_converter(tags, :social_tag)} ")
   end
 
   def seo_tags(_seo_tag), do: ""

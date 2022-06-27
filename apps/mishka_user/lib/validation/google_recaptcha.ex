@@ -7,25 +7,38 @@ defmodule MishkaUser.Validation.GoogleRecaptcha do
 
   @spec verify(binary) :: {:error, :verify, String.t()} | {:ok, :verify, map()}
   def verify(token) do
-    with {:captcha_status, "production"} <- {:captcha_status, Setting.get("google_captcha")["status"]},
+    with {:captcha_status, "production"} <-
+           {:captcha_status, Setting.get("google_captcha")["status"]},
          {:finch, {:ok, response}} <- {:finch, send_token(token)} do
-
       response.body |> Jason.decode!() |> error_handler()
     else
-      {:finch, {:error, _error}} -> {:error, :verify, "This is a server-side error, if you see it again please contact support"}
+      {:finch, {:error, _error}} ->
+        {:error, :verify,
+         "This is a server-side error, if you see it again please contact support"}
 
       {:captcha_status, developer} ->
-        challenge_ts = DateTime.utc_now() |> DateTime.add(1124000, :second) |> DateTime.to_unix()
-        {:ok, :verify, %{"action" => "#{developer}", "challenge_ts" => challenge_ts, "hostname" => "localhost", "score" => 10, "success" => true}}
+        challenge_ts =
+          DateTime.utc_now() |> DateTime.add(1_124_000, :second) |> DateTime.to_unix()
+
+        {:ok, :verify,
+         %{
+           "action" => "#{developer}",
+           "challenge_ts" => challenge_ts,
+           "hostname" => "localhost",
+           "score" => 10,
+           "success" => true
+         }}
     end
   end
 
-  @spec send_token(String.t) :: {:ok, Finch.Response.t} | {:error, Exception.t}
+  @spec send_token(String.t()) :: {:ok, Finch.Response.t()} | {:error, Exception.t()}
   def send_token(token) do
-    body = %{
-      response: token,
-      secret: Setting.get("google_captcha")["server"]
-    } |> URI.encode_query()
+    body =
+      %{
+        response: token,
+        secret: Setting.get("google_captcha")["server"]
+      }
+      |> URI.encode_query()
 
     headers = [
       {"Content-type", "application/x-www-form-urlencoded"},
@@ -38,28 +51,60 @@ defmodule MishkaUser.Validation.GoogleRecaptcha do
 
   defp error_handler(body) do
     case body do
-      %{"action" => _action, "challenge_ts" => _challenge_ts, "hostname" => _hostname, "score" => _score, "success" => true} = verify_info -> {:ok, :verify, verify_info}
-      %{"error-codes" => [error_msg], "success" => false} ->  re_captcha_error_messages(error_msg)
+      %{
+        "action" => _action,
+        "challenge_ts" => _challenge_ts,
+        "hostname" => _hostname,
+        "score" => _score,
+        "success" => true
+      } = verify_info ->
+        {:ok, :verify, verify_info}
+
+      %{"error-codes" => [error_msg], "success" => false} ->
+        re_captcha_error_messages(error_msg)
     end
   end
 
   defp re_captcha_error_messages(error) do
     error_msg =
-    [
-      {"missing-input-secret", MishkaTranslator.Gettext.dgettext("user_captcha", "کد امنیتی ضد رباط شما ارسال نشده است لطفا در صورت نمایش این پیام با پشتیبانی وب سایت در تماس باشید.")},
-      {"invalid-input-secret", MishkaTranslator.Gettext.dgettext("user_captcha", "کد امنیتی ضد رباط شما ارسال نشده است لطفا در صورت نمایش این پیام با پشتیبانی وب سایت در تماس باشید.")},
-      {"missing-input-response", MishkaTranslator.Gettext.dgettext("user_captcha", "برای ورود باید توکن دریافتی از گوگل را ارسال فرمایید در صورت تلاش مجدد و نمایش دوباره این پیام با پشتیبانی در تماس باشید.")},
-      {"invalid-input-response", MishkaTranslator.Gettext.dgettext("user_captcha", "کد ضد رباط شما درست نمی باشد و درخواست شما نا معتبر شناخته شده است لطفا دوباره تلاش کنید")},
-      {"bad-request", MishkaTranslator.Gettext.dgettext("user_captcha", "درخواست شما معتبر نمی باشد لطفا دوباره تلاش کنید")},
-      {"timeout-or-duplicate", MishkaTranslator.Gettext.dgettext("user_captcha", "درخواست شما قدیمی می باشد لطفا تلاش کنید در صورت تکرار صفحه را رفرش نمایید.")}
-    ]
-    |> Enum.find(fn {er, _msg} -> er == error end)
-    |> case do
-      nil -> "Unexpected error"
-      {_key, value} -> value
-    end
+      [
+        {"missing-input-secret",
+         MishkaTranslator.Gettext.dgettext(
+           "user_captcha",
+           "کد امنیتی ضد رباط شما ارسال نشده است لطفا در صورت نمایش این پیام با پشتیبانی وب سایت در تماس باشید."
+         )},
+        {"invalid-input-secret",
+         MishkaTranslator.Gettext.dgettext(
+           "user_captcha",
+           "کد امنیتی ضد رباط شما ارسال نشده است لطفا در صورت نمایش این پیام با پشتیبانی وب سایت در تماس باشید."
+         )},
+        {"missing-input-response",
+         MishkaTranslator.Gettext.dgettext(
+           "user_captcha",
+           "برای ورود باید توکن دریافتی از گوگل را ارسال فرمایید در صورت تلاش مجدد و نمایش دوباره این پیام با پشتیبانی در تماس باشید."
+         )},
+        {"invalid-input-response",
+         MishkaTranslator.Gettext.dgettext(
+           "user_captcha",
+           "کد ضد رباط شما درست نمی باشد و درخواست شما نا معتبر شناخته شده است لطفا دوباره تلاش کنید"
+         )},
+        {"bad-request",
+         MishkaTranslator.Gettext.dgettext(
+           "user_captcha",
+           "درخواست شما معتبر نمی باشد لطفا دوباره تلاش کنید"
+         )},
+        {"timeout-or-duplicate",
+         MishkaTranslator.Gettext.dgettext(
+           "user_captcha",
+           "درخواست شما قدیمی می باشد لطفا تلاش کنید در صورت تکرار صفحه را رفرش نمایید."
+         )}
+      ]
+      |> Enum.find(fn {er, _msg} -> er == error end)
+      |> case do
+        nil -> "Unexpected error"
+        {_key, value} -> value
+      end
 
     {:error, :verify, error_msg}
   end
-
 end

@@ -1,7 +1,6 @@
 defmodule MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent do
   use MishkaHtmlWeb, :live_component
 
-
   def render(assigns) do
     ~H"""
       <div class="col admin-home-toos-left vazir">
@@ -27,12 +26,15 @@ defmodule MishkaHtmlWeb.Admin.Dashboard.LastNotifComponent do
     {:noreply, push_patch(socket, to: socket.assigns.return_to)}
   end
 
+  def notif_summary(notif) when notif.section == :public,
+    do: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی عمومی و انبوه")
 
-  def notif_summary(notif) when notif.section == :public, do: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی عمومی و انبوه")
+  def notif_summary(notif) when notif.section == :user_only,
+    do: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی مختص به کاربر")
 
-  def notif_summary(notif) when notif.section == :user_only, do: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی مختص به کاربر")
+  def notif_summary(notif) when notif.section == :admin,
+    do: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی مخصوص مدیریت")
 
-  def notif_summary(notif) when notif.section == :admin, do: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی مخصوص مدیریت")
-
-  def notif_summary(_notif), do: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی مخصوص به بخش")
+  def notif_summary(_notif),
+    do: MishkaTranslator.Gettext.dgettext("html_live_templates", "اطلاع رسانی مخصوص به بخش")
 end

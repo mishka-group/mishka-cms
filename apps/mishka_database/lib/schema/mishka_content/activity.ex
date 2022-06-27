@@ -7,7 +7,6 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
   @foreign_key_type :binary_id
 
   schema "activities" do
-
     field(:type, ActivitiesTypeEnum)
     field(:section, ActivitiesSection)
     field(:section_id, :binary_id, primary_key: false)
@@ -26,8 +25,10 @@ defmodule MishkaDatabase.Schema.MishkaContent.Activity do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_required(@all_required,
+      message:
+        MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد")
+    )
     |> MishkaDatabase.validate_binary_id(:section_id)
   end
-
 end

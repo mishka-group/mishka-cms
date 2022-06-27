@@ -1,15 +1,14 @@
 defmodule MishkaContent.Blog.Like do
   alias MishkaDatabase.Schema.MishkaContent.BlogLike
 
-
   import Ecto.Query
+
   use MishkaDeveloperTools.DB.CRUD,
-          module: BlogLike,
-          error_atom: :post_like,
-          repo: MishkaDatabase.Repo
+    module: BlogLike,
+    error_atom: :post_like,
+    repo: MishkaDatabase.Repo
 
-
-  @type data_uuid() :: Ecto.UUID.t
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :post_like
   @type repo_data() :: Ecto.Schema.t()
@@ -92,14 +91,15 @@ defmodule MishkaContent.Blog.Like do
 
   @spec count_post_likes(data_uuid(), data_uuid()) :: map()
   def count_post_likes(post_id, user_id) do
-    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate)
+    user_id = if(!is_nil(user_id), do: user_id, else: Ecto.UUID.generate())
 
     from(like in BlogLike,
-    where: like.post_id == ^post_id,
-    left_join: liked_user in subquery(user_liked()),
-    on: liked_user.user_id == ^user_id and liked_user.post_id == ^post_id,
-    group_by: [like.post_id, liked_user.post_id, liked_user.user_id],
-    select: %{count: count(like.id), liked_user: liked_user})
+      where: like.post_id == ^post_id,
+      left_join: liked_user in subquery(user_liked()),
+      on: liked_user.user_id == ^user_id and liked_user.post_id == ^post_id,
+      group_by: [like.post_id, liked_user.post_id, liked_user.user_id],
+      select: %{count: count(like.id), liked_user: liked_user}
+    )
     |> MishkaDatabase.Repo.one()
     |> case do
       nil -> %{count: 0, liked_user: %{post_id: nil, user_id: nil}}
@@ -110,14 +110,16 @@ defmodule MishkaContent.Blog.Like do
   @spec likes :: Ecto.Query.t()
   def likes() do
     from(like in BlogLike,
-    group_by: like.post_id,
-    select: %{count: count(like.id), post_id: like.post_id})
+      group_by: like.post_id,
+      select: %{count: count(like.id), post_id: like.post_id}
+    )
   end
 
   @spec user_liked :: Ecto.Query.t()
   def user_liked() do
     from(like in BlogLike,
-    select: %{post_id: like.post_id, user_id: like.user_id})
+      select: %{post_id: like.post_id, user_id: like.user_id}
+    )
   end
 
   @spec notify_subscribers(tuple(), atom() | String.t()) :: tuple() | map()
@@ -127,7 +129,6 @@ defmodule MishkaContent.Blog.Like do
   end
 
   def notify_subscribers(params, _), do: params
-
 
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: BlogLike.__schema__(:fields)

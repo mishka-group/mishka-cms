@@ -9,7 +9,6 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     redirect: __MODULE__,
     router: Routes
 
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -31,8 +30,9 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   @impl true
   def mount(_params, session, socket) do
-    if connected?(socket), do:  Permission.subscribe()
+    if connected?(socket), do: Permission.subscribe()
     Process.send_after(self(), :menu, 100)
+
     socket =
       assign(socket,
         filters: %{},
@@ -47,7 +47,8 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
         draft_id: nil,
         permissions: []
       )
-      {:ok, socket}
+
+    {:ok, socket}
   end
 
   @impl true
@@ -62,31 +63,51 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   @impl true
   def handle_params(_params, _url, socket) do
-    {:noreply, push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))}
+    {:noreply,
+     push_redirect(socket, to: Routes.live_path(socket, MishkaHtmlWeb.AdminUserRolesLive))}
   end
 
   @impl true
   def handle_event("save", %{"permission" => params}, socket) do
     user_permission = "#{params["section"]}:#{params["permission"]}"
-    socket = case Permission.create(%{value: if(user_permission == "*:*", do: "*", else: user_permission), role_id: socket.assigns.id}) do
-      {:error, :add, :permission, repo_error} ->
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("html_live", "این خطا در زمانی نمایش داده می شود که دسترسی مورد نظر شما از قبل وجود داشته باشد یا اشتباه باشد."))
-        |> assign([changeset: repo_error])
 
-      {:ok, :add, :permission, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: "permission",
-          section_id: repo_data.id,
-          action: "add",
-          priority: "high",
-          status: "info"
-        }, %{user_action: "live_permission_create", type: "admin", user_id: socket.assigns.user_id})
+    socket =
+      case Permission.create(%{
+             value: if(user_permission == "*:*", do: "*", else: user_permission),
+             role_id: socket.assigns.id
+           }) do
+        {:error, :add, :permission, repo_error} ->
+          socket
+          |> put_flash(
+            :warning,
+            MishkaTranslator.Gettext.dgettext(
+              "html_live",
+              "این خطا در زمانی نمایش داده می شود که دسترسی مورد نظر شما از قبل وجود داشته باشد یا اشتباه باشد."
+            )
+          )
+          |> assign(changeset: repo_error)
 
-        MishkaUser.Acl.AclTask.update_role(repo_data.role_id)
-        socket
-    end
+        {:ok, :add, :permission, repo_data} ->
+          MishkaContent.General.Activity.create_activity_by_start_child(
+            %{
+              type: "section",
+              section: "permission",
+              section_id: repo_data.id,
+              action: "add",
+              priority: "high",
+              status: "info"
+            },
+            %{
+              user_action: "live_permission_create",
+              type: "admin",
+              user_id: socket.assigns.user_id
+            }
+          )
+
+          MishkaUser.Acl.AclTask.update_role(repo_data.role_id)
+          socket
+      end
+
     {:noreply, socket}
   end
 
@@ -100,20 +121,24 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
     socket =
       socket
       |> assign(permissions: Permission.permissions(socket.assigns.id))
+
     {:noreply, socket}
   end
 
   selected_menue("MishkaHtmlWeb.AdminUserRolePermissionsLive")
 
-
   @impl true
   def handle_info({:permission, :ok, repo_record}, socket) do
-    socket = case repo_record.__meta__.state do
-      :loaded ->
-        socket
-        |> assign(permissions: Permission.permissions(socket.assigns.id))
-       _ ->  socket
-    end
+    socket =
+      case repo_record.__meta__.state do
+        :loaded ->
+          socket
+          |> assign(permissions: Permission.permissions(socket.assigns.id))
+
+        _ ->
+          socket
+      end
+
     {:noreply, socket}
   end
 
@@ -124,20 +149,44 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
 
   defp permission_changeset(params \\ %{}) do
     MishkaDatabase.Schema.MishkaUser.Permission.changeset(
-      %MishkaDatabase.Schema.MishkaUser.Permission{}, params
+      %MishkaDatabase.Schema.MishkaUser.Permission{},
+      params
     )
   end
 
   def section_fields() do
     [
-      ListItemComponent.text_field("value", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "دسترسی"),
-      {true, false, false}),
-      ListItemComponent.text_field("role_name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام نقش"),
-      {true, false, false}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.text_field("role_display_name", [1], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "نام نمایش"),
-      {true, false, false}, &MishkaHtml.username_sanitize/1),
-      ListItemComponent.time_field("inserted_at", [1], "col header4", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
-      {true, false, false})
+      ListItemComponent.text_field(
+        "value",
+        [1],
+        "col header1",
+        MishkaTranslator.Gettext.dgettext("html_live", "دسترسی"),
+        {true, false, false}
+      ),
+      ListItemComponent.text_field(
+        "role_name",
+        [1],
+        "col header2",
+        MishkaTranslator.Gettext.dgettext("html_live", "نام نقش"),
+        {true, false, false},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.text_field(
+        "role_display_name",
+        [1],
+        "col header3",
+        MishkaTranslator.Gettext.dgettext("html_live", "نام نمایش"),
+        {true, false, false},
+        &MishkaHtml.username_sanitize/1
+      ),
+      ListItemComponent.time_field(
+        "inserted_at",
+        [1],
+        "col header4",
+        MishkaTranslator.Gettext.dgettext("html_live", "ثبت"),
+        false,
+        {true, false, false}
+      )
     ]
   end
 
@@ -160,7 +209,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
           %{
             method: :delete,
             router: nil,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "حذف"),
             class: "btn btn-outline-danger vazir"
           }
         ]
@@ -170,11 +219,10 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
         title: MishkaTranslator.Gettext.dgettext("html_live_templates", "دسترسی ها"),
         section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "دسترسی"),
         action: :section,
-        action_by: :section,
+        action_by: :section
       },
       custom_operations: nil,
-      description:
-      ~H"""
+      description: ~H"""
         <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "در این بخش شما امکان اضافه کردن نقش های مورد نیاز خود برای هر نقش را خواهید داشت. بعد از تخصیص هر دسترسی می توانید نقش را به یک کاربر متصل کنید") %>
         <div class="space30"></div>
         <div class="col-sm-12">

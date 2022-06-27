@@ -20,5 +20,4 @@ defmodule MishkaHtmlWeb.Admin.Setting.AddFieldComponent do
       </div>
     """
   end
-
 end

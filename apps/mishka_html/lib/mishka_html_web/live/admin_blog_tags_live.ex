@@ -5,10 +5,9 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
   @section_title MishkaTranslator.Gettext.dgettext("html_live", "مدیریت برچسب ها")
 
   use MishkaHtml.Helpers.LiveCRUD,
-      module: MishkaContent.Blog.Tag,
-      redirect: __MODULE__,
-      router: Routes
-
+    module: MishkaContent.Blog.Tag,
+    redirect: __MODULE__,
+    router: Routes
 
   @impl true
   def render(assigns) do
@@ -33,6 +32,7 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
   def mount(_params, session, socket) do
     if connected?(socket), do: Tag.subscribe()
     Process.send_after(self(), :menu, 100)
+
     socket =
       assign(socket,
         page_title: @section_title,
@@ -63,25 +63,60 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
 
   def section_fields() do
     [
-      ListItemComponent.text_field("title", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
-      {false, true, true}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.link_field("title", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر"),
-      {MishkaHtmlWeb.AdminBlogTagLive, :id},
-      {true, false, false}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.text_field("custom_title", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "تیتر سفارشی"),
-      {true, true, true}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.select_field("robots", [3, 5, 6], "col header3", MishkaTranslator.Gettext.dgettext("html_live",  "رباط"),
-      [
-        {"IndexFollow", "IndexFollow"},
-        {"IndexNoFollow", "IndexNoFollow"},
-        {"NoIndexFollow", "NoIndexFollow"},
-        {"NoIndexNoFollow", "NoIndexNoFollow"}
-      ],
-      {true, true, true}),
-      ListItemComponent.time_field("inserted_at", [1], "col header4", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
-      {true, false, false}),
-      ListItemComponent.time_field("updated_at", [1], "col header5", MishkaTranslator.Gettext.dgettext("html_live",  "به روز رسانی"), false,
-      {true, false, false})
+      ListItemComponent.text_field(
+        "title",
+        [1],
+        "col header1",
+        MishkaTranslator.Gettext.dgettext("html_live", "تیتر"),
+        {false, true, true},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.link_field(
+        "title",
+        [1],
+        "col header1",
+        MishkaTranslator.Gettext.dgettext("html_live", "تیتر"),
+        {MishkaHtmlWeb.AdminBlogTagLive, :id},
+        {true, false, false},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.text_field(
+        "custom_title",
+        [1],
+        "col header2",
+        MishkaTranslator.Gettext.dgettext("html_live", "تیتر سفارشی"),
+        {true, true, true},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.select_field(
+        "robots",
+        [3, 5, 6],
+        "col header3",
+        MishkaTranslator.Gettext.dgettext("html_live", "رباط"),
+        [
+          {"IndexFollow", "IndexFollow"},
+          {"IndexNoFollow", "IndexNoFollow"},
+          {"NoIndexFollow", "NoIndexFollow"},
+          {"NoIndexNoFollow", "NoIndexNoFollow"}
+        ],
+        {true, true, true}
+      ),
+      ListItemComponent.time_field(
+        "inserted_at",
+        [1],
+        "col header4",
+        MishkaTranslator.Gettext.dgettext("html_live", "ثبت"),
+        false,
+        {true, false, false}
+      ),
+      ListItemComponent.time_field(
+        "updated_at",
+        [1],
+        "col header5",
+        MishkaTranslator.Gettext.dgettext("html_live", "به روز رسانی"),
+        false,
+        {true, false, false}
+      )
     ]
   end
 
@@ -114,13 +149,13 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
           %{
             method: :delete,
             router: nil,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "حذف"),
             class: "btn btn-outline-danger vazir"
           },
           %{
             method: :redirect_key,
             router: MishkaHtmlWeb.AdminBlogTagLive,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "ویرایش"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "ویرایش"),
             class: "btn btn-outline-info vazir",
             action: :id
           }
@@ -131,11 +166,10 @@ defmodule MishkaHtmlWeb.AdminBlogTagsLive do
         title: MishkaTranslator.Gettext.dgettext("html_live_templates", "مدیریت برچسب ها"),
         section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "برچسب"),
         action: :section,
-        action_by: :section,
+        action_by: :section
       },
       custom_operations: nil,
-      description:
-      ~H"""
+      description: ~H"""
         <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید برچسب های مطالب را مدیریت نمایید.") %>
         <div class="space30"></div>
       """

@@ -7,12 +7,11 @@ defmodule MishkaUser.Acl.Role do
   import Ecto.Query
 
   use MishkaDeveloperTools.DB.CRUD,
-          module: Role,
-          error_atom: :role,
-          repo: MishkaDatabase.Repo
+    module: Role,
+    error_atom: :role,
+    repo: MishkaDatabase.Repo
 
-
-  @type data_uuid() :: Ecto.UUID.t
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :role
   @type repo_data() :: Ecto.Schema.t()
@@ -60,20 +59,32 @@ defmodule MishkaUser.Acl.Role do
   end
 
   @spec show_by_display_name(String.t()) ::
-  {:error, :get_record_by_field, error_tag()} | {:ok, :get_record_by_field, error_tag(), repo_data()}
+          {:error, :get_record_by_field, error_tag()}
+          | {:ok, :get_record_by_field, error_tag(), repo_data()}
   def show_by_display_name(name) do
     crud_get_by_field("name", name)
   end
 
-  @spec roles([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
+  @spec roles([
+          {:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()},
+          ...
+        ]) :: Scrivener.Page.t()
   def roles(conditions: {page, page_size}, filters: filters) do
-    from(u in Role) |> convert_filters_to_where(filters)
+    from(u in Role)
+    |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
     db_error ->
       MishkaContent.db_content_activity_error("role", "read", db_error)
-      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+
+      %Scrivener.Page{
+        entries: [],
+        page_number: 1,
+        page_size: page_size,
+        total_entries: 0,
+        total_pages: 1
+      }
   end
 
   @spec roles :: list()
@@ -82,8 +93,9 @@ defmodule MishkaUser.Acl.Role do
       select: %{
         id: role.id,
         name: role.name,
-        display_name: role.display_name,
-      })
+        display_name: role.display_name
+      }
+    )
     |> MishkaDatabase.Repo.all()
   rescue
     db_error ->
@@ -96,26 +108,28 @@ defmodule MishkaUser.Acl.Role do
       case key do
         :name ->
           like = "%#{value}%"
-          from [role] in query, where: like(role.name, ^like)
+          from([role] in query, where: like(role.name, ^like))
 
         :display_name ->
           like = "%#{value}%"
-          from [role] in query, where: like(role.display_name, ^like)
+          from([role] in query, where: like(role.display_name, ^like))
 
-        _ -> from [role] in query, where: field(role, ^key) == ^value
+        _ ->
+          from([role] in query, where: field(role, ^key) == ^value)
       end
     end)
   end
 
   defp fields(query) do
-    from [role] in query,
-    order_by: [desc: role.inserted_at, desc: role.id],
-    select: %{
-      id: role.id,
-      name: role.name,
-      display_name: role.display_name,
-      inserted_at: role.inserted_at
-    }
+    from([role] in query,
+      order_by: [desc: role.inserted_at, desc: role.id],
+      select: %{
+        id: role.id,
+        name: role.name,
+        display_name: role.display_name,
+        inserted_at: role.inserted_at
+      }
+    )
   end
 
   @spec allowed_fields(:atom | :string) :: nil | list

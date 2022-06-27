@@ -24,14 +24,13 @@ defmodule MishkaUser.Guardian do
     # the resource id so here we'll rely on that to look it up.
     id = claims["sub"]
     resource = get_resource_by_id(id)
-    {:ok,  resource}
+    {:ok, resource}
   end
 
   @spec resource_from_claims :: {:error, :reason_for_error}
   def resource_from_claims() do
     {:error, :reason_for_error}
   end
-
 
   @spec get_resource_by_id(binary()) :: %{id: any}
   def get_resource_by_id(id) do

@@ -7,7 +7,6 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
   @foreign_key_type :binary_id
 
   schema "blog_links" do
-
     field(:short_description, :string)
     field(:status, ContentStatusEnum)
     field(:type, BlogLinkType)
@@ -22,7 +21,6 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
     timestamps(type: :utc_datetime)
   end
 
-
   @all_fields ~w(
     short_description status type title link short_link robots section_id
   )a
@@ -35,9 +33,18 @@ defmodule MishkaDatabase.Schema.MishkaContent.BlogLink do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @all_fields)
-    |> validate_required(@all_required, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد"))
+    |> validate_required(@all_required,
+      message:
+        MishkaTranslator.Gettext.dgettext("db_schema_content", "فیلد مذکور نمی تواند خالی باشد")
+    )
     |> MishkaDatabase.validate_binary_id(:section_id)
-    |> unique_constraint(:short_link, name: :index_blog_links_on_short_link, message: MishkaTranslator.Gettext.dgettext("db_schema_content", "این لینک کوتاه از قبل انتخاب شده است. لطفا لینک دیگری را وارد کنید."))
+    |> unique_constraint(:short_link,
+      name: :index_blog_links_on_short_link,
+      message:
+        MishkaTranslator.Gettext.dgettext(
+          "db_schema_content",
+          "این لینک کوتاه از قبل انتخاب شده است. لطفا لینک دیگری را وارد کنید."
+        )
+    )
   end
-
 end

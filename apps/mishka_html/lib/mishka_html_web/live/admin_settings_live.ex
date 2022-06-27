@@ -5,9 +5,9 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
   @section_title MishkaTranslator.Gettext.dgettext("html_live", "تنظیمات")
 
   use MishkaHtml.Helpers.LiveCRUD,
-      module: MishkaInstaller.Setting,
-      redirect: __MODULE__,
-      router: Routes
+    module: MishkaInstaller.Setting,
+    redirect: __MODULE__,
+    router: Routes
 
   @impl true
   def render(assigns) do
@@ -32,6 +32,7 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
   def mount(_params, session, socket) do
     if connected?(socket), do: Setting.subscribe()
     Process.send_after(self(), :menu, 100)
+
     socket =
       assign(socket,
         page_size: 10,
@@ -44,6 +45,7 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
         page_title: @section_title,
         settings: Setting.settings(conditions: {1, 10}, filters: %{})
       )
+
     {:ok, socket, temporary_assigns: [settings: []]}
   end
 
@@ -60,12 +62,30 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
 
   def section_fields() do
     [
-      ListItemComponent.text_field("name", [1], "col header2", MishkaTranslator.Gettext.dgettext("html_live",  "نام بخش"),
-      {true, true, true}, &MishkaHtml.title_sanitize/1),
-      ListItemComponent.time_field("updated_at", [1], "col header5", MishkaTranslator.Gettext.dgettext("html_live",  "به روز رسانی"), false,
-      {true, false, false}),
-      ListItemComponent.time_field("inserted_at", [1], "col header1", MishkaTranslator.Gettext.dgettext("html_live",  "ثبت"), false,
-      {true, false, false})
+      ListItemComponent.text_field(
+        "name",
+        [1],
+        "col header2",
+        MishkaTranslator.Gettext.dgettext("html_live", "نام بخش"),
+        {true, true, true},
+        &MishkaHtml.title_sanitize/1
+      ),
+      ListItemComponent.time_field(
+        "updated_at",
+        [1],
+        "col header5",
+        MishkaTranslator.Gettext.dgettext("html_live", "به روز رسانی"),
+        false,
+        {true, false, false}
+      ),
+      ListItemComponent.time_field(
+        "inserted_at",
+        [1],
+        "col header1",
+        MishkaTranslator.Gettext.dgettext("html_live", "ثبت"),
+        false,
+        {true, false, false}
+      )
     ]
   end
 
@@ -83,13 +103,13 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
           %{
             method: :delete,
             router: nil,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "حذف"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "حذف"),
             class: "btn btn-outline-primary vazir"
           },
           %{
             method: :redirect_key,
             router: MishkaHtmlWeb.AdminSettingLive,
-            title: MishkaTranslator.Gettext.dgettext("html_live",  "ویرایش"),
+            title: MishkaTranslator.Gettext.dgettext("html_live", "ویرایش"),
             class: "btn btn-outline-danger vazir",
             action: :id,
             key: :id
@@ -101,11 +121,10 @@ defmodule MishkaHtmlWeb.AdminSettingsLive do
         title: MishkaTranslator.Gettext.dgettext("html_live_templates", "تنظیمات"),
         section_type: MishkaTranslator.Gettext.dgettext("html_live_component", "تنظیمات"),
         action: :user_full_name,
-        action_by: :user_full_name,
+        action_by: :user_full_name
       },
       custom_operations: nil,
-      description:
-      ~H"""
+      description: ~H"""
         <%= MishkaTranslator.Gettext.dgettext("html_live_templates", "شما در این بخش می توانید برای هر قسمت از سایت که از قبل معرفی شده است تنظیمات مورد نظر خود را وارد یا ویرایش کنید.") %>
         <div class="space30"></div>
       """

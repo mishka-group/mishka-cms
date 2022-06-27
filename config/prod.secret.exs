@@ -19,21 +19,28 @@ secret_key_base_api =
     """
 
 config :mishka_html, MishkaHtmlWeb.Endpoint,
-    url: [scheme: System.get_env("PROTOCOL"), host: System.get_env("CMS_DOMAIN_NAME"), port: System.get_env("CMS_PORT")],
-    http: [
-      port: String.to_integer(System.get_env("PORT") || "4000"),
-      transport_options: [socket_opts: [:inet6]]
-    ],
-    secret_key_base: secret_key_base_html
-
+  url: [
+    scheme: System.get_env("PROTOCOL"),
+    host: System.get_env("CMS_DOMAIN_NAME"),
+    port: System.get_env("CMS_PORT")
+  ],
+  http: [
+    port: String.to_integer(System.get_env("PORT") || "4000"),
+    transport_options: [socket_opts: [:inet6]]
+  ],
+  secret_key_base: secret_key_base_html
 
 config :mishka_api, MishkaApiWeb.Endpoint,
-    url: [scheme: System.get_env("PROTOCOL"), host: System.get_env("API_DOMAIN_NAME"), port: System.get_env("API_PORT")],
-    http: [
-      port: String.to_integer(System.get_env("PORT") || "4001"),
-      transport_options: [socket_opts: [:inet6]]
-    ],
-    secret_key_base: secret_key_base_api
+  url: [
+    scheme: System.get_env("PROTOCOL"),
+    host: System.get_env("API_DOMAIN_NAME"),
+    port: System.get_env("API_PORT")
+  ],
+  http: [
+    port: String.to_integer(System.get_env("PORT") || "4001"),
+    transport_options: [socket_opts: [:inet6]]
+  ],
+  secret_key_base: secret_key_base_api
 
 # ## Using releases (Elixir v1.9+)
 #

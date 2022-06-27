@@ -1,20 +1,20 @@
-defmodule MishkaContent.Blog.TagMapper  do
+defmodule MishkaContent.Blog.TagMapper do
   alias MishkaDatabase.Schema.MishkaContent.BlogTagMapper
 
   import Ecto.Query
-  use MishkaDeveloperTools.DB.CRUD,
-          module: BlogTagMapper,
-          error_atom: :blog_tag_mapper,
-          repo: MishkaDatabase.Repo
 
-  @type data_uuid() :: Ecto.UUID.t
+  use MishkaDeveloperTools.DB.CRUD,
+    module: BlogTagMapper,
+    error_atom: :blog_tag_mapper,
+    repo: MishkaDatabase.Repo
+
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :blog_tag_mapper
   @type repo_data() :: Ecto.Schema.t()
   @type repo_error() :: Ecto.Changeset.t()
 
   @behaviour MishkaDeveloperTools.DB.CRUD
-
 
   def subscribe do
     Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "blog_tag_mapper")
@@ -72,35 +72,47 @@ defmodule MishkaContent.Blog.TagMapper  do
       {:error, :delete, :blog_tag_mapper, :not_found}
   end
 
-  @spec tags([{:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()}, ...]) :: Scrivener.Page.t()
+  @spec tags([
+          {:conditions, {integer() | String.t(), integer() | String.t()}} | {:filters, map()},
+          ...
+        ]) :: Scrivener.Page.t()
   def tags(conditions: {page, page_size}, filters: filters) do
     from(tag_mapper in BlogTagMapper,
-    join: post in assoc(tag_mapper, :blog_posts),
-    join: tag in assoc(tag_mapper, :blog_tags))
+      join: post in assoc(tag_mapper, :blog_posts),
+      join: tag in assoc(tag_mapper, :blog_tags)
+    )
     |> convert_filters_to_where(filters)
     |> fields()
     |> MishkaDatabase.Repo.paginate(page: page, page_size: page_size)
   rescue
     db_error ->
       MishkaContent.db_content_activity_error("blog_tag_mapper", "read", db_error)
-      %Scrivener.Page{entries: [], page_number: 1, page_size: page_size, total_entries: 0,total_pages: 1}
+
+      %Scrivener.Page{
+        entries: [],
+        page_number: 1,
+        page_size: page_size,
+        total_entries: 0,
+        total_pages: 1
+      }
   end
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
-      from tag in query, where: field(tag, ^key) == ^value
+      from(tag in query, where: field(tag, ^key) == ^value)
     end)
   end
 
   def fields(query) do
     from([tag_mapper, post, tag] in query,
-    select: %{
-      id: tag_mapper.id,
-      post_id: post.id,
-      post_title: post.title,
-      tag_id: tag.id,
-      tag_title: tag.title,
-    })
+      select: %{
+        id: tag_mapper.id,
+        post_id: post.id,
+        post_title: post.title,
+        tag_id: tag.id,
+        tag_title: tag.title
+      }
+    )
   end
 
   @spec notify_subscribers(tuple(), atom() | String.t()) :: tuple() | map()
@@ -113,5 +125,7 @@ defmodule MishkaContent.Blog.TagMapper  do
 
   @spec allowed_fields(:atom | :string) :: nil | list
   def allowed_fields(:atom), do: BlogTagMapper.__schema__(:fields)
-  def allowed_fields(:string), do: BlogTagMapper.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
+
+  def allowed_fields(:string),
+    do: BlogTagMapper.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 end

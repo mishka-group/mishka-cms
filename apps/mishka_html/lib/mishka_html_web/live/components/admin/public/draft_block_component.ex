@@ -41,5 +41,4 @@ defmodule MishkaHtmlWeb.Admin.Public.DrfatBlockComponent do
       </div>
     """
   end
-
 end

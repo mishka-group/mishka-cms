@@ -6,6 +6,7 @@ defmodule MishkaContent.Email.Email do
   @spec account_email(map()) :: Bamboo.Email.t()
   def account_email(info, from \\ nil) do
     iran_now_time = Timex.now("Iran")
+
     new_email(
       to: "#{info.email}",
       from: from || System.get_env("EMAIL_SYSTEM"),
@@ -13,14 +14,15 @@ defmodule MishkaContent.Email.Email do
       headers: %{
         "Return-Path": "#{info.email}",
         Subject: "#{info.subject}",
-        Date: "#{Timex.format!(iran_now_time, "{WDshort}, {D} {Mshort} {YYYY} {h24}:{0m}:{0s} {Z}")}",
-        "message-id": "<#{:base64.encode(:crypto.strong_rand_bytes(64))}@#{System.get_env("EMAIL_DOMAIN")}>"
+        Date:
+          "#{Timex.format!(iran_now_time, "{WDshort}, {D} {Mshort} {YYYY} {h24}:{0m}:{0s} {Z}")}",
+        "message-id":
+          "<#{:base64.encode(:crypto.strong_rand_bytes(64))}@#{System.get_env("EMAIL_DOMAIN")}>"
       },
       text_body: email_converter(info).text,
       html_body: email_converter(info).html
     )
   end
-
 
   @spec email_converter(map()) :: map()
   def email_converter(info) do
@@ -505,5 +507,4 @@ defmodule MishkaContent.Email.Email do
     </html>
     """
   end
-
 end

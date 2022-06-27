@@ -10,27 +10,60 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-  defmacro paginate(field_assigned, user_id: user_id)  do
+  defmacro paginate(field_assigned, user_id: user_id) do
     quote do
       @impl Phoenix.LiveView
       def handle_params(%{"page" => page, "count" => count} = params, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"] || params, page_size: count, page_number: page)}
+
+        {:noreply,
+         MishkaHtml.Helpers.LiveCRUD.paginate_assign(
+           socket,
+           module_selected,
+           unquote(field_assigned),
+           unquote(user_id),
+           skip_list,
+           params: params["params"] || params,
+           page_size: count,
+           page_number: page
+         )}
       end
 
       @impl Phoenix.LiveView
       def handle_params(%{"page" => page}, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: page)}
+
+        {:noreply,
+         MishkaHtml.Helpers.LiveCRUD.paginate_assign(
+           socket,
+           module_selected,
+           unquote(field_assigned),
+           unquote(user_id),
+           skip_list,
+           params: socket.assigns.filters,
+           page_size: socket.assigns.page_size,
+           page_number: page
+         )}
       end
 
       @impl Phoenix.LiveView
       def handle_params(%{"count" => count} = params, _url, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        {:noreply, MishkaHtml.Helpers.LiveCRUD.paginate_assign(socket, module_selected, unquote(field_assigned), unquote(user_id), skip_list, params: params["params"] || params, page_size: count, page_number: 1)}
+
+        {:noreply,
+         MishkaHtml.Helpers.LiveCRUD.paginate_assign(
+           socket,
+           module_selected,
+           unquote(field_assigned),
+           unquote(user_id),
+           skip_list,
+           params: params["params"] || params,
+           page_size: count,
+           page_number: 1
+         )}
       end
 
       @impl Phoenix.LiveView
@@ -40,7 +73,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-  defmacro list_search_and_action()  do
+  defmacro list_search_and_action() do
     quote do
       @impl Phoenix.LiveView
       def handle_event("search", params, socket) do
@@ -49,7 +82,20 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         router = Keyword.get(@interface_module, :router)
         skip_list = Keyword.get(@interface_module, :skip_list)
         count = if(is_nil(params["count"]), do: socket.assigns.page_size, else: params["count"])
-        {:noreply, push_patch(socket, to: router.live_path(socket, redirect, params: paginate_assign_filter(Map.merge(socket.assigns.filters, params), module_selected, skip_list), count: count))}
+
+        {:noreply,
+         push_patch(socket,
+           to:
+             router.live_path(socket, redirect,
+               params:
+                 paginate_assign_filter(
+                   Map.merge(socket.assigns.filters, params),
+                   module_selected,
+                   skip_list
+                 ),
+               count: count
+             )
+         )}
       end
 
       @impl Phoenix.LiveView
@@ -61,17 +107,20 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
       @impl Phoenix.LiveView
       def handle_event("open_modal", _params, socket) do
-        {:noreply, assign(socket, [open_modal: true])}
+        {:noreply, assign(socket, open_modal: true)}
       end
 
       @impl Phoenix.LiveView
       def handle_event("close_modal", _params, socket) do
-        {:noreply, assign(socket, [open_modal: false, component: nil])}
+        {:noreply, assign(socket, open_modal: false, component: nil)}
       end
     end
   end
 
-  defmacro delete_list_item(function, component, user_id, do: after_condition, before: before_condition)  do
+  defmacro delete_list_item(function, component, user_id,
+             do: after_condition,
+             before: before_condition
+           ) do
     quote do
       @impl Phoenix.LiveView
       def handle_event("delete", %{"id" => id} = _params, socket) do
@@ -79,59 +128,122 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
         before_condition.(id)
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        socket = MishkaHtml.Helpers.LiveCRUD.delete_item_of_list(socket, module_selected, unquote(function), id, unquote(user_id), unquote(component), skip_list, unquote(after_condition))
+
+        socket =
+          MishkaHtml.Helpers.LiveCRUD.delete_item_of_list(
+            socket,
+            module_selected,
+            unquote(function),
+            id,
+            unquote(user_id),
+            unquote(component),
+            skip_list,
+            unquote(after_condition)
+          )
+
         {:noreply, socket}
       end
     end
   end
 
-  defmacro delete_list_item(function, component, user_id)  do
+  defmacro delete_list_item(function, component, user_id) do
     quote do
       @impl Phoenix.LiveView
       def handle_event("delete", %{"id" => id} = _params, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        socket = MishkaHtml.Helpers.LiveCRUD.delete_item_of_list(socket, module_selected, unquote(function), id, unquote(user_id), unquote(component), skip_list, nil)
+
+        socket =
+          MishkaHtml.Helpers.LiveCRUD.delete_item_of_list(
+            socket,
+            module_selected,
+            unquote(function),
+            id,
+            unquote(user_id),
+            unquote(component),
+            skip_list,
+            nil
+          )
+
         {:noreply, socket}
       end
     end
   end
 
-  defmacro soft_delete_list_item(function, record_id, do: after_condition)  do
+  defmacro soft_delete_list_item(function, record_id, do: after_condition) do
     quote do
       @impl Phoenix.LiveView
       def handle_event("delete", %{"id" => id}, socket) do
         module_selected = Keyword.get(@interface_module, :module)
-        {:noreply, soft_delete_item_of_list(socket, id, module_selected, unquote(after_condition), unquote(function), unquote(record_id))}
+
+        {:noreply,
+         soft_delete_item_of_list(
+           socket,
+           id,
+           module_selected,
+           unquote(after_condition),
+           unquote(function),
+           unquote(record_id)
+         )}
       end
     end
   end
 
-  defmacro soft_delete_list_item(function, record_id)  do
+  defmacro soft_delete_list_item(function, record_id) do
     quote do
       @impl Phoenix.LiveView
       def handle_event("delete", %{"id" => id}, socket) do
         module_selected = Keyword.get(@interface_module, :module)
-        {:noreply, soft_delete_item_of_list(socket, id, module_selected, fn -> nil end, unquote(function), unquote(record_id))}
+
+        {:noreply,
+         soft_delete_item_of_list(
+           socket,
+           id,
+           module_selected,
+           fn -> nil end,
+           unquote(function),
+           unquote(record_id)
+         )}
       end
     end
   end
 
-  defmacro update_list(function, user_id)  do
+  defmacro update_list(function, user_id) do
     quote do
       @impl Phoenix.LiveView
       def handle_info({_section, :ok, repo_record}, socket) do
         module_selected = Keyword.get(@interface_module, :module)
         skip_list = Keyword.get(@interface_module, :skip_list)
-        socket = case repo_record.__meta__.state do
-          :loaded ->
-            paginate_assign(socket, module_selected, unquote(function), unquote(user_id), skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
 
-          :deleted ->
-            paginate_assign(socket, module_selected, unquote(function), unquote(user_id), skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
+        socket =
+          case repo_record.__meta__.state do
+            :loaded ->
+              paginate_assign(
+                socket,
+                module_selected,
+                unquote(function),
+                unquote(user_id),
+                skip_list,
+                params: socket.assigns.filters,
+                page_size: socket.assigns.page_size,
+                page_number: socket.assigns.page
+              )
 
-          _ ->  socket
-        end
+            :deleted ->
+              paginate_assign(
+                socket,
+                module_selected,
+                unquote(function),
+                unquote(user_id),
+                skip_list,
+                params: socket.assigns.filters,
+                page_size: socket.assigns.page_size,
+                page_number: socket.assigns.page
+              )
+
+            _ ->
+              socket
+          end
 
         {:noreply, socket}
       end
@@ -143,7 +255,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-  defmacro selected_menue(module)  do
+  defmacro selected_menue(module) do
     quote do
       @impl Phoenix.LiveView
       def handle_info(:menu, socket) do
@@ -153,97 +265,130 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-  defmacro basic_menu()  do
+  defmacro basic_menu() do
     quote do
       @impl Phoenix.LiveView
       def handle_event("basic_menu", %{"type" => type, "class" => class}, socket) do
-        new_socket = case check_type_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
-          {:ok, :add_new_item_to_list, _new_item} ->
+        new_socket =
+          case check_type_list(
+                 socket.assigns.dynamic_form,
+                 %{type: type, value: nil, class: class},
+                 type
+               ) do
+            {:ok, :add_new_item_to_list, _new_item} ->
+              assign(socket,
+                basic_menu: !socket.assigns.basic_menu,
+                options_menu: false,
+                dynamic_form:
+                  socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
+              )
 
-            assign(socket, [
-              basic_menu: !socket.assigns.basic_menu,
-              options_menu: false,
-              dynamic_form:  socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
-            ])
-
-          {:error, :add_new_item_to_list, _new_item} ->
-            assign(socket, [
-              basic_menu: !socket.assigns.basic_menu,
-              options_menu: false
-            ])
-        end
+            {:error, :add_new_item_to_list, _new_item} ->
+              assign(socket,
+                basic_menu: !socket.assigns.basic_menu,
+                options_menu: false
+              )
+          end
 
         {:noreply, new_socket}
       end
 
       def handle_event("basic_menu", _params, socket) do
-        {:noreply, assign(socket, [basic_menu: !socket.assigns.basic_menu, options_menu: false])}
+        {:noreply, assign(socket, basic_menu: !socket.assigns.basic_menu, options_menu: false)}
       end
-
     end
   end
 
-  defmacro options_menu()  do
+  defmacro options_menu() do
     quote do
       @impl Phoenix.LiveView
       def handle_event("options_menu", %{"type" => type, "class" => class}, socket) do
-        new_socket = case check_type_list(socket.assigns.dynamic_form, %{type: type, value: nil, class: class}, type) do
-          {:ok, :add_new_item_to_list, _new_item} ->
+        new_socket =
+          case check_type_list(
+                 socket.assigns.dynamic_form,
+                 %{type: type, value: nil, class: class},
+                 type
+               ) do
+            {:ok, :add_new_item_to_list, _new_item} ->
+              assign(socket,
+                basic_menu: false,
+                options_menu: !socket.assigns.options_menu,
+                dynamic_form:
+                  socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
+              )
 
-            assign(socket, [
-              basic_menu: false,
-              options_menu: !socket.assigns.options_menu,
-              dynamic_form: socket.assigns.dynamic_form ++ [%{type: type, value: nil, class: class}]
-            ])
-
-          {:error, :add_new_item_to_list, _new_item} ->
-            assign(socket, [
-              basic_menu: false,
-              options_menu: !socket.assigns.options_menu,
-            ])
-        end
+            {:error, :add_new_item_to_list, _new_item} ->
+              assign(socket,
+                basic_menu: false,
+                options_menu: !socket.assigns.options_menu
+              )
+          end
 
         {:noreply, new_socket}
       end
 
       @impl true
       def handle_event("options_menu", _params, socket) do
-        {:noreply, assign(socket, [basic_menu: false, options_menu: !socket.assigns.options_menu])}
+        {:noreply, assign(socket, basic_menu: false, options_menu: !socket.assigns.options_menu)}
       end
     end
   end
 
-  defmacro save_editor(section)  do
+  defmacro save_editor(section) do
     quote do
       @impl Phoenix.LiveView
       def handle_event("save-editor", %{"html" => params}, socket) do
-        draft_id = Ecto.UUID.generate
-        socket = case socket.assigns.draft_id do
-          nil ->
-            MishkaContent.Cache.ContentDraftManagement.save_by_id(draft_id, socket.assigns.user_id, unquote(section), :public, [])
-            MishkaContent.Cache.ContentDraftManagement.update_state(id: draft_id, elements: %{editor: params, dynamic_form: [
-              %{class: "col-sm-1", type: "status", value: nil},
-              %{class: "col-sm-12", type: "description", value: params}
-            ]})
+        draft_id = Ecto.UUID.generate()
 
-            socket
-            |> assign([editor: params, draft_id: draft_id])
+        socket =
+          case socket.assigns.draft_id do
+            nil ->
+              MishkaContent.Cache.ContentDraftManagement.save_by_id(
+                draft_id,
+                socket.assigns.user_id,
+                unquote(section),
+                :public,
+                []
+              )
 
-          record ->
-            MishkaContent.Cache.ContentDraftManagement.update_state(id: record, elements: %{editor: params})
-            socket
-            |> assign([editor: params])
-        end
+              MishkaContent.Cache.ContentDraftManagement.update_state(
+                id: draft_id,
+                elements: %{
+                  editor: params,
+                  dynamic_form: [
+                    %{class: "col-sm-1", type: "status", value: nil},
+                    %{class: "col-sm-12", type: "description", value: params}
+                  ]
+                }
+              )
+
+              socket
+              |> assign(editor: params, draft_id: draft_id)
+
+            record ->
+              MishkaContent.Cache.ContentDraftManagement.update_state(
+                id: record,
+                elements: %{editor: params}
+              )
+
+              socket
+              |> assign(editor: params)
+          end
 
         {:noreply, socket}
       end
     end
   end
 
-  defmacro editor_draft(key, options_menu, extra_params, when_not: list_of_key)  do
+  defmacro editor_draft(key, options_menu, extra_params, when_not: list_of_key) do
     quote do
       @impl Phoenix.LiveView
-      def handle_event("draft", %{"_target" => ["#{unquote(key)}", type], "#{unquote(key)}" => params}, socket) when type not in unquote(list_of_key) do
+      def handle_event(
+            "draft",
+            %{"_target" => ["#{unquote(key)}", type], "#{unquote(key)}" => params},
+            socket
+          )
+          when type not in unquote(list_of_key) do
         draft(socket, type, params, unquote(options_menu), unquote(extra_params), unquote(key))
       end
 
@@ -261,63 +406,75 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     end
   end
 
-
-  defmacro delete_form()  do
+  defmacro delete_form() do
     quote do
       @impl Phoenix.LiveView
       def handle_event("delete_form", %{"type" => type}, socket) do
         socket =
           socket
-          |> assign([
+          |> assign(
             basic_menu: false,
             options_menu: false,
             dynamic_form: Enum.reject(socket.assigns.dynamic_form, fn x -> x.type == type end)
-          ])
+          )
 
         {:noreply, socket}
       end
     end
   end
 
-  defmacro clear_all_field(changeset)  do
+  defmacro clear_all_field(changeset) do
     quote do
       @impl Phoenix.LiveView
       def handle_event("clear_all_field", _, socket) do
-        {:noreply, assign(socket, [basic_menu: false, changeset: unquote(changeset), options_menu: false, draft_id: nil, dynamic_form: []])}
+        {:noreply,
+         assign(socket,
+           basic_menu: false,
+           changeset: unquote(changeset),
+           options_menu: false,
+           draft_id: nil,
+           dynamic_form: []
+         )}
       end
     end
   end
 
-  defmacro make_all_basic_menu()  do
+  defmacro make_all_basic_menu() do
     quote do
       @impl Phoenix.LiveView
       def handle_event("make_all_basic_menu", _, socket) do
         socket =
           socket
-          |> assign([
+          |> assign(
             basic_menu: false,
             options_menu: false,
-            dynamic_form: socket.assigns.dynamic_form ++ create_menu_list(basic_menu_list(), socket.assigns.dynamic_form)
-          ])
+            dynamic_form:
+              socket.assigns.dynamic_form ++
+                create_menu_list(basic_menu_list(), socket.assigns.dynamic_form)
+          )
 
         {:noreply, socket}
       end
     end
   end
 
-  defmacro make_all_menu()  do
+  defmacro make_all_menu() do
     quote do
       @impl Phoenix.LiveView
       def handle_event("make_all_menu", _, socket) do
-        fields = create_menu_list(basic_menu_list() ++ more_options_menu_list(), socket.assigns.dynamic_form)
+        fields =
+          create_menu_list(
+            basic_menu_list() ++ more_options_menu_list(),
+            socket.assigns.dynamic_form
+          )
 
         socket =
           socket
-          |> assign([
+          |> assign(
             basic_menu: false,
             options_menu: false,
             dynamic_form: socket.assigns.dynamic_form ++ fields
-          ])
+          )
 
         {:noreply, socket}
       end
@@ -328,7 +485,8 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     quote do
       @impl Phoenix.LiveView
       def handle_event("subscription", _params, socket) do
-        {:noreply, subscription(unquote(section), socket.assigns.id, socket.assigns.user_id, socket)}
+        {:noreply,
+         subscription(unquote(section), socket.assigns.id, socket.assigns.user_id, socket)}
       end
     end
   end
@@ -337,8 +495,7 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
     quote do
       @impl Phoenix.LiveView
       def handle_info({:subscription, self_pid}, socket) do
-        socket =
-          create_user_subscription_state(socket, unquote(section), self_pid)
+        socket = create_user_subscription_state(socket, unquote(section), self_pid)
         {:noreply, socket}
       end
 
@@ -353,61 +510,103 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   def create_user_subscription_state(socket, section, self_pid) do
     if socket.root_pid == self_pid do
       case socket.assigns.user_id do
-        nil -> socket |> assign(subscrip: false)
+        nil ->
+          socket |> assign(subscrip: false)
 
         user_id ->
-          record = MishkaContent.General.Subscription.subscriptions(conditions: {1, 1}, filters: %{
-            section: section,
-            user_id: user_id,
-            section_id: socket.assigns.id
-          }).entries
+          record =
+            MishkaContent.General.Subscription.subscriptions(
+              conditions: {1, 1},
+              filters: %{
+                section: section,
+                user_id: user_id,
+                section_id: socket.assigns.id
+              }
+            ).entries
 
-          if(length(record) == 0, do: socket |> assign(subscrip: false), else: socket |> assign(subscrip: true))
+          if(length(record) == 0,
+            do: socket |> assign(subscrip: false),
+            else: socket |> assign(subscrip: true)
+          )
       end
     else
       socket
     end
   end
 
-  def subscription(_section, section_id, user_id, socket) when is_nil(section_id) or is_nil(user_id) do
+  def subscription(_section, section_id, user_id, socket)
+      when is_nil(section_id) or is_nil(user_id) do
     require MishkaTranslator.Gettext
+
     socket
-    |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "برای اشتراک در این بخش لطفا وارد سایت شوید."))
+    |> put_flash(
+      :warning,
+      MishkaTranslator.Gettext.dgettext(
+        "macro_live",
+        "برای اشتراک در این بخش لطفا وارد سایت شوید."
+      )
+    )
   end
 
   def subscription(section, section_id, user_id, socket) do
     require MishkaTranslator.Gettext
-    with {:error, :get_record_by_field, _error_tag} <- MishkaContent.General.Subscription.show_by_section_id(section_id),
-         {:ok, :add, error_atom, _repo_data} <- MishkaContent.General.Subscription.create(%{
-           section: section, section_id: section_id, user_id: user_id
-         }) do
 
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
+    with {:error, :get_record_by_field, _error_tag} <-
+           MishkaContent.General.Subscription.show_by_section_id(section_id),
+         {:ok, :add, error_atom, _repo_data} <-
+           MishkaContent.General.Subscription.create(%{
+             section: section,
+             section_id: section_id,
+             user_id: user_id
+           }) do
+      MishkaContent.General.Activity.create_activity_by_start_child(
+        %{
           type: "section",
           section: activity_section_by_error_atom(error_atom),
           section_id: section_id,
           action: "add",
           priority: "low",
           status: "info"
-        }, %{user_action: "live_crud_subscription", user_id: user_id})
+        },
+        %{user_action: "live_crud_subscription", user_id: user_id}
+      )
 
-        socket
-        |> assign(subscrip: true)
-        |> put_flash(:success, MishkaTranslator.Gettext.dgettext("macro_live", "شما با موفقیت مشترک این بخش شدید. لطفا برای دیدن تاریخ انقضای اشتراک در صورت وجود داشتن یا همینطور غیر فعال سازی اشتراک وارد تنظیمات پروفایل خود شوید."))
-
+      socket
+      |> assign(subscrip: true)
+      |> put_flash(
+        :success,
+        MishkaTranslator.Gettext.dgettext(
+          "macro_live",
+          "شما با موفقیت مشترک این بخش شدید. لطفا برای دیدن تاریخ انقضای اشتراک در صورت وجود داشتن یا همینطور غیر فعال سازی اشتراک وارد تنظیمات پروفایل خود شوید."
+        )
+      )
     else
       {:error, :add, error_atom, repo_error} ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: activity_section_by_error_atom(error_atom),
-          section_id: section_id,
-          action: "add",
-          priority: "medium",
-          status: "error",
-        }, %{user_action: "live_crud_subscription", errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params), user_id: user_id})
+        MishkaContent.General.Activity.create_activity_by_start_child(
+          %{
+            type: "section",
+            section: activity_section_by_error_atom(error_atom),
+            section_id: section_id,
+            action: "add",
+            priority: "medium",
+            status: "error"
+          },
+          %{
+            user_action: "live_crud_subscription",
+            errors: Jason.encode!(repo_error.errors),
+            params: Jason.encode!(repo_error.params),
+            user_id: user_id
+          }
+        )
 
         socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطایی در ثبت اشتراک پیش آماده است.لطفا در صورت تکرار با پشتیبانی در ارتباط باشید."))
+        |> put_flash(
+          :error,
+          MishkaTranslator.Gettext.dgettext(
+            "macro_live",
+            "خطایی در ثبت اشتراک پیش آماده است.لطفا در صورت تکرار با پشتیبانی در ارتباط باشید."
+          )
+        )
 
       {:ok, :get_record_by_field, _error_tag, repo_data} ->
         delete_subscription(user_id, repo_data.section_id, socket)
@@ -416,33 +615,54 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
   def delete_subscription(user_id, section_id, socket) do
     require MishkaTranslator.Gettext
+
     case MishkaContent.General.Subscription.delete(user_id, section_id) do
       {:error, :delete, error_atom, repo_error} ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: activity_section_by_error_atom(error_atom),
-          section_id: section_id,
-          action: "delete",
-          priority: "medium",
-          status: "error"
-        }, %{user_action: "delete_subscription", errors: Jason.encode!(repo_error.errors), params: Jason.encode!(repo_error.params), user_id: user_id})
+        MishkaContent.General.Activity.create_activity_by_start_child(
+          %{
+            type: "section",
+            section: activity_section_by_error_atom(error_atom),
+            section_id: section_id,
+            action: "delete",
+            priority: "medium",
+            status: "error"
+          },
+          %{
+            user_action: "delete_subscription",
+            errors: Jason.encode!(repo_error.errors),
+            params: Jason.encode!(repo_error.params),
+            user_id: user_id
+          }
+        )
 
         socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "خطای در حذف اشتراک شما پیش آماده است لطفا صفحه را رفرش کنید و در صورت تکرار با پشتیبانی در تماس باشید."))
+        |> put_flash(
+          :warning,
+          MishkaTranslator.Gettext.dgettext(
+            "macro_live",
+            "خطای در حذف اشتراک شما پیش آماده است لطفا صفحه را رفرش کنید و در صورت تکرار با پشتیبانی در تماس باشید."
+          )
+        )
 
       {:ok, :delete, error_atom, _repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: activity_section_by_error_atom(error_atom),
-          section_id: section_id,
-          action: "delete",
-          priority: "low",
-          status: "info"
-        }, %{user_action: "delete_subscription", user_id: user_id})
+        MishkaContent.General.Activity.create_activity_by_start_child(
+          %{
+            type: "section",
+            section: activity_section_by_error_atom(error_atom),
+            section_id: section_id,
+            action: "delete",
+            priority: "low",
+            status: "info"
+          },
+          %{user_action: "delete_subscription", user_id: user_id}
+        )
 
         socket
         |> assign(subscrip: false)
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("macro_live", "اشتراک شما با موفقیت لغو شد."))
+        |> put_flash(
+          :info,
+          MishkaTranslator.Gettext.dgettext("macro_live", "اشتراک شما با موفقیت لغو شد.")
+        )
     end
   end
 
@@ -460,17 +680,21 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   end
 
   def select_draft(socket, draft_id) do
-    socket = case MishkaContent.Cache.ContentDraftManagement.get_draft_by_id(id: draft_id) do
-      {:error, :get_draft_by_id, :not_found} -> socket
+    socket =
+      case MishkaContent.Cache.ContentDraftManagement.get_draft_by_id(id: draft_id) do
+        {:error, :get_draft_by_id, :not_found} ->
+          socket
 
-      record ->
-        editor =
-          Map.get(record, :editor) || get_description(Enum.find(record.dynamic_form, fn x -> x.type == "description" end)) || ""
+        record ->
+          editor =
+            Map.get(record, :editor) ||
+              get_description(Enum.find(record.dynamic_form, fn x -> x.type == "description" end)) ||
+              ""
 
-        socket
-        |> assign(dynamic_form: record.dynamic_form, draft_id: record.id, editor: editor)
-        |> push_event("update-editor-html", %{html: editor})
-    end
+          socket
+          |> assign(dynamic_form: record.dynamic_form, draft_id: record.id, editor: editor)
+          |> push_event("update-editor-html", %{html: editor})
+      end
 
     {:noreply, socket}
   end
@@ -478,36 +702,54 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   defp get_description(nil), do: nil
   defp get_description(description), do: description.value
 
-
   def draft(socket, type, params, options_menu, extra_params, key) do
-    {_key, value} = Map.take(params, [type])
-    |> Map.to_list()
-    |> List.first()
+    {_key, value} =
+      Map.take(params, [type])
+      |> Map.to_list()
+      |> List.first()
 
-    alias_link = if(type == "title", do: MishkaHtml.create_alias_link(params["title"]), else: Map.get(socket.assigns, :alias_link))
+    alias_link =
+      if(type == "title",
+        do: MishkaHtml.create_alias_link(params["title"]),
+        else: Map.get(socket.assigns, :alias_link)
+      )
 
-    new_dynamic_form = Enum.map(socket.assigns.dynamic_form, fn x -> if x.type == type, do: Map.merge(x, %{value: value}), else: x end)
-    dynamic_form = if(options_menu, do: [options_menu: false, dynamic_form: new_dynamic_form], else: [dynamic_form: new_dynamic_form])
+    new_dynamic_form =
+      Enum.map(socket.assigns.dynamic_form, fn x ->
+        if x.type == type, do: Map.merge(x, %{value: value}), else: x
+      end)
 
-    extra_params = Enum.map(extra_params, fn item ->
-      case item do
-        {list_key, module, function, param_key, extra_input} ->
-          [{list_key, apply(module, function, [params["#{param_key}"], extra_input])}]
-        {list_key, module, function, param_key} ->
-          [{list_key, apply(module, function, [params["#{param_key}"]])}]
-        {list_key, :return_params, function} ->
-          [{list_key, function.(type, params)}]
-        {_list_key, _value} = record ->
-          Map.new([record]) |> Map.to_list()
-      end
-    end)
-    |> Enum.concat()
+    dynamic_form =
+      if(options_menu,
+        do: [options_menu: false, dynamic_form: new_dynamic_form],
+        else: [dynamic_form: new_dynamic_form]
+      )
 
+    extra_params =
+      Enum.map(extra_params, fn item ->
+        case item do
+          {list_key, module, function, param_key, extra_input} ->
+            [{list_key, apply(module, function, [params["#{param_key}"], extra_input])}]
+
+          {list_key, module, function, param_key} ->
+            [{list_key, apply(module, function, [params["#{param_key}"]])}]
+
+          {list_key, :return_params, function} ->
+            [{list_key, function.(type, params)}]
+
+          {_list_key, _value} = record ->
+            Map.new([record]) |> Map.to_list()
+        end
+      end)
+      |> Enum.concat()
 
     # save dynamic_form on Draft State
-    draft_id = create_and_update_draft_state(socket, Keyword.get(dynamic_form, :dynamic_form), key)
+    draft_id =
+      create_and_update_draft_state(socket, Keyword.get(dynamic_form, :dynamic_form), key)
 
-    assign_params = [basic_menu: false, alias_link: alias_link, draft_id: draft_id] ++ dynamic_form ++ extra_params
+    assign_params =
+      [basic_menu: false, alias_link: alias_link, draft_id: draft_id] ++
+        dynamic_form ++ extra_params
 
     {:noreply, assign(socket, assign_params)}
   end
@@ -515,11 +757,24 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   def create_and_update_draft_state(socket, dynamic_form, key) do
     case {:draft_id, is_nil(socket.assigns.draft_id)} do
       {:draft_id, true} ->
-        id = Ecto.UUID.generate
-        MishkaContent.Cache.ContentDraftManagement.save_by_id(id, socket.assigns.user_id, key, socket.assigns.id || :public, dynamic_form)
+        id = Ecto.UUID.generate()
+
+        MishkaContent.Cache.ContentDraftManagement.save_by_id(
+          id,
+          socket.assigns.user_id,
+          key,
+          socket.assigns.id || :public,
+          dynamic_form
+        )
+
         id
+
       {:draft_id, false} ->
-        MishkaContent.Cache.ContentDraftManagement.update_record(id: socket.assigns.draft_id, dynamic_form: dynamic_form)
+        MishkaContent.Cache.ContentDraftManagement.update_record(
+          id: socket.assigns.draft_id,
+          dynamic_form: dynamic_form
+        )
+
         socket.assigns.draft_id
     end
   end
@@ -527,78 +782,148 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
   def check_type_list(dynamic_form, new_item, type) do
     case Enum.any?(dynamic_form, fn x -> x.type == type end) do
       true ->
-
         {:error, :add_new_item_to_list, new_item}
-      false ->
 
+      false ->
         {:ok, :add_new_item_to_list, List.insert_at(dynamic_form, -1, new_item)}
     end
   end
 
   def create_menu_list(menus_list, dynamic_form) do
     Enum.map(menus_list, fn menu ->
-      case check_type_list(dynamic_form, %{type: menu.type, value: nil, class: menu.class}, menu.type) do
+      case check_type_list(
+             dynamic_form,
+             %{type: menu.type, value: nil, class: menu.class},
+             menu.type
+           ) do
         {:ok, :add_new_item_to_list, _new_item} ->
-
           %{type: menu.type, value: nil, class: menu.class}
 
-        {:error, :add_new_item_to_list, _new_item} -> nil
+        {:error, :add_new_item_to_list, _new_item} ->
+          nil
       end
     end)
     |> Enum.reject(fn x -> x == nil end)
   end
 
-  def delete_item_of_list(socket, module_selected, function, id,  user_id, _component, skip_list, after_condition) do
+  def delete_item_of_list(
+        socket,
+        module_selected,
+        function,
+        id,
+        user_id,
+        _component,
+        skip_list,
+        after_condition
+      ) do
     require MishkaTranslator.Gettext
-    socket = case module_selected.delete(id) do
-      {:ok, :delete, error_atom, repo_data} ->
-        MishkaContent.General.Activity.create_activity_by_start_child(%{
-          type: "section",
-          section: activity_section_by_error_atom(error_atom),
-          section_id: repo_data.id,
-          action: "delete",
-          priority: "medium",
-          status: "info"
-        }, %{user_action: "delete_item_of_list", title: Map.get(repo_data, :title), full_name: Map.get(repo_data, :full_name), user_id: Map.get(socket.assigns, :user_id)})
 
-        # It should pass conn or socket output
-        if !is_nil(after_condition), do: after_condition.(id, socket), else: socket
-        |> put_flash(:info, MishkaTranslator.Gettext.dgettext("macro_live", "رکورد مورد نظر با موفقیت حذف گردید"))
-      {:error, :delete, :forced_to_delete, _error_atom} ->
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "برای رکورد مورد نظر شما چندین وابستگی وجود دارد. اول باید رکورد های وابسته حذف گردد بعد از آن امکان حذف رکورد مدنظر را خواهید داشت."))
-        |> push_event("jump_to_top_page", %{})
-      {:error, :delete, type, _error_atom} when type in [:uuid, :get_record_by_id] ->
-        socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
-        |> push_event("jump_to_top_page", %{})
-      {:error, :delete, _error_atom, _repo_error} ->
-        socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطا در حذف رکورد اتفاق افتاده است."))
-        |> push_event("jump_to_top_page", %{})
-    end
+    socket =
+      case module_selected.delete(id) do
+        {:ok, :delete, error_atom, repo_data} ->
+          MishkaContent.General.Activity.create_activity_by_start_child(
+            %{
+              type: "section",
+              section: activity_section_by_error_atom(error_atom),
+              section_id: repo_data.id,
+              action: "delete",
+              priority: "medium",
+              status: "info"
+            },
+            %{
+              user_action: "delete_item_of_list",
+              title: Map.get(repo_data, :title),
+              full_name: Map.get(repo_data, :full_name),
+              user_id: Map.get(socket.assigns, :user_id)
+            }
+          )
 
-    paginate_assign(socket, module_selected, function, user_id, skip_list, params: socket.assigns.filters, page_size: socket.assigns.page_size, page_number: socket.assigns.page)
+          # It should pass conn or socket output
+          if !is_nil(after_condition),
+            do: after_condition.(id, socket),
+            else:
+              socket
+              |> put_flash(
+                :info,
+                MishkaTranslator.Gettext.dgettext(
+                  "macro_live",
+                  "رکورد مورد نظر با موفقیت حذف گردید"
+                )
+              )
+
+        {:error, :delete, :forced_to_delete, _error_atom} ->
+          socket
+          |> put_flash(
+            :warning,
+            MishkaTranslator.Gettext.dgettext(
+              "macro_live",
+              "برای رکورد مورد نظر شما چندین وابستگی وجود دارد. اول باید رکورد های وابسته حذف گردد بعد از آن امکان حذف رکورد مدنظر را خواهید داشت."
+            )
+          )
+          |> push_event("jump_to_top_page", %{})
+
+        {:error, :delete, type, _error_atom} when type in [:uuid, :get_record_by_id] ->
+          socket
+          |> put_flash(
+            :warning,
+            MishkaTranslator.Gettext.dgettext(
+              "macro_live",
+              "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."
+            )
+          )
+          |> push_event("jump_to_top_page", %{})
+
+        {:error, :delete, _error_atom, _repo_error} ->
+          socket
+          |> put_flash(
+            :error,
+            MishkaTranslator.Gettext.dgettext("macro_live", "خطا در حذف رکورد اتفاق افتاده است.")
+          )
+          |> push_event("jump_to_top_page", %{})
+      end
+
+    paginate_assign(socket, module_selected, function, user_id, skip_list,
+      params: socket.assigns.filters,
+      page_size: socket.assigns.page_size,
+      page_number: socket.assigns.page
+    )
   end
 
   def soft_delete_item_of_list(socket, id, module_selected, after_condition, function, record_id) do
     require MishkaTranslator.Gettext
+
     case module_selected.delete(id) do
       {:ok, :delete, _error_atom, repo_data} ->
         after_condition.()
-        new_assign = Map.new([{function, apply(module_selected, function, [Map.get(repo_data, record_id)])}]) |> Map.to_list()
+
+        new_assign =
+          Map.new([{function, apply(module_selected, function, [Map.get(repo_data, record_id)])}])
+          |> Map.to_list()
+
         assign(socket, authors: new_assign)
+
       {:error, :delete, type, _error_atom} when type in [:uuid, :get_record_by_id] ->
         socket
-        |> put_flash(:warning, MishkaTranslator.Gettext.dgettext("macro_live", "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."))
+        |> put_flash(
+          :warning,
+          MishkaTranslator.Gettext.dgettext(
+            "macro_live",
+            "چنین رکوردی ای وجود ندارد یا ممکن است از قبل حذف شده باشد."
+          )
+        )
+
       {:error, :delete, _error_atom, _repo_error} ->
         socket
-        |> put_flash(:error, MishkaTranslator.Gettext.dgettext("macro_live", "خطا در حذف رکورد اتفاق افتاده است."))
+        |> put_flash(
+          :error,
+          MishkaTranslator.Gettext.dgettext("macro_live", "خطا در حذف رکورد اتفاق افتاده است.")
+        )
     end
   end
 
   def paginate_assign_filter(params, module, skip_list) when is_map(params) do
     skip_list = if(is_nil(skip_list), do: [], else: skip_list)
+
     Map.take(params, module.allowed_fields(:string) ++ skip_list)
     |> Enum.reject(fn {_key, value} -> value == "" end)
     |> Map.new()
@@ -607,25 +932,36 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
 
   def paginate_assign_filter(_params, _module, _skip_list), do: %{}
 
-  def paginate_assign(socket, module, function, user_id, skip_list, params: params, page_size: count, page_number: page) do
-    load_record = if user_id do
-      [conditions: {page, count}, filters: paginate_assign_filter(params, module, skip_list), user_id: Map.get(socket.assigns, :auser_id)]
-    else
-      [conditions: {page, count}, filters: paginate_assign_filter(params, module, skip_list)]
-    end
+  def paginate_assign(socket, module, function, user_id, skip_list,
+        params: params,
+        page_size: count,
+        page_number: page
+      ) do
+    load_record =
+      if user_id do
+        [
+          conditions: {page, count},
+          filters: paginate_assign_filter(params, module, skip_list),
+          user_id: Map.get(socket.assigns, :auser_id)
+        ]
+      else
+        [conditions: {page, count}, filters: paginate_assign_filter(params, module, skip_list)]
+      end
 
     new_assign =
       Map.new([
         {function, apply(module, function, [load_record])},
         {:page_size, page_count(count)},
         {:filters, params},
-        {:page, page},
-      ]) |> Map.to_list()
+        {:page, page}
+      ])
+      |> Map.to_list()
 
     assign(socket, new_assign)
   end
 
   defp page_count(""), do: 10
+
   defp page_count(count) when is_binary(count) do
     case String.to_integer(count) do
       c when c > 100 -> 100
@@ -633,16 +969,29 @@ defmodule MishkaHtml.Helpers.LiveCRUD do
       c -> c
     end
   end
+
   defp page_count(_count), do: 10
 
   def activity_section_by_error_atom(error_atom) do
     [
-      {:blog_author, "blog_author"}, {:category, "blog_category"}, {:post_like, "blog_post_like"},
-      {:blog_link, "blog_link"}, {:post, "blog_post"}, {:blog_tag_mapper, "blog_tag_mapper"},
-      {:blog_tag, "blog_tag"}, {:activity, "activity"}, {:bookmark, "bookmark"},
-      {:comment_like, "comment_like"}, {:comment, "comment"}, {:notif, "notif"},
-      {:subscription, "subscription"}, {:setting, "setting"}, {:permission, "permission"},
-      {:role, "role"}, {:user_role, "user_role"}, {:identity, "identity"},
+      {:blog_author, "blog_author"},
+      {:category, "blog_category"},
+      {:post_like, "blog_post_like"},
+      {:blog_link, "blog_link"},
+      {:post, "blog_post"},
+      {:blog_tag_mapper, "blog_tag_mapper"},
+      {:blog_tag, "blog_tag"},
+      {:activity, "activity"},
+      {:bookmark, "bookmark"},
+      {:comment_like, "comment_like"},
+      {:comment, "comment"},
+      {:notif, "notif"},
+      {:subscription, "subscription"},
+      {:setting, "setting"},
+      {:permission, "permission"},
+      {:role, "role"},
+      {:user_role, "user_role"},
+      {:identity, "identity"},
       {:user, "user"}
     ]
     |> Enum.find(fn {list_error_atom, _section} -> list_error_atom == error_atom end)

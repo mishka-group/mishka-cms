@@ -9,7 +9,7 @@ defmodule MishkaDatabase.Application do
   def start(_type, _args) do
     children = [
       MishkaDatabase.Repo,
-      {MishkaDatabase.Cache.RandomCode, []},
+      {MishkaDatabase.Cache.RandomCode, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

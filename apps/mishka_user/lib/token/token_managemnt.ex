@@ -14,7 +14,11 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   def save(user_token, user_id) do
     save_token_on_db(user_token)
-    ETS.Set.put!(table(), {String.to_atom(user_token.token_info.token_id), user_id, user_token.token_info})
+
+    ETS.Set.put!(
+      table(),
+      {String.to_atom(user_token.token_info.token_id), user_id, user_token.token_info}
+    )
   end
 
   def get_all(user_id) do
@@ -34,22 +38,26 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   def delete(user_id) do
     Task.Supervisor.start_child(UserToken, fn ->
-      UserToken.revaluation_user_token_as_stream(&(UserToken.delete(&1.id)), %{user_id: user_id})
+      UserToken.revaluation_user_token_as_stream(&UserToken.delete(&1.id), %{user_id: user_id})
     end)
+
     ETS.Set.match_delete(table(), {:_, user_id, :_})
   end
 
   def delete_token(user_id, token) do
     Task.Supervisor.start_child(UserToken, fn ->
-      UserToken.revaluation_user_token_as_stream(&(UserToken.delete(&1.id)), %{token: token})
+      UserToken.revaluation_user_token_as_stream(&UserToken.delete(&1.id), %{token: token})
     end)
+
     ETS.Set.match_delete(table(), {:_, user_id, %{token: token}})
     get_all(user_id)
   end
 
   def delete_child_token(user_id, refresh_token) do
     case get_token(user_id, refresh_token) do
-      nil -> nil
+      nil ->
+        nil
+
       user_token ->
         delete(token_id: user_token.token_id)
         ETS.Set.match_delete(table(), {:_, user_id, %{rel: user_token.token_id}})
@@ -59,16 +67,26 @@ defmodule MishkaUser.Token.TokenManagemnt do
   def get_token(user_id, token) do
     case ETS.Set.match_object(table(), {:"$1", user_id, %{token: token}}) do
       {:ok, [{_token_id, ^user_id, token_info}]} ->
-        save(%{token_info: Map.merge(token_info, %{last_used: System.system_time(:second)})}, user_id)
+        save(
+          %{token_info: Map.merge(token_info, %{last_used: System.system_time(:second)})},
+          user_id
+        )
+
         token_info
-      _ -> nil
+
+      _ ->
+        nil
     end
   end
 
   # Ref: https://elixirforum.com/t/48598
   def delete_expire_token() do
     time = DateTime.utc_now() |> DateTime.to_unix()
-    pattern = [{{:"$1", :"$2", :"$3"}, [{:<, {:map_get, :access_expires_in, :"$3"}, time}],[true]}]
+
+    pattern = [
+      {{:"$1", :"$2", :"$3"}, [{:<, {:map_get, :access_expires_in, :"$3"}, time}], [true]}
+    ]
+
     ETS.Set.select_delete(table(), pattern)
   end
 
@@ -77,14 +95,22 @@ defmodule MishkaUser.Token.TokenManagemnt do
     case ETS.Set.match(table(), {:"$1", user_id, %{type: "refresh"}}) do
       {:ok, devices} when is_list(devices) and length(devices) <= 5 -> {:ok, :count_refresh_token}
       _ -> {:error, :count_refresh_token}
-      end
+    end
   end
 
   # Callbacks
   @impl true
   def init(state) do
     Logger.info("Token OTP server was started")
-    table = ETS.Set.new!(name: @ets_table, protection: :public, read_concurrency: true, write_concurrency: true)
+
+    table =
+      ETS.Set.new!(
+        name: @ets_table,
+        protection: :public,
+        read_concurrency: true,
+        write_concurrency: true
+      )
+
     {:ok, Map.merge(state, %{set: table}), {:continue, :sync_with_database}}
   end
 
@@ -98,11 +124,11 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   @impl true
   def handle_continue(:sync_with_database, state) do
-    UserToken.revaluation_user_token_as_stream(&save(
-      %{
-        id: &1.user_id,
-        token_info:
-          %{
+    UserToken.revaluation_user_token_as_stream(
+      &save(
+        %{
+          id: &1.user_id,
+          token_info: %{
             token_id: &1.id,
             type: "refresh",
             token: &1.token,
@@ -112,15 +138,20 @@ defmodule MishkaUser.Token.TokenManagemnt do
             access_expires_in: &1.expire_time |> DateTime.to_unix(),
             rel: nil
           }
-      },
-      &1.user_id
-    ), %{expire_time: DateTime.utc_now()})
+        },
+        &1.user_id
+      ),
+      %{expire_time: DateTime.utc_now()}
+    )
+
     {:noreply, state}
   end
 
   defp table() do
     case ETS.Set.wrap_existing(@ets_table) do
-      {:ok, set} -> set
+      {:ok, set} ->
+        set
+
       _ ->
         start_link([])
         table()
@@ -138,7 +169,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
           os: token_info.os,
           create_time: token_info.create_time
         },
-        user_id: user_id,
+        user_id: user_id
       })
     end)
   end

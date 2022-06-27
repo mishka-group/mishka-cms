@@ -1,12 +1,10 @@
-
 defmodule MishkaHtmlWeb.Admin.Public.Notif do
   use MishkaHtmlWeb, :live_view
-
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: subscribe()
     {:ok, assign(socket, notifs: [])}
-   end
+  end
 
   def render(assigns) do
     ~H"""
@@ -54,6 +52,6 @@ defmodule MishkaHtmlWeb.Admin.Public.Notif do
   end
 
   def notify_subscribers(notif) do
-     Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "admin_notif", {:add_notif, notif})
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "admin_notif", {:add_notif, notif})
   end
 end

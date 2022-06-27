@@ -24,9 +24,14 @@ defmodule MishkaHtmlWeb.NotifsLive do
         filters: %{},
         previous_page: false,
         self_pid: self(),
-        notifs: Notif.notifs(conditions: {1, 20, :client}, filters: %{user_id: user_id, target: :all, type: :client, status: :active})
+        notifs:
+          Notif.notifs(
+            conditions: {1, 20, :client},
+            filters: %{user_id: user_id, target: :all, type: :client, status: :active}
+          )
       )
-      {:ok, socket, temporary_assigns: [notifs: []]}
+
+    {:ok, socket, temporary_assigns: [notifs: []]}
   end
 
   @impl true
@@ -34,9 +39,19 @@ defmodule MishkaHtmlWeb.NotifsLive do
     socket =
       socket
       |> assign(
-        notifs: Notif.notifs(conditions: {page, 20, :client}, filters: %{user_id: socket.assigns.user_id, target: :all, type: :client, status: :active}),
+        notifs:
+          Notif.notifs(
+            conditions: {page, 20, :client},
+            filters: %{
+              user_id: socket.assigns.user_id,
+              target: :all,
+              type: :client,
+              status: :active
+            }
+          ),
         page: page
       )
+
     {:noreply, socket}
   end
 
@@ -48,26 +63,51 @@ defmodule MishkaHtmlWeb.NotifsLive do
   @impl true
   def handle_event("show_notif_navigate", %{"id" => id}, socket) do
     notif =
-      Notif.notifs(conditions: {1, 1, :client}, filters: %{id: id, user_id: socket.assigns.user_id, target: :all, type: :client, status: :active})
+      Notif.notifs(
+        conditions: {1, 1, :client},
+        filters: %{
+          id: id,
+          user_id: socket.assigns.user_id,
+          target: :all,
+          type: :client,
+          status: :active
+        }
+      )
+
     {:noreply, notif_link(socket, notif, socket.assigns.user_id)}
   end
 
   @impl true
   def handle_info(:menu, socket) do
-    ClientMenuAndNotif.notify_subscribers({:menu, "Elixir.MishkaHtmlWeb.NotifsLive", socket.assigns.self_pid})
+    ClientMenuAndNotif.notify_subscribers(
+      {:menu, "Elixir.MishkaHtmlWeb.NotifsLive", socket.assigns.self_pid}
+    )
+
     {:noreply, socket}
   end
 
   @impl true
   def handle_info({:notif, :ok, repo_record}, socket) do
-    socket = if repo_record.user_id == socket.assigns.user_id or is_nil(repo_record.user_id) do
-      update(socket, :notifs, fn _notif ->
+    socket =
+      if repo_record.user_id == socket.assigns.user_id or is_nil(repo_record.user_id) do
+        update(socket, :notifs, fn _notif ->
+          socket
+          |> assign(
+            notifs:
+              Notif.notifs(
+                conditions: {socket.assigns.page, 20, :client},
+                filters: %{
+                  user_id: socket.assigns.user_id,
+                  target: :all,
+                  type: :client,
+                  status: :active
+                }
+              )
+          )
+        end)
+      else
         socket
-        |> assign(notifs: Notif.notifs(conditions: {socket.assigns.page, 20, :client}, filters: %{user_id: socket.assigns.user_id, target: :all, type: :client, status: :active}))
-      end)
-    else
-      socket
-    end
+      end
 
     {:noreply, socket}
   end
@@ -79,6 +119,7 @@ defmodule MishkaHtmlWeb.NotifsLive do
 
   defp seo_tags(socket) do
     site_link = MishkaHtmlWeb.Router.Helpers.url(socket)
+
     %{
       image: "#{site_link}/images/mylogo.png",
       title: "اطلاع رسانی ها",
@@ -89,54 +130,78 @@ defmodule MishkaHtmlWeb.NotifsLive do
     }
   end
 
-
   def notif_link(socket, notif, user_id) do
     socket =
-      with {:notification, true, notif_entry} <- {:notification, length(notif.entries) == 1, notif.entries},
-           {:notif_section, true, _section, _notif_info} <- {:notif_section, List.first(notif_entry).section in [:user_only, :public], List.first(notif_entry).section, notif_entry} do
-
+      with {:notification, true, notif_entry} <-
+             {:notification, length(notif.entries) == 1, notif.entries},
+           {:notif_section, true, _section, _notif_info} <-
+             {:notif_section, List.first(notif_entry).section in [:user_only, :public],
+              List.first(notif_entry).section, notif_entry} do
         record = List.first(notif_entry)
+
         if is_nil(record.user_notif_status.status_type) do
           UserNotifStatus.create(%{type: :read, notif_id: record.id, user_id: user_id})
         end
 
         socket
-        |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.NotifLive, List.first(notif_entry).id))
-
+        |> push_redirect(
+          to: Routes.live_path(socket, MishkaHtmlWeb.NotifLive, List.first(notif_entry).id)
+        )
       else
         {:notification, false, []} ->
           socket
-          |> put_flash(:error, MishkaTranslator.Gettext.dgettext("html_live", "چنین صفحه ای وجود ندارد یا از قبل حذف شده است."))
+          |> put_flash(
+            :error,
+            MishkaTranslator.Gettext.dgettext(
+              "html_live",
+              "چنین صفحه ای وجود ندارد یا از قبل حذف شده است."
+            )
+          )
           |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.NotifsLive))
 
         {:notif_section, false, :blog_post, notif_info} ->
-          socket = case MishkaContent.Blog.Post.show_by_id(List.first(notif_info).section_id) do
-            {:ok, :get_record_by_id, _error_tag, repo_data} ->
+          socket =
+            case MishkaContent.Blog.Post.show_by_id(List.first(notif_info).section_id) do
+              {:ok, :get_record_by_id, _error_tag, repo_data} ->
+                record = List.first(notif.entries)
 
-              record = List.first(notif.entries)
-              if is_nil(record.user_notif_status.status_type) do
-                UserNotifStatus.create(%{type: :read, notif_id: record.id, user_id: user_id})
-              end
+                if is_nil(record.user_notif_status.status_type) do
+                  UserNotifStatus.create(%{type: :read, notif_id: record.id, user_id: user_id})
+                end
 
-              socket
-              |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogPostLive, repo_data.alias_link))
+                socket
+                |> push_redirect(
+                  to: Routes.live_path(socket, MishkaHtmlWeb.BlogPostLive, repo_data.alias_link)
+                )
 
-            _ ->
-              socket
-              |> put_flash(:info, MishkaTranslator.Gettext.dgettext("html_live", "چنین محتوایی وجود ندارد یا از قبل حذف شده است."))
-              |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
-          end
+              _ ->
+                socket
+                |> put_flash(
+                  :info,
+                  MishkaTranslator.Gettext.dgettext(
+                    "html_live",
+                    "چنین محتوایی وجود ندارد یا از قبل حذف شده است."
+                  )
+                )
+                |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.BlogsLive))
+            end
 
           socket
 
         {:notif_section, false, :admin, notif_info} ->
-
           socket
-          |> push_redirect(to: Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifLive, id: List.first(notif_info).id, type: "show"))
+          |> push_redirect(
+            to:
+              Routes.live_path(socket, MishkaHtmlWeb.AdminBlogNotifLive,
+                id: List.first(notif_info).id,
+                type: "show"
+              )
+          )
       end
 
-      socket
+    socket
   end
+
   def notif_read_status(status) do
     case status do
       nil -> MishkaTranslator.Gettext.dgettext("html_live", "خوانده نشده")

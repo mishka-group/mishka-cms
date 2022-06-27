@@ -1,15 +1,14 @@
 defmodule MishkaContent.Blog.Author do
-
   alias MishkaDatabase.Schema.MishkaContent.BlogAuthor
 
   import Ecto.Query
+
   use MishkaDeveloperTools.DB.CRUD,
-          module: BlogAuthor,
-          error_atom: :blog_author,
-          repo: MishkaDatabase.Repo
+    module: BlogAuthor,
+    error_atom: :blog_author,
+    repo: MishkaDatabase.Repo
 
-
-  @type data_uuid() :: Ecto.UUID.t
+  @type data_uuid() :: Ecto.UUID.t()
   @type record_input() :: map()
   @type error_tag() :: :blog_author
   @type repo_data() :: Ecto.Schema.t()
@@ -67,16 +66,17 @@ defmodule MishkaContent.Blog.Author do
   @spec authors(data_uuid()) :: list()
   def authors(post_id) do
     from(author in BlogAuthor,
-    where: author.post_id == ^post_id,
-    join: user in assoc(author, :users),
-    select: %{
-      id: author.id,
-      post_id: author.post_id,
-      inserted_at: author.inserted_at,
-      updated_at: author.updated_at,
-      user_id: user.id,
-      user_full_name: user.full_name
-    })
+      where: author.post_id == ^post_id,
+      join: user in assoc(author, :users),
+      select: %{
+        id: author.id,
+        post_id: author.post_id,
+        inserted_at: author.inserted_at,
+        updated_at: author.updated_at,
+        user_id: user.id,
+        user_full_name: user.full_name
+      }
+    )
     |> MishkaDatabase.Repo.all()
   rescue
     db_error ->
@@ -87,13 +87,14 @@ defmodule MishkaContent.Blog.Author do
   @spec authors :: Ecto.Query.t()
   def authors() do
     from(author in BlogAuthor,
-    join: user in assoc(author, :users),
-    select: %{
-      id: author.id,
-      post_id: author.post_id,
-      user_id: user.id,
-      user_full_name: user.full_name
-    })
+      join: user in assoc(author, :users),
+      select: %{
+        id: author.id,
+        post_id: author.post_id,
+        user_id: user.id,
+        user_full_name: user.full_name
+      }
+    )
   end
 
   @spec allowed_fields(:atom | :string) :: nil | list

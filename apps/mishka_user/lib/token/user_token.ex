@@ -3,10 +3,9 @@ defmodule MishkaUser.Token.UserToken do
   alias MishkaDatabase.Schema.MishkaUser.UserToken
 
   use MishkaDeveloperTools.DB.CRUD,
-      module: UserToken,
-      error_atom: :user_token,
-      repo: MishkaDatabase.Repo
-
+    module: UserToken,
+    error_atom: :user_token,
+    repo: MishkaDatabase.Repo
 
   def subscribe do
     Phoenix.PubSub.subscribe(MishkaHtml.PubSub, "user_token")
@@ -47,30 +46,30 @@ defmodule MishkaUser.Token.UserToken do
 
   def delete_by_token(token) when is_binary(token) do
     from(t in UserToken, where: t.token == ^token)
-    |> MishkaDatabase.Repo.delete_all
+    |> MishkaDatabase.Repo.delete_all()
   end
 
   def delete_by_token(token_info) do
     from(t in UserToken, where: t.token == ^token_info.token)
-    |> MishkaDatabase.Repo.delete_all
+    |> MishkaDatabase.Repo.delete_all()
   end
 
   def delete_by_user_id(user_id) when is_binary(user_id) do
     from(t in UserToken, where: t.user_id == ^user_id)
-    |> MishkaDatabase.Repo.delete_all
+    |> MishkaDatabase.Repo.delete_all()
   end
 
   # TODO: MishkaUser.Acl.AclManagement.stop(item.id) and MishkaContent.Cache.BookmarkManagement.stop(item.id)
   # Ref: https://elixirforum.com/t/48594
   def delete_expire_token() do
     stream =
-      from(t in UserToken, where: t.expire_time < ^DateTime.utc_now)
+      from(t in UserToken, where: t.expire_time < ^DateTime.utc_now())
       |> MishkaDatabase.Repo.stream()
 
-    MishkaDatabase.Repo.transaction(fn() ->
+    MishkaDatabase.Repo.transaction(fn ->
       stream
       |> Task.async_stream(&delete(&1.id), max_concurrency: 10)
-      |> Stream.run
+      |> Stream.run()
     end)
   end
 
@@ -88,10 +87,10 @@ defmodule MishkaUser.Token.UserToken do
   end
 
   defp run_action_repo_stream(stream, action) do
-    MishkaDatabase.Repo.transaction(fn() ->
+    MishkaDatabase.Repo.transaction(fn ->
       stream
       |> Task.async_stream(action, max_concurrency: 10)
-      |> Stream.run
+      |> Stream.run()
     end)
   end
 
@@ -108,26 +107,28 @@ defmodule MishkaUser.Token.UserToken do
   def notify_subscribers(params, _), do: params
 
   defp fields(query) do
-    from [t] in query,
-    order_by: [desc: t.inserted_at, desc: t.id],
-    select: %{
-      id: t.id,
-      token: t.token,
-      type: t.type,
-      expire_time: t.expire_time,
-      extra: t.extra,
-      inserted_at: t.inserted_at,
-      updated_at: t.updated_at,
-    }
+    from([t] in query,
+      order_by: [desc: t.inserted_at, desc: t.id],
+      select: %{
+        id: t.id,
+        token: t.token,
+        type: t.type,
+        expire_time: t.expire_time,
+        extra: t.extra,
+        inserted_at: t.inserted_at,
+        updated_at: t.updated_at
+      }
+    )
   end
 
   defp convert_filters_to_where(query, filters) do
     Enum.reduce(filters, query, fn {key, value}, query ->
       case key do
         :expire_time ->
-          from [t] in query, where: field(t, ^key) > ^value
+          from([t] in query, where: field(t, ^key) > ^value)
+
         _ ->
-          from [t] in query, where: field(t, ^key) == ^value
+          from([t] in query, where: field(t, ^key) == ^value)
       end
     end)
   end

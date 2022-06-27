@@ -13,43 +13,31 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   def save(user_token, user_id) do
-    save_token_on_db(user_token)
-
-    ETS.Set.put!(
-      table(),
-      {String.to_atom(user_token.token_info.token_id), user_id, user_token.token_info}
-    )
+    # save_token_on_db(user_id, user_token)
+      ETS.Bag.add!(
+        table(),
+        {user_id, user_token.token_info.token, user_token.token_info}
+      )
   end
 
   def get_all(user_id) do
-    ETS.Set.match!(table(), {:_, user_id, :"$3"})
-    |> Enum.map(&List.first/1)
+    ETS.Bag.lookup!(table(), user_id)
   rescue
     _ -> []
   end
 
   def get_all() do
-    ETS.Set.to_list!(table())
-  end
-
-  def delete(token_id: token_id) do
-    ETS.Set.delete(table(), String.to_atom(token_id))
+    ETS.Bag.to_list!(table())
   end
 
   def delete(user_id) do
-    Task.Supervisor.start_child(UserToken, fn ->
-      UserToken.revaluation_user_token_as_stream(&UserToken.delete(&1.id), %{user_id: user_id})
-    end)
-
-    ETS.Set.match_delete(table(), {:_, user_id, :_})
+    UserToken.revaluation_user_token_as_stream(&UserToken.delete(&1.id), %{user_id: user_id})
+    ETS.Bag.delete(table(), user_id)
   end
 
   def delete_token(user_id, token) do
-    Task.Supervisor.start_child(UserToken, fn ->
-      UserToken.revaluation_user_token_as_stream(&UserToken.delete(&1.id), %{token: token})
-    end)
-
-    ETS.Set.match_delete(table(), {:_, user_id, %{token: token}})
+    UserToken.revaluation_user_token_as_stream(&UserToken.delete(&1.id), %{token: token})
+    ETS.Bag.match_delete(table(), {user_id, token, :_})
     get_all(user_id)
   end
 
@@ -59,14 +47,16 @@ defmodule MishkaUser.Token.TokenManagemnt do
         nil
 
       user_token ->
-        delete(token_id: user_token.token_id)
-        ETS.Set.match_delete(table(), {:_, user_id, %{rel: user_token.token_id}})
+        delete_token(user_id, user_token.token)
+        ETS.Bag.match_delete(table(), {user_id, :_, %{rel: user_token.token_id}})
     end
   end
 
   def get_token(user_id, token) do
-    case ETS.Set.match_object(table(), {:"$1", user_id, %{token: token}}) do
-      {:ok, [{_token_id, ^user_id, token_info}]} ->
+    ETS.Bag.lookup!(table(), user_id)
+    |> Enum.find(fn {_user_id, user_token, _token_info} -> user_token == token end)
+    |> case do
+      data = {_user_id, _token, token_info} when not is_nil(data) ->
         save(
           %{token_info: Map.merge(token_info, %{last_used: System.system_time(:second)})},
           user_id
@@ -87,13 +77,16 @@ defmodule MishkaUser.Token.TokenManagemnt do
       {{:"$1", :"$2", :"$3"}, [{:<, {:map_get, :access_expires_in, :"$3"}, time}], [true]}
     ]
 
-    ETS.Set.select_delete(table(), pattern)
+    ETS.Bag.select_delete(table(), pattern)
   end
 
   @spec count_refresh_token(id()) :: {:error, :count_refresh_token} | {:ok, :count_refresh_token}
   def count_refresh_token(user_id) do
-    case ETS.Set.match(table(), {:"$1", user_id, %{type: "refresh"}}) do
-      {:ok, devices} when is_list(devices) and length(devices) <= 5 -> {:ok, :count_refresh_token}
+    ETS.Bag.lookup!(table(), user_id)
+    |> Enum.filter(fn {_user_id, _user_token, token_info} -> token_info.type == "refresh" end)
+    |> length()
+    |> case do
+      devices when devices <= 5 -> {:ok, :count_refresh_token}
       _ -> {:error, :count_refresh_token}
     end
   end
@@ -103,15 +96,18 @@ defmodule MishkaUser.Token.TokenManagemnt do
   def init(state) do
     Logger.info("Token OTP server was started")
 
-    table =
-      ETS.Set.new!(
+    bag =
+      ETS.Bag.new!(
         name: @ets_table,
         protection: :public,
+        duplicate: true,
+        keypos: 1,
         read_concurrency: true,
-        write_concurrency: true
+        write_concurrency: true,
+        compressed: false
       )
 
-    {:ok, Map.merge(state, %{set: table}), {:continue, :sync_with_database}}
+    {:ok, Map.merge(state, %{set: bag}), {:continue, :sync_with_database}}
   end
 
   @impl true
@@ -148,9 +144,9 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   defp table() do
-    case ETS.Set.wrap_existing(@ets_table) do
-      {:ok, set} ->
-        set
+    case ETS.Bag.wrap_existing(@ets_table) do
+      {:ok, bag} ->
+        bag
 
       _ ->
         start_link([])
@@ -158,7 +154,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
-  defp save_token_on_db(%{id: user_id, token_info: %{type: "refresh"} = token_info}) do
+  defp save_token_on_db(user_id, %{token_info: %{type: "refresh"} = token_info}) do
     Task.Supervisor.start_child(UserToken, fn ->
       UserToken.create(%{
         id: token_info.token_id,

@@ -84,9 +84,6 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @impl true
   def init(state) do
     Logger.info("Token OTP server was started")
-    # TODO: delete expierd token from ets
-    # TODO: delete expierd token from db
-    # TODO: after rejection db and ets chech is there any token for user if not so do MishkaUser.Acl.AclManagement.stop(item.id) and MishkaContent.Cache.BookmarkManagement.stop(item.id)
     table = ETS.Set.new!(name: @ets_table, protection: :public, read_concurrency: true, write_concurrency: true)
     {:ok, Map.merge(state, %{set: table}), {:continue, :sync_with_database}}
   end

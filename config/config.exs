@@ -97,7 +97,19 @@ config :mishka_installer, :basic,
   project_path: System.get_env("PROJECT_PATH"),
   mix: MishkaFile.MixProject,
   mix_path: System.get_env("MIX_PATH"),
-  gettext: MishkaTranslator.Gettext
+  gettext: MishkaTranslator.Gettext,
+  oban_config: [
+    repo: MishkaDatabase.Repo,
+    queues: [default: [limit: 50], compile_events: [limit: 1], update_events: [limit: 1], expire_token: [limit: 50]],
+    plugins: [
+      Oban.Plugins.Pruner,
+      {Oban.Plugins.Cron,
+       crontab: [
+         {"*/5 * * * *", MishkaInstaller.DepUpdateJob},
+         {"0 0 * * *", MishkaUser.Worker.ExpireTokenWorker},
+       ]}
+    ]
+  ]
 
 
 # Import environment specific config. This must remain at the bottom

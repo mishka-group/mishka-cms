@@ -65,6 +65,13 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  # Ref: https://elixirforum.com/t/48598
+  def delete_expire_token() do
+    time = DateTime.utc_now() |> DateTime.to_unix()
+    pattern = [{{:"$1", :"$2", :"$3"}, [{:<, {:map_get, :access_expires_in, :"$3"}, time}],[true]}]
+    ETS.Set.select_delete(table(), pattern)
+  end
+
   @spec count_refresh_token(id()) :: {:error, :count_refresh_token} | {:ok, :count_refresh_token}
   def count_refresh_token(user_id) do
     case ETS.Set.match(table(), {:"$1", user_id, %{type: "refresh"}}) do

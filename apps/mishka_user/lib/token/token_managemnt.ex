@@ -13,7 +13,14 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   def save(user_token, user_id) do
-    # save_token_on_db(user_id, user_token)
+    save_token_on_db(user_id, user_token)
+      ETS.Bag.add!(
+        table(),
+        {user_id, user_token.token_info.token, user_token.token_info}
+      )
+  end
+
+  def save(user_token, user_id, :no_sync) do
       ETS.Bag.add!(
         table(),
         {user_id, user_token.token_info.token, user_token.token_info}
@@ -135,7 +142,8 @@ defmodule MishkaUser.Token.TokenManagemnt do
             rel: nil
           }
         },
-        &1.user_id
+        &1.user_id,
+        :no_sync
       ),
       %{expire_time: DateTime.utc_now()}
     )
@@ -170,5 +178,5 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end)
   end
 
-  defp save_token_on_db(user_token), do: user_token
+  defp save_token_on_db(_user_id, user_token), do: user_token
 end

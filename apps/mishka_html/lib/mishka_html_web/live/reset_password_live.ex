@@ -1,7 +1,7 @@
 defmodule MishkaHtmlWeb.ResetPasswordLive do
   use MishkaHtmlWeb, :live_view
 
-  alias MishkaDatabase.Cache.RandomCode
+  alias MishkaUser.Validation.RandomCode
   # TODO: should be on config file or ram
   @hard_secret_random_link "Test refresh"
 
@@ -93,7 +93,7 @@ defmodule MishkaHtmlWeb.ResetPasswordLive do
            {:random_code, true} <-
              {:random_code,
               is_nil(
-                MishkaDatabase.Cache.RandomCode.get_code_with_email(
+                MishkaUser.Validation.RandomCode.get_code_with_email(
                   MishkaHtml.email_sanitize(email)
                 )
               )} do

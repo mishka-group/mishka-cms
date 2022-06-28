@@ -3,7 +3,7 @@ defmodule MishkaHtmlWeb.AuthController do
   import Plug.Conn
   require MishkaTranslator.Gettext
   alias MishkaUser.Token.Token
-  alias MishkaDatabase.Cache.RandomCode
+  alias MishkaUser.Validation.RandomCode
   @hard_secret_random_link "Test refresh"
 
   def login(
@@ -160,7 +160,7 @@ defmodule MishkaHtmlWeb.AuthController do
          {:ok, :edit, :user, user_info} <-
            MishkaUser.User.edit(%{id: repo_data.id, status: "active"}) do
       # delete all randome codes of user
-      RandomCode.delete_code(code, user_info.email)
+      RandomCode.delete_code(user_info.email)
 
       MishkaContent.General.Activity.create_activity_by_start_child(
         %{
@@ -262,7 +262,7 @@ defmodule MishkaHtmlWeb.AuthController do
       # clean all the token on disc
       MishkaUser.Token.UserToken.delete_by_user_id(user_info.id)
       # delete all randome codes of user
-      RandomCode.delete_code(code, user_info.email)
+      RandomCode.delete_code(user_info.email)
       # delete all user's ACL
       MishkaUser.Acl.AclManagement.stop(user_info.id)
 
@@ -371,7 +371,7 @@ defmodule MishkaHtmlWeb.AuthController do
       # clean all the token on disc
       MishkaUser.Token.UserToken.delete_by_user_id(repo_data.id)
       # delete all randome codes of user
-      RandomCode.delete_code(code, repo_data.email)
+      RandomCode.delete_code(repo_data.email)
       # delete all user's ACL
       MishkaUser.Acl.AclManagement.stop(repo_data.id)
 

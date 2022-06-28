@@ -111,7 +111,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
     test "Reset Password", %{conn: conn} do
       post(conn, Routes.auth_path(conn, :register), @user_info)
       post(conn, Routes.auth_path(conn, :reset_password), %{email: @user_info.email})
-      code = MishkaDatabase.Cache.RandomCode.get_code_with_email(@user_info.email)
+      code = MishkaUser.Validation.RandomCode.get_code_with_email(@user_info.email)
 
       conn =
         post(conn, Routes.auth_path(conn, :reset_password), %{
@@ -329,7 +329,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
       |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
       |> post(Routes.auth_path(conn, :deactive_account))
 
-      code = MishkaDatabase.Cache.RandomCode.get_code_with_email(@user_info.email)
+      code = MishkaUser.Validation.RandomCode.get_code_with_email(@user_info.email)
 
       conn =
         conn
@@ -365,7 +365,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
       |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
       |> post(Routes.auth_path(conn, :verify_email))
 
-      code = MishkaDatabase.Cache.RandomCode.get_code_with_email(@user_info.email)
+      code = MishkaUser.Validation.RandomCode.get_code_with_email(@user_info.email)
 
       conn =
         conn
@@ -792,7 +792,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
       |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
       |> post(Routes.auth_path(conn, :deactive_account))
 
-      code2 = MishkaDatabase.Cache.RandomCode.get_code_with_email(@user_info.email)
+      code2 = MishkaUser.Validation.RandomCode.get_code_with_email(@user_info.email)
 
       conn2 =
         conn
@@ -858,7 +858,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
       |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
       |> post(Routes.auth_path(conn, :verify_email))
 
-      code = MishkaDatabase.Cache.RandomCode.get_code_with_email(@user_info.email)
+      code = MishkaUser.Validation.RandomCode.get_code_with_email(@user_info.email)
 
       conn2 =
         conn
@@ -896,7 +896,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
       |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
       |> post(Routes.auth_path(conn, :verify_email))
 
-      code = MishkaDatabase.Cache.RandomCode.get_code_with_email(@user_info.email)
+      code = MishkaUser.Validation.RandomCode.get_code_with_email(@user_info.email)
 
       conn1 =
         conn
@@ -938,7 +938,7 @@ defmodule MishkaApiWeb.AuthControllerTest do
       |> put_req_header("authorization", "Bearer #{auth["access_token"]}")
       |> post(Routes.auth_path(conn, :deactive_account))
 
-      code2 = MishkaDatabase.Cache.RandomCode.get_code_with_email(@user_info.email)
+      code2 = MishkaUser.Validation.RandomCode.get_code_with_email(@user_info.email)
 
       conn2 =
         conn

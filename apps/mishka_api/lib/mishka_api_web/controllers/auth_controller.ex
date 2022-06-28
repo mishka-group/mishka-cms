@@ -123,7 +123,7 @@ defmodule MishkaApiWeb.AuthController do
   end
 
   def reset_password(conn, %{"code" => code, "email" => email, "new_password" => password}) do
-    MishkaDatabase.Cache.RandomCode.get_user(MishkaHtml.email_sanitize(email), code)
+    MishkaUser.Validation.RandomCode.get_user(MishkaHtml.email_sanitize(email), code)
     |> MishkaApi.AuthProtocol.reset_password(conn, password)
   end
 

@@ -1,7 +1,7 @@
 defmodule MishkaHtmlWeb.ResetChangePasswordLive do
   use MishkaHtmlWeb, :live_view
 
-  alias MishkaDatabase.Cache.RandomCode
+  alias MishkaUser.Validation.RandomCode
   # TODO: change this with config
   @hard_secret_random_link "Test refresh"
 
@@ -105,7 +105,7 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
         # clean all the token on disc
         MishkaUser.Token.UserToken.delete_by_user_id(user_info.id)
         # delete all randome codes of user
-        RandomCode.delete_code(socket.assigns.random_link, repo_data.email)
+        RandomCode.delete_code(repo_data.email)
         # delete all user's ACL
         MishkaUser.Acl.AclManagement.stop(user_info.id)
 

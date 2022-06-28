@@ -40,8 +40,11 @@ defmodule MishkaUser.Token.UserToken do
 
   def add_update_use_use_time(attrs) do
     case show_by_token(attrs.token) do
-      {:error, :get_record_by_id, :user_token} -> create(attrs)
-      {:ok, :get_record_by_field, :user_token, record_info} -> edit(%{id: record_info.id, updated_at: DateTime.utc_now()})
+      {:error, _, _} ->
+        create(attrs)
+
+      {:ok, _, _, record_info} ->
+        edit(%{id: record_info.id, updated_at: DateTime.utc_now()})
     end
   end
 

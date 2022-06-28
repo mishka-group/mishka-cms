@@ -14,17 +14,18 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   def save(user_token, user_id) do
     save_token_on_db(user_id, user_token)
-      ETS.Bag.add!(
-        table(),
-        {user_id, user_token.token_info.token, user_token.token_info}
-      )
+
+    ETS.Bag.add!(
+      table(),
+      {user_id, user_token.token_info.token, user_token.token_info}
+    )
   end
 
   def save(user_token, user_id, :no_sync) do
-      ETS.Bag.add!(
-        table(),
-        {user_id, user_token.token_info.token, user_token.token_info}
-      )
+    ETS.Bag.add!(
+      table(),
+      {user_id, user_token.token_info.token, user_token.token_info}
+    )
   end
 
   def get_all(user_id) do
@@ -154,7 +155,8 @@ defmodule MishkaUser.Token.TokenManagemnt do
   @impl true
   def handle_info(:timeout, state) do
     cond do
-      !is_nil(MishkaInstaller.get_config(:pubsub)) && is_nil(Process.whereis(MishkaInstaller.get_config(:pubsub))) ->
+      !is_nil(MishkaInstaller.get_config(:pubsub)) &&
+          is_nil(Process.whereis(MishkaInstaller.get_config(:pubsub))) ->
         {:noreply, state, 100}
 
       true ->
@@ -173,21 +175,32 @@ defmodule MishkaUser.Token.TokenManagemnt do
     end
   end
 
+  # To support elixir 1.14, Ref: https://hexdocs.pm/elixir/main/Task.Supervisor.html#module-scalability-and-partitioning
   defp save_token_on_db(user_id, %{token_info: %{type: "refresh"} = token_info}) do
-    Task.Supervisor.start_child(UserToken, fn ->
-      UserToken.add_update_use_use_time(%{
-        id: token_info.token_id,
-        token: token_info.token,
-        type: "refresh",
-        expire_time: DateTime.from_unix(token_info.access_expires_in),
-        extra: %{
-          os: token_info.os,
-          create_time: token_info.create_time
-        },
-        user_id: user_id
-      })
-    end)
+    if Code.ensure_loaded?(PartitionSupervisor) do
+      Task.Supervisor.start_child({:via, PartitionSupervisor, {UserToken, self()}}, fn ->
+        add_update_use_use_time(user_id, token_info)
+      end)
+    else
+      Task.Supervisor.start_child(UserToken, fn ->
+        add_update_use_use_time(user_id, token_info)
+      end)
+    end
   end
 
   defp save_token_on_db(_user_id, user_token), do: user_token
+
+  defp add_update_use_use_time(user_id, token_info) do
+    UserToken.add_update_use_use_time(%{
+      id: token_info.token_id,
+      token: token_info.token,
+      type: "refresh",
+      expire_time: DateTime.from_unix(token_info.access_expires_in),
+      extra: %{
+        os: token_info.os,
+        create_time: token_info.create_time
+      },
+      user_id: user_id
+    })
+  end
 end

@@ -19,7 +19,7 @@ defmodule MishkaUser.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :phoenix, :jose],
+      extra_applications: [:logger, :phoenix, :jose, :mishka_database],
       mod: {MishkaUser.Application, []}
     ]
   end

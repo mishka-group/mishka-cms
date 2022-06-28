@@ -114,7 +114,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
         compressed: false
       )
 
-    {:ok, Map.merge(state, %{set: bag}), {:continue, :sync_with_database}}
+    {:ok, Map.merge(state, %{set: bag}), 300}
   end
 
   @impl true
@@ -151,6 +151,17 @@ defmodule MishkaUser.Token.TokenManagemnt do
     {:noreply, state}
   end
 
+  @impl true
+  def handle_info(:timeout, state) do
+    cond do
+      !is_nil(MishkaInstaller.get_config(:pubsub)) && is_nil(Process.whereis(MishkaInstaller.get_config(:pubsub))) ->
+        {:noreply, state, 100}
+
+      true ->
+        {:noreply, state, {:continue, :sync_with_database}}
+    end
+  end
+
   defp table() do
     case ETS.Bag.wrap_existing(@ets_table) do
       {:ok, bag} ->
@@ -164,7 +175,7 @@ defmodule MishkaUser.Token.TokenManagemnt do
 
   defp save_token_on_db(user_id, %{token_info: %{type: "refresh"} = token_info}) do
     Task.Supervisor.start_child(UserToken, fn ->
-      UserToken.create(%{
+      UserToken.add_update_use_use_time(%{
         id: token_info.token_id,
         token: token_info.token,
         type: "refresh",

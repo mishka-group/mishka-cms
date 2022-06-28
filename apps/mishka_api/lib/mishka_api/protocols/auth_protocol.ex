@@ -107,7 +107,6 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     Token.create_token(user_info, MishkaApi.get_config(:token_type))
     |> case do
       {:error, :more_device} ->
-        MishkaUser.Token.TokenManagemnt.get_all(user_info.id)
         login({:error, :more_device, :user}, action, conn, allowed_fields)
 
       %{access_token: _access_token, refresh_token: _refresh_token} = record ->

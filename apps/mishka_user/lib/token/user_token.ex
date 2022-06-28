@@ -38,6 +38,13 @@ defmodule MishkaUser.Token.UserToken do
     crud_get_by_field("token", token)
   end
 
+  def add_update_use_use_time(attrs) do
+    case show_by_token(attrs.token) do
+      {:error, :get_record_by_id, :user_token} -> create(attrs)
+      {:ok, :get_record_by_field, :user_token, record_info} -> edit(%{id: record_info.id, updated_at: DateTime.utc_now()})
+    end
+  end
+
   def show_by_user_id(user_id) do
     from(t in UserToken, where: t.user_id == ^user_id)
     |> fields()

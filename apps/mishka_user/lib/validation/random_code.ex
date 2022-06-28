@@ -8,9 +8,9 @@ defmodule MishkaUser.Validation.RandomCode do
   end
 
   def save(email, code) do
-    # TODO: send a job to a oban worker to delete expire this code
-    exp_time = DateTime.utc_now() |> DateTime.add(600, :second) |> DateTime.to_unix()
-    ETS.Set.put_new!(table(), {email, code, exp_time})
+    exp_time = DateTime.utc_now() |> DateTime.add(600, :second)
+    MishkaUser.Worker.ExpireRandomCodeWorker.delete_random_code_scheduled(email, exp_time)
+    ETS.Set.put_new!(table(), {email, code, exp_time  |> DateTime.to_unix()})
   end
 
   def get_all() do

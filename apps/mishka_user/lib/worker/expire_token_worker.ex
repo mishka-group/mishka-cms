@@ -4,6 +4,7 @@ defmodule MishkaUser.Worker.ExpireTokenWorker do
 
   @impl Oban.Worker
   def perform(%Oban.Job{}) do
+    Logger.warn("Try to delete expired token")
     MishkaUser.Token.TokenManagemnt.delete_expire_token()
     MishkaUser.Token.UserToken.delete_expire_token()
     :ok

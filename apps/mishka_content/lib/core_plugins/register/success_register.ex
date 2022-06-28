@@ -1,6 +1,6 @@
 defmodule MishkaContent.CorePlugin.Register.SuccessRegister do
   alias MishkaInstaller.Reference.OnUserAfterSave
-  alias MishkaDatabase.Cache.RandomCode
+  alias MishkaUser.Validation.RandomCode
   # TODO: should be on config file or ram
   @hard_secret_random_link "Test refresh"
 

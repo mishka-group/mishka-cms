@@ -30,7 +30,6 @@ defmodule MishkaUser.MixProject do
       {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"},
       {:mishka_database, in_umbrella: true},
       {:mishka_translator, in_umbrella: true},
-      {:mishka_content, in_umbrella: true},
       {:plug, "~> 1.12"},
       {:guardian, "~> 2.2"},
       {:phoenix, "~> 1.6", override: true},

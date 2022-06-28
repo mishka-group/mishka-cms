@@ -40,7 +40,7 @@ end
 defimpl MishkaApi.AuthProtocol, for: Any do
   use MishkaApiWeb, :controller
   alias MishkaUser.Token.Token
-  alias MishkaDatabase.Cache.RandomCode
+  alias MishkaUser.Validation.RandomCode
   require MishkaTranslator.Gettext
 
   @request_error_tag :user
@@ -691,7 +691,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def reset_password([{:error, :get_user, _error_result}], conn, _password) do
+  def reset_password({:error, :get_user, _error_result}, conn, _password) do
     conn
     |> put_status(404)
     |> json(%{
@@ -705,7 +705,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     })
   end
 
-  def reset_password([{:ok, :get_user, code, email}], conn, password) do
+  def reset_password({:ok, :get_user, _code, email}, conn, password) do
     with {:ok, :get_record_by_field, :user, user_info} <- MishkaUser.User.show_by_email(email),
          {:ok, :edit, :user, _user_edit_info} <-
            MishkaUser.User.edit(%{id: user_info.id, password: password}) do
@@ -713,8 +713,8 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       MishkaUser.Token.TokenManagemnt.delete(user_info.id)
       # clean all the token on disc
       MishkaUser.Token.UserToken.delete_by_user_id(user_info.id)
-      # delete all randome codes of user
-      RandomCode.delete_code(code, email)
+      # delete all randome _s of user
+      RandomCode.delete_code(email)
       # delete all user's ACL
       MishkaUser.Acl.AclManagement.stop(user_info.id)
 
@@ -970,12 +970,12 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         {conn, code},
         allowed_fields_output
       ) do
-    with [{:ok, :get_user, _code, _email}] <-
-           MishkaDatabase.Cache.RandomCode.get_user(user_info.email, code),
+    with {:ok, :get_user, _code, _email} <-
+           MishkaUser.Validation.RandomCode.get_user(user_info.email, code),
          {:error, :active?, _status} <- MishkaUser.User.active?(user_info.status),
          {:ok, :edit, _error_tag, repo_data} <-
            MishkaUser.User.edit(%{id: user_info.id, status: :inactive}) do
-      RandomCode.delete_code(code, user_info.email)
+      RandomCode.delete_code(user_info.email)
       MishkaUser.Token.UserToken.delete_by_user_id(user_info.id)
       MishkaUser.Token.TokenManagemnt.delete(user_info.id)
 
@@ -1036,7 +1036,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             )
         })
 
-      [{:error, :get_user, :time}] ->
+      {:error, :get_user, :time} ->
         conn
         |> put_status(401)
         |> json(%{
@@ -1046,7 +1046,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             MishkaTranslator.Gettext.dgettext("api_auth", "کد فعال سازی شما منقضی شده است.")
         })
 
-      [{:error, :get_user, _acction}] ->
+      {:error, :get_user, _acction} ->
         conn
         |> put_status(401)
         |> json(%{
@@ -1080,12 +1080,12 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         {conn, code},
         allowed_fields_output
       ) do
-    with [{:ok, :get_user, _code, _email}] <-
-           MishkaDatabase.Cache.RandomCode.get_user(user_info.email, code),
+    with {:ok, :get_user, _code, _email} <-
+           MishkaUser.Validation.RandomCode.get_user(user_info.email, code),
          {:error, :active?, _status} <- MishkaUser.User.active?(user_info.status),
          {:ok, :edit, _error_tag, repo_data} <-
            MishkaUser.User.edit(%{id: user_info.id, status: :active, unconfirmed_email: nil}) do
-      RandomCode.delete_code(code, user_info.email)
+      RandomCode.delete_code(user_info.email)
 
       MishkaContent.General.Activity.create_activity_by_start_child(
         %{
@@ -1140,7 +1140,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             )
         })
 
-      [{:error, :get_user, :time}] ->
+      {:error, :get_user, :time} ->
         conn
         |> put_status(401)
         |> json(%{
@@ -1150,7 +1150,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
             MishkaTranslator.Gettext.dgettext("api_auth", "کد فعال سازی شما منقضی شده است.")
         })
 
-      [{:error, :get_user, _acction}] ->
+      {:error, :get_user, _acction} ->
         conn
         |> put_status(401)
         |> json(%{
@@ -1250,7 +1250,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       _ ->
-        if is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(user_info.email)) do
+        if is_nil(MishkaUser.Validation.RandomCode.get_code_with_email(user_info.email)) do
           random_link =
             Phoenix.Token.sign(
               MishkaHtmlWeb.Endpoint,
@@ -1341,7 +1341,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
         })
 
       _ ->
-        if is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(user_info.email)) do
+        if is_nil(MishkaUser.Validation.RandomCode.get_code_with_email(user_info.email)) do
           random_link =
             Phoenix.Token.sign(
               MishkaHtmlWeb.Endpoint,
@@ -1413,7 +1413,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
   end
 
   def send_delete_tokens_link_by_email({:ok, :get_record_by_field, :user, user_info}, conn) do
-    if is_nil(MishkaDatabase.Cache.RandomCode.get_code_with_email(user_info.email)) do
+    if is_nil(MishkaUser.Validation.RandomCode.get_code_with_email(user_info.email)) do
       random_link =
         Phoenix.Token.sign(
           MishkaHtmlWeb.Endpoint,

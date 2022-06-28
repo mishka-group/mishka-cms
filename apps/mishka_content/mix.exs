@@ -43,6 +43,7 @@ defmodule MishkaContent.MixProject do
     [
       {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"},
       {:mishka_database, in_umbrella: true},
+      {:mishka_user, in_umbrella: true},
       {:bamboo, "~> 2.2"},
       {:bamboo_smtp, "~> 4.2"},
       {:bamboo_phoenix, "~> 1.0"},

@@ -107,7 +107,6 @@ defmodule MishkaUser.Acl.AclManagement do
       true ->
         MishkaUser.Acl.Role.subscribe()
         MishkaUser.Acl.Permission.subscribe()
-        # TODO: subscribe to permition database
         {:noreply, state}
     end
   end

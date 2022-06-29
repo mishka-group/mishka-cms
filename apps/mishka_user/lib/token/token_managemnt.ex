@@ -61,14 +61,22 @@ defmodule MishkaUser.Token.TokenManagemnt do
   end
 
   def get_token(user_id, token) do
-    ETS.Bag.lookup!(table(), user_id)
+    user_tokens = ETS.Bag.lookup!(table(), user_id)
+    user_tokens
     |> Enum.find(fn {_user_id, user_token, _token_info} -> user_token == token end)
     |> case do
       data = {_user_id, _token, token_info} when not is_nil(data) ->
-        save(
-          %{token_info: Map.merge(token_info, %{last_used: System.system_time(:second)})},
-          user_id
-        )
+        delete(user_id)
+        Enum.map(user_tokens, fn {user_id, user_token, token_info} ->
+          if user_token == token do
+            save(
+              %{token_info: Map.merge(token_info, %{last_used: System.system_time(:second)})},
+              user_id
+            )
+          else
+            save(%{token_info: token_info}, user_id)
+          end
+        end)
 
         token_info
 

@@ -145,8 +145,8 @@ defmodule MishkaUser.Token.TokenManagemnt do
             type: "refresh",
             token: &1.token,
             os: "linux",
-            create_time: &1.inserted_at,
-            last_used: &1.updated_at,
+            create_time: &1.inserted_at |> DateTime.to_unix(),
+            last_used: &1.updated_at |> DateTime.to_unix(),
             access_expires_in: &1.expire_time |> DateTime.to_unix(),
             rel: nil
           }

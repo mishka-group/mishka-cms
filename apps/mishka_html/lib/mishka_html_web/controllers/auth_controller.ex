@@ -104,25 +104,8 @@ defmodule MishkaHtmlWeb.AuthController do
     user_ip = to_string(:inet_parse.ntoa(conn.remote_ip))
 
     if live_socket_id = get_session(conn, :live_socket_id) do
-      Task.Supervisor.async_nolink(
-        MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor,
-        fn ->
-          :timer.sleep(1000)
-
-          MishkaUser.Token.TokenManagemnt.delete_token(
-            get_session(conn, :user_id),
-            get_session(conn, :current_token)
-          )
-        end
-      )
-
-      Task.Supervisor.async_nolink(
-        MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor,
-        fn ->
-          MishkaContent.Cache.BookmarkManagement.stop(get_session(conn, :user_id))
-        end
-      )
-
+      MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
+      MishkaContent.Cache.BookmarkManagement.stop(get_session(conn, :user_id))
       MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end
 
@@ -267,24 +250,8 @@ defmodule MishkaHtmlWeb.AuthController do
       MishkaUser.Acl.AclManagement.delete(user_info.id)
 
       if live_socket_id = get_session(conn, :live_socket_id) do
-        Task.Supervisor.async_nolink(
-          MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor,
-          fn ->
-            :timer.sleep(1000)
-
-            MishkaUser.Token.TokenManagemnt.delete_token(
-              get_session(conn, :user_id),
-              get_session(conn, :current_token)
-            )
-          end
-        )
-
-        Task.Supervisor.async_nolink(
-          MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor,
-          fn ->
-            MishkaContent.Cache.BookmarkManagement.stop(get_session(conn, :user_id))
-          end
-        )
+        MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
+        MishkaContent.Cache.BookmarkManagement.stop(get_session(conn, :user_id))
 
         MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
       end
@@ -376,25 +343,8 @@ defmodule MishkaHtmlWeb.AuthController do
       MishkaUser.Acl.AclManagement.delete(repo_data.id)
 
       if live_socket_id = get_session(conn, :live_socket_id) do
-        Task.Supervisor.async_nolink(
-          MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor,
-          fn ->
-            :timer.sleep(1000)
-
-            MishkaUser.Token.TokenManagemnt.delete_token(
-              get_session(conn, :user_id),
-              get_session(conn, :current_token)
-            )
-          end
-        )
-
-        Task.Supervisor.async_nolink(
-          MishkaHtmlWeb.AuthController.DeleteCurrentTokenTaskSupervisor,
-          fn ->
-            MishkaContent.Cache.BookmarkManagement.stop(get_session(conn, :user_id))
-          end
-        )
-
+        MishkaUser.Token.TokenManagemnt.delete_token(get_session(conn, :user_id), get_session(conn, :current_token))
+        MishkaContent.Cache.BookmarkManagement.stop(get_session(conn, :user_id))
         MishkaHtmlWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
       end
 

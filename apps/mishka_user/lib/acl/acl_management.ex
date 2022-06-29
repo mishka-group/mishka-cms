@@ -67,11 +67,25 @@ defmodule MishkaUser.Acl.AclManagement do
     {:stop, :normal, stats}
   end
 
-  # TODO: suscribe to role and permetion and update user data
   @impl true
   def handle_info({:role, :ok, _action, repo_data}, state) do
     Logger.warn("Your ETS state of setting is going to be updated")
     {:ok, records} = MishkaUser.Acl.UserRole.roles(repo_data.id)
+    Enum.map(records, fn x ->
+      # Delete acl of user from ets
+      delete(x.user_id)
+      # Clean user refresh token from database
+      MishkaUser.Token.UserToken.delete_by_user_id(x.user_id)
+      # Clean user all token from ets
+      MishkaUser.Token.TokenManagemnt.delete(x.user_id)
+    end)
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:permission, :ok, _action, repo_data}, state) do
+    Logger.warn("Your ETS state of setting is going to be updated")
+    {:ok, records} = MishkaUser.Acl.UserRole.roles(repo_data.role_id)
     Enum.map(records, fn x ->
       # Delete acl of user from ets
       delete(x.user_id)
@@ -92,6 +106,7 @@ defmodule MishkaUser.Acl.AclManagement do
 
       true ->
         MishkaUser.Acl.Role.subscribe()
+        MishkaUser.Acl.Permission.subscribe()
         # TODO: subscribe to permition database
         {:noreply, state}
     end

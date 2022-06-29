@@ -264,7 +264,7 @@ defmodule MishkaHtmlWeb.AuthController do
       # delete all randome codes of user
       RandomCode.delete_code(user_info.email)
       # delete all user's ACL
-      MishkaUser.Acl.AclManagement.stop(user_info.id)
+      MishkaUser.Acl.AclManagement.delete(user_info.id)
 
       if live_socket_id = get_session(conn, :live_socket_id) do
         Task.Supervisor.async_nolink(
@@ -373,7 +373,7 @@ defmodule MishkaHtmlWeb.AuthController do
       # delete all randome codes of user
       RandomCode.delete_code(repo_data.email)
       # delete all user's ACL
-      MishkaUser.Acl.AclManagement.stop(repo_data.id)
+      MishkaUser.Acl.AclManagement.delete(repo_data.id)
 
       if live_socket_id = get_session(conn, :live_socket_id) do
         Task.Supervisor.async_nolink(

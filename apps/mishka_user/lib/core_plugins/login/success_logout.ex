@@ -21,7 +21,7 @@ defmodule MishkaUser.CorePlugin.Login.SuccessLogout do
 
   @spec call(OnUserAfterLogout.t()) :: {:reply, OnUserAfterLogout.t()}
   def call(%OnUserAfterLogout{} = state) do
-    MishkaUser.Acl.AclManagement.stop(state.user_id)
+    MishkaUser.Acl.AclManagement.delete(state.user_id)
     {:reply, state}
   end
 end

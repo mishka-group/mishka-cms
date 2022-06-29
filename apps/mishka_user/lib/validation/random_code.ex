@@ -10,7 +10,7 @@ defmodule MishkaUser.Validation.RandomCode do
   def save(email, code) do
     exp_time = DateTime.utc_now() |> DateTime.add(600, :second)
     MishkaUser.Worker.ExpireRandomCodeWorker.delete_random_code_scheduled(email, exp_time)
-    ETS.Set.put_new!(table(), {email, code, exp_time  |> DateTime.to_unix()})
+    ETS.Set.put_new!(table(), {email, code, exp_time |> DateTime.to_unix()})
   end
 
   def get_all() do
@@ -19,13 +19,19 @@ defmodule MishkaUser.Validation.RandomCode do
 
   def get_user(email, code) do
     system_time = System.system_time(:second)
+
     case ETS.Set.get(table(), email) do
-      {:ok, {user_email, user_code, exp_time}} when user_code == code and exp_time >= system_time ->
+      {:ok, {user_email, user_code, exp_time}}
+      when user_code == code and exp_time >= system_time ->
         {:ok, :get_user, user_code, user_email}
-      {:ok, {user_email, user_code, exp_time}} when user_code == code and exp_time <= system_time ->
+
+      {:ok, {user_email, user_code, exp_time}}
+      when user_code == code and exp_time <= system_time ->
         delete_code(user_email)
         {:error, :get_user, :time}
-      _ -> {:error, :get_user, :different_code}
+
+      _ ->
+        {:error, :get_user, :different_code}
     end
   end
 
@@ -62,6 +68,7 @@ defmodule MishkaUser.Validation.RandomCode do
   @impl true
   def init(_state) do
     Logger.info("OTP RandomCode server was started")
+
     table =
       ETS.Set.new!(
         name: @ets_table,
@@ -81,7 +88,9 @@ defmodule MishkaUser.Validation.RandomCode do
 
   defp table() do
     case ETS.Set.wrap_existing(@ets_table) do
-      {:ok, set} -> set
+      {:ok, set} ->
+        set
+
       _ ->
         start_link([])
         table()

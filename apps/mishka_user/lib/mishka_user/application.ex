@@ -18,9 +18,7 @@ defmodule MishkaUser.Application do
       user_token_task ++
         [
           MishkaUser.Token.TokenManagemnt,
-          {Registry, keys: :unique, name: MishkaUser.Acl.AclRegistry},
-          {DynamicSupervisor, [strategy: :one_for_one, name: MishkaUser.Acl.AclOtpRunner]},
-          {MishkaUser.Acl.AclTask, []},
+          MishkaUser.Acl.AclManagement,
           {Finch, name: MyHttpClient},
           %{
             id: MishkaUser.CorePlugin.Login.SuccessLogin,

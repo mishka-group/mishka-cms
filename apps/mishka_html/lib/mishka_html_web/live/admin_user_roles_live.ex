@@ -65,8 +65,8 @@ defmodule MishkaHtmlWeb.AdminUserRolesLive do
 
       MishkaInstaller.Hook.call(event: "on_user_after_delete_role", state: state).conn
     end,
-    before: fn x ->
-      MishkaUser.Acl.AclTask.delete_role(x)
+    before: fn _x ->
+     nil
     end
   )
 

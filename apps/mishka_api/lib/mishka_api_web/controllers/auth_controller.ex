@@ -148,7 +148,7 @@ defmodule MishkaApiWeb.AuthController do
     MishkaUser.Token.UserToken.delete_by_user_id(Map.get(conn.assigns, :user_id))
     MishkaUser.Token.TokenManagemnt.delete(Map.get(conn.assigns, :user_id))
     # delete all user's Acl
-    MishkaUser.Acl.AclManagement.stop(Map.get(conn.assigns, :user_id))
+    MishkaUser.Acl.AclManagement.delete(Map.get(conn.assigns, :user_id))
     MishkaApi.AuthProtocol.delete_tokens(conn)
   end
 

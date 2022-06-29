@@ -107,7 +107,7 @@ defmodule MishkaHtmlWeb.ResetChangePasswordLive do
         # delete all randome codes of user
         RandomCode.delete_code(repo_data.email)
         # delete all user's ACL
-        MishkaUser.Acl.AclManagement.stop(user_info.id)
+        MishkaUser.Acl.AclManagement.delete(user_info.id)
 
         socket
         |> put_flash(

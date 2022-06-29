@@ -9,7 +9,10 @@ defmodule MishkaUser.Worker.ExpireRandomCodeWorker do
     :ok
   end
 
-  def delete_random_code_scheduled(email, time \\ DateTime.utc_now() |> DateTime.add(600, :second)) do
+  def delete_random_code_scheduled(
+        email,
+        time \\ DateTime.utc_now() |> DateTime.add(600, :second)
+      ) do
     %{email: email}
     |> MishkaUser.Worker.ExpireRandomCodeWorker.new(scheduled_at: time)
     |> Oban.insert()

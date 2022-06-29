@@ -3053,3 +3053,7 @@ article.col-sm-3.home-blog-posts-normal-with-body {
   color: #000;
   font-size: 14px;
 }
+
+.notif-drop .text-muted {
+  color: #6b6b6b !important;
+}

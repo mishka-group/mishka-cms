@@ -1,99 +1,64 @@
 defmodule MishkaUser.Acl.AclManagement do
   use GenServer, restart: :temporary
   require Logger
-  alias MishkaUser.Acl.AclDynamicSupervisor
+
+  @ets_table :acl_ets_state
 
   @type params() :: map()
   @type id() :: String.t()
   @type token() :: String.t()
 
-  @spec start_link(keyword) :: :ignore | {:error, any} | {:ok, pid}
+
   def start_link(args) do
-    id = Keyword.get(args, :id)
-    type = Keyword.get(args, :type)
-
-    GenServer.start_link(__MODULE__, default(id), name: via(id, type))
+    GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
-  defp default(user_id) do
-    %{id: user_id, user_permission: []}
-  end
-
-  @spec save(params(), id()) :: :ok
   def save(element, user_id) do
-    with {:ok, :get_user_pid, pid} <- AclDynamicSupervisor.get_user_pid(user_id) do
-      GenServer.cast(pid, {:push, element})
-    else
-      {:error, :get_user_pid} ->
-        AclDynamicSupervisor.start_job(id: user_id, type: "user_permission")
-        save(element, user_id)
-    end
+    ETS.Set.put!(table(), {user_id, element})
   end
 
   @spec get_all(id()) :: any
   def get_all(user_id) do
-    with {:ok, :get_user_pid, pid} <- AclDynamicSupervisor.get_user_pid(user_id) do
-      GenServer.call(pid, :pop)
-    else
-      {:error, :get_user_pid} ->
-        AclDynamicSupervisor.start_job(id: user_id, type: "user_permission")
-
+    case ETS.Set.get(table(), user_id) do
+      {:ok, {user_id, element}} ->
+        %{id: user_id, user_permission: element.user_permission, created: element.created}
+      _ ->
+        user_permission = MishkaUser.User.permissions(user_id)
+        created = System.system_time(:second)
         save(
           %{
             id: user_id,
-            user_permission: MishkaUser.User.permissions(user_id),
-            created: System.system_time(:second)
+            user_permission: user_permission,
+            created: created
           },
           user_id
         )
-
-        get_all(user_id)
+        %{id: user_id, user_permission: user_permission, created: created}
     end
   end
 
   @spec delete(id()) :: any
   def delete(user_id) do
-    with {:ok, :get_user_pid, pid} <- AclDynamicSupervisor.get_user_pid(user_id) do
-      GenServer.call(pid, :delete)
-    else
-      {:error, :get_user_pid} ->
-        AclDynamicSupervisor.start_job(id: user_id, type: "user_permission")
-        delete(user_id)
-    end
+    ETS.Set.delete(table(), user_id)
   end
 
-  @spec stop(id()) :: :ok
-  def stop(user_id) do
-    with {:ok, :get_user_pid, pid} <- AclDynamicSupervisor.get_user_pid(user_id) do
-      GenServer.cast(pid, :stop)
-    else
-      {:error, :get_user_pid} ->
-        AclDynamicSupervisor.start_job(id: user_id, type: "user_permission")
-        stop(user_id)
-    end
+  @spec stop() :: :ok
+  def stop() do
+    GenServer.cast(__MODULE__, :stop)
   end
 
   # Callbacks
-
   @impl true
-  def init(state) do
+  def init(_state) do
     Logger.info("ACL OTP server was started")
-    {:ok, state}
-  end
-
-  @impl true
-  def handle_call(:pop, _from, state) do
-    {:reply, state, state}
-  end
-
-  @impl true
-  def handle_cast({:push, element}, _state) do
-    {:noreply, element}
-  end
-
-  @impl true
-  def handle_cast(:delete, _state) do
-    {:noreply, %{}}
+    table =
+      ETS.Set.new!(
+        name: @ets_table,
+        protection: :public,
+        read_concurrency: true,
+        write_concurrency: true
+      )
+    {:ok, %{set: table}, 100}
   end
 
   @impl true
@@ -102,15 +67,34 @@ defmodule MishkaUser.Acl.AclManagement do
     {:stop, :normal, stats}
   end
 
+  # TODO: suscribe to role and permetion and update user data
   @impl true
-  def handle_info({:update_user_permissions, user_id}, _state) do
-    new_state = %{
-      id: user_id,
-      user_permission: MishkaUser.User.permissions(user_id),
-      created: System.system_time(:second)
-    }
+  def handle_info({:role, :ok, _action, repo_data}, state) do
+    Logger.warn("Your ETS state of setting is going to be updated")
+    {:ok, records} = MishkaUser.Acl.UserRole.roles(repo_data.id)
+    Enum.map(records, fn x ->
+      # Delete acl of user from ets
+      delete(x.user_id)
+      # Clean user refresh token from database
+      MishkaUser.Token.UserToken.delete_by_user_id(x.user_id)
+      # Clean user all token from ets
+      MishkaUser.Token.TokenManagemnt.delete(x.user_id)
+    end)
+    {:noreply, state}
+  end
 
-    {:noreply, new_state}
+  @impl true
+  def handle_info(:timeout, state) do
+    cond do
+      !is_nil(MishkaInstaller.get_config(:pubsub)) &&
+          is_nil(Process.whereis(MishkaInstaller.get_config(:pubsub))) ->
+        {:noreply, state, 100}
+
+      true ->
+        MishkaUser.Acl.Role.subscribe()
+        # TODO: subscribe to permition database
+        {:noreply, state}
+    end
   end
 
   @impl true
@@ -118,11 +102,14 @@ defmodule MishkaUser.Acl.AclManagement do
     if reason != :normal do
       Logger.warn("Reason of Terminate #{inspect(reason)}")
     end
-
-    # TODO: send error to log server
   end
 
-  defp via(key, value) do
-    {:via, Registry, {MishkaUser.Acl.AclRegistry, key, value}}
+  defp table() do
+    case ETS.Set.wrap_existing(@ets_table) do
+      {:ok, set} -> set
+      _ ->
+        start_link([])
+        table()
+    end
   end
 end

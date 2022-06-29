@@ -69,7 +69,7 @@ defmodule MishkaUser.Token.UserToken do
     |> MishkaDatabase.Repo.delete_all()
   end
 
-  # TODO: MishkaUser.Acl.AclManagement.stop(item.id) and MishkaContent.Cache.BookmarkManagement.stop(item.id)
+  # TODO: MishkaUser.Acl.AclManagement.delete(item.id) and MishkaContent.Cache.BookmarkManagement.stop(item.id)
   # Ref: https://elixirforum.com/t/48594
   def delete_expire_token() do
     stream =

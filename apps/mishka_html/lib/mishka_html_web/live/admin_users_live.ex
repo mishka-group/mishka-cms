@@ -122,7 +122,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         )
 
         MishkaUser.Acl.UserRole.delete_user_role(user_id)
-        MishkaUser.Acl.AclManagement.stop(user_id)
+        MishkaUser.Acl.AclManagement.delete(user_id)
 
       _record ->
         create_or_edit_user_role(user_id, role_id, full_name, socket)
@@ -189,7 +189,7 @@ defmodule MishkaHtmlWeb.AdminUsersLive do
         MishkaUser.Acl.UserRole.create(%{user_id: user_id, role_id: role_id})
 
       {:ok, _error_atom, _, repo_data} ->
-        MishkaUser.Acl.AclManagement.stop(user_id)
+        MishkaUser.Acl.AclManagement.delete(user_id)
         MishkaUser.Acl.UserRole.edit(%{id: repo_data.id, user_id: user_id, role_id: role_id})
     end
 

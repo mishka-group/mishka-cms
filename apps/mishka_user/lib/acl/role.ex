@@ -137,8 +137,8 @@ defmodule MishkaUser.Acl.Role do
   def allowed_fields(:string), do: Role.__schema__(:fields) |> Enum.map(&Atom.to_string/1)
 
   @spec notify_subscribers(tuple(), atom() | String.t()) :: tuple() | map()
-  def notify_subscribers({:ok, _, :role, repo_data} = params, type_send) do
-    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "role", {type_send, :ok, repo_data})
+  def notify_subscribers({:ok, action, :role, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "role", {type_send, :ok, action, repo_data})
     params
   end
 

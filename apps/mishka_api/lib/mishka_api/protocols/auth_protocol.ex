@@ -418,7 +418,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
     # clean all the token on disc
     MishkaUser.Token.UserToken.delete_by_user_id(info.id)
     # delete all user's Acl
-    MishkaUser.Acl.AclManagement.stop(info.id)
+    MishkaUser.Acl.AclManagement.delete(info.id)
 
     MishkaContent.General.Activity.create_activity_by_start_child(
       %{
@@ -716,7 +716,7 @@ defimpl MishkaApi.AuthProtocol, for: Any do
       # delete all randome _s of user
       RandomCode.delete_code(email)
       # delete all user's ACL
-      MishkaUser.Acl.AclManagement.stop(user_info.id)
+      MishkaUser.Acl.AclManagement.delete(user_info.id)
 
       MishkaContent.General.Activity.create_activity_by_start_child(
         %{

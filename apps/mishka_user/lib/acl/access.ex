@@ -6,13 +6,12 @@ defmodule MishkaUser.Acl.Access do
 
   @spec permittes?(action(), data_uuid() | binary) :: boolean
   def permittes?(action, user_id) do
-    # need to be loaded on OTP state instead of db every page
-    Enum.any?(MishkaUser.Acl.AclManagement.get_all(user_id).user_permission, fn %{
-                                                                                  value:
-                                                                                    permission
-                                                                                } ->
-      is_permitted?(action: action, permission: permission)
-    end)
+    Enum.any?(
+      MishkaUser.Acl.AclManagement.get_all(user_id).user_permission,
+      fn %{value: permission} ->
+        is_permitted?(action: action, permission: permission)
+      end
+    )
   end
 
   @spec is_permitted?([{:action, action()} | {:permission, binary}, ...]) :: boolean

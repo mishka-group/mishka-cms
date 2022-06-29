@@ -79,8 +79,8 @@ defmodule MishkaUser.Acl.Permission do
   end
 
   @spec notify_subscribers(tuple(), atom() | String.t()) :: tuple() | map()
-  def notify_subscribers({:ok, _, :permission, repo_data} = params, type_send) do
-    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "permission", {type_send, :ok, repo_data})
+  def notify_subscribers({:ok, action, :permission, repo_data} = params, type_send) do
+    Phoenix.PubSub.broadcast(MishkaHtml.PubSub, "permission", {type_send, :ok, action, repo_data})
     params
   end
 

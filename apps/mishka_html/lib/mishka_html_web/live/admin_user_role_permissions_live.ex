@@ -105,6 +105,7 @@ defmodule MishkaHtmlWeb.AdminUserRolePermissionsLive do
           )
 
           socket
+          |> assign(permissions: Permission.permissions(socket.assigns.id))
       end
 
     {:noreply, socket}

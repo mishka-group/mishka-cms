@@ -57,7 +57,7 @@ defmodule MishkaApi.MixProject do
       {:plug, "~> 1.11"},
       {:mishka_translator, in_umbrella: true},
       {:sobelow, "~> 0.11.1", only: :dev},
-      {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"}
+      {:mishka_installer, "~> 0.0.3"}
     ]
   end
 

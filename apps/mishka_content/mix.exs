@@ -41,7 +41,7 @@ defmodule MishkaContent.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mishka_installer, git: "https://github.com/mishka-group/mishka_installer.git"},
+      {:mishka_installer, "~> 0.0.3"},
       {:mishka_database, in_umbrella: true},
       {:mishka_user, in_umbrella: true},
       {:bamboo, "~> 2.2"},

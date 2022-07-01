@@ -252,10 +252,10 @@ function purge() {
 
 
 function pre_script() {
-    docker ps -aq | xargs docker stop
-    docker ps -aq | xargs docker rm
-    docker volume rm mishka_cms_database mishka_cms_cms
-    docker network rm mishka_cms_netowrk
+    docker ps -aq | xargs docker stop 2> /dev/null 1>&2
+    docker ps -aq | xargs docker rm 2> /dev/null 1>&2
+    docker volume rm mishka_cms_database mishka_cms_cms 2> /dev/null 1>&2
+    docker network rm mishka_cms_netowrk 2> /dev/null 1>&2
 
     echo -e "${Green}Clenup Process is done.${NC}"
 }

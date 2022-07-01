@@ -247,6 +247,7 @@ function purge() {
         
     else 
         echo -e "${Red}NOTHING EXIST FOR CELAN !${NC}"
+        exit 1
     fi
 }
 

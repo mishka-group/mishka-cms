@@ -151,6 +151,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             purge
         fi
     else # dev
+        pre_script # cleanup existing containers, network, volumes
         trap purge INT # trap control + c and run cleanup
         ENV_TYPE="dev"
         

@@ -251,6 +251,16 @@ function purge() {
 }
 
 
+function pre_script() {
+    docker ps -aq | xargs docker stop
+    docker ps -aq | xargs docker rm
+    docker volume rm mishka_cms_database mishka_cms_cms
+    docker network rm mishka_cms_netowrk
+
+    echo -e "${Green}Clenup Process is done.${NC}"
+}
+
+
 function cleanup() {
     # load configs
     load_configs

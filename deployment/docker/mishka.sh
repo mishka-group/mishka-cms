@@ -205,7 +205,8 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
 
         # print information
         print_build_output
-
+        echo "Please note the above information, you have 1 minute, after that you can see this information with sudo ./mishka.sh and after that type 'info'"
+        sleep 60s
         # create tables and compile files
         dev_operations
         

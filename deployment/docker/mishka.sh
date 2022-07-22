@@ -475,10 +475,11 @@ else
             "clean" | "8")
                 mishka_logo
                 echo -e "${Green}Below Options is Available for clean (enter the name for each section or number):
-                               1) deps       Clean dependency
-                               2) compiled   Clean old compiled files
-                               3) all        Clean disk database, dependency, mix.lock file and old compiled files${NC}"
-                options=(deps compiled all) 
+                               1) extensions clean extensions
+                               2) deps       Clean dependency
+                               3) compiled   Clean old compiled files
+                               4) all        Clean disk database, dependency, mix.lock file and old compiled files${NC}"
+                options=(extensions deps compiled all) 
 
                 select menu in "${options[@]}"; do 
                     break;
@@ -491,29 +492,36 @@ else
                 fi
 
                 case $INPUT_CASE in
-                    "deps" | "1")
+                    "extensions" | "1")
+                        docker stop mishka_cms && docker rm mishka_cms
+                        rm -rf ../extensions
+                        echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
+                    ;;
+
+                    "deps" | "2")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm -rf ../../deps
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
-                    "compiled" | "2")
+                    "compiled" | "3")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm -rf ../../_build
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
-                    "all" | "3")
+                    "all" | "4")
                         docker stop mishka_cms && docker rm mishka_cms
-                          rm -rf ../../deps ../../_build ../../mix.lock
+                          rm -rf ../extensions ../../deps ../../_build ../../mix.lock
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
                     *)
                         echo -e "${Green}you have four option to use:${NC}"  
-                        echo -e "${Green}  1) deps${NC}" 
-                        echo -e "${Green}  2) compiled${NC}" 
-                        echo -e "${Green}  3) all${NC}" 
+                        echo -e "${Green}  1) extensions${NC}" 
+                        echo -e "${Green}  2) deps${NC}" 
+                        echo -e "${Green}  3) compiled${NC}" 
+                        echo -e "${Green}  4) all${NC}" 
                     ;;
                 esac
             ;;

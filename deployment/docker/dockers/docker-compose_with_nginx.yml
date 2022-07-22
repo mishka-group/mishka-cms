@@ -36,6 +36,7 @@ services:
       - DATABASE_PORT=5432
       - DATABASE_NAME=mishka_database
     volumes:
+      - cms_extensions:/app/deployment/extensions
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - mishka_db
@@ -72,5 +73,6 @@ networks:
   
 
 volumes:
+  cms_extensions:
   database:
   

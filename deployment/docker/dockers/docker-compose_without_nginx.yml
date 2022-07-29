@@ -19,7 +19,7 @@ services:
       - DATABASE_PORT=5432
       - DATABASE_NAME=mishka_database
     volumes:
-      - cms:/app/Mnesia.nonode@nohost
+      - cms_extensions:/app/deployment/extensions
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - mishka_db
@@ -56,5 +56,5 @@ networks:
   
 
 volumes:
-  cms:
+  cms_extensions:
   database:

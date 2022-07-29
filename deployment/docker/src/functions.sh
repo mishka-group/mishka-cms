@@ -197,15 +197,16 @@ function purge() {
             # delete deps directory
             if [ -d ../../deps ]; then 
                 rm -rf ../../deps
-                echo -e "${Green} mishka build directory deleted..${NC}"
+                echo -e "${Green} mishka deps directory deleted..${NC}"
             fi
 
-            # delete Mnesia dicretory
-            if [ -d ../../Mnesia.nonode@nohost ]; then 
-                rm -rf ../../Mnesia.nonode@nohost
-            fi 
+            # delete extensions directory
+            if [ -d ../extensions ]; then 
+                rm -rf ../extensions
+                echo -e "${Green} mishka extensions directory deleted..${NC}"
+            fi
 
-            # delete Mnesia dicretory
+            # delete mix file
             if [ -d ../../mix.lock ]; then 
                 rm -f ../../mix.lock
             fi 
@@ -227,7 +228,7 @@ function purge() {
         fi
 
         # Delete Volumes
-        docker volume rm mishka_cms_database mishka_cms_cms
+        docker volume rm mishka_cms_database
         echo -e "${Green} mishka volumes deleted..${NC}"
 
         # Delete Secret file
@@ -247,7 +248,18 @@ function purge() {
         
     else 
         echo -e "${Red}NOTHING EXIST FOR CELAN !${NC}"
+        exit 1
     fi
+}
+
+
+function pre_script() {
+    docker ps -aq | xargs docker stop 2> /dev/null 1>&2
+    docker ps -aq | xargs docker rm 2> /dev/null 1>&2
+    docker volume rm mishka_cms_database 2> /dev/null 1>&2
+    docker network rm mishka_cms_netowrk 2> /dev/null 1>&2
+
+    echo -e "${Green}Clenup Process is done.${NC}"
 }
 
 
@@ -256,9 +268,9 @@ function cleanup() {
     load_configs
 
     case $1 in 
-        "diskdb")
+        "extensions")
             docker stop mishka_cms && docker rm mishka_cms
-            rm -rf ../../Mnesia.nonode@nohost
+            rm -rf ../extensions
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 
@@ -276,7 +288,7 @@ function cleanup() {
 
         "all")
             docker stop mishka_cms && docker rm mishka_cms
-            rm -rf ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
+            rm -rf  ../extensions ../../deps ../../_build ../../mix.lock
             echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
         ;;
 

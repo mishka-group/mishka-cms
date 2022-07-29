@@ -23,7 +23,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
     # show mishka logo
     mishka_logo
 
-    echo -e "${Green}Enter your environment type:${NC}"
+    echo -e "${Green}Enter your environment type or number( 1) prod // 2) dev ):${NC}"
     options=(prod dev)
     select menu in "${options[@]}"; do 
         ENV_TYPE=$REPLY
@@ -31,7 +31,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
     done
 
     ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE)
-    if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then # convert user input to lowercase then check it
+    if [[ $ENV_TYPE_VAR =~ ^prod$ ]] || [[ "$menu" == "1" ]]; then # convert user input to lowercase then check it
         cp dockers/Dockerfile ../../
 
         if web_server_selector -eq "0"; then # nginx
@@ -151,6 +151,7 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
             purge
         fi
     else # dev
+        pre_script # cleanup existing containers, network, volumes
         trap purge INT # trap control + c and run cleanup
         ENV_TYPE="dev"
         
@@ -204,7 +205,8 @@ if [ ! -f $PWD/etc/.secret ]; then  # build
 
         # print information
         print_build_output
-
+        echo  -e "\033[33;5mPlease note the above information, you have 1 minute, after that you can see this information with sudo ./mishka.sh and after that type 'info'\033[0m"
+        sleep 60s
         # create tables and compile files
         dev_operations
         
@@ -214,22 +216,29 @@ else
     ENV_TYPE_VAR=$(to_lower_case $ENV_TYPE)
     if [[ $ENV_TYPE_VAR =~ ^prod$ ]]; then  #production env  
         mishka_logo
-        echo -e "${Green}Below Options is Available for Prod (enter the name for each section):
-                        update    update images with old token
-                        start     run all containers
-                        stop      stop one or all containers
-                        remove    stop and remove all containers plus network
-                        destroy   stop and remove all containers plus netwok also remove docker images, volume
-                        email     enable email system for cms
-                        logs      show log of specific container of all containers
-                        help      show help for mishka.sh${NC}"
+        echo -e "${Green}Below Options is Available for Prod (enter the name for each section or number):
+                       1) update    update images with old token
+                       2) start     run all containers
+                       3) stop      stop one or all containers
+                       4) remove    stop and remove all containers plus network
+                       5) destroy   stop and remove all containers plus netwok also remove docker images, volume
+                       6) email     enable email system for cms
+                       7) logs      show log of specific container of all containers
+                       8) help      show help for mishka.sh${NC}"
         options=(update start stop remove destroy email logs help) 
+        
         select menu in "${options[@]}"; do 
             break;
         done
 
-        case $REPLY in 
-            "update")
+        if [[ "$menu" == "" ]]; then
+            INPUT_CASE=$REPLY
+        else
+            INPUT_CASE=$menu
+        fi
+
+        case $INPUT_CASE in 
+            "update" | "1")
                 if [ -d ../../.git ];then 
                     git pull
                 fi 
@@ -276,7 +285,7 @@ else
                 fi
             ;;
 
-            "start")
+            "start" | "2")
                 docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
 
                 # load configs
@@ -296,7 +305,7 @@ else
                 fi
             ;;
 
-            "stop")
+            "stop" | "3")
                 if [[ $2 != "" ]]; then 
                     docker stop $2 && docker rm $2
                 else 
@@ -309,11 +318,11 @@ else
                 fi
             ;;
 
-            "remove")
+            "remove" | "4")
                 docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
             ;;
 
-            "destroy")
+            "destroy" | "5")
                 read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (YES/NO)\e[0m: ' INPUT
                 INPUT_VAR=$(to_lower_case $INPUT)
                 if [[ $INPUT_VAR =~ ^yes$ ]]; then 
@@ -323,7 +332,7 @@ else
                 fi
             ;;
 
-            "email")
+            "email" | "6")
                 # load configs
                 load_configs
                 EMAIL_CONFIG_VAR=$(to_lower_case $EMAIL_CONFIG)
@@ -341,7 +350,7 @@ else
                 fi 
             ;;
 
-            "logs")
+            "logs" | "7")
                 if [[ $2 != "" ]]; then 
                     docker logs -f $2
                 else 
@@ -349,16 +358,16 @@ else
                 fi
             ;;
 
-            "help")
+            "help" | "8")
                 echo -e "${Green}Below Options is Available (enter the name for each section):
-                    update    update images with old token
-                    start     run all containers
-                    stop      stop one or all containers
-                    remove    stop and remove all containers plus network
-                    destroy   stop and remove all containers plus netwok also remove docker images, volume
-                    email     enable email system for cms
-                    logs      show log of specific container of all containers
-                    help      show help for mishka.sh${NC}"
+                   1) update    update images with old token
+                   2) start     run all containers
+                   3) stop      stop one or all containers
+                   4) remove    stop and remove all containers plus network
+                   5) destroy   stop and remove all containers plus netwok also remove docker images, volume
+                   6) email     enable email system for cms
+                   7) logs      show log of specific container of all containers
+                   8) help      show help for mishka.sh${NC}"
             ;;
 
             *)
@@ -369,25 +378,32 @@ else
         esac
     else  # dev stage
         mishka_logo
-        echo -e "${Green}Below Options is Available for Dev (enter the name for each section):
-                    start          all containers
-                    stop           stop one or all containers
-                    remove         stop and remove all containers plus network
-                    run            start phoenix server with elixir console
-                    rebuild        remove all old files (db, dependency, compile files,..) and recreate then recompile finally start server
-                    destroy        stop and remove all containers plus netwok also remove docker images, volume
-                    logs           show log of specific container of all containers
-                    clean          Clean up dev enviroment
-                    login          log into mishka_CMS container
-                    db             graphical database manager with dbeaver
-                    info           shows information about cms addresses and secrets${NC}"
+        echo -e "${Green}Below Options is Available for Dev (enter the name for each section or number):
+                   1) start          all containers
+                   2) stop           stop one or all containers
+                   3) remove         stop and remove all containers plus network
+                   4) run            start phoenix server with elixir console
+                   5) rebuild        remove all old files (db, dependency, compile files,..) and recreate then recompile finally start server
+                   6) destroy        stop and remove all containers plus netwok also remove docker images, volume
+                   7) logs           show log of specific container of all containers
+                   8) clean          Clean up dev enviroment
+                   9) login          log into mishka_CMS container
+                   10) db             graphical database manager with dbeaver
+                   11) info           shows information about cms addresses and secrets${NC}"
         options=(start stop remove run rebuild destroy logs clean login db info) 
+
         select menu in "${options[@]}"; do 
             break;
         done 
 
-        case $REPLY in 
-            "start")
+        if [[ "$menu" == "" ]]; then
+            INPUT_CASE=$REPLY
+        else
+            INPUT_CASE=$menu
+        fi
+
+        case $INPUT_CASE in 
+            "start" | "1")
                 if [ -f $PWD/etc/.secret ]; then 
                     docker-compose -f dockers/docker-compose.yml  -p mishka_cms up -d 
 
@@ -407,7 +423,7 @@ else
                 fi
             ;;
 
-            "stop")
+            "stop" | "2")
                 if [[ $2 != "" ]]; then 
                     docker stop $2 && docker rm $2
                 else 
@@ -415,15 +431,15 @@ else
                 fi
             ;;
 
-            "remove")
+            "remove" | "3")
                 docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
             ;;
 
-            "run")
+            "run" | "4")
                 docker exec -it mishka_cms sh -c "iex -S mix phx.server"
             ;;
             
-            "rebuild")
+            "rebuild" | "5")
                 # Stop Services and Delete Networks
                 docker-compose -f dockers/docker-compose.yml  -p mishka_cms down
 
@@ -437,7 +453,7 @@ else
                 dev_operations
             ;;
 
-            "destroy")
+            "destroy" | "6")
                 read -p $'\e[31mthis stage PERMANENTLY DELETE Mishka_CMS, ARE YOUR SURE ? (YES/NO)\e[0m: ' INPUT
                 INPUT_VAR=$(to_lower_case $INPUT)
                 if [[ $INPUT_VAR =~ ^yes$ ]]; then 
@@ -448,7 +464,7 @@ else
             ;;
 
 
-            "logs")
+            "logs" | "7")
                 if [[ $2 != "" ]]; then 
                     docker logs -f $2
                 else 
@@ -456,54 +472,61 @@ else
                 fi
             ;;
 
-            "clean")
+            "clean" | "8")
                 mishka_logo
-                echo -e "${Green}Below Options is Available for clean (enter the name for each section):
-                                diskdb     Clean disk database like Erlang runtime db (mnesia)
-                                deps       Clean dependency
-                                compiled   Clean old compiled files
-                                all        Clean disk database, dependency, mix.lock file and old compiled files${NC}"
-                options=(diskdb deps compiled all) 
+                echo -e "${Green}Below Options is Available for clean (enter the name for each section or number):
+                               1) extensions clean extensions
+                               2) deps       Clean dependency
+                               3) compiled   Clean old compiled files
+                               4) all        Clean disk database, dependency, mix.lock file and old compiled files${NC}"
+                options=(extensions deps compiled all) 
+
                 select menu in "${options[@]}"; do 
                     break;
                 done 
 
-                case $REPLY in
-                    "diskdb")
+                if [[ "$menu" == "" ]]; then
+                    INPUT_CASE=$REPLY
+                else
+                    INPUT_CASE=$menu
+                fi
+
+                case $INPUT_CASE in
+                    "extensions" | "1")
                         docker stop mishka_cms && docker rm mishka_cms
-                        rm -rf ../../Mnesia.nonode@nohost
+                        rm -rf ../extensions
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
-                    "deps")
+                    "deps" | "2")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm -rf ../../deps
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
-                    "compiled")
+                    "compiled" | "3")
                         docker stop mishka_cms && docker rm mishka_cms
                         rm -rf ../../_build
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
-                    "all")
+                    "all" | "4")
                         docker stop mishka_cms && docker rm mishka_cms
-                        rm -rf ../../Mnesia.nonode@nohost ../../deps ../../_build ../../mix.lock
+                          rm -rf ../extensions ../../deps ../../_build ../../mix.lock
                         echo -e "${Green} Clean up is Done, Before start again you must run ./mishka.sh${NC}" 
                     ;;
 
                     *)
-                        echo -e "${Green}you have four option to use:${NC}" 
-                        echo -e "${Green}   diskdb${NC}" 
-                        echo -e "${Green}   deps${NC}" 
-                        echo -e "${Green}   compiled${NC}" 
-                        echo -e "${Green}   all${NC}" 
+                        echo -e "${Green}you have four option to use:${NC}"  
+                        echo -e "${Green}  1) extensions${NC}" 
+                        echo -e "${Green}  2) deps${NC}" 
+                        echo -e "${Green}  3) compiled${NC}" 
+                        echo -e "${Green}  4) all${NC}" 
                     ;;
                 esac
             ;;
 
-            "login")
+            "login" | "9")
                 CONTAINER_NAME=`docker ps --filter name=mishka_cms --format "{{.Names}}"`
                 if [[ $CONTAINER_NAME != "" ]]; then 
                     docker exec -it $CONTAINER_NAME /bin/sh -l
@@ -512,22 +535,29 @@ else
                 fi
             ;;
 
-            "db")
+            "db" | "10")
                 mishka_logo
-                echo -e "${Green}Below Options is Available for DB (enter the name for each section):
+                echo -e "${Green}Below Options is Available for DB (enter the name for each section or number):
                                 install    install DBeaver Package
                                 run        run DBeaver${NC}"
                 options=(install run) 
+                
                 select menu in "${options[@]}"; do 
                     break;
                 done 
 
-                case $REPLY in
-                        "install")
+                if [[ "$menu" == "" ]]; then
+                    INPUT_CASE=$REPLY
+                else
+                    INPUT_CASE=$menu
+                fi
+
+                case $INPUT_CASE in
+                        "install" | "1")
                             db_manager
                         ;;
 
-                        "run")
+                        "run" | "2")
                             if netstat -nultp | egrep -w '5432' > /dev/null; then
                                 if dbeaver_checker; then 
                                 dbeaver
@@ -547,12 +577,13 @@ else
                 esac
             ;;
 
-            "info")
+            "info" | "11")
                 load_configs
                 print_build_output
             ;;
 
             *)
+            
                 echo -e "${Red}$2 Does not Exist !${NC}"
                 echo -e "${Green} Using 'mishka.sh help' for more information"
             ;;
